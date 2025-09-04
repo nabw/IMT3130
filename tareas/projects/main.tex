@@ -45,19 +45,33 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
         $$ \parder{u}{t} - \Delta u = f \qquad\text{in $(0,T]\times \Omega$}. $$
         This project's goals are:
         \begin{itemize}
-            \item To study the well-posedness theory of this problem in a Bochner space setting.
+            \item To study the well-posedness theory of parabolic equations in a Bochner space setting.
             \item To study and analyze its spatial discretization with FEM.
             \item To study and analyze its time discretization using the $\theta$-method.
             \item To validate numerically the computed convergence rates.
         \end{itemize}
+
+        The following references might be useful: 
+        \begin{itemize}
+            \item Quarteroni, Valli. Numerical approximation of partial differential equations, 1994.
+            \item Thomée. Galerkin finite element methods for parabolic problems, 2007.
+            \item Evans. Partial Differential Equations, 2022.
+        \end{itemize}
+
     \item \textbf{The Helmholtz problem.} This problem consists in finding the eigenvalues of the Laplace operator, i.e. a pair $(\omega, u)$ such that
         $$ -\Delta u = \omega u. $$
         For this project you will have to 
         \begin{itemize}
-            \item Study the spectral properties of the Laplacian.
-            \item Study the spectral properties of the discrete Laplacian (you can choose how to discretize it).
-            \item Study the convergence of the eigenvalues and eigenvectors.
+            \item Study the well-posedness of the problem using Fredholm theory and G\r arding inequalities.
+            \item Study the spectral properties of the Laplacian for Dirichlet, Neumann, and mixed boundary conditions.
+            \item Study the spectral properties of the discretized Laplacian under Dirichlet, Neumann, and mixed boundary conditions.
+            \item Study the convergence of the eigenvalues and eigenvectors and devise strategies to matche the discrete eigenvalues to the corresponding continuous ones.
             \item Validate numerically the convergence rates.
+        \end{itemize}
+        The following references will be useful for this project: 
+        \begin{itemize}
+            \item Boffi, Finite element approximation of eigenvalue problems. 2010. 
+            \item Babuska, Osborne. Eigenvalue problems in \emph{Handbook of Numerical Analysis}. 1990.
         \end{itemize}
     \item \textbf{The Darcy problem.} This is a mixed problem, given by: Find $u$ in $\vec H(\dive)$ and $p$ in $L^2(\Omega)$ such that for some $f$ in $L^2(\Omega)$ it holds that
         $$ \begin{aligned}
@@ -68,7 +82,7 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
         \end{aligned} $$
         For this project you will have to 
         \begin{itemize}
-            \item Study how this problem is related to the Poisson problem
+            \item Study how this problem is related to the Poisson problem, and when they are equivalent.
             \item Study the LBB theory and show that it applies to it
             \item Study the discrete problem and show that the LBB conditions hold
             \item Validate numerically the convergence rates
@@ -142,6 +156,12 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
             \item To implement the problem and validate all theoretical claims numerically
         \end{itemize}
 
+        For this problem, the following references will be useful: 
+        \begin{itemize}
+            \item Tröltzsch, Optimal control of partial differential equations: theory, methods, and applications. 2010.
+            \item Manzoni, Quarteroni, Salsa. Optimal control of partial differential equations. 2021.
+        \end{itemize}
+
     \item \textbf{Wave equation.} The scope of this project is that of studying the wave equation, given by finding a function $u(t)$ in $H_0^1(\R^d)=\{v\in H^1(\R^d): \lim_{|x|\to \infty} v(x) = 0\}$  such that
         $$ c\parder{^2 u}{t^2} -\Delta u=0 $$
         for some initial condition. The scope of this project is to:
@@ -153,7 +173,7 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
             \item Validate all theoretical propositions numerically
         \end{itemize}
 
-    \item \textbf{Flexibilities. } All projects will be assumed to be developed in high level software such as Firedrake/NGSolve/FEniCS/etc, so that the implementation of a FEM code is not part of the difficulty. Still, flexilibity with respect to the stated goals will be considered for projects if you want to explore different topics, such as: 
+        \paragraph{\textbf{Flexibilities. }} All projects will be assumed to be developed in high level software such as Firedrake/NGSolve/FEniCS/etc, so that the implementation of a FEM code is not part of the difficulty. Still, flexilibity with respect to the stated goals will be considered for projects if you want to explore different topics, such as: 
         \begin{itemize}
             \item Implementation in a lower-level library, such as \texttt{deal.ii} [C++], \texttt{PETSc} [C], Ferrite [Julia].
             \item Study of preconditioning strategies using spectrally equivalent operators.
@@ -161,7 +181,14 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
             \item Study of iterative methods such as Uzawa schemes, or any infinite-dimensional optimization problem.
             \item Others you can think of.
         \end{itemize}
-    It will be fundamental for all projects to have (i) \textbf{continuous and discrete analysis}, and (ii) \textbf{a convergence analysis} and (iii) \textbf{some physically relevant simulations}.
+
+        \paragraph{\textbf{Inflexibilities.}} A final grade in the project below a 50\% means failing the entire course, and attendance to the final presentation is mandatory for all group members unless timely justified. Each projects can be taken by up to two groups. It will be fundamental for all projects to have 
+        \begin{enumerate}
+            \item A derivation of the model from fundamental principles
+            \item Continuous and discrete analysis
+            \item A convergence analysis showing that there is a controlable gap between the discrete solutions and the continuous ones
+            \item Two simulations: a numerical validation of the computed convergence rates and a physically significant one
+        \end{enumerate}
 \end{enumerate}
 
 \end{document}

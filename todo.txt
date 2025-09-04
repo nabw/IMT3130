@@ -1,0 +1,19 @@
+- Poner labels en teoremas y ecuaciones referenciadas. 
+- Unificar sistema de labels: 
+    - capítulos: chapter:asdf
+    - (sub)secciones:  (sub)section:asdf
+    - teoremas/lemmas:  thm/lemma:asdf
+    - ecuaciones: eq:asdf
+    - figuras: fig:asdf
+- Crear env Corollary
+- Todas las citas de teoremas/secciones/imágenes van con Figure/Theorem/Lemma/etc~\ref{fig:asdf}
+- Unificar $$ $$ o \[\] (no sé qué es mejor).
+   - \begin{equation} \begin{aligned} \end{aligned} \end{equation}
+   - Separar resultado y dejar con número. 
+- Cambiar := por \coloneqq  (alinea mejor el : con el =)
+- Operadores se definen con \DeclareMathOperator (\grad,Grad,div,Div,curl,Curl,tr,etc)
+- Unificar transpuestas
+- Párrafos después de ecuaciones pegados a la ecuación para evitar indentación.
+- Estoy usando \todo[inline] (de todonotes) y el comando \nota para dejar cosas por hacer. 
+- Agregar referencias a teoremas y ecuaciones en todo el texto.
+- Agregar Aubin- Nitsche

@@ -1,0 +1,407 @@
+In this section we set most of the foundational mathematics required to understand these notes. In general, this consists in defining rigorously the abstract functional setting and preparing the student for what a colleague calls the \emph{tensor-fu}, i.e. the capability of derivating anything. 
+
+\section{Banach and Hilbert spaces}
+Throughout the entire manuscript, we will rely on Banach spaces, Hilbert spaces, and their duals. Despite the existence of a flexible theory of Banach space formulations, we will mostly rely on Hilbert spaces because of their many nice properties. 
+
+\begin{definition}[Banach space]
+    We say that a metric vector space $X$, with a fixed metric $d$, is a Banach space if it is complete (i.e. that all Cauchy sequences converge to a well defined limit in $X$). Just for reference, we recall that a function $d:X\times X\to \R$ is a metric if it satisfies the following properties: 
+    \begin{itemize}
+        \item $d(x,x) = 0$ for all $x$ in $X$. 
+        \item (Positivity) $d(x,y) > 0$ for all $x\neq y$ in $X$. 
+        \item (Symmetry) $d(x,y) = d(y,x)$ for all $x,y$ in $X$. 
+        \item (Triangle inequality) $d(x,z) \leq d(x,y) + d(y,z)$ for all $x,y,z$ in $X$. 
+    \end{itemize}
+\end{definition}
+
+\begin{definition}[Hilbert space]
+    We say that an inner product space $H$ is a Hilbert space if it is complete with respect to the metric induced by the inner product. Throughout this manuscript, we will consider only real numbers, so the inner product $\langle\cdot, \cdot\rangle: H\times H \to \R$ is a function that satisfies the following: 
+    \begin{itemize}
+        \item (Symmetry) $\langle x,y\rangle = \langle y,x\rangle$ for all $x,y$ in $H$.
+        \item (Linear) $\langle ax_1 + bx_2, y\rangle = a\langle x_1, y\rangle + b\langle x_2, y\rangle$ for all $a,b$ in $\R$ and $x,y$ in $H$. 
+        \item (Positive definite) $\langle x, x\rangle \geq 0$ for all $x$ in $H$. The equality holds only for $x=0$. 
+    \end{itemize}
+    We will denote inner products mostly by $\langle\cdot, \cdot\rangle$ and $(\cdot, \cdot)$. Sometimes it will be important to distinguish the specific product we consider, i.e. $(\cdot, \cdot)_H$. 
+\end{definition}
+
+For now, let's simply review some relevant properties: 
+    \begin{itemize}
+        \item Continuous linear operators acting on Banach spaces have an induced operator norm: if $T: X\mapsto Y$, then 
+        $$ \| T\| =  \sup_{x\in X}\frac{|Tx|_Y}{|x|_X}. $$
+        We denote the space of continuous linear operators from $X$ to $Y$ as $L(X,Y)$. 
+        \item Given a Banach space $X$ and a linear operator $T:X\to Y$, where $Y$ is a normed space, we can define the norm induced by $T$ in the space $W=\text{Dom}(T)\subseteq X$ as
+        $$ \|x\|_{W} \coloneqq \|x\|_X + \|Tx\|_Y. $$
+        This will be important when constructing Sobolev spaces and their norms. We can show this is indeed a norm: taking $x,y\in W$ and $\alpha\in \R$ we get
+        \begin{itemize}
+            \item Triangle inequality:
+            \begin{align*}
+                \|x+y\|_W &= \|x+y\|_X + \|T(x+y)\|_Y \\
+                &\leq \|x\|_X + \|y\|_X + \|Tx\|_Y + \|Ty\|_Y \tag{$\|\cdot\|_X$ and $\|\cdot\|_Y$ are norms}\\
+                &= \|x\|_W + \|y\|_W.
+            \end{align*}
+            \item Homogeneity: since $T$ is linear, we get 
+            $$\|\alpha x\|_W = \|\alpha x\|_X + \|T(\alpha x)\|_Y = |\alpha|\|x\|_X + |\alpha|\|Tx\|_Y = |\alpha|\|x\|_W.$$
+            \item Positive-definiteness: we note that $0=\|x\|_W\geq \|x\|_X\geq 0$, which implies $x=0$.
+        \end{itemize}
+        \item Banach spaces are complete metric spaces. For a given Banach space $X$, its (topological) dual is the space $X'$ of functions $X\mapsto \R$, which is always Banach. The norm in $X'$ is referred to as the dual norm, and for $T\in X'$ it is defined as 
+            $$\|T\|_{X'} = \sup_{\substack{x\in X\\ \|x\|_X\leq 1}} |T(x)|= \sup_{x\in X}\frac{|T(x)|}{\|x\|_X}.$$
+        The action of an element of the dual space is sometimes denoted as $\langle T, x\rangle_{X'\times X}$, so as to resemble the notation of an inner product. In general, one can identify a part of the bidual space $X'' = (X')'$ through the evaluation operator $T_f:X'\mapsto \R$ in $X''$ defined as $T_f(L) = L(f)$. This immersion is not surjective. 
+        \item Inner products are mostly used as projections. This means that, in the same way that we can orthogonalize a vector $x$ with respect to $y$, we can also do this in the Hilbert space setting analogously as 
+            $$ x_\perp \coloneqq x - (x, y)_H y. $$
+        It can be quickly verified that the function $x_\perp$ is indeed perpendicular to $y$ in the sense that $(x_\perp, y)_H=0$. 
+        \item The inner product yields the fantastic Riesz map, which is actually an isometry. This is given as follows: consider a Hilbert space $H$ with inner product $(\cdot, \cdot)_H$, then a Riesz map is an operator $R_H: H\mapsto H'$ such that for any $x,y$ in $H$ it holds that $\langle R_H(x), y\rangle_{H'\times H} = (x, y)_H$. Notably, $\|R_H(x)\|_{H'} = \| x \|_H$. 
+    \end{itemize}
+One fundamental aspect of Hilbert spaces is that they provide some intuitive properties related to projections, which we recall through the following results: 
+\begin{theorem}[Best approximation]\label{thm:best-approximation}
+    Set $U\subset H$ a closed subspace of a Hilbert space $H$ and set $f$ in $H$. Then there exists a unique $g$ in $U$ such that
+        $$ \|f - g \|_H = \inf_{u\in U} \| f - u\|_H. $$
+\end{theorem}
+Using this, we can uniquely define the orthogonal complement of a set $U$: 
+    $$ U^\perp \coloneqq \{v\in H: (v, u)_H = 0 \quad\forall u\in U\}. $$
+\begin{theorem}\label{thm:orthogonal-decomposition}
+    Set $U$ a closed subspace of a Hilbert space $H$. Then, if $f$ is in $H$, there exists a unique pair $(u,v)$ in $U\times U^\perp$ such that 
+        $$f = u + v.$$
+\end{theorem}
+Some common and/or simple examples: Helmholtz decomposition, zero average functions, zero trace tensors, symmetric tensors. Note that the orthogonal complement is defined with respect to a \emph{given} inner product.
+
+\example{
+  Assume we want to orthogonalize with respect to $U=\R$. Then, we have that there is a constant $c$ such that for $f$ in a Hilbert space $H$ we can write
+    $$ f = h + c, $$
+  with $h\perp U$. Noting that a function $x$ satisfies $x\perp U$ iff $(x,1)_H = 0$, then we can use the previous expression to obtain 
+    $$ (f,1)_H = (c,1) = c(1,1)_H, $$ 
+  which yields
+    $$ c = \frac{(f,1)_H}{(1,1)_H}, $$
+  and
+    $$h = f - c = f -  \frac{(f,1)_H}{(1,1)_H}f.$$
+}
+
+The most important spaces for us will be the Lebesgue spaces $L^p(\Omega;\R^d)$ given by measurable functions $f:\Omega \mapsto \R^d$ such that
+$$ \|f\|_{L^p(\R^d)}^p \coloneqq \int_\Omega |f|_{\R^d}^p\,dx < \infty. $$
+It will be important to know that if $|\Omega|<\infty$, then these spaces form an ordered inclusion: 
+    $$ L^\infty(\Omega) \subset L^p(\Omega) \subset ... \subset L^1(\Omega). $$
+A simple way to remember this is to split a function as $f = I_{|f|\leq 1}f + I_{|f|\geq 1}f$ and note that $|x|^p < |x|^{p+\epsilon}$ for $\epsilon > 0$. 
+
+
+\section{Fundamental theorems of Functional Analysis}
+\todo[inline]{Add: Closed Graph, Open Mapping, Hahn-Banach as written by Long Chen.}
+
+
+\section{Fréchet and Gateaux derivatives}
+We will now cover the notion of differentiability in Banach spaces. The presentation closely follows that of \cite{ambrosetti1995primer}, with substantially less detail.
+\begin{definition}
+    Set $u\in U \subset X$ with $U$ an open set, and $F:U\to Y$. We say $F$ is Fréchet differentiable at $u$ if there exists a linear operator $A\in\mathcal{L}(X,Y)$ such that
+    \begin{equation*}
+        F(u+h)=F(u)+A(h)+o(\|h\|),
+    \end{equation*}
+    where we denote $\mathcal{L}(X,Y)$ as the set of linear operators from $X$ to $Y$, and the residual term $o(h)$ corresponds to a function $f(h)$ such that $\|f(h)\|/\|h\| \to 0$ when $h\to 0$. We denote the Fréchet derivative at $u$ in the direction $h$ as $dF(u)[h] \coloneqq A(h)$.
+\end{definition}
+This construction yields two properties about Fréchet differentiability:
+\begin{enumerate}
+    \item For a given $F:U\to Y$, $dF(u)$ is unique. To prove this, assume $A\neq B$ are two Fréchet derivatives of $F$, that is, 
+    \begin{align*}
+        F(x+h) &= F(x) + Ah + o(\|h\|), \\
+        F(x+h) &= F(x) + Bh + o(\|h\|).
+    \end{align*}
+    Subtracting these equations, we have $Ah - Bh = o(\|h\|)$. Since $A\neq B$, there exists a direction $h^*$ such that $Ah^* \neq Bh^*$. Setting $h=th^*$, with $t\in \mathbb{R}$, we note that
+    \begin{equation*}
+        \frac{\|Ah-Bh\|}{\|h\|} = \frac{t\|Ah^*-Bh^*\|}{t\|h^*\|} = \text{const.} \nrightarrow 0,
+    \end{equation*}
+    since it does not depend on $\|h\|$, and thus $Ah - Bh \neq o(\|h\|)$, which is a contradiction. 
+    \item If $F:U\to Y$ is Fréchet differentiable, then $F$ is continuous.
+\end{enumerate}
+
+Furthermore, we recover some classical properties of differentiation:
+\begin{enumerate}
+    \item (Linear combination) If $F$ and $G$ are Fréchet differentiable, then for any $a,b\in\mathbb{R}$, $aF+bG$ is Fréchet differentiable.
+    \item (Chain rule) Let $F:U\to Y$ and $G:V\to Z$, with $U\subset X$ an open set and $F(U)\subset V\subset Y$. Then, if $F$ is Fréchet differentiable at $u\in U$ and $G$ is Fréchet differentiable at $F(u)\in V$, then the composition $G\circ F:U\to Z$ is Fréchet differentiable at $u$, and we have
+        \begin{equation*}
+            dG\circ F(u)[h] = dG(F(u))[dF(u)[h]].
+        \end{equation*}
+\end{enumerate}
+
+We now define the Fréchet derivative map.
+\begin{definition}
+    Let $F:U\to Y$ be a Fréchet differentiable function in $U$ (i.e. Fréchet differentiable at every point $u\in U$). The map
+    \begin{align*}
+        F':U&\to \mathcal{L}(X,Y)\\
+        u&\mapsto dF(u)
+    \end{align*}
+    is called the Fréchet derivative of $F$. If $F'$ is continuous, we say that $F\in C^1$ and write $F\in C^1(U,Y)$.
+\end{definition}
+
+We note that the definition of the Fréchet derivative gives no hints to actually compute it from a given $F$. We begin by defining a different notion of differentiability.
+\begin{definition}
+    We define the Gâteaux derivative of $F:U\to Y$ at a fixed $u\in U$ as
+    \begin{equation*}
+        d_G F(u)[h] \coloneqq \lim_{\varepsilon\to 0} \frac{F(u+\varepsilon h)-F(u)}{\varepsilon} = \frac{d}{d\varepsilon}\left.\left(F(u+\varepsilon h)\right)\right|_{\varepsilon = 0}.
+    \end{equation*}
+    This corresponds to the directional derivative of $F$ in the direction $h$.
+\end{definition}
+In order to show the equivalence between Fréchet and Gâteaux derivatives, we require the mean value theorem. 
+
+\begin{theorem}[Mean value]\label{thm:mean-value-banach}
+Let $F:U\to Y$ be a function that is Gâteaux differentiable in $U$ (i.e. at every point $u\in U$). Define the function interval (convex combination)
+\begin{equation*}
+    [u,v] \coloneqq \{tu+(1-t)v, t\in[0,1]\}.
+\end{equation*}
+Then, we have
+\begin{equation*}
+    \|F(u)-F(v)\| \leq \left(\sup_{w\in[u,v]} \|d_G F(w)\|\right) \|u-v\|. 
+\end{equation*}
+\end{theorem}
+\begin{proof}
+    Assume that $F(u)-F(v)\neq 0$. We build the norm using the Hahn-Banach theorem: there exists $\psi \in Y^*$ with $\|\psi\|=1$ such that 
+    \begin{equation*}
+        \langle \psi, F(u)-F(v)\rangle = \|F(u)-F(v)\|. 
+    \end{equation*}    
+    Define $\gamma(t) = tu + (1-t)v$, with $t\in [0,1]$, and $h(t)=\langle \psi, F(\gamma(t))\rangle$. Then, by linearity, 
+    \begin{equation*}
+        \frac{h(t+\tau) - h(t)}{\tau} = \left\langle \psi, \frac{F(\gamma(t) + \tau(u-v)) - F(\gamma(t))}{\tau} \right\rangle.
+    \end{equation*}
+    By definition of the Gâteaux derivative, we have
+    \begin{equation*}
+        \lim_{\tau\to 0} \frac{h(t+\tau) - h(t)}{\tau} = h'(t) = \langle \psi, d_G F(\gamma(t)) [u-v]\rangle, 
+    \end{equation*}
+    and the scalar mean-value yields $h(1)-h(0) = h'(\theta)$ for some $\theta\in(0,1)$. Computing all the terms, we get
+    \begin{equation*}
+        h(1)-h(0) = \langle \psi, F(u)-F(v)\rangle = \|F(u)-F(v)\|,
+    \end{equation*}
+    and 
+    \begin{equation*}
+        h'(\theta) = \langle \psi, d_G F(\gamma(\theta))[u,v]\rangle \leq \underbrace{\|\psi\|}_{=1} \|d_G F(\gamma(\theta))\| \|u-v\|,
+    \end{equation*}
+    where we used the Cauchy-Schwarz inequality followed by the continuity of $d_G F(\gamma(\theta))$. Taking $\sup$ over $\theta$ completes the proof. 
+\end{proof}
+\begin{theorem}[Equivalence of Gâteaux and Fréchet derivatives]\label{thm:frechet-gateaux-equivalence}
+    If the Gâteaux derivative $d_G F$ of a function $F:X\to Y$ is continuous at $u^*\in X$, then $F$ is Fréchet differentiable at $u^*$, and they coincide, i.e. $dF(u^*) = d_G F(u^*)$.
+\end{theorem}
+\begin{proof}
+    Because of uniqueness, we simply need to verify that the Gâteaux derivative is indeed the Fréchet one. Fix $u\in U$ and define $R(h) = F(u+h) - F(u) - d_G F(u)[h]$. We now need to prove $R(h)=o(\|h\|)$, so that $Ah=d_G F(u)[h]$ in the definition of the Fréchet derivative. The Gâteaux derivative of $R$ at $h$ in the direction $k$ is
+    \begin{align*}
+        d_G R(h)[k] &= \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} R(h+\varepsilon k) \\
+        & = \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} F(u+h+\varepsilon k) - F(u) - d_G F(u)[h + \varepsilon k] \\
+        & = d_G F(u+h)[k] - d_G F(u)[k].
+    \end{align*}    
+    Thus, by the mean value theorem, we get
+    \begin{align*}
+        \|R(h)\| &\leq \sup_{w\in [0,h]} \|d_G(R(w))\| \|h\|\\
+        &=    \sup_{t\in [0,1]} \|d_G R(th)\| \|h\|\\
+        &=    \sup_{w\in [0,h]} \|d_G F(u+h)[k] - d_G F(u)[k]\| \|h\|,
+    \end{align*}
+    and thus dividing by $\|h\|$ and taking the limit $\|h\|\to 0$ yields
+    \begin{equation*}
+        \lim_{\|h\|\to 0} \frac{\|R(h)\|}{\|h\|} \leq \lim_{\|h\|\to 0} \|d_G F(u+th) - d_G F(u)\| = 0,
+    \end{equation*}    
+    because of the continuity of $d_G F$.
+\end{proof}
+Typically, one computes the Gâteaux derivative and hope it is continuous.
+
+
+For higher order derivatives, we start from the Fréchet derivative $F'(u) \coloneqq dF(u)\in \mathcal{L}(X,Y)$, where $F:U\to Y$. Repeating the calculation, we have
+\begin{equation*}
+    d^2 F(u) = dF'(u), 
+\end{equation*} 
+where $F': U\to \mathcal{L}(X,Y)$, and so $dF'(u) \in \mathcal{L}(X, \mathcal{L}(X,Y))$. Notably, the space $\mathcal{L}(X, \mathcal{L}(X,Y))$ is isometric to $\mathcal{L}(X\times X,Y)$ through the isometry
+\begin{equation*}
+    \Psi_A(u_1,u_2) = [A(u_1)](u_2),
+\end{equation*} 
+for $A\in \mathcal{L}(X,\mathcal{L}(X,Y))$. For this reason, most people write the second derivative as $d^2 F(u) [h_1,h_2]$, instead of $(d^2 F(u)[h_1])[h_2]$. In calculus of variations, it is common to study the second varition of a functional. This is simply $d^2 \Pi(u)[h,h]$, as seen in the second order term of the Taylor series
+\begin{equation*}
+    f(x+h)\approx f(x) + \nabla f(x) \cdot h + \frac{1}{2} h^\top (Hf)(x) h,
+\end{equation*} 
+where we wrote $d^2 f = Hf$ as the Hessian of $f$ at $x$.
+
+Let us list some useful properties:
+\begin{itemize}
+    \item Set $F$ twice differentiable and define $F_h(u)=dF(u)[h]$. Then,
+    \[ dF_h(u)[k] = F''(u)[h,k]. \] 
+    We can then compute the second derivative by fixing $h$ in the first derivative and differentiating like we've done in respect to $u$ for a direction $k$.
+    \item If $F$ is twice differentiable, then $F''(u)\in\mathcal{L}(X\times X, Y)$ is symmetric.
+    \item Partial derivatives are defined using projections, i.e. if $F: U\times V \to Y$, set $\sigma_v(u)=(u,v)$. Then, the partial derivatives w.r.t. $u$ is
+    \[ d(F\circ \sigma_v)(u)[h], \]
+    denoted simply $d_u F(u^*,v^*)$. Notably, one obtains
+    \[ d_u F(u^*,v^*)[h] = d_G(F\circ \sigma_v)(u)[h] = \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} F(u+\varepsilon h, v). \]
+\end{itemize}
+
+\example{
+    Let $\psi(u)=\frac{1}{p}\int_\Omega u^p dx$, defined in $L^p(\Omega)$.
+
+    \begin{align*}
+        d\psi(u)[v] &= \frac{1}{p}\frac{d}{d\varepsilon} |_{\varepsilon=0} \int_\Omega (u+\varepsilon v)^p dx \\
+        &= \frac{1}{p} \int_\Omega p(u+\varepsilon v)^{p-1}v dx|_{\varepsilon=0} \\
+        &= \int_\Omega u^{p-1}v dx
+    \end{align*}
+
+    \begin{align*}
+        d^2\psi(u)[v_1,v_2] &= d(d F_{v_1}(u))[v_2] \\
+        &= \frac{d}{d\varepsilon}|_{\varepsilon=0}\int_\Omega(u+\varepsilon v_2)^{p-1} v_1 dx\\
+        &= (p-1)\int_\Omega u^{p-2}v_1 v_2 dx
+    \end{align*}
+}
+
+In calculus of variations $d^2 F(u)[h] = d^2 F(u)[h,h]$ is used for checking the properties of the minimizers of  problem in the same way one would do in finite-dimensional optimization.
+
+
+
+
+\section{Tensors}
+Tensors are the natural way to put into one consistent algebraic setting all indexed objects, by further considering them to be independent of the coordinate system being used. In the end we will have that scalars are 0-tensors, vectors are 1-tensors, matrices are 3-tensors and so on. In addition, it will be fundamental to extend common calculus derivatives to tensor functions, which is the second topic of this section. Tensors are object of deep study in both algebra and geometry communities, so to maintain the presentation under control (and within our knowledge), we will present everything in Euclidean space $\R^3$. Generalizations should be clear by context. 
+
+In addition, we also mention that we will stick to the convention that scalars, vectors, and matrices are denoted with $a$, $\vec a$, and $\mat A$. Higher order tensors are sometimes denoted with $\mathcal A$ (3rd order) and $\mathbb A$ (4th order), but we will not use those too much. 
+
+\subsection{Tensor algebra}
+We begin by introducing the \textit{Einstein notation}, where repeated indices imply summation:
+$$a_ib_i = a_1b_1 + \dots + a_n b_n.$$ 
+Here, the index $i$ is called a \textit{dummy index}, because its replacement with another symbol does not change the value of the sum. When an index is not summed over in a given term, we call it a \textit{free index}. With this notation, we write the \textit{dot (inner) product} $\vec a \cdot \vec b = a_ib_i$, and the matrix-vector multiplication $\ten A\vec b = A_{ij}b_j\vec e_i$, where $\vec e_i$ is the canonical vector given by 
+    $$ \vec e_i = \begin{bmatrix} 0 \\ \vdots \\ 0 \\ 1 \\ 0 \\ \vdots \\  0  \end{bmatrix}\to \text{i-th entry} . $$ 
+    We now define the concept of a \textit{tensor} on the standard Euclidean space. 
+\begin{definition}[Tensor and tensor product]
+    A \textit{second-order tensor} $\ten T$ is a linear operator $\ten T\in \mathcal{L}(\R^3, \R^3)$. We write its action on $\vec u\in\R^3$ as $\ten T(\vec u) \equiv \ten T \vec u$. The \textit{components} $T_{ij}\in\R$ of $\ten T$ are defined as the $i$-th component of $\ten T\vec e_j$, i.e. $T_{ij}\vec e_i \coloneqq \ten T\vec e_j$, or equivalently, $T_{ij} = \vec e_i\cdot\ten T\vec e_j$. Since $\mathcal{L}(\R^3,\R^3)$ and $\R^{3\times 3}$ are isomorphic, we can always uniquely identify a second-order tensor $\ten T$ via its coefficient matrix $[\ten T]\in\R^{3\times 3}$, and thus we just write $\ten T$ for ease of notation.
+
+    Given two vectors $\vec a, \vec b\in\R^3$, we can construct a second-order tensor through the \textit{tensor product} $\otimes$, where we identify
+    \begin{align*}
+        \otimes: \R^3\times\R^3 &\to \R^{3\times 3}\\
+        (\vec a,\vec b) \mapsto \vec a\otimes\vec b \coloneqq \vec a\vec b^\top.
+    \end{align*}
+    From the definition, we note that $(\vec a\otimes \vec b)_{ij} = a_ib_j$, and we define the action of $(\vec a\otimes\vec b)$ on vector $\vec c$ as 
+    \begin{equation*}
+        (\vec a\otimes\vec b)\vec c = (\vec b\cdot\vec c)\vec a.
+    \end{equation*}
+    
+    More generally, a $n$th-order tensor may be expressed in the form 
+    \begin{equation*}
+        A_{i_1i_2\dots i_n}\vec e_{i_1}\otimes\vec e_{i_2}\otimes\dots\otimes\vec e_{i_n},
+    \end{equation*}
+    which is a linear operator with $3^n$ components, and where its action on $\vec a\in\R^3$ yields a $(n-1)$th-order tensor:
+    \begin{equation*}
+        \left(A_{i_1i_2\dots i_n}\vec e_{i_1}\otimes\vec e_{i_2}\otimes\dots\otimes\vec e_{i_n}\right)\vec a = (\vec e_{i_n}\cdot\vec a)\left(A_{i_1i_2\dots i_n}\vec e_{i_1}\otimes\vec e_{i_2}\otimes\dots\otimes\vec e_{i_{n-1}}\right).
+    \end{equation*}
+    From this definition, a $0$th-order tensor is identified as a \textit{scalar}, a first-order tensor is identified as a \textit{vector}, a second-order tensor is identified as a \textit{matrix} and higher-order tensor are identified as higher-dimensional matrices.
+\end{definition}
+\begin{definition}[Zero and identity tensor]
+    The zero tensor $\ten 0$ is the tensor whose components are all zero. The second-order \textit{identity tensor} $\ten I$ is defined by components as $I_{ij} = \delta_{ij}$, i.e. $\ten I = \delta_{ij} \vec e_i\otimes\vec e_j = \vec e_j \otimes \vec e_j$. Note that the Kronecker delta allows us to change indices in another factor of a given term, that is, 
+    \begin{equation*}
+        A_{ij}\delta_{jk} = \begin{cases}
+            A_{ij} &j=k\\
+            0 &j\neq k
+        \end{cases}
+        = A_{ik}.
+    \end{equation*}
+\end{definition}
+\begin{definition}[Cross product and the Levi-Civita symbol]
+    We define the \textit{Levi-Civita symbol} $\ten\varepsilon$ as the third-order tensor with components $\varepsilon_{ijk}$, where 
+    \begin{equation*}
+        \varepsilon_{ijk} = \begin{cases}
+            +1&\text{ if }(i,j,k)\in\{(1,2,3),(2,3,1),(3,1,2)\}\\
+            -1&\text{ if }(i,j,k)\in\{(1,3,2),(2,1,3),(3,2,1)\}\\
+            0&\text{ otherwise.}
+        \end{cases}
+    \end{equation*}
+    With this, given two vectors $\vec a, \vec b\in\R^3$, we can write their \textit{cross product} $\vec a\times\vec b\in\R^3$ as
+    \begin{equation*}
+        \vec a\times\vec b = \varepsilon_{ijk}a_jb_k\vec e_i.
+    \end{equation*}
+\end{definition}
+\begin{definition}{Product and transpose of second-order tensors}
+    The \textit{product} $\ten A \ten B$ of two second-order tensors $\ten A$, $\ten B$ is again a second-order tensor that follows $(\ten A\ten B)\vec u = \ten A(\ten B\vec u)$ for all vectors $\vec u$, whose components are 
+    \begin{equation*}
+        (\ten A \ten B)_{ij} = A_{ik}B_{kj}.
+    \end{equation*}
+    The (unique) \textit{transpose} of a second-order tensor $\ten A$ is denoted as $\ten A^\top$ and is given by the identity
+    \begin{equation*}
+        \vec v\cdot (\ten A^\top \vec u) = \ten A\vec v\cdot\vec u.
+    \end{equation*}
+    Clearly, $(\ten A^\top)^\top = \ten A$, and its components are $(\ten A^\top)_{ij} = A_{ji}$.
+\end{definition}
+\begin{definition}[Trace and contraction]
+    The \textit{trace} of a tensor $\ten A$ is the scalar denoted by $\tr \ten A = A_{ii}$, i.e. the sum of its diagonal. This operator is defined through the identity $\tr(\vec u\otimes\vec v) \coloneqq\vec u\cdot\vec v = u_iv_i$, which for a general tensor $\ten A$ yields 
+    \begin{equation*}
+        \tr\ten A = \tr(A_{ij}\vec e_i\otimes\vec e_j) = A_{ij}\tr(\vec e_i\otimes\vec e_j) = A_{ij}(\vec e_i\cdot\vec e_j) = A_{ij}\delta_{ij} = A_{ii}.
+    \end{equation*}
+    It follows from the definition that the trace is linear, does not change under transposition and is invariant under permutation of factors, that is, $\tr(\ten A\ten B) = \tr(\ten B\ten A)$. A \textit{contraction} of indices refers to identifying two indices and summing over them as if they were dummy indices, which is characterized for vectors by the dot product. The (double) contraction for second-order tensors is defined in terms of the trace as 
+    \begin{equation*}
+        \ten A:\ten B = A_{ij}B_{ij} = \tr(\ten A^\top\ten B) = \tr(\ten A\ten B^\top) = B_{ij}A_{ij} =  \ten B:\ten A,
+    \end{equation*}
+    and is a well-defined inner product over $\R^{n\times n}$. 
+\end{definition}
+\begin{definition}[Determinant and cofactor matrix]
+    The \textit{determinant} of a tensor $\ten A$ is the scalar $\det \ten A$ and is defined as the determinant of the matrix $[\ten A]$ of its coefficients. This operation satisfies $\det(\ten A\ten B) = (\det\ten A)(\det\ten B)$ and $\det\ten A^\top = \det\ten A$. If a tensor has nonzero determinant, we say it is \textit{invertible}, i.e. there exists a unique tensor $\ten A^{-1}$ such that $\ten A \ten A^{-1} = \ten A^{-1}\ten A = \ten I$. 
+    An important observation is that the inverse and the transpose commute, so we write $(\ten A^\top)^{-1} = (\ten A^{-1})^\top = \ten A^{-\top}$. To differentiate and derive useful properties that will simplify the calculations later on, we recall the cofactor matrix of $\ten A\in\R^{m\times n}$ is
+    \begin{equation*}
+        \Cof(\ten A)_{ij} \coloneqq (-1)^{i+j}\det \ten A'_{ij},
+    \end{equation*}
+    where $\ten A'_{ij}\in\R^{(m-1)\times(n-1)}$ is the same tensor after removing row $i$ and column $j$. Expanding this calculation we can deduce that 
+    \begin{equation*}
+        \Cof(\ten A) \coloneqq \det(\ten A)\ten A^{-\top}, 
+    \end{equation*}
+    and thus
+    \begin{equation*}
+        \ten A\Cof(\ten A)^\top = (\det\ten A)\ten I. %! determinant as a function of the Levi-Civita tensor
+    \end{equation*}
+\end{definition}
+\subsection{Tensor derivative}
+Now that we are equipped with tensor algebra and index notation, we need to adapt our standard derivative definitions to this setting. For simplicity, we refer to zero-order tensors as scalars, and to first-order tensors as vectors. The derivative of scalars and vectors with respect to a scalar variable are defined just as in standard vector calculus. We do need to define the derivative of vectors with respect to other vectors, and the derivatives of scalars with respect to second-order tensors, both of which appear naturally in the conservation laws that will follow later in this chapter.
+\begin{definition}[(Tensor) derivative of a scalar field]
+    Let $\psi=\psi(\ten A)$ be a scalar-valued function defined over a second-order tensor argument $\ten A$. The first-order Taylor approximation of $\psi$ at $\ten A$ followed by a perturbation $d\ten A$ is $\psi(\ten A + d\ten A) = \psi(\ten A) + d\psi + o(d\ten A)$, which satisfies
+    \begin{equation*}
+        d\psi = \frac{\partial\psi}{\partial\ten A} : d\ten A, 
+    \end{equation*}
+    where $\frac{\partial\psi}{\partial\ten A}$ is a second-order tensor defined as the \textit{(tensor) derivative} of $\psi$ at $\ten A$. In some cases, $\psi$ can be differentiated directly in tensor form, but sometimes it is useful to differentiate it component-wise as 
+    \begin{equation*}
+        \left[\frac{\partial \phi}{\partial\ten A}\right]_{ij} = \frac{\partial\phi}{A_{ij}},
+    \end{equation*}
+    which may be written back in tensor form. 
+\end{definition}
+\begin{definition}[Nabla operator]
+    In index notation, the \textit{nabla operator} $\nabla$ acting on a scalar, vector or tensor field $(\cdot)$ is defined ias 
+    \begin{equation*}
+        \nabla(\cdot) \coloneqq \frac{\partial(\cdot)}{\partial x_i}\vec e_i.
+    \end{equation*}
+    By analogy, we define the dot product, cross product and tensor product of $\nabla$ with a (smooth) vector or tensor-valued field $(\cdot)$ as 
+    \begin{equation*}
+        \nabla\cdot(\cdot) = \frac{\partial(\cdot)}{\partial x_i}\cdot\vec e_i,\qquad \nabla\times(\cdot) = \vec e_i \times \frac{\partial(\cdot)}{\partial x_i},\qquad \nabla\otimes(\cdot) = \frac{\partial(\cdot)}{\partial x_i}\otimes \vec e_i.
+    \end{equation*}
+\end{definition}
+\begin{definition}[Gradient, divergence and curl of a vector field]
+    Let $\vec u=\vec u(\vec x)$ be a smooth vector field. The \textit{gradient} of $\vec u$ is denoted by $\text{grad } \vec u$, $\vX \vec u$ or $\nabla\otimes\vec u$, and is defined as 
+    \begin{equation*}
+        \nabla \vec u = \frac{\partial u_i}{\partial x_j}\vec e_i\otimes\vec e_j,
+    \end{equation*}
+    or in component notation,
+    \begin{equation*}
+        [\nabla \vec u] = \begin{bmatrix}
+            \frac{\partial u_1}{\partial x_1} & \frac{\partial u_1}{\partial x_2} & \frac{\partial u_1}{\partial x_3}\\
+            \frac{\partial u_2}{\partial x_1} & \frac{\partial u_2}{\partial x_2} & \frac{\partial u_2}{\partial x_3}\\
+            \frac{\partial u_3}{\partial x_1} & \frac{\partial u_3}{\partial x_2} & \frac{\partial u_3}{\partial x_3}
+        \end{bmatrix}.
+    \end{equation*}
+    The \textit{divergence} of $\vec u$ is denoted by $\dive \vec u$ or $\nabla\cdot \vec u$, and is defined as the scalar field
+    \begin{equation*}
+        \nabla\cdot\vec u = \frac{\partial u_j}{x_i}\vec e_j\cdot\vec e_i = \frac{\partial u_i}{\partial x_i} = \frac{\partial u_1}{\partial x_1} + \frac{\partial u_2}{\partial x_2} + \frac{\partial u_3}{\partial x_3}.
+    \end{equation*}
+    From the above definitions, we can easily check that $\tr\nabla\vec u = \nabla \vec u : \ten I = \nabla\cdot\vec u$.  The \textit{curl} of $\vec u$ is denoted by $\curl\vec u$ or $\nabla\times\vec u$, and is defined as the vector field
+    \begin{equation*}
+        \nabla\times\vec u = \frac{\partial u_j}{\partial x_i}\vec e_i\times\vec e_j = \varepsilon_{ijk}\frac{\partial u_j}{\partial x_i}\vec e_k.
+    \end{equation*}
+\end{definition}
+\begin{definition}[Divergence of a tensor field]
+    The vector operator $\nabla$ dotted with any smooth, second-order tensor field $\ten A$ yields a vector field denoted by $\vec\dive \ten A$, where 
+    \begin{equation*}
+        \vec \dive \ten A = \frac{\partial A_{ij}}{x_j}\vec e_i,
+    \end{equation*}
+    that is, the divergence operator acts row-wise. We highlight that there is a mild ambiguity when reviewing literature from the mathematical or mechanical communities, where some authors define a column-wise divergence, which we denote by $\nabla\cdot\ten A$, defined as 
+    \begin{equation*}
+        \nabla\cdot\ten A = \frac{\partial A_{ij}}{x_i}\vec e_j
+    \end{equation*}
+\end{definition}
+
+\todo[inline]{NB: Esto va para continuum mechanics}
+Since material and spatial coordinates are related by a mapping without any constraints on its shape, we have to distinguish between differentiation in both frames. To this end, we use uppercase and lowercase notation for each case, and thus the gradient, divergence and curl operators in material coordinates are symbolized in nabla and text notation as 
+\begin{equation*}
+    \vX \equiv \Grad \qquad \vX\cdot \neq \Dive \qquad \vX \times \equiv \Curl,
+\end{equation*}
+and in spatial coordinates, we denote them as 
+\begin{equation*}
+    \vx \equiv \grad \qquad \vx\cdot \neq \dive \qquad \vx \times \equiv \curl.
+\end{equation*}
+
+

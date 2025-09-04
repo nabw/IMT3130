@@ -1,0 +1,565 @@
+Under appropriate boundary conditions, linear self-adjoint second-order differential operators have solutions that form orthogonal sets of functions in $L^2$. These problems are commonly referred to as Sturm-Liouville problems, and their study arises as a result of the application of the separation of variables technique to classical PDEs found in physics, such as the heat equation and the wave equation. 
+
+\section{Spectral theory}
+
+\begin{definition}[Densely-defined operators]
+    A linear operator $A:\dom A \to Y$ is \textit{densely defined in $X$} if its domain is dense in a Banach space $(X,\|\cdot\|_X)$ from which it inherits the norm, i.e. $\overline{\dom A} = X$. For instance, the derivative operator 
+    \begin{equation*}
+        \frac{d}{dx}:C^1((0,1))\to C((0,1))
+    \end{equation*}
+    where $\overline{C^1((0,1))}^{\|\cdot\|_\infty} = C((0,1))$. In general, densely-defined operators are unbounded.
+\end{definition}
+
+\begin{definition}[Transpose and Hermitian adjoint]
+    Let $X, Y$ be Banach spaces and $A:\dom A \to Y$ be a operator densely defined in $X$. Define the space
+    \begin{equation*}
+        \mathcal{D} := \{\varphi\in Y': \varphi\circ A:\dom A\to \R \}\subseteq Y'.
+    \end{equation*}
+    Since $\dom(A)$ is dense in $X$, $\varphi\circ A$ can be uniquely extended to $A'\varphi:X\to \R$, that is, $A'\varphi(x) = (\varphi\circ A)(x)$ for any $x\in\dom(A)$, and thus $A'\varphi\in X'$, whose domain is precisely $\dom(A') = \mathcal{D}$. The operator $A'$ is called the \text{transpose} of $A$. Moreover, if $H_1$ and $H_2$ are Hilbert spaces and $A:\dom A\to H_2$ is densely defined in $H_1$, then we analogously define the set 
+    \begin{equation*}
+        \dom(A^*) := \{y\in H_2: \exists z\in H_1: (Ax,y)_{H_2} = (x,z)_{H_2}\quad \forall x\in\dom(A)\}\subseteq H_2
+    \end{equation*}
+    where $A^*$ is called the \text{Hermitian adjoint} of $A$, defined as $A^*y = z$ with $A^*:\dom(A^*)\to H_1$.
+\end{definition}
+\begin{definition}[Symmetric and self-adjoint operators]
+    An operator $A:\dom A\to H$ densely defined in a Hilbert space $H$ is \textit{symmetric} if 
+    \begin{equation*}
+        (Ax,y)_H = (x,Ay)_H \quad \forall x,y\in\dom(A).
+    \end{equation*}
+    Equivalently, $A$ is symmetric if and only if $A$ is a restriction of $A^*$, that is, $A=A^*|_{\dom(A)}$ with $\dom(A)\subseteq \dom(A^*)$. Further, the operator $A$ is called \textit{self-adjoint} if $A^*=A$, i.e. if it is symmetric and $\dom(A) = \dom(A^*)$.  
+\end{definition}
+Note that a symmetric operator with a Hilbert domain is self-adjoint, due to the Hellinger-Toeplitz theorem.
+
+\begin{definition}[Eigenvalues, resolvent] 
+    Let $X$ be a normed space, $\mathcal{D}$ a dense subset of $X$ and $T:\mathcal{D}\to X$ a linear operator. Denote $I:X\to X$ the identity operator. We define the \textit{eigenvalues} $\sigma_p(T)$ as the set of $\lambda\in\mathbb{C}$ such that $T_\lambda := T - \lambda I$ is not injective, which implies that there exists $v\in \ker(T_\lambda)\setminus \{0\}$ such that $Tv=\lambda v$. The \textit{resolvent} $\rho(T)$ is the set of the $\lambda\in\mathbb{C}$ such that $T_\lambda$ is injective, has dense range in $X$ and its inverse is bounded.
+\end{definition}
+
+\begin{definition}[Eigenvalues and eigenvectors]
+    Let $A:\dom(A)\to Y$ be a linear operator. An element $v\in \dom(A)$ is called an \textit{eigenvector} of $A$, with \textit{eigenvalue} $\lambda\in\R$, if $A(v) = \lambda v$. 
+\end{definition}
+
+One of the most essential results in spectral theory is the characterization of eigenvalues and eigenvectors (eigenfunctions) of symmetric operators. 
+\begin{theorem}
+    Let $H$ be a Hilbert space. If $A:\dom(A)\to H$ is symmetric, then it has real eigenvalues and orthogonal eigenfunctions. 
+    \begin{proof}
+        Let $Av=\lambda v$ for some $\lambda\in\mathbb{C}$ and $0\neq v\in\dom(A)$. Then, 
+        \begin{equation*}
+            \lambda(v,v)_H = (\lambda v, v)_H = (Av,v)_H = (v,Av)_H = (v,\lambda v)_H = \overline{\lambda}(v,v)_H,
+        \end{equation*}
+        which implies $(\lambda-\overline{\lambda})(v,v)_H=0$, and by the homogeneity of the inner product and the fact that $v\neq 0$ we get $\lambda=\overline{\lambda}$, that is, $\lambda\in\R$. Furthermore, if $Av_1=\lambda_1v_1$ and $Av_2=\lambda_2v_2$, with $\lambda_1\neq\lambda_2$, then 
+        \begin{equation*}
+            \lambda_1(v_1,v_2)_H = (Av_1,v_2)_H = (v_1,Av_2)_H = \lambda_2(v_1,v_2)_H,
+        \end{equation*}
+        which is equivalent to $(\lambda_1-\lambda_2)(v_1,v_2)_H = 0$, and since $\lambda_1\neq\lambda_2$, we get $(v_1,v_2)_H = 0$.
+    \end{proof}
+\end{theorem}
+
+\begin{theorem}[Spectral theorem for compact operators]
+    Let $X$ be a Banach space and $T:X\to X$ a compact operator. Then, $\sigma_p(T)$ is a countable set, and it is infinite, they converge to $0$, which is the only accumulation points of $\sigma_p(T)$. Thus, since $\lambda\in\mathbb{C}\setminus\{0\}$, it holds that either $\lambda\in\rho(T)$ or $\lambda\in\sigma_p(T)$, and in both cases $\ker T_\lambda$ is finite-dimensional. 
+\end{theorem}
+\begin{theorem}[Hilbert-Schmidt]
+    Let $H$ be a Hilbert space, $T:H\to H$ a self-adjoint compact operator, that is, $T=T^*$, or equivalently, $(Tx,y)=(y,Tx)$ $\forall x,y\in H$. Then, there exists an orthogonal set of eigenvectors $\{u_n\}$ associated to eigenvalues $\lambda\in\R\setminus\{0\}$ of $T$, such that every $x\in H$ can be uniquely decomposed as 
+    \begin{equation*}
+        x = \sum_n \alpha_n u_n + v,
+    \end{equation*}
+    where $\alpha_n\in\mathbb{C}$ and $v\in\ker T$. Furthermore, $\lambda\in\rho(T)$ if and only if there exists $\gamma>0$ such that $\|Tx\|_H\geq \gamma\|x\|_H$, and thus the operator norm of $T$ is 
+    \begin{equation*}
+        \|T\| = \max\{|\lambda_{\text{min}}|, |\lambda_{\text{max}}|\},
+    \end{equation*}
+    where $\lambda_{\text{min}} = \inf \sigma_p(T)$ and $\lambda_{\text{max}} = \sup \sigma_p(T)$, where $\sigma_p(T)\subseteq\R$. 
+\end{theorem}
+
+We now state the spectral theorem for compact, self-adjoint operators. 
+\begin{theorem}[Spectral theorem for compact self-adjoint operators]
+    Let $T:H\to H$ a self-adjoint, compact operator over a Hilbert space $H$. Then, there exists an orthonormal basis of eigenvectors $\{v_\alpha\}_{\alpha\in I}$ of $H$. Furthermore, for all $x\in H$, we can decompose 
+    \begin{equation*}
+        Tx = \sum_{\alpha\in I} \lambda_\alpha(x,v_\alpha)_Hv_\alpha,
+    \end{equation*}
+    where $\lambda_\alpha\in\sigma_p(T)$ is the eigenvalue associated to $v_\alpha$. In orther words, $(\ker T)^\bot$ admits either 1. a finite eigenvector basis, or 2. an infinite one with $\lambda_n\to 0$ when $n\to\infty$. If $H$ is separable, then the basis $\{v_n\}_{n\in \mathbb{N}}$ is countable.
+\end{theorem}
+\begin{lemma}
+    Every self-adjoint, compact operator over a separable finite-dimensional Hilbert space has an orthonormal basis of eigenvectors associated to eigenvalues that converge to $0$. 
+\end{lemma}
+\section{Sturm-Liouville problems}
+Just as linear operators between finite dimensional Hilbert spaces can be represented as matrices, linear operators in infinite dimensions, such as differential operators, also have eigenvalues and eigenvectors, but there must be an infinite number of then since $\mathcal{D}\subseteq L^2((0,L))$ is infinite-dimensional. When we can prove the operator is symmetric, we immediately conclude that its eigenvalues are real and its eigenfunctions are orthogonal under the inner product of $\mathcal{D}$, usually $L^2$. If we seek to further show that these eigenfunctions are an \underline{orthogonal basis}, we need to invoke one of the spectral theorems. To do this, we consider the solution operator $\mathcal{S}$ which \textit{inverts} the action of a differential operator $T$ in the problem $Tu=f$ as $\mathcal{S}f = u$, which satisfies the boundary conditions. If this operator is compact and symmetric, then its eigenfunctions will form a basis. 
+
+\paragraph{The second derivative operator} Let us illustrate the power of these results by considering the operator $T=-\frac{d^2}{dx^2}:\mathcal{D}\to L^2((0,1))$. Here, the domain is 
+\begin{equation*}
+    \mathcal{D} \coloneqq \{u\in C^2([0,L]): u(0)=u(L)=0\},
+\end{equation*}
+where we introduced homogeneous boundary conditions. Since $C_c^\infty \subseteq \mathcal{D}\subseteq L^2(\Omega)$, we conclude that $\overline{\mathcal{D}} = L^2((0,L))$. This operaror is symmetric: if $u,v\in\mathcal{D}$ are arbitrary, then 
+\begin{align*}
+    (Tu, v)_H &= \int_0^L \frac{-d^2u}{dx^2}v dx\\
+    &= \cancel{-\left.\frac{du}{dx}v\right|_0^L} + \int_0^L \frac{du}{dx}\frac{dv}{dx} \tag{integration by parts, $v(0)=v(L)=0$}\\
+    &= \cancel{u\frac{dv}{dx}} - \int_0^L u\frac{d^2 v}{dx^2} dx \tag{$u(0)=u(L)=0$}\\
+    &= (u, Tv)_H,
+\end{align*}
+and thus this operator has real eigenvalues and orthogonal eigenfunctions. With this, we are now interested in solving the problem 
+\begin{equation*}
+    \begin{cases}
+        Tu = f\\
+        u\in\mathcal{D},
+    \end{cases} \iff 
+    \begin{cases}
+        -\dfrac{d^2u}{dx^2} = f\\
+        u(0)=u(L)=0
+    \end{cases}
+\end{equation*} 
+where $\mathcal{D}$ is defined with boundary conditions. To solve this ODE, we can employ classical methods, such as the method of variation of parameters. First, we solve $Au=0$, which has two linearly independent solutions $u_1(x)=x$ and $u_2(x)=1$. By variation of parameters, the solution $u(x)$ yields
+\begin{equation*}
+    u(x) = \mathcal{S}f(x) = \left(\int \frac{-u_2(\xi)f(\xi)}{(-1)W}d\xi\right)u_1(x) + \left(\int \frac{u_1(\xi)f(\xi)}{-W}d\xi\right)u_2(x),
+\end{equation*}
+where $W$ is the Wronskian
+\begin{equation*}
+    W = \det\left(\begin{matrix}
+        u_1(x) & u_2(x)\\
+        u_1'(x) & u_2'(x)
+    \end{matrix}\right) = x\cdot 0 - 1\cdot 1 = -1,
+\end{equation*}
+and thus 
+\begin{align*}
+    \mathcal{S}f(x) &= \left(\int\frac{-f(\xi)}{+1}d\xi\right)x + \left(\int\frac{\xi f(\xi)}{+1}d\xi\right)1\\
+    &= \left(-\int_L^x f(\xi)d\xi + C_1\right)x + \left(\int_0^x \xi f(\xi)d\xi + C_2\right).
+\end{align*}
+Substituting the boundary conditions $u(0)=\mathcal{S}f(0)=0$ and $u(L)=\mathcal{S}f(L)=0$, we get
+\begin{align*}
+    0 = \mathcal{S}f(0) &= 0 + \int_0^0 \xi f(\xi)d\xi + C_2 \implies C_2 = 0\\
+    0 = \mathcal{S}f(L) &= \left(\int_L^L f(\xi)d\xi + C_1\right)L + \int_0^L \xi f(\xi)d\xi,
+\end{align*}
+and from the second inequality we can deduce and conveniently write
+\begin{equation*}
+    C_1 = \frac{1}{L}\int_0^L \xi f(\xi)d\xi = \frac{1}{L}\int_0^x -\xi f(\xi)d\xi + \frac{1}{L} \int_x^L \xi f(\xi)d\xi,
+\end{equation*}
+which after substituting in $\mathcal{S}f(x)$ yields
+\begin{equation*}
+    \mathcal{S}f(x) = \int_x^L \frac{(L-\xi)x}{L}f(\xi)d\xi + \int_0^x \frac{\xi(L-x)}{L}f(\xi)d\xi = \int_0^L G(x,\xi) f(\xi)d\xi,
+\end{equation*}
+where we introduce the \textit{Green function} of the problem, with 
+\begin{equation*}
+    G(x,\xi) = \begin{cases}
+        \frac{1}{L}(L-\xi)x &\text{ if }x<\xi\\
+        \frac{1}{L}\xi(L-x) &\text{ if }\xi<x.
+    \end{cases}
+\end{equation*}
+Thus, since $f\in L^2((0,L))$ is arbitrary, the solution operator is $\mathcal{S}:L^2((0,L))\to L^2((0,L))$. We note it is symmetric: 
+\begin{equation*}
+    (\mathcal{S}f,g)_H = \int_0^L \int_0^L G(x,\xi)f(\xi)d\xi g(x)dx = \int_0^L f(\xi) \int_0^L G(\xi, x) g(x)dxd\xi = (f, \mathcal{S}g)_H,
+\end{equation*}
+where we noted that $G(x,\xi)=G(\xi,x)$. Since the operator is symmetric and is defined over the entire $L^2((0,L))$, it is automatically self-adjoint. By the Arzelà-Ascoli theorem, this operator is compact, and thus by the spectral theorem of compact self-adjoint operators, we have an orthogonal basis of eigenvectors $\{u_k\}_{k\in\mathbb{N}}$ of $\mathcal{S}$ with eigenvalues $\{\mu_k\}_{k\in \mathbb{N}}$ such that $\mu_k\to 0$ with $k\to\infty$. Finally, note that the spectral characterization of $\mathcal{S}$ allows us to characterize the eigenfuncions of the differntial operator $T$:
+\begin{equation*}
+    \mathcal{S}u_k = \mu_k u_k \implies T\mathcal{S}u_k = T(\mu_k u_k) \implies u_k = \mu_k Tu_k.
+\end{equation*}
+We distinguish here two cases: 
+\begin{itemize}
+    \item If $\mu_k=0$ for some $k$, then we need to find the solution operator of $T-\alpha$ for $\alpha\notin \sigma_p(T)$ and the eigenvalues $\lambda_k$ of $T$ are $\lambda_k = \alpha + \frac{1}{\mu_k}$. 
+    \item If $\mu_k\neq 0$ for all $k$, we simply obtain $Tu_k = \frac{1}{\mu_k}u_k$.
+\end{itemize}
+
+\paragraph{Sturm-Liouville problems} The Sturm-Liouville theory applies more generally to operators with the form 
+\begin{equation*}
+    Tu = -\frac{1}{w(x)}\left(\frac{d}{dx}\left(p(x)\frac{du}{dx}(x)\right) + q(x)u(x)\right),
+\end{equation*}
+where $0<w\in C([0,1])$, $q\in C([0,L])$ and $0\neq p\in C^1([0,L])$. This operator is symmetric in the \textit{weighted $L^2$ space} $L^2_w((0,L))$, where
+\begin{equation*}
+    L^2_w((0,L)) = \{f:(0,L)\to \R: \int f^2(x)w(x) dx < \infty,\}
+\end{equation*}
+which is naturally equipped with the inner product
+\begin{equation*}
+    (f,g)_w \equiv (f,g)_{L^2_w((0,L))} \coloneqq \int_0^L f(x)g(x)w(x) dx.
+\end{equation*}
+We check that this operator is symmetric in this space:
+\begin{align*}
+    (Tu,v)_w &= \int_0^L -\frac{1}{w}\left(\partial_x (p\partial_x u) + qu\right)vwdx\\
+    &= -\left.(p\partial_x u)v\right|_0^L + \int_0^L p(\partial_x u)(\partial_x v) dx - \int_0^L quvdx\\
+    &= -\left.(p\partial_x u)v\right|_0^L + \left.(p\partial_x v)u\right|_0^L - \int_0^L u\partial_x(p\partial_x v)dx - \int_0^L quvdx \\
+    &= -\int_0^L u\left(\partial_x (p\partial_x v) + qv\right)\frac{1}{w}wdx + \left.pu\partial_x v\right|_0^L - \left.pv\partial_x u\right|_0^L\\
+    &= (u,Tv)_w + \left.(puv' - pvu')\right|_0^L.
+\end{align*}
+Thus, in order for $T$ to be symmetric in this space, we require 
+\begin{equation*}
+    \left.(puv' - pvu')\right|_0^L = 0.
+\end{equation*}
+\paragraph{Examples of Sturm-Liouville problems} In our simple second derivative case $T=-\frac{d^2}{dx^2}$, we considered $u,v\in\mathcal{D}$, and thus $u(0)=u(L)=v(0)=v(L)=0$, which satisfies the condition and yields the symmetry. In our more general case, if for instance $p(0)=p(L)=0$ and $u,v,u'$ and $v'$ are finite at $x=0$ and $x=L$. Let us see some cases of such Sturm-Liouville problems. 
+\begin{itemize}
+    \item The Legendre operator 
+    \begin{equation*}
+        Tu = -\partial_x ((1-x^2)\partial_x u),\qquad x\in[-1,1].
+    \end{equation*}
+    Here, $w(x)=1$, $p(x)=1-x^2$ and $q(x)=0$. Clearly, $p(x=\pm 1) = 0$, and thus the operator is symmetric if and only if $u$ is finite at $x = \pm 1$. A well-known family of eigenfunctions of this operator are 
+    \begin{equation*}
+        -((1-x^2)\partial_x^2 P_n(x) - 2x\partial_x P_n(x)) = -\partial_x ((1-x^2)P_n(x)) = n(n+1)P_n(x),
+    \end{equation*}
+    where $\lambda_n = n(n+1)$ and $P_n(x)$ are the Legendre polynomials. These are the unique solutions if we requiere the solution to be finite at $x= \pm 1$. In the case that we do not impose such a condition, there exist additional solutions. 
+    \item The Bessel equation for $\nu\in\R$ is 
+    \begin{equation*}
+        x^2 \partial_x^2 u + x\partial_x u + (\lambda x^2 - \nu^2)u = 0,\qquad x\in[0,1],
+    \end{equation*}
+    which can be rewritten as 
+    \begin{equation*}
+        \partial_x^2 u + \frac{1}{x}\partial_x u - \frac{\nu^2}{x^2}u = -\lambda u \iff -\frac{1}{x}\partial_x (x\partial_x u) + \frac{\nu^2}{x^2} u = \lambda u,
+    \end{equation*}
+    and thus $w(x)=x$, $p(x)=x$ and $q(x)=-\frac{\nu^2}{x}$. Since $p(0)=0$, the operator 
+    \begin{equation*}
+        Tu = -\frac{1}{x}\partial_x (x\partial_x u) + \frac{\nu^2}{x^2}u
+    \end{equation*}
+    is symmetric if $u(0)$ and $\partial_x u(0)$ are finite and $u(1)=0$. This equation is relevant in polar coordinates and arises naturally when studying vibrations in the context of the wave equation. 
+    \item The Chebyshev equation is 
+    \begin{equation*}
+        (1-x^2)\partial_x^2 u - x\partial_x u + \lambda u = 0,\qquad x\in[-1,1],
+    \end{equation*}
+    which can be rewritten as 
+    \begin{equation*}
+        -\sqrt{1-x^2}\partial_x (\sqrt{1-x^2}\partial_x u) = \lambda u,
+    \end{equation*}
+    and thus $w(x)=\frac{1}{\sqrt{1-x^2}}$, $p(x)=\sqrt{1-x^2}$ and $q(x)=0$. Since $p(\pm 1) = 0$, we just need to ensure that $u(\pm 1)$ and $\partial_x u(\pm 1)$ are finite in order to establish that the operator is symmetric. The function $w(x)=\frac{1}{\sqrt{1-x^2}}$ is called the Chebyshev weight. 
+\end{itemize}
+Each one of these operators induce families of functions that are orthogonal in some sense. We expect that $p(x)\neq 0$ at both extrema, and thus the boundary conditions determine the symmetry of the operator, as seen in the example above. Consider the general boundary conditions 
+\begin{align*}
+    \alpha_1 u(0) + \alpha_2 u'(0)&=0 \qquad \alpha_1^2 + \alpha_2^2 \neq 0\\
+    \beta_1 u(L) + \beta_2 u'(L)&=0 \qquad \beta_1^2 + \beta_2^2 \neq 0.
+\end{align*}
+It is clear that Dirichlet, Neumann and Robin boundary conditions are particular cases of these general conditions, and when they are satisfied (and assuming $\alpha_2\neq 0$) we get 
+\begin{equation*}
+    u'(0)=-\frac{\alpha_1}{\alpha_2}u(0) \qquad v'(0) = -\frac{\alpha_1}{\alpha_2}v(0),
+\end{equation*}
+which implies 
+\begin{equation*}
+    u(0)v'(0)-v(0)u'(0) = u(0) \left(-\frac{\alpha_1}{\alpha_2}v(0)\right) - v_0 \left(-\frac{\alpha_1}{\alpha_2}u(0)\right) = 0,
+\end{equation*}
+and similarly in $x=L$. Then, 
+\begin{equation*}
+    \left.p(uv'-vu')\right|_0^L = 0,
+\end{equation*}
+which allows us to conclude that the operator is symmetric with these boundary conditions. If we had chosen $\alpha_2=0$, then $u(0)=v(0)=0$, which also satisfies the above relation, and analogously if $\beta_2=0$. From the symmetry only, we know that $T$ will have real eigenvalues and orthogonal eigenfunctions. To show that these eigenfunctions form a basis, we need to show that the operator is compact and self-adjoint, in order to invoke the spectral theorem for those operators. We now formally define \textit{regular} Sturm-Liouville problems and the main result associated to them.
+\begin{definition}[Regular Sturm-Liouville problems]
+    Let $\Omega = (a,b)$, $a,b\in\R$, $p\in C^1(\overline{\Omega})$, $q,w\in C(\overline{\Omega})$  with $p(x)>0$ and $w(x)>0$ $\forall x\in[a,b]$. The problem of finding $u\in C^1(\overline{\Omega})$ and $\lambda\in\mathbb{C}$ such that 
+    \begin{equation*}
+        Tu = -\frac{1}{w}(\partial_x(p\partial_x u) + qu) = \lambda u,\qquad x\in\Omega
+    \end{equation*}
+    with boundary conditions 
+    \begin{align*}
+        \alpha_1 u(0) + \alpha_2 u'(0)&=0 \qquad \alpha_1^2 + \alpha_2^2 \neq 0\\
+        \beta_1 u(L) + \beta_2 u'(L)&=0 \qquad \beta_1^2 + \beta_2^2 \neq 0.
+    \end{align*}
+    is called a \textit{regular Sturm-Liouville problem}. If $p(a)=0$ or $p(b)=0$, or $a=-\infty$ or $b=\infty$, then the problem is called a \textit{singular Sturm-Liouville problem}.
+\end{definition}
+\begin{theorem}
+    A regular Sturm-Liouville problem with operator $T$ such that $0\notin \sigma_p(T)$ has a countable number of real eigenvalues $\{\lambda_n\}_{n\in\mathbb N}$ such that $|\lambda_n|\to\infty$ when $n\to\infty$, where each eigenvalue has multiplicity one. The associated eigenfunctions $\{u_n\}_{n\in\mathbb N}\subseteq C^1(\overline{\Omega})$ are an orthogonal basis of $L^2_w(\Omega)$. 
+\end{theorem}
+Note that if the problem is singular, such as in the Legendre problem, one can sometimes conclude a similar result, but it is necessary to define special boundary conditions through limits on the boundary. For instance, for the Legendre operator 
+\begin{equation*}
+    Tu = -\partial_x ((1-x^2)\partial_x u),\qquad x\in[-1,1],
+\end{equation*}
+one can impose the boundary conditions 
+\begin{equation*}
+    \lim_{x\to 1}(1-x^2)u'(x)=0\qquad \lim_{x\to -1}(1-x^2)u'(x)=0,
+\end{equation*}
+which are equivalent to imposing that $u(\pm 1)$ and $\partial_x u(\pm 1)$ are finite. These boundary conditions yield the same result as in the above theorem, and result in  eigenfunctions known as the Legendre polynomials, which are an orthogonal basis of $L^2((-1,1))$. 
+
+There are other possible boundary conditions that can be used to prove similar results. The most important class of such boundary conditions are \textit{periodic boundary conditions}
+\begin{align*}
+    u(a) &= u(b)\\
+    \partial_x u(a) &= \partial_x u(b),
+\end{align*}
+which immediately induce symmetry in the operator $T = -\frac{1}{w}(\partial_x(p\partial_x) + q)$ with $p(a)=p(b)$, since 
+\begin{equation*}
+    \left.p(uv'-vu')\right|_a^b =  \left.p(uv'-vu') \right|_{x=a} = \left.p(uv'-vu') \right|_{x=b} = 0.
+\end{equation*}
+Here we also obtain a countable number of eigenvalues, but almost all of them have multiplicity two, and we can indeed recover an orthogonal basis of eigenfunctions. The most simple example arises when $T=-\partial_x^2$ in $[0,L]$, which leads to the classical Fourier basis 
+\begin{equation*}
+    \{u_n\}_{n\in \mathbb N} = \{\sin\left(\frac{2\pi}{L}kx\right)\}_{k\in\mathbb N} \cup  \{\cos\left(\frac{2\pi}{L}kx\right)\}_{k\in\mathbb N}
+\end{equation*}
+with eigenvalues $\{\lambda_n\}_{k\in\mathbb{N}_0} = \left\{\left(\frac{2\pi}{L}k\right)^2\right\}_{k\in\mathbb{N}_0}$ which have multiplicity two for $k\geq 1$ and multiplicity one for $k=0$.
+\section{Separation of variables}
+Regular Sturm-Liouville problems arise when studying some particular cases of PDEs motivated by physics. Often, one assumes that time and space can be (multiplicatively) \textit{separated} in the solution of a time and space-dependent PDE, where the solution is $u(x,t) = X(x)T(t)$. Let us perform separation of variables and analytically solve some regular Sturm-Liouville problems that are \textit{homogeneous} ($Tu=0$) and \textit{nonhomogeneous} ($Tu=f$).
+\subsection{Homogeneous problems}
+\paragraph{The heat equation} We state the time-dependent heat equation on the temperature $\theta=\theta(x,t)$ 
+\begin{equation*}
+    \rho c_v \partial_t \theta(x,t) - \dive (k\grad \theta) = r,
+\end{equation*}
+where $\rho$ is the density, $c_v$ is the specific heat capacity at constant volume, $k$ is the thermal conductivity and $r$ is the heat source. Let us fix $\Omega\in(0,1)$, so that $(x,t)\in\Omega\times(0,T)$. We enforce initial conditions $\theta(x,0)=\theta_0(x)$ and for simplicity consider boundary conditions $\theta(0,t) = \theta(L,t) = 0$, $r=0$, and assuming constant $k$, we obtain the problem 
+\begin{align*}
+    \partial_t \theta - \alpha\partial_x^2\theta &= 0 \quad \forall (x,t)\in(0,L)\times(0,T)\\
+    \theta(x,0) &= \theta_0(x) \quad \forall x\in(0,L)\\
+    \theta(0,t) = \theta(L,t) &= 0 \quad \forall t\in (0,T),
+\end{align*}
+where $\alpha = k/(\rho c_v)$ is the thermal diffusivity. To find $\theta(x,t)$ via separation of variables, we fix $t=t_0$, such that $\theta(x,t_0)$ is a function that we assume is in $L^2((0,L))$, and let $\{X_k(x)\}_{k\in\mathbb N}$ be an orthogonal basis of $L^2(\Omega)$. Thus,
+\begin{equation*}
+    \theta(x,t_0) = \sum_{k=1}^\infty c_kX_k(x)
+\end{equation*}
+for some unique coefficients $\{c_k\}_k$. In fact, if we know $X_k(x)$ for all $k$, then we can take the inner product and obtain $c_k$:
+\begin{equation*}
+    (\theta(\cdot, t_0), X_k)_{L^2(\Omega)} = \left(\sum_{j=1}^\infty c_jX_j, X_k\right)_{L^2(\Omega)} = c_k(X_k,X_k)_{L^2(\Omega)} = c_k\|X_k\|_{L^2(\Omega)}^2,
+\end{equation*}
+which implies 
+\begin{equation*}
+    c_k = \frac{(\theta(\cdot, t_0), X_k)_{L^2(\Omega)}}{\|X_k\|_{L^2(\Omega)}^2}.
+\end{equation*}
+Since this is true for all $t_0$, we can define pointwise the functions $c_k(t)$ for all $k$, which results in the expansion 
+\begin{equation*}
+    \theta(x,t) = \sum_{k=1}^\infty c_k(t)X_k(x).
+\end{equation*}
+This is essentially what we mean by \textit{separating} the variables, which inspires us to search for solutions $\theta_k(x,t) = c_k(t)X_k(x)$ where $c_k$ and $X_k$ are unknown. It would be very helpful at this point to establish that $\{X_k\}_{k\in\mathbb N}$ are an orthogonal basis, but this is unknown. Regardless, substituting our separation in the original equation we arrive at 
+\begin{equation*}
+    c_k'(t) X_k(x) - \alpha c_k(t) X_k''(x) = 0,
+\end{equation*}
+which after dividing by $c_k X_k$ yields
+\begin{equation*}
+    \frac{1}{\alpha}\frac{c_k'(t)}{c_k(t)} = \frac{X_k''(x)}{X_k(x)}.
+\end{equation*}
+Since the left hand side only depends on $t$ and the right hand side only depends on $x$, such an equality can hold only if both terms are equal to a constant, which we call $-\lambda_k$: 
+\begin{equation*}
+    \frac{1}{\alpha}\frac{c_k'(t)}{c_k(t)} = \frac{X_k''(x)}{X_k(x)} = -\lambda_k ,
+\end{equation*}
+which results in a decoupled system 
+\begin{align*}
+    -X_k''(x) &= \lambda_k X_k(x)\\
+    c_k'(t) &= -\alpha\lambda_k c_k(t).
+\end{align*}
+Here, boundary conditions only act on $x$: 
+\begin{align*}
+    0 &= \theta_k(0,t) = c_k(t)X_k(0) \implies X_k(0)=0\\
+    0 &= \theta_k(L,t) = c_k(t)X_k(L) \implies X_k(L)=0,
+\end{align*}
+since the case $c_k(t)=0$ translates into the trivial solution $\theta_k(x,t)\equiv 0$. With this, we note that we have a well-defined second-order boundary value problem 
+\begin{align*}
+    -\dfrac{d^2 X_k}{dx^2}(x) &= \lambda_k X_k(x)\\
+    X_k(0)= X_k(L) &= 0,
+\end{align*}
+which is a regular Sturm-Liouville theorem, and thus the eigenfunctions will form an orthogonal basis. Let us find it explicitly. Since the second-order ODE on $X_k$ has constant coefficients, we can just calculate the roots of the characteristic equations and analyze each case separately. The characteristic equation here is $r^2+\lambda_k=0$, which has roots $r=\pm \sqrt{-\lambda}$.
+\begin{itemize}
+    \item If $\lambda_k>0$, then $r_{1,2} = \pm i \sqrt{\lambda_k}\in\mathbb C$, which results in
+    \begin{equation*}
+        X_k(x) = A\cos(\sqrt{\lambda_k}x) + B\sin(\sqrt{\lambda_k}x).
+    \end{equation*} 
+    We note that $X_k(0)=0$ implies $A=0$ and $X_k(L)=0$ implies $B\sin(\sqrt{\lambda_k}L)$, which implies $\sqrt{\lambda_k}L = k\pi$ $\forall k\in\mathbb Z$, and thus 
+    \begin{equation*}
+        X_k(x) = B\sin\left(\frac{k\pi}{L}x\right),
+    \end{equation*}
+    with eigenvalues $\lambda_k = \left(\frac{k\pi}{L}\right)^2$. 
+    \item If $\lambda_k = 0$, then $r_{1,2} = 0$, which after enforcing boundary conditions implies $A = B = 0$. Thus, this case reduces to the trivial solution $\theta\equiv 0$. 
+    \item If $\lambda_k<0$, then $r_{1,2} = \pm\sqrt{|\lambda_k|}$, which results in 
+    \begin{equation*}
+        X_k(x) = Ae^{\sqrt{|\lambda_k|}x} + B e^{-\sqrt{|\lambda_k|}x}.
+    \end{equation*}
+    We can deduce from $X_k(0)=0$ that  in $A=-B$, and thus 
+    \begin{equation*}
+        X_k(x) = A\left(e^{\sqrt{|\lambda_k|}x} -e^{-\sqrt{|\lambda_k|}x}\right) = 2A\sinh(\sqrt{|\lambda_k|}x).
+    \end{equation*}
+    Now, from $X_k(L)=0$, we get 
+    \begin{equation*}
+        2A\sinh(\sqrt{|\lambda_k|}L) = 0 \implies A = 0,
+    \end{equation*}
+    which again reduces to the trivial solution. 
+\end{itemize}
+From this analysis, the only nontrivial solution is $X_k(x) = B\sin\left(\frac{k\pi}{L}x\right)$ and $\lambda_k = \left(\frac{k\pi}{L}\right)^2$. Now we have to solve the second problem without boundary conditions: 
+\begin{equation*}
+    \frac{dc_k}{dt}(t) = -\alpha\lambda_k c_k(t) = -\alpha\left(\frac{k\pi}{L}\right)^2 c_k(t),
+\end{equation*}
+which is a simple linear ODE that can be integrated to get 
+\begin{equation*}
+    c_k(t) = A_k e^{-\alpha\left(\frac{k\pi}{L}\right)^2 t}.
+\end{equation*}
+Finally, by regrouping the terms in the definition of $\theta(x,t)$, we get 
+\begin{equation*}
+    \theta(x,t) = \sum_{k=1}^\infty A_k\sin\left(\frac{k\pi}{L}x\right) e^{-\alpha\left(\frac{k\pi}{L}\right)^2 t},
+\end{equation*}
+and we are only missing the $A_k$s. To this end, we incorporate the initial condition 
+\begin{equation*}
+    \theta_0(x) = \theta(x,0) = \sum_{k=1}^\infty A_k\sin\left(\frac{k\pi}{L}x\right),
+\end{equation*}
+and taking the inner product of this equation with the basis element $\sin\left(\frac{k\pi}{L}x\right)$, we can obtain 
+\begin{equation*}
+    \left(\theta_0, \sin\left(\frac{k\pi}{L}(\cdot)\right)\right)_{L^2(\Omega)} = A_k\left|\sin\left(\frac{k\pi}{L}(\cdot)\right)\right|^2_{L^2((0,L))},
+\end{equation*}
+which yields
+\begin{equation*}
+    A_k = \frac{\left(\theta_0, \sin\left(\frac{k\pi}{L}(\cdot)\right)\right)_{L^2(\Omega)}}{\left|\sin\left(\frac{k\pi}{L}(\cdot)\right)\right|^2_{L^2((0,L))}} = \frac{2}{L}\int_0^L \theta_0(y)\sin\left(\frac{k\pi}{L}y\right)dy,
+\end{equation*}
+where we used $\left|\sin\left(\frac{k\pi}{L}(\cdot)\right)\right|^2_{L^2((0,L))} = L/2$, which is readily verified by integrating. Replacing in our solution, we finally obtain 
+\begin{equation*}
+    \theta(x,t) = \sum_{k=1}^\infty \left(\frac{2}{L}\int_0^L \theta_0(y)\sin\left(\frac{k\pi}{L}y\right)dy\right)\sin\left(\frac{k\pi}{L}x\right) e^{-\alpha\left(\frac{k\pi}{L}\right)^2 t}
+\end{equation*}
+We can repeat this procedure for other types of boundary conditions, which also yield trigonometric basis.
+\begin{itemize}
+    \item For Neumann conditions $\partial_x\theta(0,t) = \partial_x\theta(L,t) = 0$, we get the eigenvalues $\lambda_k = \left(\frac{k\pi}{L}\right)^2$ and the eigenfunctions $X_k(x) = A_k \cos \left(\frac{k\pi}{L}x\right)$.
+    \item For periodic conditions $\theta(0,t) = \theta(L,t)$ and $\partial_x \theta(0,t) = \partial_x\theta(L,t)$, we get the eigenvalues $\lambda_k = \left(\frac{2k\pi}{L}\right)^2$ and the eigenfunctions 
+    \begin{equation*}
+        X_k(x) = A_k\cos\left(\frac{2k\pi}{L}x\right) + B_k \sin\left(\frac{2k\pi}{L}x\right).
+    \end{equation*}
+\end{itemize}
+The above analysis can be extended to other physics-based PDEs, such as 2D or 3D heat conduction, or the wave equation where there is no forcing term, such as the heat generation term $r$. 
+\subsection{Nonhomogeneous problems}
+Let us now study the steady-state heat exchange equation with internal heat generation, i.e., the Poisson equation:
+\begin{equation*}
+    -\nabla^{2}u=f, \quad \text{for }(x,y)\in(0,L)\times(0,H)
+\end{equation*}
+with $u|_{\partial\Omega}=0$. If we try to use separation of variables directly with $u(x,y)=X(x)Y(y)$ and $f(x,y)=F_{x}(x)F_{y}(y)$, we get
+\begin{equation*}
+    -\nabla^{2}u=f\Rightarrow-X''Y-XY''=F_{x}F_{y} \implies -\frac{X''}{X}-\frac{Y''}{Y}=\frac{F_{x}F_{y}}{XY}
+\end{equation*}
+The expression is no longer equal to a constant, so in general it could not be solved by the method of separation of variables. However, there are cases in which it is feasible to find the solution analytically: when the eigenfunctions of an operator $T$ form a Schauder basis $\{u_k\}$
+\begin{equation*}
+    T u_{k}=\lambda_{k}u_{k}, \quad \forall k\in\mathbb{N}_0
+\end{equation*}
+with $u(x,y)=\sum_{n=1}^{\infty}c_{n}u_{n}(x,y)$ for every $u$ in the Banach space of interest. Therefore, we can also expand $f$ in this basis:
+\begin{equation*}
+    f(x,y)=\sum_{n=1}^{\infty}\hat{f}_{n}u_{n}(x,y)
+\end{equation*}
+Then, applying the operator $T$, we get
+\begin{equation*}
+    T u = T\left(\sum_{n=1}^{\infty}c_{n}u_{n}\right)=\sum_{n=1}^{\infty}c_{n}\lambda_{n}u_{n}=\sum_{n=1}^{\infty}\hat{f}_{n}u_{n}=f,
+\end{equation*}
+so that $c_{n}\lambda_{n}=\hat{f}_{n} \implies c_{n}=\frac{\hat{f}_{n}}{\lambda_{n}}$, and the solution is
+\begin{equation*}
+    u(x,y)=\sum_{n=1}^{\infty}\frac{\hat{f}_{n}}{\lambda_{n}}u_{n}(x,y).
+\end{equation*}
+Therefore, if the spectral structure of A including the boundary conditions is known, and it forms a basis for the space, then the solution can be found as long as the coefficients $\hat{f}_n$ of $f$ in that basis can be determined. In the case of a Hilbert space, if the basis is also orthogonal, calculating the coefficients of $f$ is straightforward: 
+\begin{equation*}
+    f=\sum_{k=1}^{\infty}\hat{f}_{k}u_{k}\implies(f,u_{n})=\left(\sum_{k=1}^{\infty}\hat{f}_{k}u_{k},u_{n}\right)=\hat{f}_{n}(u_{n},u_{n}) \implies\hat{f}_{n}=\frac{(f,u_{n})}{(u_{n},u_{n})}.
+\end{equation*}
+It is then sufficient to find the set of eigenvalues and eigenfunctions of the operator, which in the case of being an orthogonal basis, effectively solves the problem. To find these eigenvalues and eigenfunctions, we can use the separation of variables method. For the eigenvalue problem of our Laplace operator, the boundary conditions must always be homogeneous, although the type of boundary condition may vary on different parts of the boundary. We start by assuming $u(x,y)=X(x)Y(y)$:
+\begin{align*}
+    -\nabla^{2}u(x,y)&=-X''(x)Y(y)-X(x)Y''(y)=\lambda X(x)Y(y) \\
+    &\Rightarrow-\frac{X''(x)}{X(x)}-\frac{Y''(y)}{Y(y)}=\lambda.
+\end{align*}
+From this, we can separate the variables:
+\begin{equation*}
+    -\frac{X''(x)}{X(x)} = \mu^x, \quad -\frac{Y''(y)}{Y(y)} = \mu^y
+\end{equation*}
+such that $\lambda = \mu^x + \mu^y$.  The boundary conditions $u|_{\partial\Omega}=0$ imply
+\begin{equation*}
+    X(0)=X(L)=0, \quad Y(0)=Y(H)=0.
+\end{equation*}
+So, we obtain two eigenvalue problems in one dimension: 
+\begin{equation*}
+    \begin{cases}-X''(x)=\mu^{x}X(x)\\ X(0)=X(L)=0\end{cases} \quad \text{and} \quad \begin{cases}-Y''(y)=\mu^{y}Y(y)\\ Y(0)=Y(H)=0\end{cases}.
+\end{equation*}
+Both of these problems are analogous to the homogeneous case we studied earlier, which result in
+\begin{equation*}
+    X_{k}(x)=B_{k}\sin\left(\frac{k\pi}{L}x\right), \quad \mu_{k}^{x}=\left(\frac{k\pi}{L}\right)^{2}, \quad \forall k\in\mathbb{N}
+\end{equation*}
+and
+\begin{equation*}
+    Y_{l}(y)=C_{l}\sin\left(\frac{l\pi}{H}y\right), \quad \mu_{l}^{y}=\left(\frac{l\pi}{H}\right)^{2}, \quad \forall l\in\mathbb{N}.
+\end{equation*}
+Thus we obtain that the eigenfunctions and eigenvalues of the 2D problem are:
+\begin{equation*}
+    u_{k,l}(x,y)=A_{k,l} \sin\left(\frac{k\pi}{L}x\right)\sin\left(\frac{l\pi}{H}y\right)
+\end{equation*}
+with
+\begin{equation*}
+    \lambda_{k,l}= \mu_{k}^{x}+\mu_{l}^{y}=\left(\frac{k\pi}{L}\right)^{2}+\left(\frac{l\pi}{H}\right)^{2}, \quad \text{for } k,l \in\mathbb{N}. 
+\end{equation*}
+Now that we have found an explicit form for the eigenvalues and eigenvectors, we seek to determine if they form an orthogonal basis of $L^{2}(\Omega)$. If it were, and assuming $f\in L^{2}(\Omega)$, it follows that
+\begin{equation*}
+    f=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}\hat{f}_{k,l}u_{k,l}\Rightarrow\hat{f}_{k,l}=\frac{(f,u_{k,l})_{L^{2}}}{(u_{k,l},u_{k,l})_{L^{2}}}.
+\end{equation*}
+For the original problem $-\nabla^2u=f$ with $u|_{\partial\Omega}=0$, we seek a solution $u=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}c_{k,l}u_{k,l}$ (i.e. we seek to find $c_{k,l}$) such that: 
+\begin{align*}
+    -\nabla^{2}u &=-\nabla^{2}\left(\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}c_{k,l}u_{k,l}\right)=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}c_{k,l}(-\nabla^{2}u_{k,l}) \\
+    &=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}c_{k,l}\lambda_{k,l}u_{k,l}=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}\hat{f}_{k,l}u_{k,l}=f.
+\end{align*}
+From this, we conclude that $c_{k,l}=\frac{\hat{f}_{k,l}}{\lambda_{k,l}}$, and the solution is
+\begin{equation*}
+    u(x,y)=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}\frac{\hat{f}_{k,l}}{\lambda_{k,l}}u_{k,l}(x,y)
+\end{equation*}
+provided that $\lambda_{k,l}\neq 0$.  In the case that for some problem there is $\lambda_{k,l}=0$ for some set of indices $(k,l)\in\Lambda$, it must be assumed that $f\in\overline{\text{span}\,(\{u_{k,l}\})}_{(k,l)\in\mathbb{N}^2\setminus\Lambda}$, i.e., that $f$ is in the range of the operator. 
+
+In one dimension there is only one natural index. For example, the problem $-u''=f$ in $\Omega=(0,L)$ with $u(0)=u(L)=0$ has the solution: 
+\begin{equation*}
+    u(x)=\sum_{k=1}^{\infty}\frac{\hat{f}_{k}}{\lambda_{k}}u_{k}(x), \quad \text{where} \quad \hat{f}_{k}=\frac{(f,u_{k})_{L^{2}}}{(u_{k},u_{k})_{L^{2}}}
+\end{equation*}
+where $\{\lambda_{k}\}_{k\in\mathbb{N}}$ and $\{u_{k}\}_{k\in\mathbb{N}}$ are the eigenvalues and eigenfunctions of the differential operator. This provides an alternative way of writing the solution operator in relation to its integral expression: 
+\begin{equation*}
+    u(x)=\mathcal{S}f(x)=\int_{0}^{L}G(x,y)f(y)dy=\sum_{k=1}^{\infty}\frac{\hat{f}_{k}}{\lambda_{k}}u_{k}(x)
+\end{equation*}
+In two dimensions, we can find a similar relationship, as long as we assume that the set of (normalized) eigenfunctions form a basis for $L^{2}(\Omega)$. Then, the Green function is defined as
+\begin{equation*}
+    G(\vec{x},\vec{\xi})=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}\frac{\overline{u_{k,l}(\vec{\xi})}u_{k,l}(\vec{x})}{\lambda_{k,l}},
+\end{equation*}
+and then the solution operator in 2D would be written as
+\begin{equation*}
+    \mathcal{S}f(\vec{x})=\int_{\Omega}G(\vec{x},\vec{\xi})f(\vec{\xi})d\vec{\xi}=\sum_{k=1}^{\infty}\sum_{l=1}^{\infty}\frac{\hat{f}_{k,l}}{\lambda_{k,l}}u_{k,l}(\vec{x}).
+\end{equation*}
+Here, we could use Fredholm theory to study how Green functions are related to the spaces generated by the eigenfunctions. 
+\paragraph{Nonhomogeneous boundary conditions} In the case that our boundary condition is not homogeneous, i.e. 
+\begin{equation*}
+    \begin{cases}-\nabla^{2}u=f&\text{in }\Omega\\ u|_{\partial\Omega}=g&\text{on }\partial\Omega\end{cases},
+\end{equation*}
+we need to use the principle of superposition. We solve two problems separately: 
+\begin{equation*}
+    (1)\begin{cases}-\nabla^{2}u=0\\ u|_{\partial\Omega}=g\end{cases}\qquad (2)\begin{cases}-\nabla^{2}u=f\\ u|_{\partial\Omega}=0\end{cases}.
+\end{equation*}
+Problem (1) can be solved by separation of variables and superposition. Problem (2) requires solving the eigenvalue and eigenfunction problem, which is done using the method of separation of variables, and then finding the relevant coefficients in the eigenfunction basis. The solution to the original problem will be the sum of the solutions to problems (1) and (2).
+
+\subsection*{A note on pointwise convergence in $L^2$}
+What does the equality $f=\sum_{k=1}^{\infty}\hat{f}_{k}u_{k}$ mean in $L^{2}(\Omega)$?  It means convergence in the $L^2$-norm:
+\begin{equation*}
+    \lim_{N\rightarrow\infty}\left\|f-\sum_{k=1}^{N}\hat{f}_{k}u_{k}\right\|_{L^{2}(\Omega)}=0
+\end{equation*}
+This equality of functions does not necessarily imply that they are certain when evaluated explicitly at a point $x\in\Omega$. While it is true that if $f=g$ in $L^{2}(\Omega)$, then $f(x)=g(x)$ almost everywhere, it is not necessarily true that if $f=\lim_{N\rightarrow\infty}f_{N}$ in $L^{2}(\Omega)$, then $f(x)=\lim_{N\rightarrow\infty}f_{N}(x)$ almost everywhere. Pointwise convergence, $f(x)=\sum_{k=1}^{\infty}\hat{f}_{k}u_{k}(x)$, can be established depending on the properties of the basis $\{u_k\}$ and the function $f$. For example, if $f\in C^{1}(\Omega)$, the Fourier series converges pointwise. Despie this, the notation $f(x)=\sum_{k=1}^{\infty}\hat{f}_{k}u_{k}(x)$ is often used without much rigor.
+
+\section{Green functions} 
+Recall that the problem of finding a solution $u\in\mathcal{D}$ such that $\mathcal{L}u=f$, where $\mathcal{L}$ is a differential operator with homogeneous boundary conditions whose eigenfunctions $\{u_k\}$ form an orthogonal basis, has a solution of the form
+\begin{equation*}
+    u(\vec{x})=\mathcal{S}f(\vec{x})=\sum_{k=1}^{\infty}\frac{\hat{f}_{k}}{\lambda_{k}}u_{k}(\vec{x})=\int_{\Omega}G(\vec{x},\vec{\xi})f(\vec{\xi})d\vec{\xi}
+\end{equation*}
+for $G(\vec{x},\vec{\xi})=\sum_{k=1}^{\infty}\frac{\overline{u_{k}(\vec{\xi})}u_{k}(\vec{x})}{\lambda_{k}}$.  This function is the kernel of the solution operator and is usually called the \textit{Green function} of the original problem. In the case of the Poisson equation in one dimension,
+\begin{equation*}
+    \begin{cases}-\partial_{x}^{2}u=f&\text{in }\Omega=(0,L)\\ u(0)=u(L)=0\end{cases}
+\end{equation*}
+we calculated via variation of parameters that the Green function was
+\begin{equation*}
+    G(x,\xi)=\begin{cases}\frac{1}{L}(\xi-L)x&x<\xi\\ \frac{1}{L}\xi(x-L)&\xi<x\end{cases}.
+\end{equation*}
+Let us dive deeper into this function. First, note that we can rewrite it as 
+\begin{equation*}
+    G(x,\xi)=\begin{cases}A(\xi)x&x<\xi\\ B(\xi)(x-L)&\xi<x\end{cases}
+\end{equation*}
+and note that $u_{L}(x)=x$ and $u_{R}(x)=x-L$ are solutions to the homogeneous equation $\partial_{x}^{2}u=0$, with the special property that $u_{L}(0)=0$ and $u_{R}(L)=0$. That is, $u_L$ and $u_R$ satisfy the boundary condition on the left and right, respectively. The form of G tells us that for $x \in (0,\xi)$, the Green function is a multiple of $u_L(x)$, and for $x \in (\xi,L)$ it is a multiple of $u_R(x)$. 
+
+For a fixed $\xi_0$, the specific coefficients are $A(\xi_0)=\frac{1}{L}(\xi_{0}-L)$ and $B(\xi_0)=\frac{1}{L}\xi_{0}$. At $x=\xi_0$, we have $A(\xi_{0})\xi_{0} = B(\xi_{0})(\xi_{0}-L)$, which means that $G(x, \xi_0)$ is continuous at $x=\xi_0$. However, if we look at the derivative, there is a jump discontinuity which does not depend on $\xi_0$:
+\begin{equation*}
+    \frac{\partial G}{\partial x}(\xi_{0}^{-},\xi_{0})-\frac{\partial G}{\partial x}(\xi_{0}^{+},\xi_{0})=A(\xi_{0})-B(\xi_{0}) = \frac{1}{L}(\xi_{0}-L)-\frac{1}{L}\xi_{0}=-1,
+\end{equation*}
+and thus for $x = \xi_0$, $\partial_x^2 G(x, \xi_0)$ does not exist in the traditional sense. Finally, we see that for $x \neq \xi_0$, $\partial_x^2 G(x, \xi_0) = 0$. These properties will be what properly define Green functions. 
+\begin{definition}[Green function]
+A \textit{Green function} for a regular Sturm-Liouville problem of the form $Tu=-\frac{1}{w}(\partial_{x}(p\partial_{x}u)+qu)=f$ is a function $G:\Omega\times\Omega\to\mathbb{R}$ that satisfies the following properties: 
+\begin{enumerate}
+     \item $G\in C^{0}(\Omega\times\Omega)$ and $G\in C^{2}(\Omega\times\Omega \setminus D)$ where $D=\{(x,x):x\in\Omega\}$ is the diagonal. 
+     \item For every fixed $\xi_0$, $G(\cdot, \xi_0)$ satisfies the boundary conditions. 
+     \item $T G(\cdot, \xi_0) = 0$ for $x \neq \xi_0$.
+     \item $\partial_{x}G(\xi_{0}^{-},\xi_{0})-\partial_{x}G(\xi_{0}^{+},\xi_{0})=\frac{1}{p(\xi_{0})}$ $\forall \xi_0\in(a,b)$.
+\end{enumerate}
+\end{definition}
+
+One can verify that $u(x)=\int_{\Omega}G(x,\xi)f(\xi)d\xi$ is indeed the solution to $Tu=f$. The construction in one dimension requires one to find two homogeneous solutions $Tu_L = Tu_R = 0$ with $u_L$ satisfying the boundary conditions on the left and $u_R$ on the right. Then, find multiple $A(\xi)$ and $B(\xi)$ such that $G(x,\xi)$ is continuous at $x=\xi$ and satisfies the jump condition. This canonical form of $G$ already satisfies the second and third conditions of the definition. Indeed, this construction is used in constructing Green functions for Sturm-Liouville problems, as stated in the following theorem. 
+\begin{theorem}[Green functions of regular Sturm-Liouville problems]
+Given $\Omega=(a,b)$, $p\in C^{1}(\overline{\Omega})$, $q, w \in C(\overline{\Omega})$, with $p(x)>0$ and $w(x)>0$ for all $x\in[a,b]$, and $f(x)\in C^{0}(\Omega)$, the problem of finding $u\in C^{2}(\overline{\Omega})$ such that 
+\begin{equation*}
+    -\frac{1}{w}(\partial_{x}(p\partial_{x}u)+qu)=f
+\end{equation*}
+with boundary conditions
+\begin{equation*}
+    \begin{cases}\alpha_{1}u(a)+\alpha_{2}u'(a)=0 & \text{with } \alpha_{1}^{2}+\alpha_{2}^{2}\ne0\\ \beta_{1}u(b)+\beta_{2}u'(b)=0 & \text{with } \beta_{1}^{2}+\beta_{2}^{2}\ne0\end{cases}
+\end{equation*}
+has a solution given by $u(x)=\int_{a}^{b}G(x,\xi)f(\xi)w(\xi)d\xi$, where
+\begin{equation*}
+    G(x,\xi)=\begin{cases} \frac{u_R(\xi)u_L(x)}{pW} & x < \xi \\ \frac{u_L(\xi)u_R(x)}{pW} & x > \xi \end{cases}
+\end{equation*}
+where $u_L(x)$ and $u_R(x)$ are the unique solutions to the problem $\mathcal{L}u=0$ with the left and right boundary conditions, respectively, and $W$ is the Wronskian of $u_L$ and $u_R$. In particular, we note that $Tu_L = Tu_R = 0$, and $pW$ is constant. 
+\end{theorem}
+Green functions also exist for problems with non-homogeneous boundary conditions by adding appropriate terms in the definition of $u$ as a function of $G$. These constructions generalize to more dimensions, but only up to a point. The Green function of the Laplacian will be the one that satisfies $\mathcal{L}_{\vec{x}}G(\vec{x},\vec{\xi})=\delta(\vec{\xi}-\vec{x})$. The solution operator then looks like
+\begin{equation*}
+    u(\vec{x})=\int_{\Omega}G(\vec{x},\vec{\xi})f(\vec{\xi})d\Omega_{\xi}+\int_{\Gamma}(u(\vec{s})\nabla_{\vec{s}}G(\vec{x},\vec{s})\cdot\vec{n}-G(\vec{x},\vec{\xi})\nabla_{\vec{s}}u(\vec{\xi})\cdot\vec{n})d\Gamma_{\vec{s}}.
+\end{equation*}
+For the Laplacian, in general $G(\vec{x},\vec{\xi})=G^{F}(\vec{x},\vec{\xi})+h(\vec{x},\vec{\xi})$, with $G^F$ being the fundamental solution 
+\begin{equation*}
+    G^F(\vec x, \vec\xi) = \begin{cases}
+        \frac{1}{2}|\xi|&\text{ in }\R\\
+        \frac{1}{2\pi}\ln\sqrt{(\vec x -\vec \xi)\cdot(\vec x - \vec \xi)} &\text{ in }\R^2\\
+        \frac{-1}{4\pi} \frac{1}{\sqrt{(\vec x -\vec \xi)\cdot(\vec x - \vec \xi)}}
+    \end{cases},
+\end{equation*}
+and $h$ being a harmonic function chosen to satisfy the boundary conditions.

@@ -1,0 +1,173 @@
+We now study time-dependent problems, where the solutions are functions $V\ni u:[0,T]\times \Omega\to \R$. In this section, we consider $\mathcal{L}:V\to V'$ an elliptic operator, and follow the presentations from \cite{thomee2007galerkin,quarteroni2008numerical}.
+
+\begin{definition}[Parabolic and hyperbolic generic operators]
+    Let $\partial_t$ and $\partial_{tt}$ represent the first and second order time derivative operators, respectively. Then, we say that
+    \begin{align*}
+        \partial_t + \mathcal{L} &\qquad \text{is parabolic,}\\
+        \partial_{tt} + \mathcal{L} &\qquad \text{is hyperbolic.}
+    \end{align*}
+\end{definition}
+The fundamental difference between parabolic and hyperbolic systems is the behaviour of their \textit{energy} $E(t)$. Let us formally derive this fact.
+
+\begin{enumerate}
+    \item Parabolic systems: we can readily write the weak form of the parabolic equation $(\partial_t + \mathcal{L})u=0$ as
+    \begin{equation*}
+        (\partial_t u, v) + (\mathcal{L}u, v) = 0 \qquad \forall v\in V.
+    \end{equation*}
+    We note that this weak formulation seems unbalanced as it is being tested only on the space variable. We will accept this for now, but see later on that it is indeed a good weak formulation for analyzing the problem using our knowledge of elliptic (and Gårding) operators. Since this is true for all $v\in V$, we can choose $v=u$, and we obtain
+    \begin{equation*}
+        (\partial_t u, u) + (\mathcal{L}u,u) = 0.
+    \end{equation*}
+    Note that $\partial_t(u^2) = 2u\dot{u}$, and thus we can write $(\partial_t u, u) = \int_\Omega u\dot{u} = \frac{1}{2}\int_\Omega \partial_t (u^2)$, which leads to
+    \begin{equation*}
+        \frac{1}{2}\int_\Omega \partial_t (u^2) + \underbrace{\int \mathcal{L}u \cdot u}_{:= a(u,u)} = 0, 
+    \end{equation*}
+    and integrating in time in $[0,t]$ with $t\leq T$ we get
+    \begin{equation*}
+        \frac{1}{2} \int_\Omega (u(t)^2-u(0)^2)  + \int_0^t a(u,u)ds = 0,
+    \end{equation*}
+    where $u(0) = u(0,x)$ is a (fixed) initial condition. This implies that
+    \begin{equation*}
+        \frac{1}{2}\int_\Omega u(t)^2 =  \frac{1}{2} \int_\Omega u(0)^2 - \int_0^t a(u,u)ds.
+    \end{equation*}
+    Defining the energy as $E(t) := \int_\Omega u(t)^2$, we get
+    \begin{equation*}
+        \frac{1}{2}E(t) = \frac{1}{2}E(0) - \int_0^t \underbrace{a(u,u)}_{\geq \alpha\|u\|^2>0} ds \implies \boxed{E(t) < E(0)}.
+    \end{equation*}
+    We observe that energy decreases from the initial condition in a parabolic system. Thus, parabolic systems are called \textit{dissipative}.
+    \item Hyperbolic systems: since we need a second-order time derivative, we note that $\partial_t(\dot{u}^2) = 2\dot{u}\ddot{u}$, and thus as before we can write
+    \begin{equation*}
+        \int_\Omega \ddot{u}v + \int_\Omega \mathcal{L}u\cdot v = 0 \qquad \forall v\in V.
+    \end{equation*}
+    Setting $v=\dot{u}$, we obtain
+    \begin{equation*}
+        \frac{1}{2}\int_\Omega \partial_t (\dot{u}^2) + \int_\Omega \mathcal{L}u\cdot \dot{u} = 0 \qquad \forall v\in V.
+    \end{equation*}
+    We now restrict ourselves to elliptic operators $\mathcal{L}$ that can be written as $\mathcal{L}=B^\top B$, such that $\mathcal{L}u\cdot v = Bu\cdot Bv$. This way, we see that 
+    \begin{equation*}
+        \partial_t (Bu)^2 = 2Bu \cdot B\dot{u} = 2\mathcal{L}u\cdot \dot{u}.
+    \end{equation*}
+    As before, we integrate in time and get 
+    \begin{equation*}
+        \frac{1}{2} \int_\Omega \left[\dot{u}^2(t) + (Bu(t))^2\right] = \frac{1}{2} \int_\Omega \left[\dot{u}^2(0) + (Bu(0))^2\right].
+    \end{equation*}
+    Now, setting the energy as $E(t) := \int_\Omega \left[u(t)^2 + (Bu(t))^2\right]$, we conclude that $E(t) = E(0)$. Thus, hyperbolic systems are \textit{conservative}.
+\end{enumerate}
+The parabolic initial value problem is given by:
+\begin{equation*}
+    \begin{aligned}
+        \partial_t + \mathcal{L}u &= f &&\quad \text{in }\Omega_T := (0,T) \times \Omega\\
+        \hfill Bu &= g &&\quad \text{in }\Sigma_T := (0,T) \times \partial\Omega\\
+        \hfill u(0,x)&= u_0(x) &&\quad \text{in }\Omega,
+    \end{aligned}
+\end{equation*}
+with $f,g:\Omega_T\to \R$ and $u_0:\Omega\to\R$. Let us analyze how to deal with the time dependence of our system by introducing the Bochner integral.
+
+\begin{definition}[Bochner integral]
+We seek to integrate functions $f:\R\to X$, where $X$ is a Banach space. We extend the notion of simple functions
+\begin{equation*}
+    f^N(t) = \sum_{i=1}^N \lambda_i \phi_i(t),
+\end{equation*}
+where $\lambda_i \in X$ $\forall i$, and $\phi_i(t)$ are indicator functions. If $I\subset \R$, then the time integral yields
+\begin{equation*}
+    \int_I f^N(t) dt = \sum_{i=1}^N \lambda_i \int_I \phi_i(t) dt.
+\end{equation*}
+Here, if we have absolute convergence of the corresponding series, i.e. 
+\begin{equation*}
+    \sum_{i=0}^{\infty} \|\lambda_i\|_X \int_I \phi_i(t)dt <\infty,
+\end{equation*}
+and if $f(t) = \sum_{i=1}^{\infty} \lambda_i \phi_i(t)$ for every $t$ where the series converges, then we say $f$ is Bochner-integrable, and
+\begin{equation*}
+    \int_0^t f(s)ds = \sum_{i=1}^\infty \lambda_i \int_0^t \phi_i(s)ds.
+\end{equation*}    
+\end{definition}
+\begin{remark}
+    A useful property: if $f$ is Bochner-integrable, then $|f|$ is Lebesgue-integrable. 
+\end{remark}
+
+We now define the Bochner spaces we will be using for our analysis:
+\begin{equation*}
+    L^p(0,T; X) := \left\{v:(0,T)\to X: v \text{ is Bochner-integrable}, \int_0^T \|v\|_X^p ds <\infty \right\}.
+\end{equation*}
+\begin{equation*}
+    H^1(0,T; X) := \left\{v:(0,T)\to X: v\in L^2(0,T;X), \partial_t v\in L^2(0,T;X) \right\}.
+\end{equation*}
+In general, $\partial_t v$ should be interpreted as an element of $V'$, since the weak form we will be using is, given $f:\Omega_T\to \R$,
+\begin{equation*}
+    (\dot{u},v) + a(u,v) = \langle f, v\rangle \quad \forall v\in V,
+\end{equation*}
+and thus $\dot{u}\in V'$ for the first term to exist. The natural definition that gives sense to this object is as follows: setting $X=L^2(\Omega)$ and $L^2(\Omega_T) := L^2(0,T; L^2(\Omega))$, we denote
+\begin{equation*}
+    H^1(0,T;L^2(\Omega)) := \left\{v:(0,T)\to X: v\in L^2(\Omega_T), \partial_t v\in L^2(\Omega_T) \right\}.
+\end{equation*}
+This yields a norm equivalence:
+\begin{align*}
+    \|v\|_{L^2(\Omega_T)} &= \int_0^T \|v(s)\|_{0,\Omega}^2 ds\\
+    &= \int_0^T \left(\left(\int_\Omega v(s,x)^2 dx\right)^{1/2}\right)^2ds\\
+    &= \int_0^T \int_\Omega v^2 dxds\\
+    &= \int_{\Omega_T} v^2\\
+    &= \|v\|^2_{L^2(\Omega_T)}.
+\end{align*}
+We now state an embedding theorem for Bochner spaces.
+\begin{theorem}
+    Let $\Omega\subseteq \R^d$ be a Lipschitz domain, $s\geq 0$ and $r>1/2$. For any $\theta\in[0,1]$, the following embedding is continuous:
+    \begin{equation*}
+        L^2(0,T;H^s(\Omega))\cap H^r(0,T;L^2(\Omega)) \longrightarrow H^{\theta r}(0,T;H^{(1-\theta)s}(\Omega))\cap C^0(0,T;H^{\sigma_0}(\Omega)),
+    \end{equation*}
+    with $\sigma_0 = \frac{(2r-1)s}{2r}$. Furthermore, if $s>0$ and $|\Omega|<\infty$, then the following is compact:
+    \begin{equation*}
+        L^2(0,T;H^s(\Omega))\cap H^r(0,T;L^2(\Omega)) \longrightarrow H^{r_1}(0,T;H^{s_1}(\Omega))\cap C^0(0,T;H^{\sigma_1}(\Omega)),
+    \end{equation*}
+    for any $s_1\geq 0$, $0\leq r_1 < r(1-s_1/s)$ and $0\leq \sigma_1 < \sigma$.
+\end{theorem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Faedo-Galerkin and the method of lines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo[inline]{TODO}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Space and time discretization}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As usual, we consider an approximation space $V_h\subset V$  and compute first the semi-discrete problem: 
+
+\begin{equation}\label{eq:semi-discrete in time}
+    \begin{aligned}
+        (\dot u_h(t), v_h) + a(u_h(t), v_h) &= (f(t),v_h) &&\qquad \forall v_h\in V_h, t \in(0,T)  \\
+                                u_h(0)&= \Pi_h(u_0), 
+    \end{aligned}
+\end{equation}
+where $\Pi_h:V\to V_h$ is an orthogonal projector. In what follows, for any given bilinear form $a:V\times V\to \R$ we well denote the \textbf{Ritz projector} as the operator $R_h:V\to V_h$ such that 
+    $$ a(R_h z, v_h) = a(z, v_h) \qquad \forall v_h \in V_h. $$
+In particular, the \emph{a-priori} bound yields $\|R_h z \| \leq \| z \|$.  We first prove the following convergence result for the semi-discrete problem: 
+
+\begin{theorem}
+In problem \eqref{eq:semi-discrete in time}, if both $u(t)$ and $\dot u(t)$ belong to $H^1(\Omega)$ for all $t$ in $(0,T)$, then 
+    $$ \| u(t) - u_h(t) \|_V \leq \|u_0 - \Pi_h(u_0)\|_v + Ch^r\left(\|u_0\|_r+\int_0^t\|\dot u(s)\|_r\,ds\right). $$
+\begin{proof}
+The methodology consists in separating the error into \emph{projection} and \emph{consistency} errors: 
+    $$ e_h \coloneqq u - u_h = \underbrace{u - \Pi_h u}_{\xi_h} + \underbrace{\Pi_h u - u_h}_{\eta_h} = \xi_h + \eta_h. $$
+We now consider the error equation: 
+    $$ (\dot e_h, v_h) + a(e_h, v_h) = 0 \qquad \forall v_h\in V_h, $$
+and we consider as the projector the Ritz projector, i.e. $\Pi_h=R_h$, which gives
+    $$ (\dot \xi_h + \dot \eta_h, v_h) + a(\eta_h, v_h) = 0 \qquad \forall v_h\in V_h. $$
+Setting $v_h = \eta_h$, we obtain 
+    $$ \frac 1 2 \partial_t(\|\eta_h\|^2_0)+a(\eta_h,\eta_h) = -(\dot \xi_h, v_h). $$
+Note that 
+    $$ \frac 1 2 \partial_t(\|\eta_h\|_0^2) = \|\eta_h\|_0 \partial_t(\|\eta_h\|_0), $$
+and thus using the ellipticity of $a$ we obtain the following: 
+    $$ \|\eta_h\|\partial_t(\|\eta_h\|_0) \leq \partial_t(\|\eta\|_0^2) + a(\eta_h, \eta_h) \leq \|\dot \eta_h\|_0 \|v_h\|_0, $$
+which after dividing by $\|v_h\|_0$ and integrating yields
+    $$ \| \eta_h(t)\|_0 \leq \|\eta_h(0)\|_0 + \int_0^t \| \dot \eta_h(s) \|_0\,ds. $$
+Bounding each of the terms appearing gives the remaining estimates: 
+    \begin{align*}
+        \| \eta_h(0) \|_0 &= \|\Pi_h u_0 - R_h u_0 \|_0 \leq \|u_0 - \Pi_h\|_0 + \| u_0 - R_h u_0\|\\ 
+        \| \dot \xi_h \|_0 &= \| \dot u - \R_h \dot u \|.
+    \end{align*}
+The resulting estimate comes from the convergence rate obtained from the Ritz projector. Another common choice is the Scott-Zhang projector. Another common way for deriving this type of estimate is using the Gronwall inequality.
+\end{proof}
+\end{theorem}
+We finally derive a convergence estimate for the fully-discrete problem. [TODO]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
