@@ -1,452 +1,437 @@
-In the previous section we have thorougly studied elliptic problems and many approximation propoerties. Still, one might rightfully notice that ellipticity can be quickly broken. For example, the operator $-\Delta: H_0^1(\Omega)\to H^{-1}(\Omega)$ is elliptic, but if we remove the minus sign, it loses that property. As this case is linear, it is possible to remap the unknown with $u\mapsto -u$, but it still feels unsatisfactory that the property is so fragile. Because of this, in this section we review two important theories that go beyond ellipticity: the inf-sup theory and the theory of Fredholm operators.
+The Lax-Milgram lemma~\ref{lemma:lax-milgram}, which we studied in Chapter~\ref{chapter:weak-forms-galerkin}, provides a powerful and straightforward tool for proving the well-posedness of elliptic boundary-value problems. While this condition holds for many important physical models, it is also remarkably fragile. For example, the operator $-\Delta: H_0^1(\Omega)\to H^{-1}(\Omega)$ is elliptic, but if we remove the minus sign, it loses that property. As this case is linear, it is possible to remap the unknown with $u\mapsto -u$, but it still feels unsatisfactory that the property is so fragile. Also, the introduction of lower-order terms as in the Helmholtz equation $(-\Delta u - k^2 u = f)$, can break the ellipticity condition.
+
+This raises a crucial question: how can we analyze the well-posedness of the vast class of problems that are not elliptic? The central result that tackles this problem is the \emph{generalized Lax-Milgram lemma}, also known as the \emph{Banach-Ne\v{c}as-Babu\v{s}ka (BNB) theorem}, which characterizes the well-posedness of problems via the surjectivity and injectivity of the associated operator.
+
+We will first develop this theory for continuous problems, and then address the critical issue of discretization, where we will find that the discrete inf-sup condition is not automatically inherited from its continuous counterpart. Finally, we will study the related theory of \emph{Fredholm operators}, which provides an alternative path to well-posedness for problems that satisfy a \emph{Gårding inequality}---a condition weaker than ellipticity---and is particularly suited for analyzing problems such as wave propagation.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Inf-sup conditions}
+\section{The continuous inf-sup condition}\label{sec:inf-sup}
+We are interested in deriving a more general characterization of the well-posedness of the continuous, generic problem of finding $u\in W$ such that $a(u,v)=f(v)$ for all $v\in V$, where now $a$ is not necessarily elliptic. This result is known as the \emph{generalized Lax-Milgram lemma} or the \emph{Banach-Ne\v{c}as-Babu\v{s}ka theorem}, which gives necessary and sufficient conditions for the well-posedness. The first condition will be known as the \emph{inf-sup condition}. For detailed proofs and omitted details, see~\cite{ern2004theory, chen2024infSup, gatica2014simple}. 
 
-We are interested in showing first that the inf-sup condition means 
-surjectivity. This will require the use of certain results from 
-functional analysis. For detailed proofs and omitted details, see \cite{chen2024infSup} 
-and \cite{gatica2014simple}. A first important result is to characterize 
-operators with closed range. 
+First, we need to characterize the surjectivity and injectivity of bilinear operators in Banach spaces. An important step is to characterize operators with closed range. 
+\begin{lemma}[Injectivity and closed range $\iff$ bounded below]
+    Let $U$ and $ V$ be Banach spaces and $T:U\to V$ a linear continuous operator. Then, $T$ is injective and its range $R(T)$ is closed if and only if  $T$ is \emph{bounded below}, i.e., there exists a positive constant $c$ such that 
+    \begin{equation}
+        \| Tu \| \ge c\| u \|\quad \forall u\in U
+    \end{equation}
+    \begin{proof}
+        First, we assume $T$ is bounded below. If $Tu=0$, the inequality implies $u=0$, i.e., $T$ is injective. Let $\{Tu_k\}$ be a convergent sequence in $V$. By the inequality,
+        \begin{equation}
+            \| Tu_k - Tu_m \| \ge c\| u_k - u_m \|
+        \end{equation}
+        for some $k,m$. Then, because $\{Tu_k\}$ is a Cauchy sequence, we know that $\{u_k\}$ is also a Cauchy sequence and, because both spaces are Banach, the sequence then converges to some $u\in U$. The continuity of $T$ shows that $Tu_k$ converges to $Tu$ and thus the range of $T$ is closed. 
 
-\begin{lemma}
-    Let \(U\) and \( V\) be Banach spaces and \(T:U\to V\) a linear 
-    continuous operator. Then, \(T\) is injective and its range \(R(T)\) is 
-    closed if and only if  \(T\) is bounded below, i.e., there exists 
-    a positive constant \(c\) such that 
-    \begin{displaymath}
-        \lVert Tu \rVert \ge c\lVert u \rVert
-        \quad \text{ for all } u\in U
-    \end{displaymath}
+        Now, assume $T$ is injective and its range is closed. Then, because $R(T)$ is a closed subspace of a Banach space, it is also Banach. As $ T$ is injective, $T^{-1}$ is well defined on $R(T)$, i.e., $T:U\to R(T)\subset V$ is invertible. In addition, by the open mapping theorem~\ref{thm:open-mapping-theorem}, $T^{-1}$ is continuous. Then, we have
+        \begin{equation}
+            \| u \| = \| T^{-1}(Tu) \| 
+            \le \| T^{-1} \| \| Tu \|,
+        \end{equation}
+        which implies $T$ is bounded below with constant $c = \| T^{-1} \|^{-1}$.
+    \end{proof}
 \end{lemma}
-\begin{proof}
-    First, we assume \(T\) is bounded below. If \(Tu=0\), the inequality 
-    implies \(u=0\), i.e., \(T\) is injective. Let \(\{Tu_k\}\) be a convergent sequence in \(V\). By the inequality, we have that
-    \begin{displaymath}
-        \lVert Tu_k - Tu_m \rVert \ge c\lVert u_k - u_m \rVert
-    \end{displaymath}
-    for some \(k,m\). Then, because \(\{Tu_k\}\) is a Cauchy sequence, we know that \(\{u_k\}\) is also a Cauchy sequence and, because both spaces are Banach, the sequence then converges to some \(u\in U\). The continuity of \(T\) shows that \(Tu_k\) converges to \(Tu\) and thus the range of \(T\) is closed. 
 
-    Now, assume \(T\) is injective and its range is closed. Then, because 
-    \(R(T)\) is a closed subspace of a Banach space, it is also Banach. As \( T\) is injective, \(T^{-1}\) is well defined on \(R(T)\), i.e., 
-    \(T:U\to R(T)\subset V\) is invertible. In addition, Open Mapping Theorem 
-    shows that \(T^{-1}\) is continuous. Then
-    \begin{displaymath}
-        \lVert u \rVert = \lVert T^{-1}(Tu) \rVert 
-        \le \lVert T^{-1} \rVert \lVert Tu \rVert 
-    \end{displaymath}
-    which implies \(T\) is bounded below with constant 
-    \(c = \lVert T^{-1} \rVert^{-1}\).
-\end{proof}
-
-Now, we would like to characterize the surjectivity of the operator using its dual.
-
+To characterize the surjectivity of the operator, we use its topological dual.
 \begin{lemma}
-    Let \(U\) and \(V\) be Banach spaces and let \(T\) be a linear continuous 
-    operator. \(T\) is surjective if and only if \(T'\) is injective with closed 
-    range, where \(T'\) is the dual (or transpose) operator of \(T\).
+    Let $U$ and $V$ be Banach spaces and let $T$ be a linear continuous operator. $T$ is surjective if and only if $T'$ is injective with closed range, where $T'$ is the dual (or transpose) operator of $T$.
+    \begin{proof}
+        First, if $T$ is surjective, then $\im (T) = V$ is closed. By the closed range theorem~\ref{thm:closed-range-theorem}, $\ker(T')$ is also closed and 
+        \begin{equation}
+            \im (T) = \ker (T')^\bot = 
+            \{v\in V: \langle v', v\rangle = 0,\quad \forall v' \in \ker(T')\},
+        \end{equation}
+        where $\ker(T')$ is the kernel of $T'$. Now, since $V = \im(T) = \ker(T')^\bot$, then, for each $v' \in \ker(T')$, it holds that $ \langle v', v\rangle = 0$ $\forall v \in V$, which means that $v' = 0$. Thus, $\ker(T') = \{0\}$, so $T'$ is injective.
+
+        For the proof in the other direction, we get from the closed range theorem~\ref{thm:closed-range-theorem} that also $\im(T)$ is closed. By contradiction, consider $v$in $V$ such that $v\not\in \im(T)$. By the Hahn-Banach extension corollary~\ref{cor:hahn-banach-extension} we get that there exists $f$ in $V'$ such that $f(\im(T)) = 0$ and $f(v)=1$\footnote{This is an improvement over Urysohn's Lemma, which yields only a possibly nonlinear function}. This implies that $\langle f, Tu\rangle_{V'\times V} = 0$ for all $u\in U$, and by taking transposes, we get 
+        \begin{equation*}
+            0 = \langle f, Tu\rangle_{V'\times V} = \langle T'f, u\rangle_{V'\times V} \qquad \forall u\in U.
+        \end{equation*}
+        This implies that $T'f=0$, and since we assumed that $T'$ is injective, we have $f=0$, which contradicts $f(v)=1$. 
+    \end{proof}
 \end{lemma}
-\begin{proof}
-    First, if \(T\) is surjective, then \(R(T) = V\) is closed. By Closed Range 
-    Theorem, \(R(T')\) is also closed and 
-    \begin{displaymath}
-        R(T) = N(T')^\bot = 
-        \{v\in V: \langle v', v\rangle = 0 \,\,\, \forall v' \in N(T')\}
-    \end{displaymath}
-    where \(N(T')\) is the null space of \(T'\). Now, since 
-    \(V = R(T) = N(T')^\bot\), then, for each \(v' \in N(T')\), it holds
-    that \( \langle v', v\rangle = 0\,\,\, \forall v \in V\), which means that 
-    \(v' = 0\). Thus, \(N(T') = \{0\}\), so \(T'\) is injective.
-
-    For the proof in the other direction, we get from Closed Range Theorem that also $R(T)$ is closed. By contradiction, consider $v$in $V$ such that $v\not\in R(T)$. By Hahn-Banach we get that there exists $f$ in $V'$ such that $f(R(T)) = 0$ and $f(v)=1$\footnote{This is an improvement over Urysohn's Lemma, which yields only a possibly nonlinear function}. Then, $T'f$ is such that
-        $$ \langle T'f', u\rangle = \langle f, Tu\rangle = u \qquad \forall u\in U.$$
-    This implies that $f=0$, which contradicts that $f(v)=1$. 
-
-\end{proof}
-
 Combining both lemmas, we can write
-\begin{align*}
+\begin{tightalign*}
     T \text{ surjective}
     &\Longleftrightarrow T'\text{ injective and with closed range}
-    \\&\Longleftrightarrow T'\text{ is bounded below}
-\end{align*}
+    \\&\Longleftrightarrow T'\text{ is bounded below.}
+\end{tightalign*}
 
-Let \(U\) and \(V\) Hilbert spaces and \(T:U\to V\) linear continuous operator
-with transpose \(T':V'\to U'\), considering its adjoint operator \(T^*:V \to U\), 
-we can write \[T^* = R_U^{-1} \circ T' \circ R_V\] and 
-\[\lVert T^* \rVert_{V\to U} = \lVert T' \rVert_{V'\to U'}\] 
-where \(R_U: U\to U'\) and 
-\(R_V: V\to V'\) are Riesz operators. Then, using the Riesz representation 
-Theorem, we have that
-
-\begin{align*}
+Let $U$ and $V$ Hilbert spaces and $T:U\to V$ linear continuous operator with transpose $T':V'\to U'$, considering its adjoint operator $T^*:V \to U$, we can write 
+\begin{equation}
+    T^* = R_U^{-1} \circ T' \circ R_V
+\end{equation} 
+and 
+\begin{equation}
+    \| T^* \|_{V\to U} = \| T' \|_{V'\to U'}
+\end{equation} 
+where $R_U: U\to U'$ and $R_V: V\to V'$ are Riesz maps. Then, using the Riesz representation theorem~\ref{thm:riesz-representation}, we have that
+\begin{tightalign*}
     T \text{ surjective}
     &\Longleftrightarrow 
     T'\text{ is bounded below}
     \\&\Longleftrightarrow 
-    \lVert T'v' \rVert_{U'} \ge c \lVert v' \rVert_{V'} \quad \forall v'\in V'
+    \| T'v' \|_{U'} \ge c \| v' \|_{V'} \quad \forall v'\in V'
     \\&\Longleftrightarrow 
-    \lVert (T'\circ R_V) (v) \rVert_{U'} \ge c \lVert v \rVert_{V} 
+    \| (T'\circ R_V) (v) \|_{U'} \ge c \| v \|_{V} 
     \quad \forall v\in V
     \\&\Longleftrightarrow 
-    \lVert (R_U \circ R_U^{-1} \circ T'\circ R_V) (v) \rVert_{U'} 
-    \ge c \lVert v \rVert_{V} \quad \forall v\in V
+    \| (R_U \circ R_U^{-1} \circ T'\circ R_V) (v) \|_{U'} 
+    \ge c \| v \|_{V} \quad \forall v\in V
     \\&\Longleftrightarrow 
-    \lVert (R_U \circ T^*) (v) \rVert_{U'} 
-    \ge c \lVert v \rVert_{V} \quad \forall v\in V
+    \| (R_U \circ T^*) (v) \|_{U'} 
+    \ge c \| v \|_{V} \quad \forall v\in V
     \\&\Longleftrightarrow 
-    \lVert T^* v \rVert_{U} 
-    \ge c \lVert v \rVert_{V} \quad \forall v\in V
+    \| T^* v \|_{U} 
+    \ge c \| v \|_{V} \quad \forall v\in V
     \\&\Longleftrightarrow 
-    c \lVert v \rVert_{V}  
-    \le \sup_{u\in U}\frac{(Tu, v)}{\lVert u \rVert_{U}} \quad \forall v\in V
+    c \| v \|_{V}  
+    \le \sup_{u\in U}\frac{(Tu, v)}{\| u \|_{U}} \quad \forall v\in V
     \\&\Longleftrightarrow 
     0 < c \le \inf_{v\in V}\sup_{u\in U}
-    \frac{(Tu, v)}{\lVert u \rVert_{U}\lVert v \rVert_{V}}
-\end{align*}
+    \frac{(Tu, v)}{\| u \|_{U}\| v \|_{V}}.
+\end{tightalign*}
 
-We also can characterize the injectivity of the operator.
-
+Now, we can characterize the injectivity of the operator.
 \begin{lemma}
-    Let \(U\) and \(V\) be Banach spaces and let \(T:U\to V\) be a linear 
-    continuous operator. Then, \(T\) is injective if and only if 
-    \[\sup_{v'\in V'} \langle Tu, v'\rangle_{V\times V'} > 0 
-    \quad \forall u\in U\text{, }u \neq 0\]
+    Let $U$ and $V$ be Banach spaces and let $T:U\to V$ be a linear continuous operator. Then, $T$ is injective if and only if 
+    \begin{equation}
+        \sup_{v'\in V'} \langle Tu, v'\rangle_{V\times V'} > 0 
+        \quad \forall u\in U\text{, }u \neq 0
+    \end{equation}
+    \begin{proof}
+        Suppose that $T$ is injective. If $u\neq 0$, then $Tu \neq 0$, and so, for some $v'\in V'$, we have that $\langle Tu, v'\rangle_{V\times V'} \neq 0$. Which implies the right side of the equivalence. Now, assume the right side of the equivalence. By contradiction, if $T$ is non injective, there exists $u\in U $ with $u\neq 0$ such that $Tu = 0$, which contradicts the hypothesis.
+    \end{proof}
 \end{lemma}
-\begin{proof}
-    Suppose that \(T\) is injective. If \(u\neq 0\), then \(Tu \neq 0\), and so, 
-    for some \(v'\in V'\), we have that \(\langle Tu, v'\rangle_{V\times V'} 
-    \neq 0\). Which implies the right side of the equivalence.
 
-    Now, assume the right side of the equivalence. By contradiction, if \(T\)
-    is non injective, there exists \(u\in U \) with \(u\neq 0\) such that \(Tu = 0\), 
-    which contradicts the hypothesis.
-\end{proof}
+Now that we have characterized injectivity and surjectivity of operators, we can now postulate a generalized version of the Lax-Milgram lemma. Our continuous problem is the same as in Section~\ref{sec:galerkin}, where we seek to find $u\in W$ such that $a(u,v)=f(v)$ for all $v\in V$. In a general setting, it is enough to consider $W$ a Banach space and $V$ a reflexive Banach space, but we state the theorem in the particular case where $W$ and $V$ are Hilbert spaces. 
 
-We can now postulate a general Lax-Milgram Theorem. We write it in Hilbert Spaces.
-
-\begin{theorem}(Generalized Lax-Milgram)
-    Consider \(H_1\), \(H_2\) Hilbert spaces and a bounded bilinear form 
-    \(B:H_1\times H_2 \to \mathbb{R}\). Then, there exists a unique \(u\in H_1\) for each 
-    \(F\in H_2'\) such that \[B(u,v) = F(v),\quad \forall v \in H_2\] if and only if 
+\begin{theorem}(Generalized Lax-Milgram; Banach-Ne\v{c}as-Babu\v{s}ka)
+\label{theorem:generalized-lax-milgram}
+    Consider $H_1$, $H_2$ Hilbert spaces and a bounded bilinear form $a:H_1\times H_2 \to \mathbb{R}$. Then, there exists a unique $u\in H_1$ for each $F\in H_2'$ such that 
+    \begin{equation}
+        a(u,v) = f(v),\quad \forall v \in H_2
+    \end{equation} 
+    if and only if the two following conditions hold:
     \begin{enumerate}
-        \item \(\exists \alpha > 0\) such that \[\sup_{u\in H_1,u\neq 0}
-        \frac{B(u,v)}{\lVert u \rVert_{H_1}} \ge \alpha \lVert v \rVert_{H_2}
-        \quad \forall v\in H_2\quad \text{ (surjective) }\]
-        \item \[\sup_{v\in H_2} B(u,v) > 0 
-        \quad \forall u\in H_1,\,\, u\neq 0
-        \quad \text{ (injective) }\]
+        \item the \emph{inf-sup condition}, i.e. there exists $\alpha > 0$ such that 
+        \begin{equation}\label{eq:inf-sup-condition}
+            \sup_{u\in H_1,u\neq 0} \frac{a(u,v)}{\| u \|_{H_1}} \ge \alpha \| v \|_{H_2} \quad \forall v\in H_2\quad \text{ (surjective) }
+        \end{equation}
+        \item 
+        \begin{equation}\label{eq:inf-sup-injectivity}
+            \sup_{v\in H_2} a(u,v) > 0 \quad \forall u\in H_1,\,\, u\neq 0 \quad \text{ (injective) }.
+        \end{equation}
     \end{enumerate}
+    Moreover, the following a priori estimate holds: 
+    \begin{equation}
+        \|u\|_{H_1} \leq \frac{1}{\alpha}\|f\|_{H_2'}.
+    \end{equation}
 \end{theorem}
-We note that injectivity can be equivalently stated as an inf-sup condition simply by inverting the arguments in the surjectivity inf-sup.  The main difficulty in using this theory is that well-posedness of a discrete problem is not inherited from the continuous one. In fact, consider $U_N\subset U$ and $v'_N\in V'_N\subset V$ discrete spaces, then 
-$$ \|T'v_N'\|_{U'} = \sup_{u\in U}\frac{\langle u, T'v_N'\rangle}{\|u\|_U} \geq \sup_{u_N\in U_N}\frac{\langle u_N, T'v_N'\rangle}{\|u_N\|_U}, $$
+
+In practice, the Lax-Milgram lemma and the generalized Lax-Milgram lemma provide different guarantees for the discrete system: the Lax-Milgram lemma is equivalent to stating that the matrix $\ten\mathcal{A}$ associated with the method is positive definite, whereas the generalized Lax-Milgram lemma are equivalent to its invertibility. For details, see~\cite[Sect. 2.1.3]{ern2004theory}.
+
+The condition~\ref{eq:inf-sup-condition} is called \emph{inf-sup} because it is often stated and used in the alternative, equivalent way: there exists $\alpha>0$ such that 
+\begin{equation}
+    \inf_{v\in H_2}\sup_{u\in H_1,u\neq 0} \frac{a(u,v)}{\| u \|_{H_1}\|v\|_{H_2}} \ge \alpha.
+\end{equation}
+
+We note that injectivity can be equivalently stated as an inf-sup condition simply by inverting the arguments in the surjectivity part of the proof. In fact, consider $U_N\subset U$ and $v'_N\in V'_N\subset V$ discrete spaces, then 
+\begin{equation*}
+    \|T'v_N'\|_{U'} = \sup_{u\in U}\frac{\langle u, T'v_N'\rangle}{\|u\|_U} \geq \sup_{u_N\in U_N}\frac{\langle u_N, T'v_N'\rangle}{\|u_N\|_U},
+\end{equation*}
 which establishes our claim. Despite this, one can still recover convergence as before. To see this, consider $u$ and $u_N$ the continuous and discrete solutions given by the following problems with $a:U\times V \to \R$:
-    $$\begin{aligned}
+\begin{equation*}
+    \begin{aligned}
         a(u,v) &= f(v) &&\forall v\in V,\\
         a(u_N, v_N) &= f(v_N) &&\forall v_N\in V_N.
-    \end{aligned}$$
+    \end{aligned}
+\end{equation*}
 This bilinear forms make sense as operator equations as they induce an $A:U\to V'$. Both problems are well-posed are both operators are surjective, which implies that 
-    $$ a(u-u_N, v) = 0  \qquad \forall v_N \in V_N. $$
+\begin{equation*}
+    a(u-u_N, v) = 0  \qquad \forall v_N \in V_N.
+\end{equation*}
 From the injectivity seen as an inf-sup condition we get that
-$$ \alpha \| u - u_N \|_U \leq \sup_{v_N\in V_N} \frac{a(u-u_N, v_N)}{\|v_N\|} \leq \| a \| \|u - \xi_N \|, $$
+\begin{equation*}
+    \alpha \| u - u_N \|_U \leq \sup_{v_N\in V_N} \frac{a(u-u_N, v_N)}{\|v_N\|} \leq \| a \| \|u - \xi_N \|,
+\end{equation*}
 for some $\xi_N$ in $U_N$, as in the Lax-Milgram proof. Taking the infimum in $\xi_N$ and setting $C=\|a\|$ yields that
-    $$ \| u - u_N \| \leq \frac{C}{\alpha}\text{dist}(u, U_N). $$
+\begin{equation*}
+    \| u - u_N \| \leq \frac{C}{\alpha}\text{dist}(u, U_N).
+\end{equation*}
+
+\section{The discrete inf-sup condition}\label{sec:inf-sup-discrete}
+The main difficulty in using the continuous inf-sup theory is that well-posedness of a discrete problem is not necessarily inherited from the continuous one. This is indeed the case when (i) the approximation (Galerkin) scheme is conformal and consistent, and (ii) the problem is elliptic, where can just use the Lax-Milgram lemma. 
+
+\paragraph{The elliptic case} We have seen that elliptic problems have the following a priori stability estimate
+\begin{equation}
+    \alpha \|u\|_H \leq \|f\|_{H^*}\quad\text{ for }\quad a(u,v) = \langle f, v\rangle, \quad \forall v\in H,
+\end{equation}
+which carries naturally to the discrete problem:
+\begin{equation}
+    \alpha \|u_h\|_H \leq \|f\|_{H^*}\quad\text{ for }\quad a(u_h,v_h) = \langle f, v\rangle, \quad \forall v_h\in H_h.
+\end{equation}
+This can be rewritten as follows: denote the orthogonal projection $\Pi_h: H\to H_h $, and $R_H:H\to H^*$ the Riesz map. Then,
+\begin{tightalign*}
+    &a(u,v) = \langle f, v\rangle_{H^*\times H}\quad \forall v\in H,\\
+    \iff &\langle Au, v\rangle_{H'\times H} = \langle f, v\rangle_{H'\times H}\quad \forall v\in H,\\
+    \iff &Au = f \quad\text{ in $H'$ and }(R^{-1}\circ A)u = R^{-1}f\quad\text{in }H.
+\end{tightalign*}
+Also, we have
+\begin{tightalign*}
+    &a(u_h,v_h) = \langle f, v_h\rangle\quad\forall v_h\in H_h,\\
+    \iff &(R^{-1}\circ A u_h,v_h)_H = (R^{-1}f,v_h)_H\quad\forall v_h\in H_h,\\
+    \iff &\Pi_h\mathbb{A}u_h = \Pi_h\mathbb{F},
+\end{tightalign*}
+where $\mathbb{A} = R^-1\circ A$ and $\mathbb{F} = R^{-1}f$. The stability estimate gives, 
+\begin{equation}
+    \|u_h\| \leq\frac{1}{\alpha}\|\Pi_h\mathbb{F}\| = \frac{1}{\alpha}\|\Pi_h\mathbb{A} u_h\|
+\end{equation}
+Finally, by duality, we get
+\begin{tightalign*}
+    \|u_h\| &\leq \frac{1}{\alpha}\|\Pi_h\mathbb{A}u_h\| = \frac{1}{\alpha}\sup_{v_h}\frac{(\Pi_h\mathbb{A}u_h,v_h)}{\|v_h\|}
+    =\frac{1}{\alpha}\sup_{v_h}\frac{\langle Au_h,v_h\rangle_{H'\times H}}{\|v_h\|} = \frac{1}{\alpha}\sup_{v_h}\frac{a(u_h,v_h)}{\|v_h\|}.
+\end{tightalign*}
+We call this result,
+\begin{equation}
+    \|u_h\| \leq C\sup_{v_h\in V_h}\frac{a(u_h,v_h)}{\|v_h\|},\qquad \forall u_h\in H_h
+\end{equation}
+an \emph{discrete inf-sup condition}. One may readily see that this condition implies (discrete) injectivity as $Au_h=0$ implies $u_h = 0$.
+
+\paragraph{The general case} Consider now the approximate problem of finding $u_h\in W_h$ such that it satisfies the Galerkin scheme $a_h(u_h,v_h)=f_h(v_h)$ for all $v_h\in V_h$, where $a_h\approx a$ is not necessarily elliptic. From the generalized Lax-Milgram lemma~\ref{theorem:generalized-lax-milgram}, the well-posedness of this problem is equivalent to the following two discrete conditions: 
+\begin{enumerate}
+    \item the \emph{discrete inf-sup condition}, i.e. there exists $\alpha_h > 0$ such that 
+    \begin{equation}\label{eq:discrete-inf-sup-condition}
+        \inf_{w_h\in W_h}\sup_{v_h\in V_h} \frac{a_h(w_h, v_h)}{\|w_h\|_{W_h}\|v_h\|_{V_h}}\geq \alpha_h,
+    \end{equation}
+    \item the injectivity condition
+    \begin{equation}\label{eq:discrete-injectivity-condition}
+        \forall v_h\in V_h, \quad (\forall w_h\in W_h, a_h(w_h,v_h)= 0)\implies (v_h=0).
+    \end{equation}
+\end{enumerate}
+
+These discrete conditions allow us to explicitly characterize the stiffness matrix $\ten\mathcal{A}$ that results from the Galerkin approximation.
+
+\begin{lemma}[Characterization of $\ten\mathcal{A}$ via discrete inf-sup]
+    The following statements hold:
+    \begin{enumerate}
+        \item The discrete inf-sup condition~\eqref{eq:discrete-inf-sup-condition} holds if and only if $\ker \ten\mathcal{A} = \{\vec 0\}$.
+        \item The discrete injectivity condition~\eqref{eq:discrete-injectivity-condition} holds if and only if $\rank \ten\mathcal{A} = \dim V_h$, where $\rank\ten\mathcal{A} = \dim\im \ten\mathcal{A}$.
+        \item If $\dim W_h = \dim V_h$, then~\eqref{eq:discrete-injectivity-condition} and~\eqref{eq:discrete-injectivity-condition} are equivalent. 
+    \end{enumerate}
+    \begin{proof}
+        The proof follows from direct restatements of both conditions and the rank theorem (i.e. $\rank \ten\mathcal{A} + \dim\ker\ten\mathcal{A} = \dim V_h$), see~\cite[Proposition 2.21]{ern2004theory}
+    \end{proof}
+\end{lemma}
+
+Note that, even if the approximation is consistent and conformal, the continuous inf-sup and injectivity conditions \emph{do not translate} to their discrete counterparts. Despite this, the interpretation of the discrete conditions in matrix terms is almost identical to the interpretation of the continuous conditions in operator terms, and the only difference is that infinite dimension, the range of $\ten\mathcal{A}$ is automatically closed. Further, one can characterize $\alpha_h$ as the smallest singular value of $\ten\mathcal{A}$. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Fredholm operators}
+\section{Fredholm operators}\label{sec:fredholm}
+Despite the power of the inf-sup theory for studying the well-posedness of problems, verifying the inf-sup condition and the injectivity condition may take too much work, and there are certain classes of operators where this characterization can be simpler. One such class consists of \emph{Fredholm operators}, which consists of compact perturbations of operators. 
 
-Most of the forms in which we present our problems comes from the fantastic notes from Andrea Moiola on time-harmonic acoustic waves \cite{moiola2021scattering}. Our reference problem will be the Helmholtz equation, given by the following strong form:
-
-\[
-\left\{
-\begin{array}{rc}
-    -\Delta u -k^2 u = f, &\Omega,\\
-    u=0, &\partial\Omega,
-\end{array}\right.
-\]
-
-for some $f\in H^{-1}(\Omega)$ and some boundary condition. This equation can be recoverred in the following way: consider the wave equation
-    $$ \ddot u - \Delta u = 0, $$
-and consider a variable separation procedure with $u(t,x) = V(t)U(x)$. This is a common technique, and it results in 
-    $$ \frac{\Delta U}{U} = k^2.$$
-multiplying by $U$ gives the desired result. Regarding well-posedness, let's first explore what we can conclude with Lax-Milgram. We will assume $u$ in $H_0^1(\Omega)$ for simplicity, which yields the following weak form: Find $u$ in $H_0^1(\Omega)$ such that
-
-\[
-a(u,v) = (\nabla u, \nabla v) - k^2(u,v) = \langle f, v\rangle, \quad \forall v\in H_0^1.
-\]
-
-Using $H_0^1(\Omega)$ with the norm induced by the seminorm $|v|_1 = \|\nabla v\|_0$, Poincaré inequality gives us $\|u\|_0\leq C_{\Omega}\|\nabla u\|_0$, and so the Lax-Milgram hypotheses look as follows: 
-
+The presentation of this section comes from the notes of Andrea Moiola on time-harmonic acoustic waves~\cite{moiola2021scattering}. Our reference problem will be the Helmholtz equation, given by the following strong form:
+\begin{equation}
+    \begin{aligned}
+        -\Delta u -k^2 u = f, &&\tin \Omega,\\
+        u=0, &&\ton \partial\Omega,
+    \end{aligned}
+\end{equation}
+for some $f\in H^{-1}(\Omega)$ and some boundary conditions. This equation can be recovered in the following way: consider the wave equation
+\begin{equation*}
+    \ddot u - \Delta u = 0,
+\end{equation*}
+and consider a separation of variables procedure with $u(t,x) = V(t)U(x)$, as we did for Sturm-Liouville problems in Section~\ref{sec:sturm-liouville}. This results in 
+\begin{equation*}
+    \frac{\Delta U}{U} = k^2.
+\end{equation*}
+multiplying by $U$ gives the desired result. Regarding well-posedness, let's first explore what we can conclude with the Lax-Milgram lemma~\ref{lemma:lax-milgram}. We will assume $u$ in $H_0^1(\Omega)$ for simplicity, which yields the following weak form: Find $u$ in $H_0^1(\Omega)$ such that
+\begin{equation}
+    a(u,v) = (\nabla u, \nabla v) - k^2(u,v) = \langle f, v\rangle, \quad \forall v\in H_0^1.
+\end{equation}
+Using $H_0^1(\Omega)$ with the norm induced by the seminorm $|v|_1 = \|\nabla v\|_0$, the Poincaré inequality~\eqref{eq:poincare-inequality} gives us $\|u\|_0\leq C_{\Omega}\|\nabla u\|_0$, and so the Lax-Milgram lemma hypotheses look as follows: 
 \begin{itemize}
     \item Boundedness: 
-    \begin{align*}
+    \begin{tightalign*}
         a(u,v) &\leq \|\nabla u\|_0\|\nabla v\|_0 + k^2\|u\|_0\|v\|_0,\\ 
         &\leq (1+k^2C_\Omega^2)|u|_1|v|_1.
-    \end{align*}
-
+    \end{tightalign*}
     \item Coercivity: 
     \begin{equation*}
         a(v,v) = \|\nabla v\|^2_{0,\Omega} - k^2\|v\|^2_{0,\Omega}.
     \end{equation*}
-
-    We note that, by Poincaré inequality,
-
-    \[ k^2\|v\|^2_0 \leq k^2 C^2_{\Omega}\|\nabla v\|^2_0, \]
-
-    and thus,
-
-    \begin{align*}
+    We note that, by the Poincaré inequality,
+    \begin{equation}
+        k^2\|v\|^2_0 \leq k^2 C^2_{\Omega}\|\nabla v\|^2_0
+    \end{equation}
+    and thus
+    \begin{tightalign*}
         a(v,v) &\geq \|\nabla v\|^2_0 - k^2C_\Omega^2\|\nabla v\|^2_0 \\
         &= (1- k^2 C_\Omega^2)\|\nabla v\|^2_{0,\Omega}.
-    \end{align*}
-
+    \end{tightalign*}
     In other words, the problem is well-possed if 
-    $$1-k^2C_\Omega^2 > 0 \iff k^2 < \frac{1}{C_\Omega^2}$$
+    \begin{equation*}
+        1-k^2C_\Omega^2 > 0 \iff k^2 < \frac{1}{C_\Omega^2}
+    \end{equation*}
 \end{itemize}
 
-This is a very limited answer, so we will now answer what happens for arbitrary $k\in\R$.
-
-\begin{definition}
-    A linear operator $K:H_1 \to H_1$ is \textbf{compact} if the image of a bounded sequence admits a converging subsequence.
+This is a very limited answer, so we will now study what happens for arbitrary $k\in\R$. To this end, we need to define \emph{compact} and \emph{Fredholm} operators, and the \emph{Fredholm alternative}.
+\begin{definition}[Compact operator]\label{def:compact-operator}
+    A linear operator $K:H_1 \to H_1$ is \emph{compact} if the image of a bounded sequence admits a converging subsequence.
 \end{definition}
-\begin{definition}
-    A bounded linear operator is a \textbf{Fredholm operator} if it is the sum of an invertible and a compact operator. 
+\begin{definition}[Fredholm operator]\label{def:fredholm-operator}
+    A bounded linear operator is a \emph{Fredholm operator} if it is the sum of an invertible and a compact operator. 
 \end{definition}
 
-\begin{theorem}[Fredholm alternative]
-    A Fredholm operator is injective if and only if it is surjective. In such case, it has a bounded inverse.
+The main result on Fredholm operators is the \emph{Fredholm alternative}.
+\begin{theorem}[Fredholm alternative]\label{thm:fredholm-alternative}
+    A Fredholm operator $T$ is injective if and only if it is surjective. In such case, it has a bounded inverse $T^{-1}$.
 \end{theorem}
 
-A simpler way of showing that an operator is Fredholm, is through a Gårding inequality.
+Note that in a finite-dimensional setting, all operators are compact since all bounded sequences in $\R^n$ or $\C^n$ contain converging subsequences. Thus, if the finite-dimensional spaces have the same dimension (i.e. the operator is associated to a square matrix), then it is Fredholm, and the Fredholm alternative automatically holds because injectivity and surjectivity are equivalent from the rank theorem.
 
-\begin{definition}
-    Consider $H\subset V$ Hilbert spaces with a continuous embedding $H\hookrightarrow V$. 
-    A bilinear form $a:H\times H\to \R$ satisfies a \textbf{Gårding inequality} if there exist two positive constants $\alpha$, $C_V$ subject to, 
-    
-    \[a(v,v) \geq \alpha \|v\|^2_H - C_V\|v\|^2_V,\quad \forall v\in H.\]
+Back in an infinite-dimensional setting, there is a simpler way of showing that an operator is Fredholm, i.e. through the \emph{Gårding inequality}.
+\begin{definition}[Gårding inequality]\label{def:garding-inequality}
+    Consider $H\subset V$ Hilbert spaces with a continuous embedding $H\hookrightarrow V$. A bilinear form $a:H\times H\to \R$ satisfies a \emph{Gårding inequality} if there exist two positive constants $\alpha$, $C_V$ subject to, 
+    \begin{equation}
+        a(v,v) \geq \alpha \|v\|^2_H - C_V\|v\|^2_V,\quad \forall v\in H
+    \end{equation}
 \end{definition}
+\begin{corollary}
+    Asume that the embedding $H\hookrightarrow V$ is compact, and the operator $A: H\to H^*$ associated to $a:H\times H\to \R$ (i.e. $\langle Ax,y\rangle = a(x,y)$) satisfies the Gårding inequality. Then, $A$ is Fredholm. 
+    \begin{proof}
+        We note that, by the Gårding inequality, $a(u,v) + C_V(u,v)_V$ is invertible because of the Lax-Milgram lemma. We now try to write the equation in operator form. The form $(u,v)_V$ is handled as follows: set $T:V\to H^*$ as
+        \begin{equation}
+            \langle Tv, w\rangle_{H^*\times H} = "(v,w)_V"\equiv (v,iw)_V
+        \end{equation}
+        where $i: H\to V$ is the compact embedding. $T$ is clearly bounded:
+        \begin{tightalign*}
+            \|Tv\|_{H^*} &= \sup_{w\in H}\frac{(v,iw)_V}{\|w\|_H},\\
+            &\leq \sup_{w\in H}\frac{\|v\|_V\|iw\|_V}{\|w\|_H},\\
+            &\leq \sup_{w\in H}\frac{\|v\|_V\|i\|\|w\|_H}{\|w\|_H},\\
+            &\leq \|i\|\|v\|.
+        \end{tightalign*}
+        Then, the operator associated to the problem is $B  \coloneqq A + C_V T\circ i$, where:
+        \begin{itemize}
+            \item $B$ is invertible,
+            \item $T$ is continuous,
+            \item $i$ is compact. 
+        \end{itemize}
+        The last two properties imply that $T\circ i$ is compact, as the composition of continuous and compact operators is compact. It follows that $A = B - C_V T\circ i$ is Fredholm.
+    \end{proof}
+\end{corollary}
 
-\textbf{Proposition:}
- If the inclusion $H\hookrightarrow V$ is compact, then the operator $A: H\to H^*$ associated to $a:H\times H\to \R$, i.e,
- \[\langle Ax,y\rangle = a(x,y),\]
-
- is such that if $a$ satisfies Gårding then $A$ is Fredholm. 
-
-\begin{proof}
-    We note that, by definition of Gårding,  \(a(u,v) + C_V(u,v)_V\) is invertible because of Lax-Milgram. 
-    We now try to write the equation in operator form. The form $(u,v)_V$ is handled as follows: set $T:V\to H^*$ as
-
-    \[\langle Tv, w\rangle_{H^*\times H} = "(v,w)_V"\equiv (v,iw)_V,\]
-    where $i: H\to V$ is the compact embedding. $T$ is clearly bounded:
-
-    \begin{align*}
-        \|Tv\|_{H^*} &= \sup_{w\in H}\frac{(v,iw)_V}{\|w\|_H},\\
-        &\leq \sup_{w\in H}\frac{\|v\|_V\|iw\|_V}{\|w\|_H},\\
-        &\leq \sup_{w\in H}\frac{\|v\|_V\|i\|\|w\|_H}{\|w\|_H},\\
-        &\leq \|i\|\|v\|.
-    \end{align*}
-
-    Then, the operator associated to the problem is $B :=A + C_V T\circ i$, where:
-    \begin{itemize}
-        \item $B$ is invertible,
-        \item $T$ is continuous,
-        \item $i$ is compact. 
-    \end{itemize}
-
-    The last two impliy that $T\circ i$ is compact, as the composition of continuous and compact operators is compact. 
-    It follows that $A = B - C_V T\circ i$ is Fredholm.
-\end{proof}
-
-
-
-\section{Galerkin stability}
-
-We have seen that elliptic problems have the following a-priori stability estimate
-
-\[\alpha \|u\|_H \leq \|f\|_{H^*}\quad\text{ for }\quad a(u,v) = \langle f, v\rangle, \quad \forall v\in H.\]
-
-which carries naturally to the discrete problem:
-
-\[\alpha \|u_h\|_H \leq \|f\|_{H^*}\quad\text{ for }\quad a(u_h,v_h) = \langle f, v\rangle, \quad \forall v_h\in H_h.\]
-
-This can be rewritten as follows: denote the orthogonal projection $\Pi_h: H\to H^*$, and $R_H:H\to H^*$ the Riesz map.
-
-Then:
-
-\begin{align*}
-    &a(u,v) = \langle f, v\rangle_{H^*\times H}\quad \forall v\in H,\\
-    \iff &\langle Au, v\rangle_{H'\times H} = \langle f, v\rangle_{H'\times H}\quad \forall v\in H,\\
-    \iff &Au = f \quad\text{ in $H'$ and }(R^{-1}\circ A)u = R^{-1}f\quad\text{in }H.
-\end{align*}
-
-Also:
-
-\begin{align*}
-    &a(u_h,v_h) = \langle f, v_h\rangle\quad\forall v_h\in H_h,\\
-    \iff &(R^{-1}\circ A u_h,v_h)_H = (R^{-1}f,v_h)_H\quad\forall v_h\in H_h,\\
-    \iff &\Pi_h\mathbb{A}u_h = \Pi_h\mathbb{F},
-\end{align*}
-
-where $\mathbb{A} = R^-1\circ A$ and $\mathbb{F} = R^{-1}f$. The stability estimate gives, 
-
-\[\|u_h\| \leq\frac{1}{\alpha}\|\Pi_h\mathbb{F}\| = \frac{1}{\alpha}\|\Pi_h\mathbb{A} u_h\|.\]
-
-Finally, by duality, we get
-
-\begin{align*}
-    \|u_h\| &\leq \frac{1}{\alpha}\|\Pi_h\mathbb{A}u_h\| = \frac{1}{\alpha}\sup_{v_h}\frac{(\Pi_h\mathbb{A}u_h,v_h)}{\|v_h\|}
-    =\frac{1}{\alpha}\sup_{v_h}\frac{\langle Au_h,v_h\rangle_{H'\times H}}{\|v_h\|} = \frac{1}{\alpha}\sup_{v_h}\frac{a(u_h,v_h)}{\|v_h\|}.
-\end{align*}
-
-We call this result,
-
-\[\|u_h\| \leq C\sup_{v_h\in V_h}\frac{a(u_h,v_h)}{\|v_h\|},\qquad \forall u_h\in H_h,\]
-
-\todo[inline]{NB: Esto ya no tiene sentido acá.}
-an \textbf{inf-sup condition}, which we will later use to prove \textbf{surjectivity} and \textbf{injectivity} separately. One may readily see that this condition implies (discrete) injectivity as $Au_h$ implies $u_h = 0$.
-
-We will require the following Lemma regarding discrete stability of Fredholm operators. Details are provided in \cite{sayas2019variational}.
-\begin{lemma}
-Consider a bilinear form $a:H\times H\to \R$ associated to an injective Fredholm operator $A+K$. Then, there exists $C, h_0>0$ such that
-
-\[\|u_h\|_H\leq C\sup_{v_h}\frac{a(u_h,v_h)}{\|v_h\|},\quad \forall u_h\in H_h, \quad h\leq h_0.\]
-In other words, discrete stability holds only for sufficiently fine meshes. 
+We will require the following Lemma regarding discrete stability of Fredholm operators. Details are provided in~\cite{sayas2019variational}.
+\begin{lemma}\label{lemma:stability-fredholm}
+    Consider a bilinear form $a:H\times H\to \R$ associated to an injective Fredholm operator $A+K$. Then, there exists $C, h_0>0$ such that
+    \begin{equation}
+        \|u_h\|_H\leq C\sup_{v_h}\frac{a(u_h,v_h)}{\|v_h\|},\quad \forall u_h\in H_h, \quad h\leq h_0
+    \end{equation}
+    In other words, discrete stability holds only for sufficiently fine meshes. 
 \end{lemma}
 
+Now we can prove an a priori estimate 
 Consider the discrete problem
-\[a(u_h,v_h) + b(u_h,v_h) = \langle f, v_h\rangle\]
-
+\begin{equation}
+    a(u_h,v_h) + b(u_h,v_h) = \langle f, v_h\rangle
+\end{equation}
 where $a$ and $b$ are the bilinear forms associated to an elliptic and a compact operator respectively, and consider the Galerkin projection $G_h: H\to H_h$
-
-\[a(G_hu, v_h) + b(G_hu, v_h) = a(u, v_h) + b(u,v_h).\]
-
+\begin{equation}
+    a(G_h u, v_h) + b(G_h u, v_h) = a(u, v_h) + b(u,v_h)
+\end{equation}
 Under the previous hypothesis, for $h\leq h_0$ we have, 
-
-\[\|G_hu\|\leq C\sup_{v_h}\frac{a(G_hu, v_h) + b(G_hu, v_h)}{\|v_h\|}\leq C\|A+K\|\|u\|.\]
-
-Then $G_h$ is bounded. We observe that, as $G_h$ is a porjection, it holds that $G_h\Pi_h = \Pi_h$, and thus:
-\begin{align*}
-    \|u - G_hu\|&\leq \|u-\Pi_hu\| + \|\Pi_hu - G_hu\|,\\
-    &= \|u-\Pi_hu\| + \|G_h(\Pi_hu - u)\|,\\
+\begin{equation}
+    \|G_h u\|\leq C\sup_{v_h}\frac{a(G_h u, v_h) + b(G_h u, v_h)}{\|v_h\|}\leq C\|A+K\|\|u\|.
+\end{equation}
+Then, $G_h$ is bounded. We observe that, as $G_h$ is a projection, it holds that $G_h\Pi_h = \Pi_h$, and thus
+\begin{tightalign*}
+    \|u - G_h u\|&\leq \|u-\Pi_h u\| + \|\Pi_h u - G_h u\|,\\
+    &= \|u-\Pi_h u\| + \|G_h(\Pi_h u - u)\|,\\
     &\leq (1+C\|A+K\|)\|u - \Pi_h u\|,
-\end{align*}
-
+\end{tightalign*}
 which implies
-
-\[\|u-u_h\|\leq (1+C\|A+K\|)\inf_{v_h\in H_h}\|u-v_h\|,\] 
-
-which is a Céa estimate for sufficiently small $h$.
-
+\begin{equation}
+    \|u-u_h\|\leq (1+C\|A+K\|)\inf_{v_h\in H_h}\|u-v_h\|
+\end{equation}
+which is a Céa estimate for sufficiently small $h$, similar to lemma~\ref{lemma:cea-estimate}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Saddle point problems}
-
-In this section we will study the well-posedness theory of saddle point problems. The presentation has been taken, mostly verbatim, from \cite{gatica2014simple}. A saddle point problem has the form:
-\begin{displaymath}
-    \begin{bmatrix}
-        A & B^{T}\\ 
-        B & 0
-    \end{bmatrix}
-    \begin{bmatrix}
-        u \\ p
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-        f \\ g
-    \end{bmatrix}.
-\end{displaymath}
-
-To grasp the relevance of this formulations, let's first see
-some examples:
-\begin{itemize}
-    \item \textbf{Stokes}: The variational formulation of
-    Stokes reads:
-    \begin{displaymath}
-    \begin{cases}
-        (\nabla u, \nabla v) - (p, \dive v)
-        &=
-        \langle f, v \rangle
-        \quad\forall v,
-        \\
-        (\dive u, q) &= 0 \hspace{3em}\forall q.
-    \end{cases}
-    \end{displaymath}
-    By inspection we see that \(A=-\Delta\), \(B=\dive\).
-
-    \item \textbf{Darcy (or mixed Poisson)}: We are dealing 
-    with the problem
-    \begin{displaymath}
-        -\Delta u = f\quad \text{ in } \Omega
-    \end{displaymath}
-    Introducing the variable \(\sigma = -\nabla u\), the problem
-    now reads:
-    \begin{displaymath}
-    \left\{
-    \begin{aligned}
-        \dive \sigma &= f && \quad \text{ in } \Omega\\ 
-        \sigma + \nabla u &= 0 && \quad \text{ on } \partial\Omega
-    \end{aligned}
-    \right.
-    \end{displaymath}
-    Testing the equation on \(\tau\) and :
-    \begin{displaymath}
-    \left\{
-    \begin{aligned}
-        (\sigma, \tau) - (u, \dive \tau) &= 0
-        &&\quad\forall \tau, \\ 
-        (\dive \sigma, v) &= \langle f,v \rangle
-        &&\quad \forall v,
-    \end{aligned}
-    \right.
-    \end{displaymath}
-    where $A$ is the identity operatir and $B=\dive$ as before.
-
-    \item \textbf{Primal-Mixed Poisson (Dirichlet with multipliers)}
-    Consider the problem
-    \begin{displaymath}
-    \left\{
-    \begin{aligned}
-        -\Delta u &= f &&\quad\text{ in } \Omega \\ 
-        u &= g &&\quad\text{ on } \partial\Omega
-    \end{aligned}
-    \right.
-    \end{displaymath}
-    Integration by parts yields:
-    \begin{displaymath}
-        (\nabla u, \nabla v) 
-        - \langle \gamma_N u, \gamma_D v \rangle
-        = \langle f,v \rangle.
-    \end{displaymath}
-    Define \(\xi = -\gamma_N u\) and impose Dirichlet boundary
-    conditions weakly. That is,
-    \begin{displaymath}
-        \forall \lambda \in H^{-1/2}(\partial\Omega)
-        \colon\qquad
-        \langle \lambda, \gamma_D u \rangle
+\section{Saddle point problems}\label{sec:saddle-point}
+In this section we will study the well-posedness theory of saddle point problems. The presentation has been taken, mostly verbatim, from~\cite{gatica2014simple}, which is a great book mainly focused on mixed and saddle point problems. 
+\begin{definition}[Saddle point problem]
+    A \emph{saddle point problem} is a problem of the form:
+    \begin{equation}
+        \begin{bmatrix}
+            A & B^{T}\\ 
+            B & 0
+        \end{bmatrix}
+        \begin{bmatrix}
+            u \\ p
+        \end{bmatrix}
         =
-        \langle \lambda, g \rangle
-    \end{displaymath}
+        \begin{bmatrix}
+            f \\ g
+        \end{bmatrix}.
+    \end{equation}
+\end{definition}
+
+To grasp the relevance of this formulations, let's first see some examples:
+\begin{itemize}
+    \item \emph{Stokes}: the variational formulation of the Stokes equations reads:
+    \begin{equation}
+        \begin{aligned}
+            (\nabla u, \nabla v) - (p, \dive v) &= \langle f, v \rangle &&\quad\forall v, \\
+            (\dive u, q) &= 0 &&\quad \forall q.
+        \end{aligned}
+    \end{equation}
+    By inspection we see that $A=-\Delta$, $B=\dive$.
+    \item \emph{Darcy (or mixed Poisson)}: we are dealing with the problem
+    \begin{equation}
+        -\Delta u = f\quad \tin\Omega.
+    \end{equation}
+    Introducing the variable $\sigma = -\nabla u$, the problem now reads:
+    \begin{equation}
+        \begin{aligned}
+            \dive \sigma &= f && \tin  \Omega\\ 
+            \sigma + \nabla u &= 0 && \ton \partial\Omega.
+        \end{aligned}
+    \end{equation}
+    Testing the equation on $\tau$,
+    \begin{equation}
+        \begin{aligned}
+            (\sigma, \tau) - (u, \dive \tau) &= 0
+            &&\quad\forall \tau, \\ 
+            (\dive \sigma, v) &= \langle f,v \rangle
+            &&\quad \forall v,
+        \end{aligned}
+    \end{equation}
+    where $A$ is the identity operator and $B=\dive$ as before.
+    \item \emph{Primal-mixed Poisson (Dirichlet with multipliers)}: consider the problem
+    \begin{equation}
+        \begin{aligned}
+            -\Delta u &= f &&\tin \Omega \\ 
+            u &= g &&\ton \partial\Omega.
+        \end{aligned}
+    \end{equation}
+    Integration by parts yields:
+    \begin{equation}
+        (\nabla u, \nabla v) - \langle \gamma_N u, \gamma_0 v \rangle = \langle f,v \rangle
+    \end{equation}
+    Define $\xi = -\gamma_N u$ and impose Dirichlet boundary conditions weakly, that is, $\forall \lambda \in H^{-1/2}(\partial\Omega)$,
+    \begin{equation}
+         \langle \lambda, \gamma_0 u \rangle = \langle \lambda, g \rangle.
+    \end{equation}
     Writing everything together shows a saddle point problem:
-    \begin{displaymath}
-    \left\{
-    \begin{aligned}
-        (\nabla u, \nabla v) + \langle \xi, \gamma_D v \rangle
-        &= \langle f,v \rangle
-        &&\quad \forall v,\\ 
-        \langle \lambda, \gamma_D u \rangle &= \langle \lambda, g \rangle
-        &&\quad  \forall \lambda.
-    \end{aligned}
-    \right.
-    \end{displaymath}
+    \begin{equation}
+        \begin{aligned}
+            (\nabla u, \nabla v) + \langle \xi, \gamma_0 v \rangle &= \langle f,v \rangle &&\quad \forall v,\\ 
+            \langle \lambda, \gamma_0 u \rangle &= \langle \lambda, g \rangle &&\quad  \forall \lambda.
+        \end{aligned}
+    \end{equation}
 \end{itemize}
 
-Now that we know some examples of saddle points problems, a natural
-question is to ask for conditions for the existence and uniqueness
-of solutions. Fortunately, this has already been done and it's known
-as the \emph{Ladyzhenskaya-Babu\v{s}hka-Brezzi Theory}, typically denoted as LBB theory.
-
-\begin{theorem}
+Now that we know some examples of saddle points problems, a natural question is to ask for conditions for the existence and uniqueness of solutions. Fortunately, this has already been done and it's known as the \emph{Ladyzhenskaya-Babu\v{s}hka-Brezzi Theory}, typically denoted as LBB theory.
+\begin{theorem}\label{thm:mixed}
     Consider the problem
-    \begin{equation*}\label{mixed}
+    \begin{equation*}
         \begin{bmatrix}
             A & B^{T}\\ 
             B & 0
@@ -459,94 +444,118 @@ as the \emph{Ladyzhenskaya-Babu\v{s}hka-Brezzi Theory}, typically denoted as LBB
             f \\ g
         \end{bmatrix}
     \end{equation*}
-    Let \(V = \ker B\) and \(\Pi\colon H\to V\) the orthogonal
-    projector. Suppose that
+    Let $V = \ker B$ and $\Pi\colon H\to V$ the orthogonal projector. Suppose that
     \begin{itemize}
-        \item \(\Pi A\colon V\to V\) is a bijection;
-        \item the bilinear form \(b\) (associated to \(B\))
-        satisfies the inf-sup condition with constant \(\beta\).
+        \item $\Pi A\colon V\to V$ is a bijection;
+        \item the bilinear form $b$ (associated to $B$) satisfies the inf-sup condition with constant $\beta$.
     \end{itemize}
-    Then, for each \((f,g)\) in \(H'\times Q'\) there exists
-    a unique pair \((u,p)\in H\times Q\) such that~\eqref{mixed}
-    holds. Moreover, there is a positive constant
-    \(C=C(\|A\|, \| (\Pi A)^{-1}\|, \beta)\) such that
+    Then, for each $(f,g)$ in $H'\times Q'$ there exists a unique pair $(u,p)\in H\times Q$ such that Theorem~\ref{thm:mixed} holds. Moreover, there is a positive constant $C=C(\|A\|, \| (\Pi A)^{-1}\|, \beta)$ such that
     \begin{equation*}
-        \| (u,p) \|
-        \le
-        C \left( \|f\| + \|g\| \right) 
+        \| (u,p) \| \le C \left( \|f\| + \|g\| \right) 
     \end{equation*}
+    \begin{proof}
+        Exercise :)
+    \end{proof}
 \end{theorem}
-\begin{proof}
-    Exercise :)
-\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \paragraph{Common example: Darcy} We will present a the worked example of Darcy's problem, to be analyzed using the LBB theory. Its weak form is given as follows: Consider $\vec H=H(\dive; \Omega)\cap \{\vec u\cdot \vec n=0\}$ and $Q=L^2(\Omega)$, then find $(u,p)$ in $H\times Q$ such that
-    \[ \begin{aligned}
-    (\ten K^{-1}\vec u, \vec v) - (\dive \vec v, p) &= \langle f,\vec v\rangle && \forall \vec v\in \vec H \\
-    (\dive \vec u, q)  &= \langle g, q\rangle && \forall q \in Q,
-    \end{aligned} \]
-where $\ten K$ is symmetric and positive definite ($ k_1|\vec x|^2 \leq \vec x\cdot \ten K^{-1}\vec x \leq k_2 |\vec x|^2$), $f$ is in $\vec H'$ and $g$ is in $Q'$. We omit details regarding continuity as it is a simply application of the Cauchy-Schwartz inequality. The bilinear forms to be studied here are $a(\vec u, \vec v) = (\ten K^{-1}\vec u, \vec v)$ and $b(\vec v, q) = (\dive \vec v, q)$.
-    \begin{itemize}
-        \item First, we need to show that $\Pi A|_V$ is invertible. To better understand this operator, we recall that $\Pi$ is the orthogonal projector of $\vec H$ into $\vec V = \ker B$, so let's look into all the pieces to make sense out of it. First, $B:H\to Q$ is the operator given by 
-        $$ (B\vec v, q) = (\dive \vec v, q),$$
-        and thus, as $L^2$ can be identified with its dual, we have that simply $B = \dive$ and thus $\vec V = \{\vec v \in \vec H: \dive \vec v = 0\}$, i.e. the space of solenoidal functions in $H(\dive;\Omega)$ with null normal component on the boundary. Second, the projection $\Pi$ is surjective, and thus 
-            \[ \langle \Pi A|_V \vec u, \vec v\rangle \]
-        which is defined for all $\vec u, \vec v$ in $\vec H$, can be written analogously as 
-            \[ \langle \Pi A \vec u, \vec v\rangle \]
-        for $\vec u$ in $\vec V$ and $\vec v$ in $\vec H$, where $A\vec u$ belongs to $\vec H$. Finally, $\Pi:\vec H\to\vec V$ is an orthogonal projector, meaning that if we denote $\vec H = \vec V \oplus \vec V^\perp$ and $\vec v = \vec v_0 + \vec v^\perp$, we obtain
-            \[  \langle A \vec u, \vec v_0\rangle \]
-        with $\vec u$ in $\vec V$ and $\vec v_0$ in $\vec V$. In other words, the operator $\Pi A|_V$ is simply the restricted bilinear form $a: \vec V\times \vec V \to \R$, given by
-        \[ a(\vec u, \vec v) = (\ten K^{-1}\vec u, \vec v) \qquad\forall \vec u, \vec v \in \vec V. \]
-        In such a space, the form $a$ is elliptic: 
-        \[ a(\vec u, \vec u) = (\ten K^{-1}\vec u, \vec u) \geq k_1 \| \vec u \|_0^2 = k_1 \| \vec u\|_{\dive}^2 \qquad\forall \vec u \in \vec V,\]
-        where the term $\|\dive \vec u\|$ can be trivially added as $\dive \vec u = 0$ for $\vec u$ in $\vec V$. This shows that $\Pi A|_V$ is invertible using the Lax-Milgram lemma.
-        \item We now show the inf-sup property. For this, we will use the auxiliary problem technique. Consider the following problem
-        \[ \begin{aligned}
-            - \Delta z &= q && \Omega \\
-            \grad z\cdot \vec n &= 0 &&\partial\Omega,
-        \end{aligned} \]
-        which we have already shown to be invertible in the subspace of $H^1$ that is orthogonal to the constants. Thus, it holds that the function $\tilde{\vec u} = -\grad z$ is such that it belongs to $\vec H$ and satisfies that $\|\tilde{\vec u}\|_0 \leq C \| q\|_0$, which comes from the \emph{a-priori} (or stability) estimate. Also, as $\dive \tilde{\vec u} = q$, we have $\|\tilde{\vec u}\|_{\dive} \leq (C+1)\|q\|$. Going back to the original problem, we want to show that there exists $\beta>0$ such that
-        \[ \sup_{\vec v\in \vec H}\frac{b(\vec v, q)}{\|\vec v\|} \geq \beta \|q\|_0 \qquad \forall q \in Q.\]
-        Using our previously constructed solution, we obtain
-        \[ \sup_{\vec v\in \vec H}\frac{b(\vec v, q)}{\|\vec v\|} \geq \frac{(\dive \tilde{\vec u}, q)}{\|\tilde{\vec u}\|_{\dive}}\geq \frac{\|q\|_0^2}{(C+1)\|q\|} = \tilde\beta \|q\|, \]
-        where $\tilde \beta = 1/(C+1)$. This concludes the proof. We note that it was actually sufficient to show that for each $q$ there existed an element $\tilde{\vec u}$ in the desired space, as it proved the survectivity of the operator $B$, but showing the complete inf-sup estimate was more instructive. 
-    \end{itemize}
-    Given that we have shown the required properties for $a$ and $b$, then there exists a unique and stable solution $(u,p)$ of Darcy's problem. 
-
+\begin{equation}
+    \begin{aligned}
+        (\ten K^{-1}\vec u, \vec v) - (\dive \vec v, p) &= \langle f,\vec v\rangle && \forall \vec v\in \vec H, \\
+        (\dive \vec u, q)  &= \langle g, q\rangle && \forall q \in Q,
+    \end{aligned}
+\end{equation}
+where $\ten K$ is symmetric and positive definite ($ k_1|\vec x|^2 \leq \vec x\cdot \ten K^{-1}\vec x \leq k_2 |\vec x|^2$), $f$ is in $\vec H'$ and $g$ is in $Q'$. We omit details regarding continuity as it is a simply application of the Cauchy-Schwarz inequality. The bilinear forms to be studied here are $a(\vec u, \vec v) = (\ten K^{-1}\vec u, \vec v)$ and $b(\vec v, q) = (\dive \vec v, q)$.
+\begin{itemize}
+    \item First, we need to show that $\Pi A|_V$ is invertible. To better understand this operator, we recall that $\Pi$ is the orthogonal projector of $\vec H$ into $\vec V = \ker B$, so let's look into all the pieces to make sense out of it. First, $B:H\to Q$ is the operator given by 
+    \begin{equation*}
+        (B\vec v, q) = (\dive \vec v, q),
+    \end{equation*}
+    and thus, as $L^2$ can be identified with its dual, we have that simply $B = \dive$ and thus $\vec V = \{\vec v \in \vec H: \dive \vec v = 0\}$, i.e. the space of solenoidal functions in $H(\dive;\Omega)$ with null normal component on the boundary. Second, the projection $\Pi$ is surjective, and thus 
+    \begin{equation}
+        \langle \Pi A|_V \vec u, \vec v\rangle
+    \end{equation}
+    which is defined for all $\vec u, \vec v$ in $\vec H$, can be written analogously as 
+    \begin{equation}
+        \langle \Pi A \vec u, \vec v\rangle
+    \end{equation}
+    for $\vec u$ in $\vec V$ and $\vec v$ in $\vec H$, where $A\vec u$ belongs to $\vec H$. Finally, $\Pi:\vec H\to\vec V$ is an orthogonal projector, meaning that if we denote $\vec H = \vec V \oplus \vec V^\perp$ and $\vec v = \vec v_0 + \vec v^\perp$, we obtain
+    \begin{equation}
+        \langle A \vec u, \vec v_0\rangle
+    \end{equation}
+    with $\vec u$ in $\vec V$ and $\vec v_0$ in $\vec V$. In other words, the operator $\Pi A|_V$ is simply the restricted bilinear form $a: \vec V\times \vec V \to \R$, given by
+    \begin{equation}
+        a(\vec u, \vec v) = (\ten K^{-1}\vec u, \vec v) \qquad\forall \vec u, \vec v \in \vec V
+    \end{equation}
+    In such a space, the form $a$ is elliptic: 
+    \begin{equation}
+        a(\vec u, \vec u) = (\ten K^{-1}\vec u, \vec u) \geq k_1 \| \vec u \|_0^2 = k_1 \| \vec u\|_{\dive}^2 \qquad\forall \vec u \in \vec V
+    \end{equation}
+    where the term $\|\dive \vec u\|$ can be trivially added as $\dive \vec u = 0$ for $\vec u$ in $\vec V$. This shows that $\Pi A|_V$ is invertible using the Lax-Milgram lemma.
+    \item We now show the inf-sup property. For this, we will use the auxiliary problem technique. Consider the following problem
+    \begin{equation}
+        \begin{aligned}
+            - \Delta z &= q && \tin \Omega \\
+            \grad z\cdot \vec n &= 0 &&\ton \partial\Omega,
+        \end{aligned}
+    \end{equation}
+    which we have already shown to be invertible in the subspace of $H^1$ that is orthogonal to the constants. Thus, it holds that the function $\tilde{\vec u} = -\grad z$ is such that it belongs to $\vec H$ and satisfies that $\|\tilde{\vec u}\|_0 \leq C \| q\|_0$, which comes from the \emph{a-priori} (or stability) estimate. Also, as $\dive \tilde{\vec u} = q$, we have $\|\tilde{\vec u}\|_{\dive} \leq (C+1)\|q\|$. Going back to the original problem, we want to show that there exists $\beta>0$ such that
+    \begin{equation}
+        \sup_{\vec v\in \vec H}\frac{b(\vec v, q)}{\|\vec v\|} \geq \beta \|q\|_0 \qquad \forall q \in Q
+    \end{equation}
+    Using our previously constructed solution, we obtain
+    \begin{equation}
+        \sup_{\vec v\in \vec H}\frac{b(\vec v, q)}{\|\vec v\|} \geq \frac{(\dive \tilde{\vec u}, q)}{\|\tilde{\vec u}\|_{\dive}}\geq \frac{\|q\|_0^2}{(C+1)\|q\|} = \tilde\beta \|q\|
+    \end{equation}
+    where $\tilde \beta = 1/(C+1)$. This concludes the proof. We note that it was actually sufficient to show that for each $q$ there existed an element $\tilde{\vec u}$ in the desired space, as it proved the survectivity of the operator $B$, but showing the complete inf-sup estimate was more instructive. 
+\end{itemize}
+Given that we have shown the required properties for $a$ and $b$, then there exists a unique and stable solution $(u,p)$ of Darcy's problem.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Discretization of saddle point problems}
+\section{Discretization of saddle point problems}\label{sec:discretization-saddle-point}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We consider finite dimensional and conforming spaces $\{H_h\}_h \subset H$ and $\{Q_h\}_h \subset Q$. Then, given $\vec F$ in $H'$ and $G$ in $Q'$, the discrete problem reads: Find $(u_h, p_h)$ in $H_h \times Q_h$ such that 
-    \[ \begin{aligned}
+\begin{equation}
+    \begin{aligned}
         a(u_h, v_h) + b(v_h, p_h) &= \langle F, v_h\rangle &&\forall v_h \in H_h \\
         b(u_h, q_h)  &= \langle G, q_h\rangle &&\forall q_h \in Q_h. 
-    \end{aligned} \]
-The previous theory can be used in this context unchanged, with only some mild changes in the definition of the operators, which we do in the following before announcing the operators. Consider the induced operators $A_h:H_h\to H_h$ and $B_h: H_h\to Q_h$, defined using convenient Riesz operators as done previously, and define the kernel space $V_h = \ker B_h = \{v_h \in H_h: b(v_h, q_h) = 0 \quad\forall q_h \in Q_h\}$. 
-\begin{theorem} Consider the orthogonal projection $\Pi_h: H_h \to Q_h$. Then, if 
+    \end{aligned}
+\end{equation}
+The previous theory can be used in this context unchanged, with only some mild changes in the definition of the operators, which we do in the following before announcing the operators. Consider the induced operators $A_h:H_h\to H_h$ and $B_h: H_h\to Q_h$, defined using convenient Riesz operators as done previously, and define the kernel space 
+\begin{equation}
+    V_h = \ker B_h = \{v_h \in H_h: b(v_h, q_h) = 0 \quad\forall q_h \in Q_h\}.
+\end{equation}
+\begin{theorem}\label{thm:uniqueness-mixed} 
+    Consider the orthogonal projection $\Pi_h: H_h \to V_h$. Then, if 
     \begin{itemize}
         \item The operator $\Pi_h A_h|_{V_h}: V_h\to V_h$ is injective (or surjective), and
         \item the bilinear form $b:H_h\times Q_h\to \R$ satisfies and inf-sup condition, then
     \end{itemize}
-for each pair of functions $(F, G)$ there is a unique solution $(u_h, p_h)$ in $H_h\times Q_h$ such that 
-    \[ \| (u_h, p_h) \|_{H\times Q} \leq C_h\left( \|F|_{H_h}\|_{H_h'} + \| G|_{Q_h} \|_{Q_h'} \right), \]
-where $C_h = C_h(\| A_h\|, \| (\Pi_h A)^{-1} \|, \beta_h)$. 
-\end{theorem}
-From this result, it is easy to see that the Galerkin projection $G_h: H\times Q \to H_h\times Q_h$ is well-posed: 
-    \[\begin{aligned}
-        a(\Pi_H \circ G_h(u,p), v_h) + b(v_h, \Pi_Q \circ G_h(u,p)) &= a(u, v_h) + b(p, v_h) && \forall v_h \in H_h\\
-        b(\Pi_H \circ G_h(u,p), q_h) &= b(u, q_h) && \forall q_h \in Q_h,
-    \end{aligned}\]
-where $\Pi_H$ and $\Pi_Q$ are simply component projections, i.e. $\Pi_H(u,p) = u$ and $\Pi_Q(u,p) = p$. One can further prove a Céa estimate: 
-    \[ \| u - u_h\| \leq C_1 \|\inf_{\zeta_h \in H_h}\| u -\zeta_h \|_H + C_2\inf_{w_h\in Q_h}\| p -w_h\|\]
-    \[ \|p - p_h\| \leq C_3 \|\inf_{\zeta_h \in H_h}\| u -\zeta_h \|_H + C_4\inf_{w_h\in Q_h}\| p -w_h\|.\]
-Note that the discrete inf-sup condition \emph{does not} follow from the continuous one, so it is typically an additional difficulty during the analysis. Still, there is a classical lemma that allows to infer the discrete inf-sup in some conditions. 
-
-\begin{lemma}[Fortin's Lemma]
-Consider $b:H\times Q\to \R$ that satisfies an inf-sup condition with constant $\beta >0$. If there exists a famliy of discrete projectors $\Pi_h: H\to H_h$ such that 
-    \[ \|\Pi_h \|\leq \tilde C \quad \forall h \qquad \text{ and } \qquad b(\Pi_h u, q_h) = b(u, q_h) \quad\forall u\in H, q_h \in Q_h,\]
-then the discrete inf-sup of $b:H_h\to Q_h$ holds with $\tilde \beta = \beta / \tilde C$.
+    for each pair of functions $(F, G)$ there is a unique solution $(u_h, p_h)$ in $H_h\times Q_h$ such that 
+    \begin{equation}
+        \| (u_h, p_h) \|_{H\times Q} \leq C_h\left( \|F|_{H_h}\|_{H_h'} + \| G|_{Q_h} \|_{Q_h'} \right)
+    \end{equation}
+    where $C_h = C_h(\| A_h\|, \| (\Pi_h A)^{-1} \|, \beta_h)$. 
+    \end{theorem}
+    From this result, it is easy to see that the Galerkin projection $G_h: H\times Q \to H_h\times Q_h$ is well-posed: 
+    \begin{equation}
+        \begin{aligned}
+            a(\Pi_H \circ G_h(u,p), v_h) + b(v_h, \Pi_Q \circ G_h(u,p)) &= a(u, v_h) + b(p, v_h) && \forall v_h \in H_h\\
+            b(\Pi_H \circ G_h(u,p), q_h) &= b(u, q_h) && \forall q_h \in Q_h,
+        \end{aligned}
+    \end{equation}
+    where $\Pi_H$ and $\Pi_Q$ are simply component projections, i.e. $\Pi_H(u,p) = u$ and $\Pi_Q(u,p) = p$. One can further prove a Céa estimate: 
+    \begin{equation}
+        \| u - u_h\| \leq C_1 \|\inf_{\zeta_h \in H_h}\| u -\zeta_h \|_H + C_2\inf_{w_h\in Q_h}\| p -w_h\|
+    \end{equation}
+    \begin{equation}
+        \|p - p_h\| \leq C_3 \|\inf_{\zeta_h \in H_h}\| u -\zeta_h \|_H + C_4\inf_{w_h\in Q_h}\| p -w_h\|
+    \end{equation}
+Note that the discrete inf-sup condition \emph{does not} follow from the continuous one, as we studied in Section~\ref{sec:inf-sup}. Still, there is a classical lemma that allows to infer the discrete inf-sup in some conditions. 
+\begin{lemma}[Fortin's Lemma]\label{lemma:fortin}
+    Consider $b:H\times Q\to \R$ that satisfies an inf-sup condition with constant $\beta >0$. If there exists a famliy of discrete projectors $\Pi_h: H\to H_h$ such that 
+    \begin{equation}
+        \|\Pi_h \|\leq \tilde C \quad \forall h \qquad \text{ and } \qquad b(\Pi_h u, q_h) = b(u, q_h) \quad\forall u\in H, q_h \in Q_h
+    \end{equation}
+    then the discrete inf-sup of $b:H_h\to Q_h$ holds with $\tilde \beta = \beta / \tilde C$.
 \end{lemma}
-
-

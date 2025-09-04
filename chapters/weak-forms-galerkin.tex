@@ -1,0 +1,411 @@
+As we reviewed in the last chapter, one can derive theoretical convergence and stability guarantees for the finite difference method, but its applicability is heavily restricted by the geometry discretization, which is often limited to regular grids in rectangular domains in $\R^n$. In this chapter, we seek to (i) formally define the conditions for well-posedness of abstract and elliptic problems, (ii) introduce Galerkin methods as the standard, finite-dimensional approximation methods, and (iii) introduce approximation of PDEs via weak (or variational) formulations that are suitable for Galerkin methods. This presentation partially follows~\cite{ern2004theory}.
+
+\section{Well-posedness of abstract problems}
+Let $W$ and $V$ be normed vector spaces with norms $\|\cdot\|_W$ and $\|\cdot\|_V$, respectively. It is sufficient for this analysis to assume that $V$ is a reflexive Banach space and $W$ is a Banach space, but in many applications they are Hilbert spaces. We define the following abstract and continuous problem: find $u\in W$ such that
+\begin{equation}\label{eq:well-posedness-abstract-problem}
+    \begin{aligned}
+        a(u,v) = f(v),\quad \forall v\in V,
+    \end{aligned}
+\end{equation}
+where $a$ is a continuous bilinear form on $W\times V$, i.e. $a\in \mathcal{L}(W\times V; \R)$ (and thus $a$ is bounded), and $f\in V'$ is a continuous linear form on $V$. Recall that we are using the shorthand notation $f(v)=\langle f, v\rangle_{V',V}$ for the duality pairing. 
+
+The notion that problem~\ref{eq:well-posedness-abstract-problem} has a \emph{unique solution} and that it is continuous with respect to $f$ is called \emph{well-posedness}, and is the fundamental property that one seeks to prove to consider proposing a discrete method to solve it. This definition of well-posedness is standard and was proposed by Hadamard. 
+\begin{definition}[Well-posedness in the sense of Hadamard]
+    Problem~\ref{eq:well-posedness-abstract-problem} is said to be \emph{well-posed} if it admits exactly one solution, and if the following a priori estimate holds: 
+    \begin{equation}
+        \exists c>0, \forall f\in V',\quad \|u\|_W \leq c\|f\|_{V'}.
+    \end{equation}
+\end{definition}
+
+In our applications, the bilinear form $a$ and the linear form $f$ result from deriving a \emph{weak formulation} of a boundary value problem, i.e. a PDE with a set of boundary conditions. In the following section, we will derive such formulations for a number of PDEs. 
+
+\section{Weak formulations}\label{sec:weak-formulations}
+A weak formulation refers to an integral form of a PDE, understood distributionally. This is typically a systematic procedure that should not be too difficult, and it helps in revealing what are the adequate boundary conditions for a given problem. The main tool for this will be the integration by parts formulas. 
+
+Our test problem will be the Laplace problem, given by the $-\Delta$ operator. The minus sign will be better justified in the following section. Consider then the problem of finding $u$ such that 
+\begin{equation}
+    -\Delta u = f \quad \tin\Omega.
+\end{equation}
+Define an arbitrary smooth function $v$, then integration by parts yields
+\begin{equation}\label{eq:ibp-poisson}
+    - \int_\Omega \Delta u v\,dx = -\int_{\partial\Omega}\gamma_0 v \gamma_N \grad u \,ds + \int_\Omega \grad u \cdot \grad v\,dx
+\end{equation}
+for all $v$. This function is typically called a \emph{test function}. The surface form suggest the boundary conditions: 
+\begin{equation}
+    \int_{\partial\Omega}\underbrace{\gamma_0 v}_\text{Dirichlet BC} \underbrace{\gamma_N \grad u}_\text{Neumann BC} \,ds,
+\end{equation}
+so that we can have boundary conditions on the function itself  
+\begin{equation*}
+    u = g,
+\end{equation*}
+or on its normal derivative
+\begin{equation*}
+    \grad u \cdot \vec n = h.
+\end{equation*}
+This can be combined, so that for a given partition of the boundary into two disjoint sets $\Gamma_D$ and $\Gamma_N$ such that $\overline{\partial\Omega} = \overline{\Gamma_D}\cup\overline{\Gamma_N}$, one can have a Dirichlet boundary condition on $\Gamma_D$ and a Neumann boundary condition on $\Gamma_N$. For this type of boundary condition, one must define a solution space given by 
+\begin{equation}
+    V_g = \{v \in H^1(\Omega): \gamma_0 v = g \ton\Gamma_D\},
+\end{equation}
+but let us focus first on spaces with null Dirichlet boundary condition ($V_0$). In this case, the boundary conditions will give
+\begin{equation*}
+    \int_{\partial\Omega}\gamma_0 v \gamma_N \grad u\,ds = \int_{\gamma_N} h \gamma_0 v\,ds,
+\end{equation*}
+and thus the integral form of the equation will be given by
+\begin{equation*}
+    -\int_\Omega\Delta u v\,dx = -\int_{\Gamma_N}v h\,ds + \int_\Omega \grad u \cdot \grad v\,dx = \int_\Omega f v\,dx,
+\end{equation*}
+for all smooth $v$. Now, we note that (i) this formulation is well defined for $u,v$ in $H^1$ (and thus can be extended to hold for all $v$ in $H^1$ by density as long as $v$ satisfies the Dirichlet boundary conditions), (ii) the trace operator $\gamma_0$ has been omitted from the surface integral for convenience, and (iii) that the Dirichlet boundary condition does not appear anywhere in the formulation. This justifies naming Dirichlet boundary conditions \emph{essential}, and Neumann boundary conditions \emph{natural}. The \emph{weak formulation} of the problem thus refers to the following statement: find $u$ in $V_0$ such that
+\begin{equation}\label{eq:weak-form-poisson}
+    (\grad u, \grad v)_{0,\Omega} = \langle f, v\rangle  + \langle h,  v\rangle \qquad \forall v\in V_0,
+\end{equation}
+for given functions $f$ in $V_0'$ and $g$ in $(\gamma_0 V_0)'$. Note the following: 
+\begin{itemize}
+    \item The space of the solution and the test functions is the same. This is not mandatory, but it is common and can be better motivated by interpreting the Laplace problem as the first order equations related to the following minimization problem: 
+    \begin{equation*}
+        \min_{v \in V_0} \int_\Omega |\grad v|^2\,dx .
+    \end{equation*}
+    Then, one simply infers the spaces of each function from the definition of the Gâteaux derivative. 
+    \item The solution $u$ was formulated in a space without boundary condition. This is important because the regularity theory will depend on the solution space being a Hilbert space, and the space $V_g$ is not even a vector space as it is not closed under addition. This can be solved by defining adequate \emph{lifting} operators, i.e. a function $G$ in $H^1(\Omega)$ such that $\gamma_0 G = g$ that allows us to write $u$ in $V_g$ as 
+    \begin{equation*}
+        u = u_0 + G,
+    \end{equation*}
+    where $u_0$ belongs to $V_0$. We can then rewrite the problem in $V_g$ as a problem in $V_0$ (and I encourage the reader to do this procedure at least once in their life). The existence of a lifting function in this case is given by the surjectivity of the Dirichlet trace, but it can be tricky in other contexts. This is also tricky in nonlinear problems, which justifies that nonlinear problems are typically studied with homogeneous boundary conditions.  
+    \item We note that the Laplacian is now being interpreted as a \emph{distribution}, and thus the strong problem (including the boundary conditions) yields the definition of the \emph{action} of the distribution. In particular, this means that the action of the distribution naturally changes with the boundary conditions. This observation is fundamental to understand Discontinuous Galerkin methods, or other formulations defined on broken spaces, i.e. spaces that allow for discontinuities. 
+\end{itemize}
+
+\section{Well-posedness of elliptic problems}
+A broad class of PDEs where we can prove existence and uniqueness of solutions are \emph{elliptic} problems, whose weak formulations involve elliptic forms. 
+\begin{definition}[Elliptic forms]\label{def:elliptic-form}
+    A bilinear form $a(\cdot, \cdot)$ defined on a Hilbert space $X$ is said to be \emph{elliptic} if there exists a constant $\alpha>0$ such that
+    \begin{equation}\label{eq:elliptic-form}
+        a(x, x) \geq \alpha \| x \|^2_X \qquad \forall x\in X.
+    \end{equation}
+\end{definition}
+
+The ellipticity property~\eqref{eq:elliptic-form} is the basis of the Lax-Milgram lemma, which gives sufficient conditions for the existence and uniqueness of solutions of elliptic problems.
+\begin{lemma}[Lax-Milgram]\label{lemma:lax-milgram}
+    Consider a bounded bilinear form $a: H\times H\to \R$ defined on a Hilbert space $H$ that is elliptic with constants $C$ and $\alpha$ respectively, and a linear functional $f\in H'$. Then, problem~\eqref{eq:well-posedness-abstract-problem} is well-posed, i.e. there exists a unique solution $u\in H$ such that $a(u,v)=f(v)$ for all $v\in H'$, and it satisfies the \emph{a priori estimate}
+    \begin{equation}\label{eq:lax-milgram-a-priori}
+        \| u\|_H \leq \frac 1 \alpha \| f \|_{H'} .
+    \end{equation}
+\end{lemma}
+
+Before providing a proof, we note that every continuous bilinear form $a:H\times H\to \R$ induces an operator $A:H\to H'$ given by
+\begin{equation}\label{eq:form-induced-by-matrix}
+    (Au)[v] = a(u,v),
+\end{equation}
+which one could also write as $Au = a(u, \cdot)$. Naturally, the bilinear form $a$ is bounded if and only if the operator $A$ is bounded. 
+
+\begin{proof}
+    It will be seen further ahead that this can be easily proved using the inf-sup conditions. Still, we present a more elementary proof that uses only the properties of the bilinear form and a fixed point argument. Consider $\rho>0$ and the fixed-point map $T:H\to H$ given by 
+    \begin{equation*}
+        T(u) = u - \rho \mathcal R^{-1}\circ (Au - F),
+    \end{equation*}
+    where it can be seen that $T$ is linear, and $\mathcal R$ is the Riesz map between $H$ and $H'$. Now, we look for $\rho$ such that $T$ is a contraction, which we do simply by hand. Consider thus two functions $u,v$ in $H$, then: 
+    \begin{tightalign*}
+        \| T(u) - T(v)\|_H^2 &= \|T(u - v) \|_H^2 \\
+        &= (u-v, u-v)_H - 2\rho(u-v, \mathcal R^{-1}\circ A(u-v))_H\\
+        &\phantom{=  } + \rho^2(\mathcal R^{-1}\circ A(u-v), \mathcal R^{-1}\circ A(u-v))_H \\
+        &= \|u-v\|_H^2 - 2\rho\langle A(u-v), u-v\rangle_{H'\times H} + \rho^2 \| \mathcal R^{-1} \circ A(u-v)\|_H^2.
+    \end{tightalign*}
+    We bound the second and third terms as follows: 
+    \begin{tightalign*}
+        \langle A(u-v), u-v\rangle &= a(u-v, u-v)  \tag{by definition of $A$}\\
+        &\geq \alpha \| u-v\|_H^2, \tag{ellipticity}
+    \end{tightalign*}
+    \begin{tightalign*}
+        \| \mathcal R^{-1} \circ A(u-v) \|_H &= \| A(u-v) \|_{H'} \tag{Riesz isometry}\\
+        &\leq  C \| u-v \|_H. \tag{continuity}
+    \end{tightalign*}
+    Plugging this into our previous estimate we get
+    \begin{equation*}
+        \| Tu - Tv \|_H \leq (1 - 2\rho \alpha + \rho^2 C^2)^{1/2}\| u-v \|_H ,
+    \end{equation*}
+    which shows that $T$ is a contraction whenever $\rho\in (0,\frac{2\alpha}{C^2})$. Stability follows naturally from the properties of $a$:
+    \begin{tightalign*}
+        \alpha \| u \|^2 & \leq a(u,u) \tag{ellipticity}\\
+        & = f(u) \\
+        & \leq \| f \|_{H'} \|u \|_H,
+    \end{tightalign*}
+    which shows the desired stability estimate: 
+    \begin{equation*}
+        \| u \|_H \leq \frac{1}{\alpha} \| f \|_{H'}.
+    \end{equation*}
+\end{proof}
+
+In the case that $a$ is symmetric and non-negative, problem~\ref{eq:well-posedness-abstract-problem} is equivalent to the optimization problem 
+\begin{equation*}
+    \min_{u\in V} J(u) \coloneqq \min_{u\in V} \left\{\frac{1}{2}a(u,u) - f(u)\right\},
+\end{equation*}
+and the Lax-Milgram lemma implies that there exists a unique minimizer. In this sense, the ellipticity of $a$ translates to the strong convexity of $J$, which represents an \emph{energy functional}. 
+
+The generalization of the Lax-Milgram lemma for the setting where $W$ is a Banach space and $V$ is a reflexive Banach space is covered in Chapter~\ref{chapter:nonlinear}, where we state the \emph{generalized Lax-Milgram lemma} and the \emph{inf-sup condition}. 
+
+\section{Galerkin methods}\label{sec:galerkin}
+Instead of discretizing the differential operator, as one would do in the case of finite differences to obtain discrete derivatives, one can consider discrete functional spaces, with the idea that the discrete space somehow converges to the continuous space. This is known as a \emph{Galerkin scheme} or \emph{Galerkin method}.
+
+\paragraph{The discrete Galerkin setting}
+Consider thus an abstract differential problem given by finding $u$ in $W$ such that
+\begin{equation}
+    a(u, v) = f(v), \quad \forall v \in V,
+\end{equation}
+such that the hypotheses the Lax-Milgram lemma~\ref{lemma:lax-milgram} hold. We can consider a discrete \emph{solution (or trial) space} $W_h$ and a discrete \emph{test space} $V_h$ that approximate $W$ and $V$, where the subindex $h$ refers to the characteristic size of the elements of a discrete mesh of the domain $\Omega$. and define a \emph{Petrov-Galerkin method (or scheme)} as the following discrete problem: find $u_h \in W_h$ such that 
+\begin{equation}\label{eq:galerkinscheme}
+    a_h(u_h, v_h) = f_h(v_h) \qquad \forall v_h \in V_h,
+\end{equation}
+where $a_h$ and $f_h$ are approximations of $a$ and $f$, respectively. 
+We assume that both spaces $W_h$ and $V_h$ are equipped with some norms $\|\cdot\|_{W_h}$ and $\|\cdot\|_{V_h}$. In most references, the particular case of~\ref{eq:galerkinscheme} when $W_h = V_h$ is known as a \emph{standard Galerkin}, \emph{Bubnov-Galerkin} or simply \emph{Galerkin method}. 
+
+We note that Galerkin methods are simply linear systems. To see this, consider~\ref{eq:galerkinscheme} and fix $M=\dim W_h$, $N=\dim V_h$. We can then fix $\{\psi_1,\dots,\psi_M\}$ a basis of $W_h$ and $\{\varphi_1,\dots,\varphi_N\}$ a basis of $V_h$. The expansion of $u_h\in W_h$ reads 
+\begin{equation}
+    u_h = \sum_{i=1}^M U_i \psi_i,
+\end{equation}
+where we denote the coordinate vector of $u_h$ as $\vec U = (U_i)_i\in\R^M$ with respect to the basis $\{\psi_1,\dots,\psi_M\}$. Denote the matrix $\ten A\in\R^{N\times M}$ and the vector $\vec F \in \R^N$ component-wise as 
+\begin{equation}
+    A_{ij} \coloneqq a_h(\psi_j, \varphi_i),\quad F_i\coloneqq f_h(\varphi_i),
+\end{equation}
+and one can readily verify that $u_h$ solves~\ref{eq:galerkinscheme} if and only if $\ten A\vec U  =\vec F$. When working with a computational implementation of a Galerkin method, we have to take advantage of the structure of $\ten A$ to propose fast methods for solving the linear system on $\vec U$.
+
+The choice of the $W_h$ and $V_h$ depends on the scheme used, and one may or may not choose them as subsets of the corresponding continuous function spaces. For instance, when approximating $W=C^2$ functions in 1D, one could choose the space $W_h$ as the space of piecewise linear functions, where $W_h\not\subset W$, or as the space of cubic splines, where $W_h\subset W$. This property is known as \emph{conformity}. 
+\begin{definition}[Conformity]
+    An approximation setting (such as a Galerkin scheme) is said to be \emph{conformal} if $W_h\subset W$ and $V_h\subset V$, and is said to be \emph{non-conformal} otherwise.
+\end{definition}
+
+Naturally, we would expect the continuous solution $u\in W$ to be a solution
+\begin{equation*}
+    a_h(u, v_h) = f_h(v_h),\quad \forall v_h\in V_h,
+\end{equation*}
+where $a_h$ is appropriately extended to handle $u$. In this case, we say that our method is \emph{consistent}, otherwise it is \emph{non-consistent}. This property implies an additional property: by subtracting equations 
+\begin{tightalign*}
+    a_h(u, v_h) &= f_h(v_h),\quad \forall v_h\in V_h,\\
+    a_h(u_h, v_h) &= f_h(v_h),\quad \forall v_h\in V_h,
+\end{tightalign*}
+and by the bilinearity of $a_h$ we preserve in the approximation $a_h\approx a$, we obtain the \emph{Galerkin orthogonality} property
+\begin{equation}\label{eq:galerkin-orthogonality}
+    a_h(u-u_h, v_h) = 0,\quad \forall v_h\in V_h.
+\end{equation}
+
+Most of the time we will use conformal, consistent, standard Galerkin methods, where $W_h=V_h$ and $V_h\subset V$. When $a$ is elliptic, it is easy to verify that all the hypotheses of the Lax-Milgram lemma are satisfied, and thus the Galerkin scheme is invertible and we obtain a discrete a priori estimate 
+\begin{equation*}
+    \|u_h\|_V \leq \frac{1}{\alpha}\|f\|_{V'}.
+\end{equation*}
+One can further prove that for elliptic problems, the matrix $\ten{A}$ associated to the Galerkin scheme is positive-definite, and if $a$ is symmetric, then $\ten{A}$ is symmetric as well. The general case, when $a$ is not necessarily elliptic, is covered in~\ref{sec:inf-sup}.
+
+\paragraph{Error analysis}
+The natural question is whether the discrete solution $u_h\in W_h$ converges to the continuous solution $u\in W$, which is studied through the \emph{error equation}. We define the \emph{approximation error} $e_h$ as 
+\begin{equation}
+    e_h\coloneqq u - u_h.
+\end{equation}
+
+We can use the Galerkin orthogonality~\ref{eq:galerkin-orthogonality} to compute the error estimate for consistent, conformal approximations of elliptic problems. This estimate is known as \emph{Céa's estimate}.
+\begin{lemma}[Céa's estimate]\label{lemma:cea-estimate}
+    Consider a consistent, conformal approximation of~\ref{eq:galerkinscheme}, i.e. with $W_h=V_h$ and $W=V$. Assume that the bilinear form $a$ is elliptic with ellipticity constant $\alpha$ and continuity constant $C$. Then, we have the error estimate 
+    \begin{equation}
+        \| u - u_h \|_V \leq \frac C \alpha \inf_{v_h\in V_h} \|u - v_h\|_V.
+    \end{equation}
+    \begin{proof}
+        Let $z_h\in V_h$ be an arbitrary test function. We proceed directly:
+        \begin{tightalign*}
+            \alpha \| e_h \|_V^2 &\leq a(e_h, e_h) \tag{$a$ elliptic}\\ 
+            &= a(e_h, u - z_h) \tag{Galerkin orthogonality} \\
+            &\leq C\|e_h\|_V \|u - z_h\|_V \tag{$a$ continuous},
+        \end{tightalign*}
+        where one obtains that for all $z_h$ it holds that
+        \begin{equation}
+            \| e_h \|_V \leq \frac C \alpha \|u - z_h\|_V.
+        \end{equation}
+        Taking the infimum over $z_h$ we get the desired bound.
+    \end{proof}
+\end{lemma}
+
+This inequality can reveal many things. For example, if the number $C/\alpha$ is very big, it can hint on a very wide gap between the optimal solution (i.e. the projection) and the discrete one computed from the space $V_h$. This estimate can be sharpened when $a$ is symmetric via an energy norm, and it extended to the non-elliptic case, as we will study in~\ref{sec:inf-sup}, as well as the non-consistent and non-conformal case, see~\cite[Sect. 2.3.2]{ern2004theory}. A more precise characterization of the approximation properties of a space can be given by the \emph{Kolmogorov width}, which has been studied in~\cite{evans2009n}.
+
+\paragraph{The Aubin-Nitsche lemma} We can derive an error estimate in a weaker norm than Céa's estimate. For simplicity, we consider the conformal, consistent, standard Galerkin variant of~\ref{eq:galerkinscheme}, where $W_h=V_h$ and $W=V$. We assume that our continuous and discrete problems are well-posed, as well as two additional assumptions: 
+\begin{enumerate}
+    \item There exists a Hilbert space $H$ into which $V$ can be continuously embedded, i.e. for $\|v\|_H \leq c\|v\|_V$ for all $v\in V$. Assume that $H$ is equipped with a continuous, symmetric, positive bilinear form $\ell(\cdot,\cdot)$, which induces a seminorm $|\cdot|_H \coloneqq\sqrt{\ell(\cdot,\cdot)}$. Further, assume that there exists a Banach space $Z\subset V$ and a stability constant $c_S>0$ such that for all $g\in H$, the function $\sigma(g)\in V$ solves the auxiliary problem
+    \begin{equation*}
+        a(v, \sigma(g)) = \ell(g, v),\quad \forall v\in V,
+    \end{equation*}
+    and satisfies the a priori estimate $\|\sigma(g)\|_Z \leq c_S |g|_H$.
+    \item There exists an interpolation constant $c_h>0$ such that for all mesh sizes $h$, 
+    \begin{equation*}
+        \inf_{v_h\in V_h} \|v-v_h\|_V \leq c_h h \|v\|_Z.
+    \end{equation*}
+\end{enumerate}
+
+With these two assumptions, we can derive an error estimate in the seminorm $|\cdot|_H$.
+\begin{lemma}[Aubin-Nitsche lemma]
+    Under the above assumptions, for all mesh sizes $h$ we have 
+    \begin{equation*}
+        |u-u_h|_H \leq c h \|u-u_h\|_V,
+    \end{equation*}
+    where $c=c_hc_S \|a\|_{W\times V}$.
+    \begin{proof}
+        Setting the error $e_h = u-u_h$, we can see that 
+        \begin{equation*}
+            |e_h|_H = \sup_{g\in H}\frac{\ell(g,e_h)}{|g|_H}=\sup_{g\in H}\frac{a(e_h, \sigma(g))}{|g|_H}.
+        \end{equation*}
+        Galerkin orthogonality implies that $a(e_h,\sigma(g)) = a(e_h, \sigma(g)-v_h)$ for all $v_h\in V_h$, and thus 
+        \begin{tightalign*}
+            a(e_h, \sigma(g)) &\leq \|a\|_{W\times V} \|e_h\|_V \inf_{v_h\in V_h} \|\sigma(g) - v_h\|_V\\
+            &\leq \|a\|_{W\times V} \|e_h\|_V c_h h \|\sigma(g)\|_Z\tag{first assumption}\\
+            &\leq \|a\|_{W\times V} \|e_h\|_V c_h h c_S |g|_H, \tag{second assumption}
+        \end{tightalign*}
+        which yields the estimate we wanted.
+    \end{proof}
+\end{lemma}
+
+\paragraph{Examples}
+\paragraph{The Poisson problem} Consider $f$ in $H^{-1}(\Omega)$ and $g$ in $H^{1/2}(\Gamma)$ with $\Gamma\coloneqq \partial\Omega$. The Poisson problem in strong form is given as the following boundary value problem: 
+\begin{equation*}
+    \begin{aligned}
+        -\Delta u  &= f &&\tin\Omega\\
+        \gamma_0 u &= g &&\ton\Gamma.
+    \end{aligned}
+\end{equation*}
+Note that the strong form must be understood in the distributional sense, i.e. as an equation in $H^{-1}(\Omega)$. To derive the weak formulation, consider a function $v$ in $H_0^1(\Omega)$, then using the boundary conditions we obtain that 
+\begin{equation}
+    -\langle \Delta u,v\rangle = (\grad u, \grad v),
+\end{equation}
+where $(\cdot, \cdot)$ is the $L^2(\Omega)$ product. Thus the weak formulation reads: find $u$ in $H_0^1(\Omega)$ such that 
+\begin{equation}
+    \int_\Omega \grad u\cdot \grad v\,dx = \int_\Omega fv\, dx \qquad \forall v\in H_0^1(\Omega),
+\end{equation}
+or more compactly, $(\nabla u, \nabla v) = (f, v)$. This problem can be shown to be well-posed using Lax-Milgram's lemma and the Poincaré inequality. A good exercise is to extend the proof to the case of non-homogeneous Dirichlet boundary conditions.
+
+In the case of having a boundary condition defined only on a portion $\Gamma_D$ of the boundary, the formulation changes, because (i) we need further information regarding the Neumann trace on the complement of the boundary, (ii) the test space looks different. In particular, we define the solution space given by 
+\begin{equation}\label{eq:def-V0}
+    V_0 = \{v\in H^1(\Omega): \quad v = 0 \ton \Gamma_D\},
+\end{equation}
+which using the generalized Poincaré inequality can be shown to still satisfy an ellipticity estimate. 
+
+\paragraph{The pure Neumann problem} In general, having Neumann boundary conditions is problematic for two reasons: (i) it results in a \emph{data compatibility} condition, and (ii) it results in having a non-trivial kernel in the problem. The problem in general reads: find $u$ in $H^1(\Omega)$ such that
+\begin{equation}
+    \begin{aligned}
+        -\Delta u &= f && \tin\Omega ,\\
+        \grad u \cdot \vec n &= h && \ton\partial\Omega.
+    \end{aligned}
+\end{equation}
+The weak formulation is 
+\begin{equation}
+    (\grad u, \grad v) = (f, v) \qquad \forall v\in H^1(\Omega),
+\end{equation}
+where it is easy to see that if $u$ is a solution, then $u+c$ is also a solution for all $c\in \R$. This means that the problem has a kernel, which is given by the space of constant functions, i.e. $\spanned(\{1\})$. The other problem is that, when one considers a test function in the kernel of the problem, this yields the following: 
+\begin{equation}
+    (\grad u, \grad 1) = 0 = (f, 1) .
+\end{equation}
+This is a compatibility condition on the data, and it shows that having compatible data is \emph{necessary} for having a well-posed formulation. Because of these reasons, one considers a solution (and test) space that is orthogonal to the kernel: 
+\begin{equation}
+    V = \{u\in H^1(\Omega): \int_\Omega u \,dx = 0\},
+\end{equation}
+where the null average condition can be seen as 
+\begin{equation}
+    \int_\Omega u \,dx = (u, 1)_0 = (u,1)_0 + (\grad u, \grad 1)_0 = (u, 1)_1,
+\end{equation}
+and thus the orthogonality is being considered with respect to the natural space $H^1(\Omega)$. With it, the weak formulation is given as: Consider $f$ a compatible function in $H^{-1}(\Omega)$, then find $u$ in $V$ such that
+\begin{equation}
+    (\grad u, \grad v) = (f, v) \qquad \forall v\in V.
+\end{equation}
+
+To conclude this section, we wanted to establish that if the solution is sufficiently regular, then the weak form is equivalent to the strong form. The main tool for this is the fundamental lemma of the calculus of variations: 
+
+\begin{lemma}[Fundamental lemma of the calculus of variations]\label{lemma:lema-calvar}
+    Consider $\Omega\subset \R^d$ bounded and set $f\in L^1(\Omega)$ such that
+    \begin{equation}\label{eq:lemma-calvar}
+        \int_\Omega f\varphi\,dx = 0 \qquad \forall \varphi \in C_0^\infty(\Omega).
+    \end{equation}
+    Then, $f=0$ almost everywhere.
+\end{lemma}
+
+Consider now the weak formulation of the Poisson problem: Find $u$ in $V_0$ such that 
+\begin{equation}
+    (\grad u, \grad v) = (f, v) - (\grad u_g, \grad v) + \langle t, v\rangle_{-1/2, 1/2},
+\end{equation}
+where $f$ and $t$ are integrable. Then, integrating by parts one obtains
+\begin{equation}\label{eq:ibp-nonhomogeneous-poisson}
+    (-\Delta (u+u_g) - f, v)+\langle \grad u \cdot \vec n, v\rangle = \langle t, v\rangle_{-1/2,1/2}.
+\end{equation}
+If we consider test functions $v$ in $C_0^\infty(\Omega)$, then the problem reduces to
+\begin{equation}
+    (-\Delta (u+u_g) - f, v) = 0,
+\end{equation}
+and if $u$ and the lifting function $u_g$ are integrable, then Lemma~\ref{lemma:lema-calvar} yields
+\begin{equation*}
+    -\Delta \tilde u = f,
+\end{equation*}
+which is the strong form for the combined solution $\tilde u= u + u_g$. Substituting this back into equation~\eqref{eq:ibp-nonhomogeneous-poisson}, we obtain the weak form
+\begin{equation*}
+    \langle \grad u \cdot \vec n, v\rangle = \langle t, v\rangle.
+\end{equation*}
+Using again Lemma~\ref{lemma:lema-calvar} on the subspace topology of $C_0^\infty(\Gamma_N)$, then we obtain the equation
+\begin{equation*}
+    \grad u\cdot \vec n = t,
+\end{equation*}
+which holds strongly.\\
+
+\example{
+We encourage the reader to try to compute the weak formulation of the Poisson problem in mixed form. To do this, one must define the auxiliary variable $\vec \sigma \coloneqq \grad u$, so that the strong form of the problem now becomes
+\begin{equation*}
+    \begin{aligned}
+        -\dive \vec\sigma &= f && \tin\Omega, \\
+        \vec \sigma - \grad u &= 0 &&\tin\Omega , \\
+        \gamma_D u &= g && \ton\Gamma_D, \\
+        \gamma_N \vec\sigma &= h &&\ton\Gamma_D . 
+    \end{aligned}
+\end{equation*}
+This problem will be studied in detail further ahead. 
+}
+\paragraph{Non-conforming schemes}\label{sec:non-conforming-schemes}
+In order to have a good approximation, it is not necessary that the scheme is conforming. Some examples of conforming schemes are most finite element methods and spectral element methods, and among non-conforming schemes are discontinuous-Galerkin (DG) finite element methods, and methods that impose boundary conditions weakly. We will study several conforming finite element methods in Chapter~\ref{chapter:fem}. 
+
+\paragraph{Classical non-conforming schemes} Although conforming spaces have some nice properties, there exist some applications where the mesh and the domain boundaries may not match, or where traditional finite elements may not apply, forcing one to use other schemes such as spline-based methods, where the degrees of freedom are control points of the splines, rather than actual nodes. In these cases, we can use a non-conforming scheme. The following presentation is based on~\cite{Chouly2024}. Consider the Poisson problem with a nonhomogeneous Dirichlet boundary condition: find $u:\Omega\to \mathbb{R}$ such that
+\begin{equation}
+    \begin{aligned}
+        -\Delta u &= f &&\tin \Omega \\
+        \gamma_0 u &= g &&\ton \partial\Omega,
+    \end{aligned}
+\end{equation}
+which we rewrite in weak form as follows: find $u\in H^1(\Omega)$ such that $u|_{\partial\Omega} = g$ and
+\begin{equation}
+    a(u,v) = (f,v) \qquad \forall v\in H_0^1(\Omega),
+\end{equation}
+where as usual we denote $a(u,v)=(\nabla u,\nabla v)$. Let $K^h$ be a discretization of $\Omega$ with mesh size $h$, which we assume is sufficiently regular. There exist several ways to enforce the Dirichlet boundary condition, such as the \emph{penalty method} and the \emph{Nitsche method}. We outline both methods below.
+\begin{itemize}
+    \item \emph{The penalty method}: at the continuous level, this method can be formulated as follows: find $u^\varepsilon\in H^1(\Omega)$ such that 
+    \begin{equation}
+        a(u^\varepsilon, v) + \frac{1}{\varepsilon} (u^\varepsilon, v)_{\partial\Omega} = (f,v) + \frac{1}{\varepsilon} (g,v)_{\partial\Omega} \qquad \forall v\in H^1(\Omega),
+    \end{equation}
+    where we introduced the penalty parameter $\varepsilon>0$. When going back to the strong form, we verify that $u^\varepsilon$ satisfies the Poisson equation $-\Delta u^\varepsilon = f$ and the Robin boundary condition 
+    \begin{equation}
+        \nabla u^\varepsilon \cdot\vec n = -\frac{1}{\varepsilon}(u^\varepsilon - g) \implies \varepsilon (\nabla u^\varepsilon) \cdot \vec n = -(u^\varepsilon - g),
+    \end{equation}
+    which for $\varepsilon$ small enough approximates the nonhomogeneous Dirichlet boundary condition. By the Friedrich inequality, we can show that the bilinear form in the left hand side is elliptic on $H^1(\Omega)$ and thus the problem is well-posed by the Lax-Milgram lemma. In a discrete setting, we consider $\varepsilon = \varepsilon_0 h^\lambda$ for some $\varepsilon_0 > 0$ and $\lambda\geq 0$, both independent of the mesh, and we can prove that this discrete problem is well-posed and convergent. Often, the user has to manually tune the values of $\varepsilon_0$ and $\lambda$ to achieve good convergence rates. The critical choice lies in the value of $\varepsilon_0$: if the value is too small, the conditioning of the global stiffness matrix deteriorates, since its conditioning is $\mathcal{O}(\varepsilon_0^{-1}h^{-1-\lambda})$, and if the value is too large, the Dirichlet condition is approximated poorly. 
+
+    \item \emph{The Nitsche method}: let $\gamma > 0$ be a positive function on $\partial\Omega$ and $\theta\in\mathbb{R}$ a fixed parameter. Integrating by parts the weak form of the Poisson problem we first get 
+    \begin{equation}
+        a(u,v) - (\nabla u\cdot \vec n, v)_{\partial\Omega} = (f,v),
+    \end{equation}
+    and from the Dirichlet condition we can write 
+    \begin{equation}
+        (u,\gamma v -\theta\nabla v\cdot \vec n)_{\partial\Omega} = (g,\gamma v - \theta \nabla v \cdot \vec n)_{\partial\Omega}.
+    \end{equation}
+    Adding these two equations together and rearranging, we get 
+    \begin{equation}
+        a(u,v) - (\nabla u \cdot \vec n, v)_{\partial\Omega} - \theta (u,\nabla v\cdot  \vec n) + (u,\gamma v)_{\partial\Omega} = (f,v) + (g,\gamma v - \theta \nabla v\cdot n)_{\partial\Omega}.
+    \end{equation}
+    Let $\zeta$ denote a piecewise constant function on the boundary, that is defined locally by the value of the diameter of every boundary facet. Taking $\gamma = \gamma_0 \zeta^{-1}$ for some $\gamma_0>0$, and recalling the trace inequality~\eqref{eq:trace-inequality},
+    \begin{equation}
+        \|\nabla v_h\cdot \vec n\|^2_{-1/2,\partial\Omega} \leq c_T \|\nabla v_h\|^2_{0,\Omega},
+    \end{equation}
+    we can prove that this problem is well-posed provided that 
+    \begin{equation}
+        \frac{(1+\theta)^2 c_T}{\gamma_0}\leq 1.
+    \end{equation}
+    Moreover, this method is convergent in the $H^1$ norm for large enough $\gamma_0$. In the case that we expect more regularity, for $u\in H^s(\Omega)$ with $3/2<s<1+k$ (where $k$ is the degree of the polynomial approximation space), we get
+    \begin{equation}
+        \|u-u_h\| + \|\nabla u\cdot \vec n - \nabla u_h\cdot \vec n\|_{-1/2,\partial\Omega} \leq Ch^s\|u\|_{s,\Omega}.
+    \end{equation}
+    Remarkably, and in contrast to the penalty method, the constant $C>0$ does not depend on $\gamma_0$ provided that it is large enough, but does depend on the regularity of the mesh and on the polynomial order $k$. As expected, the value of $\gamma_0$ influences the condition number of the global stiffness matrix associated to the left hand side of this problem, and thus it must not be taken too large, but the impact of the value of $\gamma_0$ on the approximation of the Dirichlet boundary condition is much smaller than in the penalty method. 
+\end{itemize}
+
+In practice, the penalty method is much simpler to understand and to implement, but its accuracy in some specific problems may not always be satisfactory. The Nitsche method is still simple to implement, and it constitutes a better alternative to the penalty method, where one has to tune only one numerical parameter. There exist more variants to these methods, such as the penalty-free Nitsche method and methods with Lagrange multipliers. The interested reader is referred to~\cite{Chouly2024} for more details.

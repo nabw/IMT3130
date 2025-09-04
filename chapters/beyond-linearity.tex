@@ -1,207 +1,225 @@
-\section{Local analysis}
-Consider the set 
-\[ \text{Inv}(X,Y) = \left\{ A\in \mathcal{L}(X,Y): A \text{ is invertible} \right\}. \]
+The theory of well-posedness for linear problems, centered on the Lax-Milgram lemma~\ref{lemma:lax-milgram}, provides a robust framework for proving existence and uniqueness of solutions. Its power lies in its direct application to any problem whose weak formulation can be expressed through a continuous and elliptic bilinear form $a(u,v)$. Many physical models, however, are inherently nonlinear, leading to equations where this linear structure is lost. Consider, for instance, a semilinear problem of the form
+\begin{equation}\label{eq:semilinear-example}
+    \begin{aligned}
+        -\Delta u + F(u) &= f &&\tin \Omega,  \\
+        u &= 0 && \ton \partial\Omega.
+    \end{aligned}
+\end{equation}
+Its weak formulation, $(\nabla u, \nabla v) + (F(u),v) = (f,v)$, results in a form $a(u;v)$ that depends nonlinearly on $u$, and consequently, the Lax-Milgram lemma is not applicable. Thus, we need a new set of tools to establish the well-posedness of such problems.
 
-Then, we have the following local inversion result
+This chapter introduces the foundational methods of nonlinear functional analysis. Unlike in the linear setting, there is no single, universally applicable theorem for existence and uniqueness. Instead, we will build a toolkit of three distinct and powerful approaches, each suited for a different class of nonlinear problems.
 
-\begin{theorem}
-    Consider $F\in C^1(X,Y)$, $F'(u^*)\in\text{Inv}(X,Y)$. Then, $F$ is locally invertible at $u^*$ with $F^{-1}\in C^1$. In fact,
-    \[ dF^{-1}(v) = (F'(u))^{-1}, \quad u=F^{-1}(v). \]
+We will begin with a \emph{local analysis} based on the inverse function theorem, which provides conditions for a unique solution to exist in a neighborhood of a known solution. We then move to more global methods founded on the \emph{fixed point theorems} of Banach, Brouwer, and Schauder, which provide existence results under assumptions of contractivity or compactness. Finally, we will explore the theory of \emph{monotone operators}, a nonlinear generalization of positive definite operators, and establish the Minty-Browder theorem, a cornerstone result that guarantees the existence of solutions for coercive and monotone operators.
+
+\section{Local analysis}\label{sec:local-analysis}
+Consider the set of \emph{invertible linear operators}
+\begin{equation}
+    \inv(X,Y) \coloneqq \left\{ A\in \mathcal{L}(X,Y): A \text{ is invertible} \right\}.
+\end{equation}
+For generic $C^1$ functions, we have a local inversion result, known as the \emph{inverse function theorem}.
+\begin{theorem}[Inverse function theorem]\label{thm:local-invertibility}
+    Consider $F\in C^1(X,Y)$, $F'(u^*)\in\inv(X,Y)$. Then, $F$ is \emph{locally invertible} at $u^*$, i.e.
+    \begin{equation}
+        dF^{-1}(v) = (F'(u))^{-1}, \quad u=F^{-1}(v),
+    \end{equation}
+    and $F^{-1}\in C^1$.
 \end{theorem}
 
 \example{
-    \[
-    \left\{
-    \begin{array}{rc}
-        -\Delta u + u^p  = h, &\Omega,\\
-        u=0, &\partial\Omega,
-    \end{array}\right.
-    \]
+    Consider the nonlinear problem 
+    \begin{equation*}
+        \begin{aligned}
+            \Delta u + u^p  &= h, &&\tin \Omega,\\
+            u&=0, &&\ton\partial\Omega,
+        \end{aligned}
+    \end{equation*}
     where $p>1$, $h\in H^{-1}(\Omega)$, so $F:X\to Y$ with $X\coloneqq H_0^1(\Omega)$ and $Y\coloneqq H^{-1}(\Omega)$. We compute
-    \[ dF(u)[w] = -\Delta w + p u^{p-1} w. \]
-    We want to show that $dF(u)\in\text{Inv}(X,Y)$. That is, for a given $g\in Y$, we need to prove that there exists a $w\in X$ that solves
-    \[
-    a(w,v) = (\nabla w, \nabla v) + p(u^{p-1}w,v) = \langle g,v \rangle \quad \forall v\in X.
-    \]
+    \begin{equation}
+        dF(u)[w] = -\Delta w + p u^{p-1} w.
+    \end{equation}
+    We want to show that $dF(u)\in\inv(X,Y)$. That is, for a given $g\in Y$, we need to prove that there exists a $w\in X$ that solves
+    \begin{equation*}
+        a(w,v) = (\nabla w, \nabla v) + p(u^{p-1}w,v) = \langle g,v \rangle \quad \forall v\in X.
+    \end{equation*}
     We have proven many times before the bound for the first term, so let us focus in the second:
-    \[
-    |(u^{p-1}w,v)|\leq \|u^{p-1} \|_{L^\infty} \|w\|_{0} \|v \|_{0}.
-    \]
-    Note that if $u\geq 0$, then $a$ is elliptic. Then, if $u\in X\cap L^\infty \cap \{u\geq 0\}$ we have that $dF(u)\in\text{Inv}(X,Y)$ and we can use the theorem.
-
+    \begin{equation*}
+        |(u^{p-1}w,v)|\leq \|u^{p-1} \|_{L^\infty} \|w\|_{0} \|v \|_{0}.
+    \end{equation*}
+    Note that if $u\geq 0$, then $a$ is elliptic. Then, if $u\in X\cap L^\infty \cap \{u\geq 0\}$ we have that $dF(u)\in\inv(X,Y)$ and we can use Theorem~\ref{thm:local-invertibility}.
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Fixed point theorems}
+\section{Fixed point theorems}\label{sec:fixed-point-theorems}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The main idea is that certain non-linearities would be less terrible if we could fix one of the functions. For example, consider the problem of finding a function $u$ such that
+The main idea is that certain nonlinearities would be less terrible if we could fix one of the functions. For example, consider the problem of finding a function $u$ such that
 \begin{equation}
-\begin{aligned}
-    -\Delta u &= \sin (u) &&\qquad \text{in $\Omega$},  \\
-    u &= 0 && \qquad \text{on $\partial\Omega$}.
-\end{aligned}
+    \begin{aligned}
+        -\Delta u &= \sin (u) &&\tin \Omega,  \\
+        u &= 0 && \ton  \partial\Omega.
+    \end{aligned}
 \end{equation}
 This problem is non-linear, but given $w$, finding $u$ such that
-\begin{equation}\label{eq:fixed-point:lap u sin u}
-     -\Delta u = sin(w)
+\begin{equation}\label{eq:fixed-point-sin}
+     -\Delta u = \sin(w)
 \end{equation}
-is linear on $u$. It also induces a mapping $w \mapsto T(w) = u$ such that, \emph{if it has a fixed point} $u=T(u)$, this fixed point solves the initial problem. For this section, we follow \cite{ciarlet2013linear,pata2019fixed}.
-
-
-\textbf{Definition:} A Lipschitz function $f:X\to X$
-\begin{align*}
-    ||f(x)-f(y)||\leq L||x-y||
-\end{align*}
-is said to be:
-\begin{itemize}
-    \item $L = 1:$ Non-expansive.
-    \item $L<1:$ A contraction.
-\end{itemize}
-
-\begin{theorem}[Banach Fixed Point]
- Let $X$ be a complete metric space and $f$ a contraction of constant $\lambda<1$. Then $f$ has a unique fixed point.
-
-\begin{proof} Set $x^{n+1}=f(x^n)$, which we typically refer to as a \emph{Picard iteration}, and consider some initial $x^0\in X$. By induction we get that
-\begin{align*}
-     \|x^{n+1}-x^n\| &\leq \lambda \|x^n-x^{n-1}\|\leq \underbrace{\dots}_\text{induction} \lambda^n\|x^1-x^0\|\\
-    \Rightarrow  \| x^{n+m}-x^n\| &\leq \|x^{n+m}-x^{n+m-1}\|+ \dots = \|x^{n+1}-x^n\|\\
-    &\leq (\lambda ^{n+m-1}+\dots+\lambda^n)\|x^1-x^0\|\\
-    &=\lambda^n\left(\displaystyle\sum_{j=0}^m\lambda^j\right)\|x^1-x^0\|\\
-    &\leq\lambda^n\left(\displaystyle\sum_{j=0}^\infty\lambda^j\right)\|x^1-x^0\|\\
-    &=\lambda^n\dfrac{1}{1-\lambda}\|x^1-x^0\|
-\end{align*}
-which implies that $\{x_n\}_n$ is Cauchy, and since $X$ is complete, this gives $x_n\to \bar{x}$. Finally, since $f$ is continuous, $f(\bar{x}) = \lim_{n\to \infty}f(x_n) = \lim_{x\to\infty}x_{n+1}=\bar{x}$.
-\end{proof}
+is linear on $u$. It also induces a mapping $w \mapsto T(w) = u$ such that, \emph{if it has a fixed point} $u=T(u)$, this fixed point solves the initial problem. For this section, we follow~\cite{ciarlet2013linear,pata2019fixed}.
+\begin{definition}[Non-expanding and contractive maps]\label{def:nonexpanding-contractive-maps}
+    A Lipschitz function $f:X\to X$
+    \begin{equation*}
+        ||f(x)-f(y)||\leq L||x-y||
+    \end{equation*}
+    is said to be \emph{non-expansive} if $L=1$, and a \emph{contraction} if $L<1$.
+\end{definition}
+\begin{theorem}[Banach fixed point]\label{thm:banach-fixed-point}
+    Let $X$ be a complete metric space and $f$ a contraction of constant $\lambda<1$. Then $f$ has a unique fixed point.
+    \begin{proof} 
+    Set $x^{n+1}=f(x^n)$, which we typically refer to as a \emph{Picard iteration}, and consider some initial $x^0\in X$. By induction we get that
+    \begin{tightalign*}
+        \|x^{n+1}-x^n\| &\leq \lambda \|x^n-x^{n-1}\|\leq \underbrace{\dots}_\text{induction} \lambda^n\|x^1-x^0\|\\
+        \Rightarrow  \| x^{n+m}-x^n\| &\leq \|x^{n+m}-x^{n+m-1}\|+ \cdots = \|x^{n+1}-x^n\|\\
+        &\leq (\lambda ^{n+m-1}+\cdots+\lambda^n)\|x^1-x^0\|\\
+        &=\lambda^n\left(\displaystyle\sum_{j=0}^{m-1}\lambda^j\right)\|x^1-x^0\|\\
+        &\leq\lambda^n\left(\displaystyle\sum_{j=0}^\infty\lambda^j\right)\|x^1-x^0\|\\
+        &=\lambda^n\dfrac{1}{1-\lambda}\|x^1-x^0\|
+    \end{tightalign*}
+    which implies that $\{x_n\}_n$ is Cauchy, and since $X$ is complete, this gives $x_n\to \bar{x}$. Finally, since $f$ is continuous, $f(\bar{x}) = \lim_{n\to \infty}f(x_n) = \lim_{x\to\infty}x_{n+1}=\bar{x}$.
+    \end{proof}
 \end{theorem}
-
-We note that if $X$ is compact, then this theorem can be extended to \textit{weak} contractions, ie $\|f(x)-f(y)\|< \|x-y\|$.
-
-\example{Consider problem \eqref{eq:fixed-point:lap u sin u}, where we note that Lax-Milgram immediately yields the existence of a unique solution $u$ for each $w$. From the mean value theorem one has that differentiable functions satisfy $f(x) - f(y) = f'(\xi)(x-y)$ for some $\xi$ in $(x,y)$. This in particular shows that $\sin$ is a Lipschitz function as $\sup_{\xi\in \R}\sin(\xi) = 1$. Using this fact we can compute the following for some given $w_1, w_2$:  
-    $$ -\Delta(T(w_1)-T(w_2))= \sin(w_1)-\sin(w_2),$$ 
-    and the \emph{a-priori} estimate gives
-    $$\|T(w_1)-T(w_2)\|\leq C\|\sin(w_1)-\sin(w_2)\|\leq C \|w_1-w_2\|.$$
-Then, if $C<1$ there exists $\bar u$ such that $T(\bar u)= \bar u$. }
-
-\begin{theorem}[Brouwer fixed point] Set $K$ a non-empty, compact and convex subset of a finite-dimensional Banach space. Then every continuous $f:K\to K$ has a fixed point.
-\end{theorem}
+We note that if $X$ is compact, then this theorem can be extended to \emph{weak} contractions, i.e. $\|f(x)-f(y)\|< \|x-y\|$.\\
 
 \example{
-Let's go back to \eqref{eq:fixed-point:lap u sin u}, and consider its Galerkin approximation for some given $w_h$:
-\begin{align*}
-    (\grad u_h,\grad v_h)=(\sin(w_h),v_h) \qquad \forall v_h \in V_h
-\end{align*}
-where $dim(V_h)<\infty$. Then, from the \emph{a-priori} bound we have 
-\begin{align*}
-    \|u_h\|_{1}\leq C||\sin (w_h)||< C
-\end{align*}
-using that $|\sin (x)|\leq 1$. This implies that $u_h$ is contained in a finite-dimensional ball of $V_h$, $\mathcal{B}(0,r), r=C$. To show that it is continuous, we consider two functions $w_1,w_2$ in $V_h$, and obtain the difference equation setting $u_i=T(w_i)$: 
-    $$(\grad [u_1 - u_2], \grad v_h) = (\sin(w_1) - \sin(w_2), v_h) \qquad \forall v_h \in V_h. $$
-Again, using the \emph{a-priori} bound we use $\sin' = \cos \leq 1$ to obtain 
-    $$ \| u_1 - u_2\|_1 \leq \|w_1 - w_2\|_0.$$
-This yields that $T_h:\mathcal{B}(0,r)\to \mathcal{B}(0,r)$ is continuous and thus has at least one fixed point.
+    Consider problem~\eqref{eq:fixed-point-sin}, where we note that the Lax-Milgram lemma~\eqref{lemma:lax-milgram} immediately yields the existence of a unique solution $u$ for each $w$. From the mean value theorem~\eqref{thm:mean-value-banach} one has that differentiable functions satisfy $f(x) - f(y) = f'(\xi)(x-y)$ for some $\xi$ in $(x,y)$. This in particular shows that $\sin$ is a Lipschitz function as it is differentiable, with $\sin' = \cos$, and $\sup_{\xi\in \R}\cos(\xi) = 1$. Using this fact we can compute the following for some given $w_1, w_2$:  
+    \begin{equation*}
+        -\Delta(T(w_1)-T(w_2))= \sin(w_1)-\sin(w_2),
+    \end{equation*} 
+    and the a priori estimate gives
+    \begin{equation*}
+        \|T(w_1)-T(w_2)\|\leq C\|\sin(w_1)-\sin(w_2)\|\leq C \|w_1-w_2\|.
+    \end{equation*}
+    Then, if $C<1$ there exists $\bar u$ such that $T(\bar u)= \bar u$. 
+}
+\begin{theorem}[Brouwer fixed point]\label{thm:brouwer-fixed-point}
+    Set $K$ a non-empty, compact and convex subset of a finite-dimensional Banach space. Then, every continuous function $f:K\to K$ has a fixed point.
+\end{theorem}
+\example{
+    Let's go back to~\eqref{eq:fixed-point-sin}, and consider its Galerkin scheme for some given $w_h$:
+    \begin{equation*}
+        (\grad u_h,\grad v_h)=(\sin(w_h),v_h) \qquad \forall v_h \in V_h
+    \end{equation*}
+    where $\dim(V_h)<\infty$. Then, from the a priori bound we have 
+    \begin{equation*}
+        \|u_h\|_{1}\leq C||\sin (w_h)||< C
+    \end{equation*}
+    using that $|\sin (x)|\leq 1$. This implies that $u_h$ is contained in a finite-dimensional ball of $V_h$, $\mathcal{B}(0,r), r=C$. To show that it is continuous, we consider two functions $w_1,w_2$ in $V_h$, and obtain the difference equation setting $u_i=T(w_i)$: 
+    \begin{equation*}
+        (\grad [u_1 - u_2], \grad v_h) = (\sin(w_1) - \sin(w_2), v_h) \qquad \forall v_h \in V_h.
+    \end{equation*}
+    Again, using the a priori bound we use $\sin'(x) = \cos(x) \leq 1$ to obtain 
+    \begin{equation*}
+        \| u_1 - u_2\|_1 \leq \|w_1 - w_2\|_0.
+    \end{equation*}
+    This yields that $T_h:\mathcal{B}(0,r)\to \mathcal{B}(0,r)$ is continuous and thus has at least one fixed point.
 }
 
-From the previous result we can extend to $h\to 0$ through compactness. This can be generalized to another fixed point theorem known as Schauder's fixed point theorem, which has two forms.
-
-\begin{theorem}[Schauder fixed point]
-\begin{enumerate}
-    \item Set $K$ a compact, convex subset of $X$ normed space, and $f:K\to K$ a continuous mapping. Then $f$ has at least one fixed point.
-    \item Let $\mathcal{C}$ a closed, convex subset of a Banach space $X$, and $f:\mathcal{C}\to \mathcal{C}$ continuous s.t. $\overline{f(\mathcal{C})}$ is compact. Then $f$ has at least one fixed point.
-\end{enumerate}
+From the previous result we can extend to $h\to 0$ through compactness. This generalization is known as Schauder's fixed point theorem, which has two forms.
+\begin{theorem}[Schauder fixed point]\label{thm:schauder-fixed-point}
+    \begin{enumerate}
+        \item Let $K$ be a compact, convex subset of a normed space $X$, and $f:K\to K$ a continuous mapping. Then, $f$ has at least one fixed point.
+        \item Let $\mathcal{C}$ a closed, convex subset of a Banach space $X$, and $f:\mathcal{C}\to \mathcal{C}$ continuous s.t. $\overline{f(\mathcal{C})}$ is compact. Then $f$ has at least one fixed point.
+    \end{enumerate}
 \end{theorem}
-
-
 \example{ 
-Consider again \eqref{eq:fixed-point:lap u sin u}, with its induced Picard mapping $w \mapsto u\coloneqq T(w)$ given by 
-\begin{align*}
-    -\Delta u &= \sin(w) \text{ on }\Omega,\\
-    u&=0\text{ on }\partial\Omega,
-\end{align*}
-whose solution is guaranteed by Lax-Milgram's Lemma, with $u$ in $H_0^1(\Omega)$.  From the \emph{a-priori} bound $\|u||\leq\dfrac{1}{\alpha}\|f\|$ we get $\|u\|_1\leq C\|\sin(w)\|_0\leq C|\Omega|=:r_0$. Our candidate set will be $\mathcal C = \bar{B}(0,r_0)\subset L^2(\Omega)$ which is closed, convex and contained in both $L^2(\Omega)$ and $H_0^1(\Omega)$. Now we are only missing that $\overline{T(\mathcal C)}$ is compact. 
-
-Consider a sequence $(w_k)_{k>1}$ in $\mathcal C$, which yields $(v_k)_{k>1}=(T(w_k))_{k>1}$ in $\mathcal C$ and additionally $v_k\in H_0^1(\Omega)$ for all $k$. Now, we note that we have a sequence in $H^1$, and as the unit ball is weakly compact, we obtain that is has some weakly convergent sequence in $H^1$. The final detail is that, if we consider $\mathcal C$ to be a ball in $L^2$, then the mapping $T$ can be written additionally as $T\circ i$, where $i:L^2(\Omega)\to H^1(\Omega)$ is the compact embedding of $H^1$ into $L^2$. We thus have that $T\circ i$ is the composition of a continuous and a compact mapping, and thus a compact map. This in particular implies that our sequence $(v_k)$ has a strongly convergent subsequence in $L^2$. This concludes that $T:L^2(\Omega)\to L^2(\Omega)$ is compact, and thus we can use Schauder's fixed point theorem to show the existence of a fixed point $\bar u = T(\bar u)$ in $L^2(\Omega)$. Naturally, the equation itself reveals that actually $\bar u$ belongs to $H_0^1(\Omega)$, so we have some additional regularity on the fixed point we just found.
+    Consider again~\eqref{eq:fixed-point-sin}, with its induced Picard mapping $w \mapsto u\coloneqq T(w)$ given by 
+    \begin{equation}
+        \begin{aligned}
+            -\Delta u &= \sin(w) && \tin \Omega,\\
+            u&=0 &&\ton \partial\Omega,
+        \end{aligned}
+    \end{equation}
+    whose solution is guaranteed by Lax-Milgram's lemma, with $u$ in $H_0^1(\Omega)$. From the a priori bound $\|u||\leq\dfrac{1}{\alpha}\|f\|$ we get $\|u\|_1\leq C\|\sin(w)\|_0\leq C|\Omega|=:r_0$. Our candidate set will be $\mathcal C = \bar{B}(0,r_0)\subset L^2(\Omega)$ which is closed, convex and contained in both $L^2(\Omega)$ and $H_0^1(\Omega)$. To prove that $\overline{T(\mathcal C)}$ is compact, consider a sequence $(w_k)_{k>1}$ in $\mathcal C$, which yields $(v_k)_{k>1}=(T(w_k))_{k>1}$ in $\mathcal C$ and additionally $v_k\in H_0^1(\Omega)$ for all $k$. Now, we note that we have a sequence in $H^1$, and as the unit ball is weakly compact, we obtain that is has some weakly convergent sequence in $H^1$. The final detail is that, if we consider $\mathcal C$ to be a ball in $L^2$, then the mapping $T$ can be written additionally as $T\circ i$, where $i:H^1(\Omega)\hookrightarrow L^2(\Omega)$ is the compact embedding of $H^1$ into $L^2$. We thus have that $T\circ i$ is the composition of a continuous and a compact mapping, and thus a compact map. This in particular implies that our sequence $(v_k)$ has a strongly convergent subsequence in $L^2$. This concludes that $T:L^2(\Omega)\to L^2(\Omega)$ is compact, and thus we can use Schauder's fixed point theorem to show the existence of a fixed point $\bar u = T(\bar u)$ in $L^2(\Omega)$. Naturally, the equation itself reveals that actually $\bar u$ belongs to $H_0^1(\Omega)$, so we have some additional regularity on the fixed point we just found.
 }
 A consequence of the Schauder fixed point theorem is the Schaefer fixed point theorem. We state it for completeness without proof.
-\begin{theorem}[Schaefer fixed point]
+\begin{theorem}[Schaefer fixed point]\label{thm:schaefer-fixed-point}
     Let $X$ be a Banach space and $f:X\to X$ a compact operator. If 
-    \begin{equation*}
+    \begin{equation}
         \{x\in X: \sigma f(x)=x,\sigma\in[0,1]\}\subset B(0,r)
-    \end{equation*}
+    \end{equation}
     for some $r>0$, then there exists a fixed point of $f$.
 \end{theorem}
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Monotone operators}
+
+\section{Monotone operators}\label{sec:monotone}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Among nonlinear operators, there is a class of operators that provide efficient means to prove existence and uniqueness of solutions. These operators are called \textit{monotone}, and they have been extensively studied. We follow this section closely from \cite{ciarlet2013linear}.
-\begin{definition}[Monotone operator]
-    Let $V$ be a normed vector space and $\langle\cdot,\cdot\rangle$ its duality pairing. An operator $A:V\to V'$ is called monotone if
-    \begin{equation*}
+Among nonlinear operators, there is a class of operators that provide efficient means to prove existence and uniqueness of solutions. These operators are called \emph{monotone}, and they have been extensively studied. We follow this section closely from~\cite{ciarlet2013linear}.
+\begin{definition}[Monotone operator]\label{def:monotone-operator}
+    Let $V$ be a normed vector space and $\langle\cdot,\cdot\rangle$ its duality pairing. An operator $A:V\to V'$ is called \emph{monotone} if
+    \begin{equation}
         \langle A(v)-A(u),v-u\rangle \geq 0 \qquad \forall u,v\in V,
-    \end{equation*}
-    and strictly monotone if the previous inequality is strict for $u\neq v$.
+    \end{equation}
+    and \emph{strictly monotone} if the inequality is strict for $u\neq v$.
 \end{definition}
 We note that if $f:X\to \R$ is a convex and differentiable function, then $\nabla f$ is a monotone operator. Indeed, from convexity applied to $x,y\in X$ and adding we get
-\begin{align*}
+\begin{tightalign*}
     f(x) &\geq f(y) + \langle \nabla f(y), x-y\rangle\\
     f(y) &\geq f(x) + \langle \nabla f(x), y-x\rangle\\
     \implies 0 &\geq \langle \nabla f(y)-\nabla f(x),x-y\rangle \\
     \implies 0&\leq \langle \nabla f(x)-\nabla f(y),x-y\rangle.
-\end{align*}
+\end{tightalign*}
 We can also build monotone operators from an elliptic operator. If $A:V\to V'$ is an operator such that $a(u,v) = \langle A(u),v\rangle$ is continuous (linear) and elliptic, then $A$ is strictly monotone:
-\begin{align*}
+\begin{tightalign*}
     \langle A(u)-A(v),u-v\rangle &= \langle A(u-v), u-v\rangle\\
     &= a(u-v,u-v)\\
     &\geq \alpha \|u-v\|^2 \geq 0,
-\end{align*}
+\end{tightalign*}
 and the inequality is strict for $u\neq v$ since $\|\cdot\|$ is a norm. 
 
 A very useful property can be derived from the monotonicity in the case that $V$ is complete.
-\begin{theorem}
+\begin{theorem}\label{thm:lipschitz-property-monotone}
     If $V$ is a real Banach space and $A:V\to V'$ is monotone, then $A$ is locally bounded, i.e. for any $u\in V$ there exists $r=r(u)>0$ and $\rho=\rho(u)>0$ such that
     \begin{equation*}
         \|u-v\|\leq r \implies \|A(u)-A(v)\|\leq \rho,
     \end{equation*}
     which similar to a Lipschitz property. Moreover, if $A$ is linear, then $A$ is continuous.
 \end{theorem}
+
 We now introduce the notion of coercive ($\neq$ elliptic) and hemicontinuous operators.
-\begin{definition}
-    An operator $A:V\to V'$ is coercive if 
+\begin{definition}[Coercive operator]\label{def:coercive-operator}
+    An operator $A:V\to V'$ is \emph{coercive} if 
     \begin{equation*}
         \lim_{\|v\|\to \infty} \frac{\langle A(v),v\rangle}{\|v\|} = +\infty.
     \end{equation*}
 \end{definition}
-\begin{definition}
-    An operator $A:V\to V'$ is hemicontinuous if for every $u,v,w\in V$ there exists $t_0=t_0(u,v,w)>0$ such that the map 
-    \begin{align*}
+\begin{definition}[Hemicontinuous operator]\label{def:hemicontinuous-operator}
+    An operator $A:V\to V'$ is \emph{hemicontinuous} if for every $u,v,w\in V$ there exists $t_0=t_0(u,v,w)>0$ such that the map 
+    \begin{tightalign*}
         \varphi:(-t_0,t_0)&\to \R\\
         t&\mapsto \langle A(u+tv),w\rangle
-    \end{align*}
-    at $t=0$. 
+    \end{tightalign*}
+    is continuous at $t=0$. 
 \end{definition}
 Hemicontinuity is a weaker property than continuity, as we shall prove in the following theorem.
 \begin{theorem}
     If $A:V\to V'$ is continuous, then it is hemicontinuous.
     \begin{proof}
         Let $\varphi(t)=\langle A(u+tv),w\rangle$. Then, we get
-        \begin{align*}
+        \begin{tightalign*}
             |\varphi(t)-\varphi(0)| &= |\langle A(u+tv),w\rangle - \langle A(u),w\rangle|\\
-            &\leq |\langle A(u+tv)-A(u),w\rangle| \tag{Linearity of $A$}\\
+            &\leq |\langle A(u+tv)-A(u),w\rangle| \tag{Linearity of the duality pairing}\\
             &\leq \|A(u+tv)-A(u)\|_{V'} \|w\|_V. \tag{Cauchy-Schwarz}
-        \end{align*}
+        \end{tightalign*}
         Thus, as $\|(u+tv)-u\|_V=\|tv\|\leq |t|\|u\|_V$, then $u+tv\overset{t\to 0}{\to} u$ in norm, and since $A$ is continuous, we get $A(u+tv)\overset{t\to 0}{\to} A(u)$ in $V'$. Thus, taking limit as $t\to 0$ we immediately conclude that $\varphi$ is continuous at $t=0$.
     \end{proof}
 \end{theorem}
 Now that we have defined hemicontinuous operators, we are ready to introduce a theorem that gives sufficient conditions that guarantee the surjectivity of a hemicontinuous monotone operator.
-\begin{theorem}[Minty-Browder]
+\begin{theorem}[Minty-Browder]\label{thm:minty-browder}
     Let $V$ a real, separable and reflexive Banach space (e.g. $L^p$ for $p>1$), and $A:V\to V'$ a coercive and hemicontinuous monotone operator. Then, $A$ is surjective, i.e. given any $f\in V'$ there exists $u\in V$ such that $A(u)=f$. Moreover, if $A$ is strictly monotone, then $A$ is also injective, and thus there exists a unique solution for $A(u)=f$.
 \end{theorem}
-A common example of an operator that can be analyzed via the Minty-Browder theorem is the p-Laplacian $-\Delta_p$, which for $p\geq 1$ is defined as the map
-\begin{align*}
+A common example of an operator that can be analyzed via the Minty-Browder theorem is the \emph{p-Laplacian} $-\Delta_p$, which for $p\geq 1$ is defined as the map
+\begin{tightalign*}
     -\Delta_p : W_0^{1,p}(\Omega)&\to W^{-1,q}(\Omega) = (W_0^{1,p}(\Omega))'\\
     v&\mapsto -\Delta_p v = -\nabla\cdot(|\nabla v|^{p-2}\nabla v),
-\end{align*}
+\end{tightalign*}
 where $q$ is the conjugate exponent of $p$, such that $1/p + 1/q = 1$. Note that for arbitrary $u,v\in W_0^{1,p}(\Omega)$ the duality is given by 
 \begin{equation*}
     \langle \Delta_p u, v\rangle = \langle \nabla\cdot (|\nabla u|^{p-2}\nabla u), v\rangle = -\langle |\nabla u|^{p-2}\nabla u, \nabla v\rangle = -\int_\Omega |\nabla u|^{p-2}\nabla u\cdot\nabla v dx,
@@ -211,34 +229,33 @@ which is well-defined by Hölder's inequality:
     \left|\int_\Omega |\nabla u|^{p-2}\nabla u\cdot\nabla v dx\right| \leq \|\nabla u\|^{p-1}_{W_0^{1,p}(\Omega)}\|\nabla v\|_{W_0^{1,p}(\Omega)},
 \end{equation*}
 and noting that $w\mapsto \|\nabla w\|_{W_0^{1,p}(\Omega)}$ is a norm on $W_0^{1,p}(\Omega)$. We define now the functional
-\begin{align*}
+\begin{tightalign*}
     \Psi:W_0^{1,p}(\Omega)&\to \R\\
-    u&\mapsto \Psi(u):= \frac{1}{p}\int_\Omega |\nabla u|^p dx.
-\end{align*}
+    u&\mapsto \Psi(u) \coloneqq  \frac{1}{p}\int_\Omega |\nabla u|^p dx.
+\end{tightalign*}
 This functional is Gâteaux-differentiable, and we explicitly compute its the Gâteaux derivative for $u,v\in W_0^{1,p}(\Omega)$:
-\begin{align*}
+\begin{tightalign*}
     d\Psi(u)[v] &= \left.\frac{d}{d\varepsilon}\right|_{\varepsilon=0} \Psi(u+\varepsilon v)\\
     &= \left.\frac{d}{d\varepsilon}\right|_{\varepsilon=0} \frac{1}{p}\int_\Omega \underbrace{|\nabla (u+\varepsilon v)|^p}_{|\nabla(u+\varepsilon v)\cdot \nabla(u+\varepsilon v)|^{p/2}} dx\\
     &= \left.\frac{1}{p}\int_\Omega \frac{p}{2} |\nabla (u+\varepsilon v)\cdot\nabla(u+\varepsilon v)|^{p/2-1}\cdot 2(\nabla u\cdot\nabla v) dx\right|_{\varepsilon = 0}\\
     &= \int_\Omega |\nabla u\cdot\nabla u|^{\frac{p-2}{2}}\nabla u\cdot\nabla v dx\\
     &= \int_\Omega |\nabla u|^{p-2}(\nabla u\cdot\nabla v) dx\\
     &= \langle -\Delta_p u, v\rangle,
-\end{align*}
+\end{tightalign*}
 and thus $d\Psi = -\Delta_p$. This operator is hemicontinuous: take $t\in \R$ and $u,v,w\in W_0^{1,p}(\Omega)$, and define $\varphi(t) = \langle A(u+tv),w\rangle$. With this, we have
-\begin{align*}
-    |\varphi(t)-\varphi(0)| &= \left|\int_\Omega \left(|\nabla (u+tv)|^{p-2}\nabla (u+tv) - |\nabla u|^{p-2}\nabla u\right)\cdot \nabla w dx \right|\\
+\begin{tightalign*}
+    |\varphi(t)-&\varphi(0)| = \left|\int_\Omega \left(|\nabla (u+tv)|^{p-2}\nabla (u+tv) - |\nabla u|^{p-2}\nabla u\right)\cdot \nabla w dx \right|\\
     &= \left|\int_\Omega \left((|\nabla u + t\nabla v|^{p-2} - |\nabla u|^{p-2})\nabla u \cdot \nabla w + t|\nabla u + t\nabla v|^{p-2} \nabla v\cdot \nabla w \right) dx\right|\\
     &\leq \int_\Omega \left(|\nabla u + t\nabla v|^{p-2} - |\nabla u|^{p-2}\right)|\nabla u||\nabla w| dx + |t|\int_\Omega |\nabla u + t\nabla v|^{p-2}|\nabla v||\nabla w| dx,
-\end{align*}
+\end{tightalign*}
 and taking the limit $t\to 0$ we conclude that $-\Delta_p$ is hemicontinuous. Moreover, since $\Psi$ is strictly convex, we obtain that for all $u\neq v \in W_0^{1,p}(\Omega)$, it holds that
 \begin{equation*}
     \langle \Delta_p u - \Delta_p v, u-v\rangle < 0 \implies \langle -\Delta_p u - (-\Delta_p v), u-v\rangle > 0,
 \end{equation*}
 which implies that $-\Delta_p$ is strictly monotone. To prove coercivity, we take a nonzero $u\in W_0^{1,p}(\Omega)$ and get
-\begin{align*}
+\begin{tightalign*}
     \frac{\langle A(u),u\rangle}{\|u\|_{W_0^{1,p}(\Omega)}} &= \frac{1}{\|u\|_{W_0^{1,p}(\Omega)}}\int_\Omega \underbrace{|\nabla u|^{p-2}(\nabla u\cdot\nabla u)}_{|\nabla u|^p} dx\\
     &= \frac{1}{\|u\|_{W_0^{1,p}(\Omega)}}\|u\|_{W_0^{1,p}(\Omega)}^p\\
     &= \|u\|_{W_0^{1,p}(\Omega)}^{p-1}\xlongrightarrow{\|u\|_{W_0^{1,p}(\Omega)}\to\infty}\infty,
-\end{align*}
-since $p>1$, which proves that $-\Delta_p$ is coercive. Since $W_0^{1,p}(\Omega)$ is separable and reflexive for $p>1$, the conditions of the Minty-Browder theorem are satisfied, and thus we conclude that $-\Delta_p$ is bijective, i.e. for any $f\in W^{-1,q}(\Omega)$ there exists a unique $u\in W_0^{1,p}(\Omega)$ such that $-\Delta_p u = f$.
-
+\end{tightalign*}
+since $p>1$, which proves that $-\Delta_p$ is coercive. Since $W_0^{1,p}(\Omega)$ is separable and reflexive for $p>1$, the conditions of the Minty-Browder theorem~\ref{thm:minty-browder} are satisfied, and thus we conclude that $-\Delta_p$ is bijective, i.e. for any $f\in W^{-1,q}(\Omega)$ there exists a unique $u\in W_0^{1,p}(\Omega)$ such that $-\Delta_p u = f$.

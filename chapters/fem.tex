@@ -1,265 +1,361 @@
-The idea of studying specifically finite elements will be that of having more significative ways of expressing the projection error present in Ceà's estimate: 
-    $$ \inf_{v_h\in V_h} \| u - v_h\|_V. $$
-A typical use of this inequality will be that of bounding the projection error through a finite element interpolant, such that one gets inequalities such as
-    $$ \inf_{v_h\in V_h} \| u - v_h\|_V \leq \| u - I_h u \|_V \leq h^s \|u \|_W, $$
-    where $W$ is some space of higher regularity, $s$ is some (hopefully positive) exponent and $I_h:V \to V_h$ is an interpolation operator. Our idea is that of producing FEM spaces for all of our relevant Hilbert spaces: $L^2$, $H^1$, $H(\dive)$, and $H(\curl)$. We will start by introducing first order finite elements in $\R$ by following an almost verbatim copy of \cite[Chapter 1]{ern2004theory}. 
+The Galerkin method we studied in Section~\ref{sec:galerkin} allowed us to obtain an a priori error bound, Céa's estimate~\eqref{lemma:cea-estimate}, which establishes that the error of the discrete solution is proportional to the \emph{best possible approximation error} (i.e. the infimum term) within the chosen discrete space $V_h$:
+\begin{equation}\label{eq:cea-estimate-fem}
+    \|u-u_h\|_V \leq \frac{C}{\alpha} \inf_{v_h\in V_h} \| u - v_h\|_V.
+\end{equation}
+While fundamental, this result remains abstract. Its practical power relies on our ability to quantify the best approximation error. Doing so requires a systematic method for constructing the spaces $V_h$ in a way that allows us to concretely estimate how well they can approximate functions from $V$.
 
-\section{One-dimensional interpolation} 
+This is precisely the purpose of the finite element method (FEM), which is a general and powerful framework for constructing discrete function spaces $V_h$ based on a partition of the domain $\Omega$ into a set of simple geometric shapes, or \emph{elements}. The key idea is to bound the abstract best approximation error by a tangible \emph{interpolation error}. We achieve this by defining interpolation operators $I_h: V \to V_h$ that project functions from the continuous space into the discrete one. Since the interpolant $I_h u$ is an element of $V_h$, we will immediately have
+\begin{equation}\label{eq:proj-error-fem}
+    \inf_{v_h\in V_h} \| u - v_h\|_V \leq \| u - I_h u \|_V,
+\end{equation}
+and as we will see, we are able to derive explicit estimates $\| u - I_h u \|_V \leq C h^s |u|_{W}$, where $h$ is a \emph{mesh size}, $s$ is a positive exponent indicating the order of convergence, and $|u|_W$ is a higher-order seminorm of the exact solution. These estimates transform Céa's lemma into a practical tool for predicting the convergence rate of our numerical method.
 
-To introduce approximation spaces for finite elements, we need to introduce suitable approximation techniques. A straightforward choice for approximation is polynomial interpolations, which we will begin to study in the one-dimensional case. For an integer $k \ge 0$, $\mathbb{P}_k$ denotes the space of the polynomials in one variable, of degree at most $k$, and with real coefficients.
+To build this theory, we follow the presentation in~\cite[Chapter 1]{ern2004theory} very closely, where we cover one-dimensional and higher-dimensional interpolation. These results will allow us to determine (i) conformal finite element spaces for $H^1$, $H(\dive)$, $H(\curl)$ and $L^2$, and (ii) explicit a priori bounds as functions of the mesh size $h$.
 
-\subsection{The mesh}
-Let $\Omega = ]a, b[$ be a one-dimensional domain. We define a mesh on $\Omega$ as an indexed collection of intervals with non-zero measure $\{I_i = [x_{1,i}, x_{2,i}]\}_{0 \leq i \leq N}$ forming a partition of $\Omega$, i.e.
-$$ \bigcup_{i=0}^N I_i = \bar{\Omega} $$
-and $I_i^\circ \cap I_j^\circ = \emptyset$ for $i \neq j$.
+\section{One-dimensional interpolation}\label{sec:one-dimensional-interpolation}
+
+A straightforward choice for one-dimensional approximation is to use polynomials, which we will begin to study in the one-dimensional case. For an integer $k \ge 0$, $\mathbb{P}_k$ denotes the space of the polynomials in one variable, of degree at most $k$, and with real coefficients.
+
+\paragraph{The mesh}
+\begin{definition}[Mesh]\label{def:mesh}
+    Let $\Omega = ]a, b[$ be a one-dimensional domain. We define a mesh on $\Omega$ as an indexed collection of intervals with non-zero measure $\{I_i = [x_{1,i}, x_{2,i}]\}_{0 \leq i \leq N}$ forming a partition of $\Omega$, i.e.
+    \begin{equation}\label{eq:def-mesh}
+        \bigcup_{i=0}^N I_i = \bar{\Omega}
+    \end{equation}
+    and $I_i^\circ \cap I_j^\circ = \emptyset$ for $i \neq j$.
+\end{definition}
 The simplest way to construct a mesh is to take $(N+2)$ points in $\bar{\Omega}$ such that
-$$ a = x_0 < x_1 < \dots < x_N < x_{N+1} = b, $$
-and to set $x_{1,i} = x_i$ and $x_{2,i} = x_{i+1}$ for $0 \le i \le N$. The points in the set $\{x_0, \dots, x_{N+1}\}$ are called the vertices of the mesh. The mesh may have a variable step size
-$$ h_i = x_{i+1} - x_i, \quad 0 \leq i \le N, $$
+\begin{equation}
+    a = x_0 < x_1 < \cdots < x_N < x_{N+1} = b,
+\end{equation}
+and to set $x_{1,i} = x_i$ and $x_{2,i} = x_{i+1}$ for $0 \le i \le N$. The points in the set $\{x_0, \dots, x_{N+1}\}$ are called the \emph{vertices} or \emph{nodes} of the mesh. The mesh may have a variable \emph{step size}
+\begin{equation}
+    h_i = x_{i+1} - x_i, \quad 0 \leq i \le N,
+\end{equation}
 and we define the mesh size $h$ as
-$$ h = \max_{0 \le i \le N} h_i.$$
-In what follows, the intervals $I_i$ are also called elements (or cells) and the mesh is denoted by $\mathcal{T}_h = \{I_i\}_{0 \le i \le N}$, where the subscript $h$ refers to the refinement level given by the mesh size.
+\begin{equation}
+    h = \max_{0 \le i \le N} h_i.
+\end{equation}
 
-\subsection{The $\mathbb{P}_1$ Lagrange finite element}
+In what follows, the intervals $I_i$ are also called \emph{elements} (or \emph{cells}) and the mesh is denoted by $\mathcal{T}_h = \{I_i\}_{0 \le i \le N}$, where the subscript $h$ refers to the refinement level given by the mesh size.
+
+\paragraph{The $\mathbb{P}_1$ Lagrange finite element}
 One of the simplest methods to approximate functions over $\Omega$ is to define piecewise-linear functions. We denote the vector space of continuous, piecewise-linear functions
-$$ P_h^1 = \{ v_h \in C(\bar{\Omega}): \forall i \in \{0, \dots, N\}, v_h|_{I_i} \in \mathbb{P}_1 \}.$$
-This space can be used in conjunction with Galerkin methods to approximate one-dimensional PDEs, and for this reason, $P_h^1$ is called an approximation space.
-We introduce the functions $\{\varphi_0, \dots, \varphi_{N+1}\}$ defined elementwise as follows: for $i \in \{0, \dots, N+1\}$, set
-$$ \varphi_i(x) = \begin{cases} \frac{x - x_{i-1}}{h_{i-1}} & \text{if } x \in I_{i-1}, \\ \frac{x_{i+1} - x}{h_i} & \text{if } x \in I_i, \\ 0 & \text{otherwise}, \end{cases} $$
-with obvious modifications if $i = 0$ or $N+1$. Clearly, $\varphi_i \in P_h^1$. These functions are often called ''hat functions'' in reference to the shape of their graph.
-\begin{lemma} \label{hatbasis}
+\begin{equation}
+    P_h^1 = \{ v_h \in C(\bar{\Omega}): \forall i \in \{0, \dots, N\}, v_h|_{I_i} \in \mathbb{P}_1 \}.
+\end{equation}
+This space can be used in conjunction with Galerkin methods to approximate one-dimensional PDEs, and for this reason, $P_h^1$ is called an \emph{approximation space}. We introduce the functions $\{\varphi_0, \dots, \varphi_{N+1}\}$ defined element-wise as follows: for $i \in \{0, \dots, N+1\}$, set
+\begin{equation}
+    \varphi_i(x) = \begin{cases} \frac{x - x_{i-1}}{h_{i-1}} & \text{if } x \in I_{i-1}, \\ \frac{x_{i+1} - x}{h_i} & \text{if } x \in I_i, \\ 0 & \text{otherwise}, \end{cases}
+\end{equation}
+with obvious modifications if $i = 0$ or $N+1$. Clearly, $\varphi_i \in P_h^1$. These functions are often called \emph{hat functions} in reference to the shape of their graph.
+\begin{lemma}\label{lemma:hatbasis}
     The set $\{\varphi_0, \dots, \varphi_{N+1}\}$ is a basis for $P_h^1$.
     \begin{proof}
         The proof relies on the fact that $\varphi_i(x_j) = \delta_{ij}$ where $\delta$ is the Kronecker delta, for $0 \le i,j \le N+1$. Let $(a_0, \dots, a_{N+1})^\top \in \mathbb{R}^{N+2}$ and assume that the continuous function $w = \sum_{i=0}^{N+1} a_i \varphi_i$ vanishes identically in $\bar{\Omega}$. Then, for $0 \le i \le N+1$, $a_i = w(x_i) = 0$; hence, the set $\{\varphi_0, \dots, \varphi_{N+1}\}$ is linearly independent. Furthermore, for all $v_h \in P_h^1$, it is clear that $v_h = \sum_{i=0}^{N+1} v_h(x_i) \varphi_i$ since, on each element $I_i$, the functions $v_h$ and $\sum_{i=0}^{N+1} v_h(x_i) \varphi_i$ are affine and coincide at two points, namely $x_i$ and $x_{i+1}$.
     \end{proof}
 \end{lemma}
-\begin{definition}
-    Choose a basis $\{\gamma_0, \dots, \gamma_{N+1}\}$ for $\mathcal{L}(P_h^1;\mathbb{R})$; henceforth, the linear forms in this basis are called the global degrees of freedom in $P_h^1$. The functions in the dual basis are called the global shape functions in $P_h^1$. 
+\begin{definition}\label{def:global-shape-functions}
+    Choose a basis $\{\gamma_0, \dots, \gamma_{N+1}\}$ for $\mathcal{L}(P_h^1;\mathbb{R})$; henceforth, the linear forms in this basis are called the \emph{global degrees of freedom} in $P_h^1$. The functions in the dual basis are called the \emph{global shape functions} in $P_h^1$. 
 \end{definition}
+
 For $i \in \{0, \dots, N+1\}$, choose the linear form
+\begin{equation}\label{eq:pointwise-form}
+    \gamma_i: C(\bar{\Omega}) \ni v \mapsto \gamma_i(v) = v(x_i) \in \mathbb{R}.
+\end{equation}
+The proof of Lemma~\ref{lemma:hatbasis} shows that a function $v_h \in P_h^1$ is uniquely defined by the $(N+2)$-tuple $(v_h(x_i))_{0 \le i \le N+1}$, i.e. the values at the nodes. In other words, $\{\gamma_0, \dots, \gamma_{N+1}\}$ is a basis for $\mathcal{L}(P_h^1; \mathbb{R})$. Choosing the linear forms $\{\gamma_i\}_i$ in~\ref{eq:pointwise-form} as the global degrees of freedom in $P_h^1$, the global shape functions are precisely the hat functions $\{\varphi_0, \dots, \varphi_{N+1}\}$, since $\gamma_i(\varphi_j) = \delta_{ij}$, $0 \le i,j \le N+1$.
 
-$$ \gamma_i: C(\bar{\Omega}) \ni v \mapsto \gamma_i(v) = v(x_i) \in \mathbb{R}.$$
-The proof of Lemma~\ref{hatbasis} shows that a function $v_h \in P_h^1$ is uniquely defined by the $(N+2)$-tuple $(v_h(x_i))_{0 \le i \le N+1}$, i.e. the values at the nodes. In other words, $\{\gamma_0, \dots, \gamma_{N+1}\}$ is a basis for $\mathcal{L}(P_h^1; \mathbb{R})$. Choosing the linear forms $\{\gamma_i\}_i$ defined above as the global degrees of freedom in $P_h^1$, the global shape functions are precisely the hat functions $\{\varphi_0, \dots, \varphi_{N+1}\}$, since $\gamma_i(\varphi_j) = \delta_{ij}$, $0 \le i,j \le N+1$.
-
-
-In this space, we define the interpolation operator
-$$ I_h^1: C(\bar{\Omega}) \ni v \mapsto \sum_{i=0}^{N+1} \gamma_i(v) \varphi_i \in P_h^1.$$
-For a function $v \in C^0(\bar{\Omega})$, $I_h^1 v$ is the unique continuous, piecewise linear function that takes the same value as $v$ at all the mesh vertices. The function $I_h^1 v$ is called the Lagrange interpolant of $v$ of degree 1. Note that the approximation space $P_h^1$ is the codomain of $I_h^1$. 
-
+With these forms, we are ready to define an \emph{interpolation operator} in this space. 
+\begin{definition}[Lagrange interpolation operator in $\mathbb{P}^1$]\label{def:interpolation-operator-Ph1}
+    For a function $v\in C^0(\bar{\Omega})$, we define the \emph{Lagrange interpolation operator} $I_h^1$ as 
+    \begin{equation}\label{eq:interpolation-operator-Ph1}
+        \begin{aligned}
+            I_h^1: C(\bar{\Omega}) &\to P_h^1\\
+            v &\mapsto \sum_{i=0}^{N+1} \gamma_i(v) \varphi_i,
+        \end{aligned}
+    \end{equation}
+    that is, $I_h^1 v$ is the unique continuous, piecewise linear function that takes the same value as $v$ at all the mesh vertices. The function $I_h^1 v$ is called the \emph{Lagrange interpolant} of $v$ of degree 1. Note that the approximation space $P_h^1$ is the codomain of $I_h^1$. 
+\end{definition}
 Now we connect the polynomial approximation space we just defined with the Sobolev space $H^1(\Omega)$, to ensure that our method is conforming. 
-\begin{lemma}\label{approxP1}
+\begin{lemma}\label{lemma:approxP1}
     It holds that $P_h^1 \subset H^1(\Omega)$.
     \begin{proof}
-    Let $v_h \in P_h^1$. Clearly, $v_h \in L^2(\Omega)$. Furthermore, owing to the continuity of $v_h$, its first-order distributional derivative is the piecewise constant function $w_h$ such that
-    $$\forall I_i \in \mathcal{T}_h,\quad  w_h|_{I_i} = \frac{v_h(x_{i+1}) - v_h(x_i)}{h_i}.$$
-    It is clear that $w_h\in L^2(\Omega)$, and thus by definition we conclude $v_h\in H^1(\Omega)$.
+        Let $v_h \in P_h^1$. Clearly, $v_h \in L^2(\Omega)$. Furthermore, owing to the continuity of $v_h$, its first-order distributional derivative is the piecewise constant function $w_h$ such that
+        \begin{equation*}
+            \forall I_i \in \mathcal{T}_h,\quad  w_h|_{I_i} = \frac{v_h(x_{i+1}) - v_h(x_i)}{h_i}.
+        \end{equation*}
+        It is clear that $w_h\in L^2(\Omega)$, and thus by definition we conclude $v_h\in H^1(\Omega)$.
     \end{proof}
 \end{lemma}
-We can characterize the properties of the interpolation operator. 
-\begin{lemma}\label{cont1D}
+We now characterize the properties of the interpolation operator. 
+\begin{lemma}\label{lemma:cont1D}
     $I_h^1$ is a linear continuous mapping from $H^1(\Omega)$ to $H^1(\Omega)$, and $\|I_h^1\|_{\mathcal{L}(H^1(\Omega);H^1(\Omega))}$ is uniformly bounded with respect to $h$.
     \begin{proof}
-    For the first part, in one dimension, a function in $H^1(\Omega)$ is continuous. Indeed, for $v \in H^1(\Omega)$ and $x,y \in \overline{\Omega}$,
-    \begin{equation}\label{eq:interpolator_continuity_1d}
-        |v(y) - v(x)| \le \int_x^y |v'(s)| ds  \le |y-x|^{1/2} |v|_{1,\Omega},
-    \end{equation}
-    owing to the Cauchy-Schwarz inequality, which can be justified rigorously by a density argument. Furthermore, taking $x$ to be a point where $|v|$ reaches its minimum over $\overline{\Omega}$, the above inequality implies
-    \begin{equation*}\label{eq:supnorm_p1}
-        \|v\|_{L^\infty(\Omega)} \le |b-a|^{-1/2} \|v\|_0 + |b-a|^{1/2}|v|_{1,\Omega},
-    \end{equation*}
-    since $|v(x)| \le |b-a|^{-1/2} \|v\|_{0}$. Therefore, $I_h^1 v$ is well-defined for $v \in H^1(\Omega)$. Moreover, Lemma~\ref{approxP1} implies $I_h^1 v \in H^1(\Omega)$; hence, $I_h^1$ maps $H^1(\Omega)$ to $H^1(\Omega)$.
+        For the first part, in one dimension, a function in $H^1(\Omega)$ is continuous. Indeed, for $v \in H^1(\Omega)$ and $x,y \in \overline{\Omega}$,
+        \begin{equation}\label{eq:interpolator_continuity_1d}
+            |v(y) - v(x)| \le \int_x^y |v'(s)| ds  \le |y-x|^{1/2} |v|_{1,\Omega},
+        \end{equation}
+        owing to the Cauchy-Schwarz inequality, which can be justified rigorously by a density argument. Furthermore, taking $x$ to be a point where $|v|$ reaches its minimum over $\overline{\Omega}$, inequality~\eqref{eq:interpolator_continuity_1d} implies
+        \begin{equation*}\label{eq:supnorm_p1}
+            \|v\|_{L^\infty(\Omega)} \le |b-a|^{-1/2} \|v\|_{0} + |b-a|^{1/2}|v|_{1,\Omega},
+        \end{equation*}
+        since $|v(x)| \le |b-a|^{-1/2} \|v\|_{0}$. Therefore, $I_h^1 v$ is well-defined for $v \in H^1(\Omega)$. Moreover, Lemma~\ref{lemma:approxP1} implies $I_h^1 v \in H^1(\Omega)$; hence, $I_h^1$ maps $H^1(\Omega)$ to $H^1(\Omega)$.
 
-    For the second part, let $I_i \in \mathcal{T}_h$ for $0 \le i \le N$. From the definition of the distributional derivative $w_h$ above, $(I_h^1 v)'|_{I_i} = h_i^{-1}(v(x_{i+1}) - v(x_i))$; hence, using the previous inequality we get the estimate $|I_h^1 v|_{1,I_i} \le |v|_{1,I_i}$. Therefore, $|I_h^1 v|_{1,\Omega} \le |v|_{1,\Omega}$. Moreover, since $\|I_h^1 v\|_{0,\Omega} \le |b-a|^{1/2} \|I_h^1 v\|_{L^\infty(\Omega)}$ and $\|I_h^1 v\|_{L^\infty(\Omega)} \le \|v\|_{L^\infty(\Omega)}$, we deduce that $\|I_h^1 v\|_{0,\Omega} \le c \|v\|_{1,\Omega}$ where $c$ is independent of $h$ (assuming $h$ bounded). The conclusion follows readily.
+        For the second part, let $I_i \in \mathcal{T}_h$ for $0 \le i \le N$. From the definition of the distributional derivative $w_h$, $(I_h^1 v)'|_{I_i} = h_i^{-1}(v(x_{i+1}) - v(x_i))$. Hence, using~\eqref{eq:supnorm_p1} we get the estimate $|I_h^1 v|_{1,I_i} \le |v|_{1,I_i}$. Therefore, $|I_h^1 v|_{1,\Omega} \le |v|_{1,\Omega}$. Moreover, since $\|I_h^1 v\|_{0,\Omega} \le |b-a|^{1/2} \|I_h^1 v\|_{L^\infty(\Omega)}$ and $\|I_h^1 v\|_{L^\infty(\Omega)} \le \|v\|_{L^\infty(\Omega)}$, we deduce that $\|I_h^1 v\|_{0,\Omega} \le c \|v\|_{1,\Omega}$ where $c$ is independent of $h$ (assuming $h$ bounded). The conclusion follows readily.
     \end{proof}
 \end{lemma}
 We can explicitly control the interpolation error via the mesh size.
-\begin{lemma}
+\begin{lemma}\label{lemma:interpolation-error-Ph1}
     For all $h$ and $v \in H^2(\Omega)$,
-    $$ \|v - I_h^1 v\|_{0,\Omega} \le h^2 \|v''\|_{0,\Omega},\qquad  |v - I_h^1 v|_{1,\Omega} \le h \|v''\|_{0,\Omega}. $$
-\begin{proof}
-
-    Consider an interval $I_i \in \mathcal{T}_h$. Let $w \in H^1(I_i)$ be such that $w$ vanishes at some point $\xi$ in $I_i$. Then, owing to inequality~\ref{eq:interpolator_continuity_1d}, we infer $\|w\|_{0,I_i} \le h_i |w|_{1,I_i}$.
-    Let $v \in H^2(\Omega)$, let $i \in \{0, \dots, N\}$, and set $w_i = (v - Iautomatically_h^1 v)'|_{I_i}$. Note that $w_i \in H^1(I_i)$ and that $w_i$ vanishes at some point $\xi$ in $I_i$ owing to the mean-value theorem. Applying the estimate derived above to $w_i$ and using the fact that $(I_h^1 v)''$ vanishes identically on $I_i$ yields $|v - I_h^1 v|_{1,I_i} \le h_i |v''|_{0,I_i}$. The second estimate is then obtained by summing over the mesh intervals. To prove the first estimate, observe that the result above can also be applied to $(v - I_h^1 v)|_{I_i}$ yielding
-    $$ \|v - I_h^1 v\|_{0,I_i} \le h_i |v - I_h^1 v|_{1,I_i} \le h_i^2 |v''|_{0,I_i}. $$
-    Conclude by summing over the mesh intervals.
-\end{proof}
+    \begin{equation}
+        \|v - I_h^1 v\|_{0,\Omega} \le h^2 \|v''\|_{0,\Omega},\qquad  |v - I_h^1 v|_{1,\Omega} \le h \|v''\|_{0,\Omega}.
+    \end{equation}
+    \begin{proof}
+        First, consider an interval $I_i \in \mathcal{T}_h$. Let $w \in H^1(I_i)$ be such that $w$ vanishes at some point $\xi$ in $I_i$. Then, owing to inequality~\eqref{eq:interpolator_continuity_1d}, we infer $\|w\|_{0,I_i} \le h_i |w|_{1,I_i}$.
+        
+        Second, let $v \in H^2(\Omega)$, let $i \in \{0, \dots, N\}$, and set $w_i = (v - I_h^1 v)'|_{I_i}$. Note that $w_i \in H^1(I_i)$ and that $w_i$ vanishes at some point $\xi$ in $I_i$ owing to the mean-value theorem. Applying the estimate derived in the first step to $w_i$ and using the fact that $(I_h^1 v)''$ vanishes identically on $I_i$ yields $|v - I_h^1 v|_{1,I_i} \le h_i |v''|_{0,I_i}$. The second estimate is then obtained by summing over the mesh intervals. To prove the first estimate, observe that the result above can also be applied to $(v - I_h^1 v)|_{I_i}$ yielding
+        \begin{equation*}
+    \|v - I_h^1 v\|_{0,I_i} \le h_i |v - I_h^1 v|_{1,I_i} \le h_i^2 |v''|_{0,I_i}.
+    \end{equation*}
+        Conclude by summing over the mesh intervals.
+    \end{proof}
 \end{lemma}
 We remark here that the bound on the interpolation error involves second-order derivatives of $v$. This is reasonable since the larger the second derivative, the more the graph of $v$ deviates from the piecewise linear interpolant. Also, if the function to be interpolated is in $H^1(\Omega)$ only, one can prove the following results: for all $h$,
-\begin{align*}
+\begin{tightalign*}
     \|v - I_h^1 v\|_{0,\Omega} &\le h |v|_{1,\Omega}\\
     \lim_{h \rightarrow 0} |v - I_h^1 v|_{1,\Omega} &= 0.
-\end{align*}
-The proof of the previous lemma shows that the operator $I_h^1$ is endowed with local interpolation properties, i.e., the interpolation error is controlled elementwise before being controlled globally over $\Omega$. This motivates the introduction of local interpolation operators. Let $I_i = [x_i, x_{i+1}] \in \mathcal{T}_h$ and let $\Sigma_i = \{\sigma_{i,0}, \sigma_{i,1}\}$ where $\sigma_{i,0}, \sigma_{i,1} \in \mathcal{L}(\mathbb{P}_1; \mathbb{R})$ are such that, for all $p \in \mathbb{P}_1$,
-$$ \sigma_{i,0}(p) = p(x_i),\qquad \sigma_{i,1}(p) = p(x_{i+1}). $$
-Note that $\Sigma_i$ is a basis for $\mathcal{L}(\mathbb{P}_1; \mathbb{R})$. The triplet $\{I_i, \mathbb{P}_1, \Sigma_i\}$ is called a (one-dimensional) $\mathbb{P}_1$ Lagrange finite element, and the linear forms $\{\sigma_{i,0}, \sigma_{i,1}\}$ are the corresponding local degrees of freedom. The functions $\{\theta_{i,0}, \theta_{i,1}\}$ in the dual basis of $\Sigma_i$ (i.e., $\sigma_{i,m}(\theta_{i,n}) = \delta_{mn}$ for $0 \le m, n \le 1$) are called the local shape functions. One readily verifies that
-$$ \theta_{i,0}(t) = 1 - \frac{t - x_i}{h_i},\qquad \theta_{i,1}(t) = \frac{t - x_i}{h_i}. $$
-Finally, introduce the family $\{\mathcal{I}_{I_i}^1\}_{I_i \in \mathcal{T}_h}$ of local interpolation operators such that, for $i \in \{0, \dots, N\}$,
-$$ \mathcal{I}_{I_i}^1: C(I_i) \ni v \mapsto \sum_{m=0}^1 \sigma_{i,m}(v) \theta_{i,m}. $$
+\end{tightalign*}
+The proof of Lemma~\ref{lemma:interpolation-error-Ph1} shows that the operator $I_h^1$ is endowed with local interpolation properties, i.e., the interpolation error is controlled elementwise before being controlled globally over $\Omega$. This motivates the introduction of \emph{local interpolation operators}. Let $I_i = [x_i, x_{i+1}] \in \mathcal{T}_h$ and let $\Sigma_i = \{\sigma_{i,0}, \sigma_{i,1}\}$ where $\sigma_{i,0}, \sigma_{i,1} \in \mathcal{L}(\mathbb{P}_1; \mathbb{R})$ are such that, for all $p \in \mathbb{P}_1$,
+\begin{equation}
+    \sigma_{i,0}(p) = p(x_i),\qquad \sigma_{i,1}(p) = p(x_{i+1}).
+\end{equation}
+Note that $\Sigma_i$ is a basis for $\mathcal{L}(\mathbb{P}_1; \mathbb{R})$. The triplet $\{I_i, \mathbb{P}_1, \Sigma_i\}$ is called a (one-dimensional) $\mathbb{P}_1$ \emph{Lagrange finite element}, and the linear forms $\{\sigma_{i,0}, \sigma_{i,1}\}$ are the corresponding local degrees of freedom. The functions $\{\theta_{i,0}, \theta_{i,1}\}$ in the dual basis of $\Sigma_i$ (i.e., $\sigma_{i,m}(\theta_{i,n}) = \delta_{mn}$ for $0 \le m, n \le 1$) are called the \emph{local shape functions}. One readily verifies that
+\begin{equation}
+    \theta_{i,0}(t) = 1 - \frac{t - x_i}{h_i},\qquad \theta_{i,1}(t) = \frac{t - x_i}{h_i}.
+\end{equation}
+Finally, introduce the family $\{\mathcal{I}_{I_i}^1\}_{I_i \in \mathcal{T}_h}$ of local interpolation operators, such that for $0\leq i\leq N$,
+\begin{equation}
+    \mathcal{I}_{I_i}^1: C(I_i) \ni v \mapsto \sum_{m=0}^1 \sigma_{i,m}(v) \theta_{i,m}.
+\end{equation}
 The proofs of the two previous lemmas can now be rewritten using the local interpolation operators $\mathcal{I}_{I_i}^1$. In particular, the key properties are, for $0 \le i \le N$ and $v \in H^2(I_i)$,
-$$ \|v - \mathcal{I}_{I_i}^1 v\|_{0,I_i} \le h_i^2 |v|_{2,I_i},\qquad|\mathcal{I}_{I_i}^1 v|_{1,I_i} \le h_i |v|_{2,I_i}. $$
-
-\subsection{The $\mathbb{P}_k$ Lagrange finite elements}
+\begin{equation}
+    \|v - \mathcal{I}_{I_i}^1 v\|_{0,I_i} \le h_i^2 |v|_{2,I_i},\qquad|\mathcal{I}_{I_i}^1 v|_{1,I_i} \le h_i |v|_{2,I_i}.
+\end{equation}
+\paragraph{The $\mathbb{P}_k$ Lagrange finite elements}
 The interpolation technique presented for the piecewise-linear case (polynomial degree $1$) generalizes to higher-degree polynomials. Consider the mesh $\mathcal{T}_h = \{I_i\}_{0 \le i \le N}$ introduced previously. Let
-$$ P_h^k = \{ v_h \in C(\bar{\Omega}): \forall i \in \{0, \dots, N\}, v_h|_{I_i} \in \mathbb{P}_k \}. $$
-To investigate the properties of the approximation space $P_h^k$ and to construct an interpolation operator with codomain $P_h^k$, it is convenient to consider Lagrange polynomials. Recall the following:
-
-\begin{definition}[Lagrange polynomials]\label{def:lagrangepolynomials}
-    Let $k \ge 1$ and let $\{s_0, \dots, s_k\}$ be $(k+1)$ distinct numbers. The Lagrange polynomials $\{\mathcal{L}_0^k, \dots, \mathcal{L}_k^k\}$ associated with the nodes $\{s_0, \dots, s_k\}$ are defined to be
-    $$ \mathcal{L}_m^k(t) = \frac{\prod_{l \ne m}(t - s_l)}{\prod_{l \ne m}(s_m - s_l)}, \quad 0 \le m \le k. $$
+\begin{equation}\label{eq:def-Phk}
+    P_h^k = \{ v_h \in C(\bar{\Omega}): \forall i \in \{0, \dots, N\}, v_h|_{I_i} \in \mathbb{P}_k \}.
+\end{equation}
+To investigate the properties of the approximation space $P_h^k$ and to construct an interpolation operator with codomain $P_h^k$, it is convenient to consider Lagrange polynomials.
+\begin{definition}[Lagrange polynomials]\label{def:lagrange-polynomials}
+    Let $k \ge 1$ and let $\{s_0, \dots, s_k\}$ be $(k+1)$ distinct numbers. The \emph{Lagrange polynomials} $\{\mathcal{L}_0^k, \dots, \mathcal{L}_k^k\}$ associated with the nodes $\{s_0, \dots, s_k\}$ are defined to be
+    \begin{equation}
+        \mathcal{L}_m^k(t) = \frac{\prod_{l \ne m}(t - s_l)}{\prod_{l \ne m}(s_m - s_l)}, \quad 0 \le m \le k.
+    \end{equation}
     The Lagrange polynomials satisfy the important property
-    $$ \mathcal{L}_m^k(s_l) = \delta_{ml}, \quad 0 \le m,l \le k. $$
+    \begin{equation}
+        \mathcal{L}_m^k(s_l) = \delta_{ml}, \quad 0 \le m,l \le k.
+    \end{equation}
 \end{definition}
+
 For $i \in \{0, \dots, N\}$ introduce the nodes $\xi_{i,m} = x_i + \frac{m}{k}h_i$, $0 \le m \le k$, in the mesh interval $I_i$. Let $\{\mathcal{L}_{i,0}^k, \dots, \mathcal{L}_{i,k}^k\}$ be the Lagrange polynomials associated with these nodes. For $j \in \{0, \dots, k(N+1)\}$ with $j = ki + m$ and $0 \le m \le k-1$ define the function $\varphi_j$ elementwise as follows: For $1 \le m \le k-1$,
-$$ \varphi_{ki+m}(x) = \begin{cases} \mathcal{L}_{i,m}^k(x) & \text{if } x \in I_i, \\ 0 & \text{otherwise}, \end{cases} $$
+\begin{equation}
+    \varphi_{ki+m}(x) = \begin{cases} \mathcal{L}_{i,m}^k(x) & \text{if } x \in I_i, \\ 0 & \text{otherwise}, \end{cases}
+\end{equation}
 and for $m=0$,
-$$ \varphi_{ki}(x) = \begin{cases} \mathcal{L}_{i-1,k}^k(x) & \text{if } x \in I_{i-1}, \\ \mathcal{L}_{i,0}^k(x) & \text{if } x \in I_i, \\ 0 & \text{otherwise}, \end{cases} $$
+\begin{equation}
+    \varphi_{ki}(x) = \begin{cases} \mathcal{L}_{i-1,k}^k(x) & \text{if } x \in I_{i-1}, \\ \mathcal{L}_{i,0}^k(x) & \text{if } x \in I_i, \\ 0 & \text{otherwise}, \end{cases}
+\end{equation}
 with obvious modifications if $i = 0$ or $N+1$.
-\begin{lemma}\label{basis_functions_Pk}
+\begin{lemma}\label{lemma:basis_functions_Pk}
     The construction above results in degree $k$ polynomials, i.e. $\varphi_j \in P_h^k$.
-\begin{proof}
-    Let $j \in \{0, \dots, k(N+1)\}$ with $j = ki + m.$ If $1 \le m \le k-1$, $\varphi_j(x_i) = \varphi_j(x_{i+1}) = 0$; hence, $\varphi_j \in C(\bar{\Omega})$. Moreover, the restrictions of $\varphi_j$ to the mesh intervals are in $\mathbb{P}_k$ by construction. Therefore, $\varphi_j \in P_h^k$. Now, assume $m = 0$ (i.e., $j=ki$) and $0 < i < N+1$. Clearly, $\varphi_{ki}$ is continuous at $x_i$ by construction and $\varphi_{ki}(x_{i-1}) = \varphi_{ki}(x_{i+1}) = 0$; hence, $\varphi_{ki} \in P_h^k$. The cases $i = 0$ and $i = N+1$ are treated similarly.
-\end{proof}
+    \begin{proof}
+        Let $j \in \{0, \dots, k(N+1)\}$ with $j = ki + m.$ If $1 \le m \le k-1$, $\varphi_j(x_i) = \varphi_j(x_{i+1}) = 0$; hence, $\varphi_j \in C(\bar{\Omega})$. Moreover, the restrictions of $\varphi_j$ to the mesh intervals are in $\mathbb{P}_k$ by construction. Therefore, $\varphi_j \in P_h^k$. Now, assume $m = 0$ (i.e., $j=ki$) and $0 < i < N+1$. Clearly, $\varphi_{ki}$ is continuous at $x_i$ by construction and $\varphi_{ki}(x_{i-1}) = \varphi_{ki}(x_{i+1}) = 0$; hence, $\varphi_{ki} \in P_h^k$. The cases $i = 0$ and $i = N+1$ are treated similarly.
+    \end{proof}
 \end{lemma}
 Introduce the set of nodes $\{a_j\}_{0 \le j \le k(N+1)}$ such that $a_j = \xi_{i,m}$ where $j = ik + m$. For $j \in \{0, \dots, k(N+1)\}$, consider the linear form
-$$ \gamma_j: C(\bar{\Omega}) \ni v \mapsto \gamma_j(v) = v(a_j). $$
-
+\begin{equation}\label{eq:pointwise-form-k}
+    \gamma_j: C(\bar{\Omega}) \ni v \mapsto \gamma_j(v) = v(a_j).
+\end{equation}
 \begin{lemma}
     $\{\varphi_0, \dots, \varphi_{k(N+1)}\}$ is a basis for $P_h^k$, and $\{\gamma_0, \dots, \gamma_{k(N+1)}\}$ is a basis for $\mathcal{L}(P_h^k; \mathbb{R})$.
-
-\begin{proof}
-    Similar to that of Lemma~\ref{hatbasis}, since $\gamma_j(\varphi_{j'}) = \delta_{jj'}$ for $0 \le j,j' \le k(N+1)$.
-\end{proof}
+    \begin{proof}
+        Similar to that of Lemma~\ref{lemma:hatbasis}, since $\gamma_j(\varphi_{j'}) = \delta_{jj'}$ for $0 \le j,j' \le k(N+1)$.
+    \end{proof}
 \end{lemma}
-The global degrees of freedom in $P_h^k$ are chosen to be the $(k(N+1)+1)$ linear forms $\gamma_j$ defined above; hence, the global shape functions in $P_h^k$ are the functions $\{\varphi_0, \dots, \varphi_{k(N+1)}\}$.
+The global degrees of freedom in $P_h^k$ are chosen to be the $(k(N+1)+1)$ linear forms $\gamma_j$ defined in~\eqref{eq:pointwise-form-k}; hence, the global shape functions in $P_h^k$ are the functions $\{\varphi_0, \dots, \varphi_{k(N+1)}\}$.
 
-The main advantage of using high-degree polynomials is that smooth functions can be interpolated to high-order accuracy. Define the interpolation operator $I_h^k$ to be
-$$ I_h^k: C(\bar{\Omega}) \ni v \mapsto \sum_{j=0}^{k(N+1)} \gamma_j(v) \varphi_j \in P_h^k. $$
-$I_h^k v$ is called the Lagrange interpolant of $v$ of degree $k$. Clearly, $I_h^k$ is a linear operator, and $I_h^k v$ is the unique function in $P_h^k$ that takes the same value as $v$ at all the mesh nodes. The approximation space $P_h^k$ is the codomain of $I_h^k$. 
-
-\begin{lemma}
+The main advantage of using high-degree polynomials is that smooth functions can be interpolated to high-order accuracy.
+\begin{definition}[Lagrange interpolation operator in $\mathbb{P}^k$]\label{def:interpolation-operator-Phk}
+    Define the \emph{Lagrange interpolation operator} $I_h^k$ to be
+    \begin{equation}\label{eq:interpolation-operator-Phk}
+        I_h^k: C(\bar{\Omega}) \ni v \mapsto \sum_{j=0}^{k(N+1)} \gamma_j(v) \varphi_j \in P_h^k.
+    \end{equation}
+    $I_h^k v$ is called the \emph{Lagrange interpolant} of $v$ of degree $k$. Clearly, $I_h^k$ is a linear operator, and $I_h^k v$ is the unique function in $P_h^k$ that takes the same value as $v$ at all the mesh nodes. The approximation space $P_h^k$ is the codomain of $I_h^k$. 
+\end{definition}
+\begin{lemma}\label{lemma:approxPk}
     The approximation space $P_h^k$ constructed above satisfies $P_h^k \subset H^1(\Omega)$.
 \begin{proof}
-    Similar to that of Lemma~\ref{approxP1}.
+    Similar to that of Lemma~\ref{lemma:approxP1}.
 \end{proof}
 \end{lemma}
 To investigate the properties of $I_h^k$, it is convenient to introduce a family of local interpolation operators. On $I_i = [x_i, x_{i+1}] \in \mathcal{T}_h$ choose the local degrees of freedom to be the $(k+1)$ linear forms $\{\sigma_{i,0}, \dots, \sigma_{i,k}\}$ defined as follows:
-$$ \sigma_{i,m}: \mathbb{P}_k \ni p \mapsto \sigma_{i,m}(p) = p(\xi_{i,m}), \quad 0 \le m \le k. $$
-The triplet $\{I_i, \mathbb{P}_k, \Sigma_i\}$ is called a (one-dimensional) $\mathbb{P}_k$ Lagrange finite element, and the points $\{\xi_{i,0}, \dots, \xi_{i,k}\}$ are called the nodes of the finite element. Clearly, the local shape functions $\{\theta_{i,0}, \dots, \theta_{i,k}\}$ are the $(k+1)$ Lagrange polynomials associated with the nodes $\{\xi_{i,0}, \dots, \xi_{i,k}\}$, i.e., $\theta_{i,m} = \mathcal{L}_{i,m}^k$ for $0 \le m \le k$. Finally, introduce the family $\{\mathcal{I}_{I_i}^k\}_{I_i \in \mathcal{T}_h}$ of local interpolation operators such that, for $i \in \{0, \dots, N\}$,
-$$ \mathcal{I}_{I_i}^k: C(I_i) \ni v \mapsto \sum_{m=0}^k \sigma_{i,m}(v) \theta_{i,m}, $$
+\begin{equation}
+    \sigma_{i,m}: \mathbb{P}_k \ni p \mapsto \sigma_{i,m}(p) = p(\xi_{i,m}), \quad 0 \le m \le k.
+\end{equation}
+The triplet $\{I_i, \mathbb{P}_k, \Sigma_i\}$ is called a (one-dimensional) $\mathbb{P}_k$ \emph{Lagrange finite element}, and the points $\{\xi_{i,0}, \dots, \xi_{i,k}\}$ are called the \emph{nodes} of the finite element. Clearly, the local shape functions $\{\theta_{i,0}, \dots, \theta_{i,k}\}$ are the $(k+1)$ Lagrange polynomials associated with the nodes $\{\xi_{i,0}, \dots, \xi_{i,k}\}$, i.e., $\theta_{i,m} = \mathcal{L}_{i,m}^k$ for $0 \le m \le k$. Finally, introduce the family $\{\mathcal{I}_{I_i}^k\}_{I_i \in \mathcal{T}_h}$ of local interpolation operators such that, for $i \in \{0, \dots, N\}$,
+\begin{equation}
+    \mathcal{I}_{I_i}^k: C(I_i) \ni v \mapsto \sum_{m=0}^k \sigma_{i,m}(v) \theta_{i,m},
+\end{equation}
 i.e., for all $0 \le i \le N$ and $v \in C(\bar{\Omega})$, $(I_h^k v)|_{I_i} = \mathcal{I}_{I_i}^k(v|_{I_i})$.
 
-Let us show that the family $\{\mathcal{I}_{I_i}^k\}_{I_i \in \mathcal{T}_h}$ can be generated from a single reference interpolation operator. Let $\hat{K} = [0, 1]$ be the unit interval, henceforth referred to as the reference interval. Set $\hat{P} = \mathbb{P}_k,$ and define the $(k+1)$ linear forms $\{\hat{\sigma}_0, \dots, \hat{\sigma}_k\}$ as follows:
-$$ \hat{\sigma}_m: \mathbb{P}_k \ni \hat{p} \mapsto \hat{\sigma}_m(\hat{p}) = \hat{p}(\hat{\xi}_m), \quad 0 \le m \le k, $$
+Let us show that the family $\{\mathcal{I}_{I_i}^k\}_{I_i \in \mathcal{T}_h}$ can be generated from a single reference interpolation operator. Let $\hat{K} = [0, 1]$ be the unit interval, called the \emph{reference interval}. Set $\hat{P} = \mathbb{P}_k,$ and define the $(k+1)$ linear forms $\{\hat{\sigma}_0, \dots, \hat{\sigma}_k\}$ as follows:
+\begin{equation}
+    \hat{\sigma}_m: \mathbb{P}_k \ni \hat{p} \mapsto \hat{\sigma}_m(\hat{p}) = \hat{p}(\hat{\xi}_m), \quad 0 \le m \le k,
+\end{equation}
 where $\hat{\xi}_m = \frac{m}{k}$. Let $\{\hat{\mathcal{L}}_0^k, \dots, \hat{\mathcal{L}}_k^k\}$ be the Lagrange polynomials associated with the nodes $\{\hat{\xi}_0, \dots, \hat{\xi}_k\}$. Set $\hat{\theta}_m = \hat{\mathcal{L}}_m^k$, $0 \le m \le k$, so that $\hat{\sigma}_m(\hat{\theta}_n) = \delta_{mn}$ for $0 \le m,n \le k$. Then, $\{\hat{K}, \hat{P}, \hat{\Sigma}\}$ is a $\mathbb{P}_k$ Lagrange finite element, and the corresponding interpolation operator is
-$$ \mathcal{I}_{\hat{K}}^k: C(\hat{K}) \ni \hat{v} \mapsto \sum_{m=0}^k \hat{\sigma}_m(\hat{v}) \hat{\theta}_m. $$
-$\{\hat{K}, \hat{P}, \hat{\Sigma}\}$ is called the reference finite element and $\mathcal{I}_{\hat{K}}^k$ the reference interpolation operator. For $i \in \{0, \dots, N\}$, consider the affine transformations
-$$ T_i: \hat{K} \ni t \mapsto x = x_i + th_i \in I_i. $$
+\begin{equation}
+    \mathcal{I}_{\hat{K}}^k: C(\hat{K}) \ni \hat{v} \mapsto \sum_{m=0}^k \hat{\sigma}_m(\hat{v}) \hat{\theta}_m.
+\end{equation}
+$\{\hat{K}, \hat{P}, \hat{\Sigma}\}$ is called the \emph{reference finite element} and $\mathcal{I}_{\hat{K}}^k$ the \emph{reference interpolation operator}. For $i \in \{0, \dots, N\}$, consider the affine transformations
+\begin{equation}
+    T_i: \hat{K} \ni t \mapsto x = x_i + th_i \in I_i.
+\end{equation}
 Since $T_i(\hat{K}) = I_i$, the mesh $\mathcal{T}_h$ can be constructed by applying the affine transformations $T_i$ to the reference interval $\hat{K}$. Moreover, owing to the fact that $T_i(\hat{\xi}_m) = \xi_{i,m}$ for $0 \le m \le k$, it is clear that $\theta_{i,m} \circ T_i = \hat{\theta}_m$ and $\sigma_{i,m}(v) = \hat{\sigma}_m(v \circ T_i)$ for all $v \in C(I_i)$. Hence, using
-\begin{align*}
+\begin{tightalign*}
     \mathcal{I}_{I_i}^k(v)(T_i(\hat{x})) &= \sum_{m=0}^k \sigma_{i,m}(v) \theta_{i,m}(T_i(\hat{x})) \\
     &= \sum_{m=0}^k \sigma_{i,m}(v) \hat{\theta}_m(\hat{x}) \\
     &= \sum_{m=0}^k \hat{\sigma}_m(v \circ T_i) \hat{\theta}_m(\hat{x})\\
     & = \mathcal{I}_{\hat{K}}^k(v \circ T_i)(\hat{x}),
-\end{align*}
+\end{tightalign*}
 and thus we infer
-$$ \forall v \in C(I_i), \quad \mathcal{I}_{I_i}^k(v) \circ T_i = \mathcal{I}_{\hat{K}}^k(v \circ T_i). $$
-In other words, the family $\{\mathcal{I}_{I_i}^k\}_{I_i \in \mathcal{T}_h}$ is entirely generated by the transformations $\{T_i\}_{I_i \in \mathcal{T}_h}$ and the reference interpolation operator $\mathcal{I}_{\hat{K}}^k$. The property above plays a key role when estimating the interpolation error; see the proof of Lemma~\ref{interpolationerrPk} below.
+\begin{equation}
+    \forall v \in C(I_i), \quad \mathcal{I}_{I_i}^k(v) \circ T_i = \mathcal{I}_{\hat{K}}^k(v \circ T_i).
+\end{equation}
+In other words, the family $\{\mathcal{I}_{I_i}^k\}_{I_i \in \mathcal{T}_h}$ is entirely generated by the transformations $\{T_i\}_{I_i \in \mathcal{T}_h}$ and the reference interpolation operator $\mathcal{I}_{\hat{K}}^k$. The property above plays a key role when estimating the interpolation error; see the proof of Lemma~\ref{lemma:interpolationerrPk} below.
 
 As well as with the one-dimensional case, we can characterize the interpolation operators.
-\begin{lemma}
+\begin{lemma}\label{lemma:contkD}
     $I_h^k$ is a linear continuous mapping from $H^1(\Omega)$ to $H^1(\Omega)$, and $\|I_h^k\|_{\mathcal{L}(H^1(\Omega);H^1(\Omega))}$ is uniformly bounded with respect to $h$.
-\begin{proof}
-    To prove that $I_h^k$ maps $H^1(\Omega)$ to $H^1(\Omega)$, use the same argument as in the proof of Lemma~\ref{cont1D}.
-    Let $v \in H^1(\Omega)$ and $I_i \in \mathcal{T}_h$. Since $\sum_{m=0}^k \theta_{i,m}' = 0$,
-    $$ (\mathcal{I}_{I_i}^k v)' = \sum_{m=0}^k [v(\xi_{i,m}) - v(x_i)] \theta_{i,m}'. $$
-    Inequality~\ref{eq:interpolator_continuity_1d} yields $|v(\xi_{i,m}) - v(x_i)| \le h_i^{1/2} |v|_{1,I_i}$ for $0 \le m \le k$. Furthermore, changing variables in the integral, it is clear that $|\theta_{i,m}|_{1,I_i} = h_i^{-1/2} |\hat{\theta}_m|_{1,\hat{K}}$. Set $c_k = \max_{0 \le m \le k} |\hat{\theta}_m|_{1,\hat{K}}$ and observe that this quantity is mesh-independent. A straightforward calculation yields
-    $$ |\mathcal{I}_{I_i}^k v|_{1,I_i} \le (k+1) c_k |v|_{1,I_i}, $$
-    showing that $|\mathcal{I}_h^k v|_{1,\Omega}$ is controlled by $|v|_{1,\Omega}$ uniformly with respect to $h$. In addition, since $\sum_{m=0}^k \theta_{i,m} = 1$,
-    $$ \mathcal{I}_{I_i}^k v - v(x_i) = \sum_{m=0}^k [v(\xi_{i,m}) - v(x_i)] \theta_{i,m}, $$
-    implying, for $x \in I_i$, $|\mathcal{I}_{I_i}^k v(x)| \le \|v\|_{L^\infty(\Omega)} + (k+1) d_k h_i^{1/2} |v|_{1,I_i}$ with the mesh-independent constant $d_k = \max_{0 \le m \le k} \|\hat{\theta}_m\|_{L^\infty(\hat{K})}$. Then, from inequality~\ref{eq:supnorm_p1} we get that $\|\mathcal{I}_h^k v\|_{L^\infty(\Omega)}$ is controlled by $\|v\|_{1,\Omega}$ uniformly with respect to $h$. To conclude, use the fact that $\|\mathcal{I}_h^k v\|_{0,\Omega} \le |b-a|^{1/2} \|\mathcal{I}_h^k v\|_{L^\infty(\Omega)}$.
-\end{proof}
+    \begin{proof}
+        To prove that $I_h^k$ maps $H^1(\Omega)$ to $H^1(\Omega)$, use the same argument as in the proof of Lemma~\ref{lemma:cont1D}.
+        Let $v \in H^1(\Omega)$ and $I_i \in \mathcal{T}_h$. Since $\sum_{m=0}^k \theta_{i,m}' = 0$,
+        \begin{equation*}
+            (\mathcal{I}_{I_i}^k v)' = \sum_{m=0}^k [v(\xi_{i,m}) - v(x_i)] \theta_{i,m}'.
+        \end{equation*}
+        Inequality~\ref{eq:interpolator_continuity_1d} yields $|v(\xi_{i,m}) - v(x_i)| \le h_i^{1/2} |v|_{1,I_i}$ for $0 \le m \le k$. Furthermore, changing variables in the integral, it is clear that $|\theta_{i,m}|_{1,I_i} = h_i^{-1/2} |\hat{\theta}_m|_{1,\hat{K}}$. Set $c_k = \max_{0 \le m \le k} |\hat{\theta}_m|_{1,\hat{K}}$ and observe that this quantity is mesh-independent. A straightforward calculation yields
+        \begin{equation*}
+            |\mathcal{I}_{I_i}^k v|_{1,I_i} \le (k+1) c_k |v|_{1,I_i},
+        \end{equation*}
+        showing that $|\mathcal{I}_h^k v|_{1,\Omega}$ is controlled by $|v|_{1,\Omega}$ uniformly with respect to $h$. In addition, since $\sum_{m=0}^k \theta_{i,m} = 1$,
+        \begin{equation*}
+            \mathcal{I}_{I_i}^k v - v(x_i) = \sum_{m=0}^k [v(\xi_{i,m}) - v(x_i)] \theta_{i,m},
+        \end{equation*}
+        implying, for $x \in I_i$, $|\mathcal{I}_{I_i}^k v(x)| \le \|v\|_{L^\infty(\Omega)} + (k+1) d_k h_i^{1/2} |v|_{1,I_i}$ with the mesh-independent constant $d_k = \max_{0 \le m \le k} \|\hat{\theta}_m\|_{L^\infty(\hat{K})}$. Then, from inequality~\ref{eq:supnorm_p1} we get that $\|\mathcal{I}_h^k v\|_{L^\infty(\Omega)}$ is controlled by $\|v\|_{1,\Omega}$ uniformly with respect to $h$. To conclude, use the fact that $\|\mathcal{I}_h^k v\|_{0,\Omega} \le |b-a|^{1/2} \|\mathcal{I}_h^k v\|_{L^\infty(\Omega)}$.
+    \end{proof}
 \end{lemma}
-\begin{lemma}\label{interpolationerrPk}
+\begin{lemma}\label{lemma:interpolationerrPk}
     Let $0 \le l \le k$. Then, there exists $c$ such that, for all $h$ and $v \in H^{l+1}(\Omega)$
-    $$ \|v - I_h^k v\|_{0,\Omega} + h |v - I_h^k v|_{1,\Omega} \le c h^{l+1} |v|_{l+1,\Omega} $$
+    \begin{equation}
+        \|v - I_h^k v\|_{0,\Omega} + h |v - I_h^k v|_{1,\Omega} \le c h^{l+1} |v|_{l+1,\Omega}
+    \end{equation}
     and for $l \ge 1$
-    $$ \sum_{m=2}^{l+1} h^m \left(\sum_{i=0}^N |v - I_h^k v|_{m,I_i}^2\right)^{1/2} \le c h^{l+1} |v|_{l+1,\Omega}. $$
-
-\begin{proof}
-    Let $0 \le l \le k$, $0 \le m \le l+1$. Let $v \in H^{l+1}(\Omega)$.
-    Consider a mesh interval $I_i$. Set $\hat{v} = v \circ T_i$. Then, we can go back to $\hat{K}$ via the transformations $T_i$, i.e. change variables in the integral to obtain
-    $$ |v - \mathcal{I}_{I_i}^k v|_{m,I_i} = h_i^{-m+1/2} |\hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v}|_{m,\hat{K}}. $$
-    Similarly, $|\hat{v}|_{l+1,\hat{K}} = h_i^{l+1/2} |v|_{l+1,I_i}$. 
-    Consider the linear mapping
-    $$ \mathcal{F}: H^{l+1}(\hat{K}) \ni \hat{v} \mapsto \hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v} \in H^m(\hat{K}). $$
-    Note that $\mathcal{I}_{\hat{K}}^k \hat{v}$ is meaningful since in one dimension, $\hat{v} \in H^{l+1}(\hat{K})$ with $l \ge 0$ implies $\hat{v} \in C(\hat{K})$. Moreover, $\mathcal{F}$ is continuous from $H^{l+1}(\hat{K})$ to $H^m(\hat{K})$. Indeed, one can easily adapt the proof of Lemma~\ref{cont1D} to prove that $\mathcal{I}_{\hat{K}}^k$ is continuous from $H^1(\hat{K})$ to $H^s(\hat{K})$ for all $s \ge 1$. Furthermore, it is clear that $\mathbb{P}_k$ is invariant under $\mathcal{F}$ since, for all $\hat{p} \in \mathbb{P}_k$ with $\hat{p} = \sum_{n=0}^k \alpha_n \hat{\theta}_n$
-    $$ \mathcal{I}_{\hat{K}} \hat{p} = \sum_{m,n=0}^k \alpha_n \hat{\sigma}_m(\hat{\theta}_n) \hat{\theta}_m = \sum_{m,n=0}^k \alpha_n \delta_{mn} \hat{\theta}_m = \sum_{n=0}^k \alpha_n \hat{\theta}_n = \hat{p}. $$
-    Since $l \le k$, $\mathbb{P}_l$ is invariant under $\mathcal{F}$. As a result,
-    \begin{align*}
-        |\hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v}|_{m,\hat{K}} &= |\mathcal{F}(\hat{v})|_{m,\hat{K}} = \inf_{\hat{p} \in \mathbb{P}_l} |\mathcal{F}(\hat{v} + \hat{p})|_{m,\hat{K}} \\
-        &\le \|\mathcal{F}\|_{\mathcal{L}(H^{l+1}(\hat{K});H^m(\hat{K}))} \inf_{\hat{p} \in \mathbb{P}_l} \|\hat{v} + \hat{p}\|_{l+1,\hat{K}} \\
-        &\le c \inf_{\hat{p} \in \mathbb{P}_l} \|\hat{v} + \hat{p}\|_{l+1,\hat{K}} \le c |\hat{v}|_{l+1,\hat{K}}.
-    \end{align*}
-    the last estimate resulting from the Deny-Lions Lemma; see Lemma B.67 in \cite{ern2004theory}. The identities derived in step 1 yield
-    $$ |v - \mathcal{I}_{I_i}^k v|_{m,I_i} = h_i^{-m+1/2} |\hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v}|_{m,\hat{K}} \le h_i^{-m+1/2} c |\hat{v}|_{l+1,\hat{K}} = h_i^{-m+1/2} c h_i^{l+1/2} |v|_{l+1,I_i} = c h_i^{l+1-m} |v|_{l+1,I_i}. $$
-    To derive the desired, sum over the mesh intervals. When $m = 0$ or 1, global norms over $\Omega$ can be used since $\mathbb{P}_k \subset H^1(\Omega)$ owing to the fact that $P_h^k\subset H^1(\Omega)$.
-\end{proof}
+    \begin{equation}
+        \sum_{m=2}^{l+1} h^m \left(\sum_{i=0}^N |v - I_h^k v|_{m,I_i}^2\right)^{1/2} \le c h^{l+1} |v|_{l+1,\Omega}.
+    \end{equation}
+    \begin{proof}
+        Let $0 \le l \le k$, $0 \le m \le l+1$. Let $v \in H^{l+1}(\Omega)$.
+        Consider a mesh interval $I_i$. Set $\hat{v} = v \circ T_i$. Then, we can go back to $\hat{K}$ via the transformations $T_i$, i.e. change variables in the integral to obtain
+        \begin{equation*}
+            |v - \mathcal{I}_{I_i}^k v|_{m,I_i} = h_i^{-m+1/2} |\hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v}|_{m,\hat{K}}.
+        \end{equation*}
+        Similarly, $|\hat{v}|_{l+1,\hat{K}} = h_i^{l+1/2} |v|_{l+1,I_i}$. 
+        Consider the linear mapping
+        \begin{equation*}
+            \mathcal{F}: H^{l+1}(\hat{K}) \ni \hat{v} \mapsto \hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v} \in H^m(\hat{K}).
+        \end{equation*}
+        Note that $\mathcal{I}_{\hat{K}}^k \hat{v}$ is meaningful since in one dimension, $\hat{v} \in H^{l+1}(\hat{K})$ with $l \ge 0$ implies $\hat{v} \in C(\hat{K})$. Moreover, $\mathcal{F}$ is continuous from $H^{l+1}(\hat{K})$ to $H^m(\hat{K})$. Indeed, one can easily adapt the proof of Lemma~\ref{lemma:cont1D} to prove that $\mathcal{I}_{\hat{K}}^k$ is continuous from $H^1(\hat{K})$ to $H^s(\hat{K})$ for all $s \ge 1$. Furthermore, it is clear that $\mathbb{P}_k$ is invariant under $\mathcal{F}$ since, for all $\hat{p} \in \mathbb{P}_k$ with $\hat{p} = \sum_{n=0}^k \alpha_n \hat{\theta}_n$
+        \begin{equation*}
+            \mathcal{I}_{\hat{K}} \hat{p} = \sum_{m,n=0}^k \alpha_n \hat{\sigma}_m(\hat{\theta}_n) \hat{\theta}_m = \sum_{m,n=0}^k \alpha_n \delta_{mn} \hat{\theta}_m = \sum_{n=0}^k \alpha_n \hat{\theta}_n = \hat{p}.
+        \end{equation*}
+        Since $l \le k$, $\mathbb{P}_l$ is invariant under $\mathcal{F}$. As a result,
+        \begin{tightalign*}
+            |\hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v}|_{m,\hat{K}} &= |\mathcal{F}(\hat{v})|_{m,\hat{K}} = \inf_{\hat{p} \in \mathbb{P}_l} |\mathcal{F}(\hat{v} + \hat{p})|_{m,\hat{K}} \\
+            &\le \|\mathcal{F}\|_{\mathcal{L}(H^{l+1}(\hat{K});H^m(\hat{K}))} \inf_{\hat{p} \in \mathbb{P}_l} \|\hat{v} + \hat{p}\|_{l+1,\hat{K}} \\
+            &\le c \inf_{\hat{p} \in \mathbb{P}_l} \|\hat{v} + \hat{p}\|_{l+1,\hat{K}} \le c |\hat{v}|_{l+1,\hat{K}}.
+        \end{tightalign*}
+        the last estimate resulting from the Deny-Lions Lemma; see Lemma~\cite[B.67]{ern2004theory}. The identities derived in step 1 yield
+        \begin{tightalign*}
+            |v - \mathcal{I}_{I_i}^k v|_{m,I_i} &= h_i^{-m+1/2} |\hat{v} - \mathcal{I}_{\hat{K}}^k \hat{v}|_{m,\hat{K}}\\
+            &\le h_i^{-m+1/2} c |\hat{v}|_{l+1,\hat{K}}\\
+            &= h_i^{-m+1/2} c h_i^{l+1/2} |v|_{l+1,I_i}\\
+            & = c h_i^{l+1-m} |v|_{l+1,I_i}.
+        \end{tightalign*}
+        To derive the desired, sum over the mesh intervals. When $m = 0$ or 1, global norms over $\Omega$ can be used since $\mathbb{P}_k \subset H^1(\Omega)$ owing to the fact that $P_h^k\subset H^1(\Omega)$.
+    \end{proof}
 \end{lemma}
 Note that the proofs above show that the interpolation properties of $I_h^k$ are local. If the function to be interpolated is smooth enough, say $v \in H^{k+1}(\Omega)$, the interpolation error is of optimal order. In particular, the first error estimate yields
-$$ \|v - I_h^k v\|_{0,\Omega} + h |v - I_h^k v|_{1,\Omega} \le c h^{k+1} |v|_{k+1,\Omega}. $$
+\begin{equation*}
+    \|v - I_h^k v\|_{0,\Omega} + h |v - I_h^k v|_{1,\Omega} \le c h^{k+1} |v|_{k+1,\Omega}.
+\end{equation*}
 However, one should bear in mind that the order of the interpolation error may not be optimal if the function to be interpolated is not smooth. For instance, if $v \in H^s(\Omega)$ and $v \notin H^{s+1}(\Omega)$ with $s \ge 2$, considering polynomials of degree larger than $s-1$ does not improve the interpolation error. If the function to be interpolated is in $H^1(\Omega)$ only, one can still prove $\lim_{h \rightarrow 0} |v - I_h^k v|_{1,\Omega} = 0$. To this end, use the density of $H^2(\Omega)$ in $H^1(\Omega)$ and the first error estimate; details are left as an exercise.
 
-\section{Finite elements: definitions and examples}
+\section{Finite elements: definitions and examples}\label{sec:finite-element-definitions}
 With one-dimensional interpolation already covered, we now present a general definition of finite elements and local interpolation operators. We will see several examples in two and three dimensions. 
 
-\subsection{Main definitions}
+\paragraph{Main definitions}
 \begin{definition}[Finite element]\label{def:finiteelements}
-    A finite element consists of a triplet $\{K, P, \Sigma\}$, where:
+    A \emph{finite element} consists of a triplet $\{K, P, \Sigma\}$, where:
     \begin{enumerate}
         \item $K$ is a compact, connected, Lipschitz subset of $\mathbb{R}^d$ with non-empty interior.
         \item $P$ is a vector space of functions $p: K \rightarrow \mathbb{R}^m$ for some positive integer $m$ (typically $m = 1$ or $d$).
         \item $\Sigma$ is a set of $n_{sh}$ linear forms $\{\sigma_1, \dots, \sigma_{n_{sh}}\}$ acting on the elements of $P$, and such that the linear mapping
-        \begin{equation*}
-            \label{eq:finite_element_mapping}
+        \begin{equation}\label{eq:finite_element_mapping}
             P \ni p \mapsto (\sigma_1(p), \dots, \sigma_{n_{sh}}(p)) \in \mathbb{R}^{n_{sh}}
-        \end{equation*}
+        \end{equation}
         is bijective, i.e., $\Sigma$ is a basis for $\mathcal{L}(P; \mathbb{R})$. The linear forms $\{\sigma_1, \dots, \sigma_{n_{sh}}\}$ are called the local degrees of freedom.
     \end{enumerate}
 \end{definition}
 
 \begin{lemma}\label{lemma:basis_from_bijectivity}
     There exists a basis $\{\theta_1, \dots, \theta_{n_{sh}}\}$ in $P$ such that
-    $$ \sigma_i(\theta_j) = \delta_{ij}, \quad 1 \le i,j \le n_{sh}. $$
+    \begin{equation}
+        \sigma_i(\theta_j) = \delta_{ij}, \quad 1 \le i,j \le n_{sh}.
+    \end{equation}
     \begin{proof}
-        Direct consequence of the bijectivity of the mapping \eqref{eq:finite_element_mapping} above.
+        Direct consequence of the bijectivity of the mapping~\eqref{eq:finite_element_mapping}.
     \end{proof}
 \end{lemma}
 
-
 \begin{definition}
-    $\{\theta_1, \dots, \theta_{n_{sh}}\}$ are called the local shape functions.
+    $\{\theta_1, \dots, \theta_{n_{sh}}\}$ are called the \emph{local shape functions}.
 \end{definition}
 
 Note that condition (3) in Definition~\ref{def:finiteelements} amounts to proving that
-    $$ \forall(\alpha_1, \dots, \alpha_{n_{sh}}) \in \mathbb{R}^{n_{sh}}, \quad \exists ! p \in P, \quad \sigma_i(p) = \alpha_i \text{ for } 1 \le i \le n_{sh}, $$
-    which, in turn, is equivalent to
-    $$ \begin{cases} \dim P = |\Sigma| = n_{sh}, \\ \forall p \in P, (\sigma_i(p) = 0, 1 \le i \le n_{sh}) \Rightarrow (p = 0). \end{cases} $$
-This property is usually referred to as unisolvence. In the literature, the bijectivity of the mapping \eqref{eq:finite_element_mapping} is sometimes not included in the definition and, if this property holds, the finite element is said to be unisolvent.
+\begin{equation}
+    \forall(\alpha_1, \dots, \alpha_{n_{sh}}) \in \mathbb{R}^{n_{sh}}, \quad \exists ! p \in P, \quad \sigma_i(p) = \alpha_i \text{ for } 1 \le i \le n_{sh},
+\end{equation}
+which, in turn, is equivalent to
+\begin{equation}
+    \begin{cases} \dim P = |\Sigma| = n_{sh}, \\ \forall p \in P, (\sigma_i(p) = 0, 1 \le i \le n_{sh}) \Rightarrow (p = 0). \end{cases}
+\end{equation}
+This property is usually referred to as unisolvence. In the literature, the bijectivity of the mapping~\eqref{eq:finite_element_mapping} is sometimes not included in the definition and, if this property holds, the finite element is said to be unisolvent.
 
 \begin{definition}[Lagrange finite element]\label{def:lagrange_finite_element}
-    Let $\{K, P, \Sigma\}$ be a finite element. If there is a set of points $\{a_1, \dots, a_{n_{sh}}\}$ in $K$ such that, for all $p \in P$, $\sigma_i(p) = p(a_i)$, $1 \le i \le n_{sh}$, $\{K, P, \Sigma\}$ is called a Lagrange finite element. The points $\{a_1, \dots, a_{n_{sh}}\}$ are called the nodes of the finite element, and the local shape functions $\{\theta_1, \dots, \theta_{n_{sh}}\}$ (which are such that $\theta_i(a_j) = \delta_{ij}$ for $1 \le i,j \le n_{sh}$) are called the nodal basis of $P$.
+    Let $\{K, P, \Sigma\}$ be a finite element. If there is a set of points $\{a_1, \dots, a_{n_{sh}}\}$ in $K$ such that, for all $p \in P$, $\sigma_i(p) = p(a_i)$, $1 \le i \le n_{sh}$, $\{K, P, \Sigma\}$ is called a \emph{Lagrange finite element}. The points $\{a_1, \dots, a_{n_{sh}}\}$ are called the \emph{nodes} of the finite element, and the local shape functions $\{\theta_1, \dots, \theta_{n_{sh}}\}$ (which are such that $\theta_i(a_j) = \delta_{ij}$ for $1 \le i,j \le n_{sh}$) are called the \emph{nodal basis} of $P$.
 \end{definition}
 
-\subsection{Local interpolation operator}
+\paragraph{Local interpolation operator}
 Let $\{K, P, \Sigma\}$ be a finite element. Assume that there exists a normed vector space $V(K)$ of functions $v: K \rightarrow \mathbb{R}^m$ such that:
 \begin{enumerate}
     \item $P \subset V(K)$.
     \item The linear forms $\{\sigma_1, \dots, \sigma_{n_{sh}}\}$ can be extended to $V(K)'$.
 \end{enumerate}
-Then, the local interpolation operator $\mathcal{I}_K$ can be defined as follows:
-$$ \mathcal{I}_K: V(K) \ni v \mapsto \sum_{i=1}^{n_{sh}} \sigma_i(v) \theta_i \in P. $$
-$V(K)$ is the domain of $\mathcal{I}_K$ and $P$ is its codomain. Note that the term ''interpolation'' is used in a broad sense since $\mathcal{I}_K v$ is not necessarily defined by matching point values of $v$.
-
+Then, the \emph{local interpolation operator} $\mathcal{I}_K$ can be defined as follows:
+\begin{equation}
+    \mathcal{I}_K: V(K) \ni v \mapsto \sum_{i=1}^{n_{sh}} \sigma_i(v) \theta_i \in P.
+\end{equation}
+$V(K)$ is the domain of $\mathcal{I}_K$ and $P$ is its codomain. Note that the term ``interpolation'' is used in a broad sense since $\mathcal{I}_K v$ is not necessarily defined by matching point values of $v$.
 \begin{lemma}\label{lemma:P_invariant_under_IK}
     $P$ is invariant under $\mathcal{I}_K$, i.e., $\forall p \in P$, $\mathcal{I}_K p = p$.
     \begin{proof}
@@ -276,179 +372,253 @@ $V(K)$ is the domain of $\mathcal{I}_K$ and $P$ is its codomain. Note that the t
 }
 
 At this point, it may seem more appropriate to define a finite element as a quadruplet $\{K, P, \Sigma, V(K)\}$ where the triplet $\{K, P, \Sigma\}$ complies with Definition~\ref{def:finiteelements} and $V(K)$ satisfies properties (1)-(2). However, for the sake of simplicity, we hereafter employ the well-established triplet-based definition, and always implicitly assume that there exists a normed vector space $V(K)$ satisfying properties (1)-(2). In many textbooks, $V(K)$ is implicitly assumed to be of the form $C^s(K)$ for some integer $s \ge 0$.
-\section{Finite elements in higher dimensions}
+
+\section{Finite elements in higher dimensions}\label{sec:finite-elements-high-dimensions}
 We now extend the above definitions to the higher-dimensional setting, by introducing simplicial and tensor product finite elements.
-\subsection{Simplicial Lagrange finite elements}
-\paragraph{Simplices and barycentric coordinates} Let $\{a_0, \dots, a_d\}$ be a family of points in $\mathbb{R}^d$, $d \ge 1$. Assume that the vectors $\{a_1 - a_0, \dots, a_d - a_0\}$ are linearly independent. Then, the convex hull of $\{a_0, \dots, a_d\}$ is called a simplex, and the points $\{a_0, \dots, a_d\}$ are called the vertices of the simplex. The unit simplex of $\mathbb{R}^d$ is the set
-$$ \left\{x \in \mathbb{R}^d: x_i \ge 0, 1 \le i \le d, \text{ and } \sum_{i=1}^d x_i \le 1 \right\}. $$
-A simplex can be equivalently defined to be the image of the unit simplex by a bijective affine transformation. For $0 \le i \le d$, define $F_i$ to be the face of $K$ opposite to $a_i$, and define $n_i$ to be the outward normal to $F_i$. Note that in dimension 2 a face is also called an edge, but this distinction will not be made unless necessary.
-Given a simplex $K$ in $\mathbb{R}^d$, it is often convenient to consider the associated barycentric coordinates $\{\lambda_0, \dots, \lambda_d\}$ defined as follows: For $0 \le i \le d$,
-\begin{equation*}\label{eq:barycentric_coords}
+\paragraph{Simplicial Lagrange finite elements}
+\paragraph{Simplices and barycentric coordinates} Let $\{a_0, \dots, a_d\}$ be a family of points in $\mathbb{R}^d$, $d \ge 1$. Assume that the vectors $\{a_1 - a_0, \dots, a_d - a_0\}$ are linearly independent. Then, the convex hull of $\{a_0, \dots, a_d\}$ is called a \emph{simplex}, and the points $\{a_0, \dots, a_d\}$ are called the vertices of the simplex. The \emph{unit simplex} of $\mathbb{R}^d$ is the set
+\begin{equation}
+    \left\{x \in \mathbb{R}^d: x_i \ge 0, 1 \le i \le d, \text{ and } \sum_{i=1}^d x_i \le 1 \right\}.
+\end{equation}
+A simplex can be equivalently defined to be the image of the unit simplex by a bijective affine transformation. For $0 \le i \le d$, define $F_i$ to be the face of $K$ opposite to $a_i$, and define $n_i$ to be the outward normal vector to $F_i$. Note that in dimension 2 a face is also called an \emph{edge}, but this distinction will not be made unless necessary.
+Given a simplex $K$ in $\mathbb{R}^d$, it is often convenient to consider the associated \emph{barycentric coordinates} $\{\lambda_0, \dots, \lambda_d\}$ defined as follows: For $0 \le i \le d$,
+\begin{equation}\label{eq:barycentric_coords}
     \lambda_i: \mathbb{R}^d \ni x \mapsto \lambda_i(x) = 1 - \frac{(x - a_i) \cdot n_i}{(a_j - a_i) \cdot n_i} \in \mathbb{R},
-\end{equation*}
+\end{equation}
 where $a_j$ is an arbitrary vertex in $F_i$ (the definition of $\lambda_i$ is clearly independent of the choice of the vertex in $F_i$). The barycentric coordinate $\lambda_i$ is an affine function; it is equal to 1 at $a_i$ and vanishes at $F_i$. Furthermore, its level-sets are hyperplanes parallel to $F_i$. Note that the barycenter $G$ of $K$ has barycentric coordinates $(\frac{1}{d+1}, \dots, \frac{1}{d+1})$. The barycentric coordinates satisfy the following properties: For all $x \in K$, $0 \le \lambda_i(x) \le 1$ and for all $x \in \mathbb{R}^d$,
-$$ \sum_{i=1}^{d+1} \lambda_i(x) = 1 \text{ and } \sum_{i=1}^{d+1} \lambda_i(x) (x - a_i) = 0. $$
-See Exercise 1.4 in \cite{ern2004theory} for further properties in dimension 2 and 3.
+\begin{equation}
+    \sum_{i=1}^{d+1} \lambda_i(x) = 1 \text{ and } \sum_{i=1}^{d+1} \lambda_i(x) (x - a_i) = 0.
+\end{equation}
+See~\cite[Exercise 1.4]{ern2004theory} for further properties in dimension 2 and 3.
 
 \example{In the unit simplex, $\lambda_0 = 1 - x_1 - x_2$, $\lambda_1 = x_1$, and $\lambda_2 = x_2$ in dimension 2, and $\lambda_0 = 1 - x_1 - x_2 - x_3$, $\lambda_1 = x_1$, $\lambda_2 = x_2$, $\lambda_3 = x_3$ in dimension 3.}
 
 \paragraph{The polynomial space $\mathbb{P}_k$} Let $x = (x_1, \dots, x_d)$ and let $\mathbb{P}_k$ be the space of polynomials in the variables $x_1, \dots, x_d$, with real coefficients and of global degree at most $k$,
-$$ \mathbb{P}_k = \{ p(x) = \sum_{0 \le i_1 + \dots + i_d \le k} \alpha_{i_1 \dots i_d} x_1^{i_1} \dots x_d^{i_d} : \alpha_{i_1 \dots i_d} \in \mathbb{R} \}. $$
+\begin{equation}
+    \mathbb{P}_k = \{ p(x) = \sum_{0 \le i_1 + \cdots + i_d \le k} \alpha_{i_1 \dots i_d} x_1^{i_1} \dots x_d^{i_d} : \alpha_{i_1 \dots i_d} \in \mathbb{R} \}.
+\end{equation}
 One readily verifies that $\mathbb{P}_k$ is a vector space of dimension
-$$ \dim \mathbb{P}_k = \binom{d+k}{k} = \begin{cases} k+1 & \text{if } d=1, \\ \frac{1}{2}(k+1)(k+2) & \text{if } d=2, \\ \frac{1}{6}(k+1)(k+2)(k+3) & \text{if } d=3. \end{cases} $$
-
+\begin{equation*}
+    \dim \mathbb{P}_k = \binom{d+k}{k} = \begin{cases} k+1 & \text{if } d=1, \\ \frac{1}{2}(k+1)(k+2) & \text{if } d=2, \\ \frac{1}{6}(k+1)(k+2)(k+3) & \text{if } d=3. \end{cases}
+\end{equation*}
 \begin{lemma}\label{lemma:simplicial_lagrange_fe}
     Let $K$ be a simplex in $\mathbb{R}^d$. Let $k \ge 1$, let $P = \mathbb{P}_k$, and let $n_{sh} = \dim \mathbb{P}_k$. Consider the set of nodes $\{a_i\}_{1 \le i \le n_{sh}}$ with barycentric coordinates
-    $$ \left(\frac{i_0}{k}, \dots, \frac{i_d}{k}\right), \quad 0 \le i_0, \dots, i_d \le k, \quad i_0 + \dots + i_d = k. $$
+    \begin{equation*}
+        \left(\frac{i_0}{k}, \dots, \frac{i_d}{k}\right), \quad 0 \le i_0, \dots, i_d \le k, \quad i_0 + \cdots + i_d = k.
+    \end{equation*}
     Let $\Sigma = \{\sigma_1, \dots, \sigma_{n_{sh}}\}$ be the linear forms such that $\sigma_i(p) = p(a_i)$, $1 \le i \le n_{sh}$. Then, $\{K, P, \Sigma\}$ is a Lagrange finite element.
     \begin{proof}
-        See Exercise 1.3 in \cite{ern2004theory}.
+        See~\cite[Exercise 1.3]{ern2004theory}.
     \end{proof}
 \end{lemma}
 
 For $k=1$, the $(d+1)$ local shape functions are the barycentric coordinates
-$$ \theta_i = \lambda_i, \quad 0 \le i \le d. $$
+\begin{equation}
+    \theta_i = \lambda_i, \quad 0 \le i \le d.
+\end{equation}
 For $k=2$, the local shape functions are
-$$ \begin{cases} \lambda_i(2\lambda_i - 1), & 0 \le i \le d, \\ 4\lambda_i \lambda_j, & 0 \le i < j \le d, \end{cases} $$
+\begin{equation}
+    \begin{cases} \lambda_i(2\lambda_i - 1), & 0 \le i \le d, \\ 4\lambda_i \lambda_j, & 0 \le i < j \le d, \end{cases}
+\end{equation}
 and for $k=3$
-$$ \begin{cases} \frac{1}{2}\lambda_i(3\lambda_i - 1)(3\lambda_i - 2), & 0 \le i \le d, \\ \frac{9}{2}\lambda_i(3\lambda_i - 1)\lambda_j, & 0 \le i,j \le d, i \ne j, \\ 27\lambda_i \lambda_j \lambda_k, & 0 \le i < j < k \le d. \end{cases} $$
-
-\subsection{Tensor product Lagrange finite elements}
-\paragraph{Cuboids}
-Given a set of $d$ intervals $\{[c_i, d_i]\}_{1 \le i \le d}$, all with non-zero measure, the set $K = \prod_{i=1}^d [c_i, d_i]$ is called a cuboid. For $x \in K$, there exists a unique vector $(t_1, \dots, t_d) \in [0, 1]^d$ such that, for all $1 \le i \le d$, $x_i = c_i + t_i(d_i - c_i)$. The vector $(t_1, \dots, t_d)$ is called the local coordinate vector of $x$ in $K$.
+\begin{equation}
+    \begin{cases} \frac{1}{2}\lambda_i(3\lambda_i - 1)(3\lambda_i - 2), & 0 \le i \le d, \\ \frac{9}{2}\lambda_i(3\lambda_i - 1)\lambda_j, & 0 \le i,j \le d, i \ne j, \\ 27\lambda_i \lambda_j \lambda_k, & 0 \le i < j < k \le d. \end{cases}
+\end{equation}
+\paragraph{Tensor product Lagrange finite elements}
+\paragraph{Cuboids} Given a set of $d$ intervals $\{[c_i, d_i]\}_{1 \le i \le d}$, all with non-zero measure, the set $K = \prod_{i=1}^d [c_i, d_i]$ is called a \emph{cuboid}. For $x \in K$, there exists a unique vector $(t_1, \dots, t_d) \in [0, 1]^d$ such that, for all $1 \le i \le d$, $x_i = c_i + t_i(d_i - c_i)$. The vector $(t_1, \dots, t_d)$ is called the \emph{local coordinate vector} of $x$ in $K$.
 
 \paragraph{The polynomial space $\mathbb{Q}_k$} Let $\mathbb{Q}_k$ be the polynomial space in the variables $x_1, \dots, x_d$, with real coefficients and of degree at most $k$ in each variable. In dimension 1, $\mathbb{Q}_k = \mathbb{P}_k$; in dimension $d \ge 2$
-$$ \mathbb{Q}_k = \{ q(x) = \sum_{0 \le i_1, \dots, i_d \le k} \alpha_{i_1 \dots i_d} x_1^{i_1} \dots x_d^{i_d} : \alpha_{i_1 \dots i_d} \in \mathbb{R} \}. $$
+\begin{equation}
+    \mathbb{Q}_k = \{ q(x) = \sum_{0 \le i_1, \dots, i_d \le k} \alpha_{i_1 \dots i_d} x_1^{i_1} \dots x_d^{i_d} : \alpha_{i_1 \dots i_d} \in \mathbb{R} \}.
+\end{equation}
 One readily verifies that $\mathbb{Q}_k$ is a vector space of dimension
-$$ \dim \mathbb{Q}_k = (k+1)^d = \begin{cases} (k+1)^2 & \text{if } d=2, \\ (k+1)^3 & \text{if } d=3. \end{cases} $$
+\begin{equation}
+    \dim \mathbb{Q}_k = (k+1)^d = \begin{cases} (k+1)^2 & \text{if } d=2, \\ (k+1)^3 & \text{if } d=3. \end{cases}
+\end{equation}
 Note the inclusions $\mathbb{P}_k \subset \mathbb{Q}_k \subset \mathbb{P}_{kd}$.
 
 \begin{lemma}\label{lemma:tensor_product_lagrange_fe}
     Let $K$ be a cuboid in $\mathbb{R}^d$. Let $k \ge 1$, let $P = \mathbb{Q}_k$, and let $n_{sh} = \dim \mathbb{Q}_k$. Consider the set of nodes $\{a_i\}_{1 \le i \le n_{sh}}$ with local coordinates
-    $$ \left(\frac{i_1}{k}, \dots, \frac{i_d}{k}\right), \quad 0 \le i_1, \dots, i_d \le k. $$
+    \begin{equation}
+        \left(\frac{i_1}{k}, \dots, \frac{i_d}{k}\right), \quad 0 \le i_1, \dots, i_d \le k.
+    \end{equation}
     Let $\Sigma = \{\sigma_1, \dots, \sigma_{n_{sh}}\}$ be the linear forms such that $\sigma_i(p) = p(a_i)$, $1 \le i \le n_{sh}$. Then, $\{K, P, \Sigma\}$ is a Lagrange finite element.
 \end{lemma}
-For $1 \le i \le d$, set $\xi_{i,l} = c_i + \frac{l}{k}(d_i - c_i)$, $0 \le l \le k$, and let $\{\mathcal{L}_{i,0}^k, \dots, \mathcal{L}_{i,k}^k\}$ be the Lagrange polynomials in the variable $x_i$ associated with the nodes $\{\xi_{i,0}, \dots, \xi_{i,k}\}$; see Definition~\ref{def:lagrangepolynomials}. Then, the local shape functions are
-$$ \theta_{i_1 \dots i_d}(x) = \mathcal{L}_{1,i_1}^k(x_1) \dots \mathcal{L}_{d,i_d}^k(x_d), \quad 0 \le i_1, \dots, i_d \le k. $$
+For $1 \le i \le d$, set $\xi_{i,l} = c_i + \frac{l}{k}(d_i - c_i)$, $0 \le l \le k$, and let $\{\mathcal{L}_{i,0}^k, \dots, \mathcal{L}_{i,k}^k\}$ be the Lagrange polynomials in the variable $x_i$ associated with the nodes $\{\xi_{i,0}, \dots, \xi_{i,k}\}$, see Definition~\ref{def:lagrange-polynomials}. Then, the local shape functions are
+\begin{equation*}
+    \theta_{i_1 \dots i_d}(x) = \mathcal{L}_{1,i_1}^k(x_1) \dots \mathcal{L}_{d,i_d}^k(x_d), \quad 0 \le i_1, \dots, i_d \le k.
+\end{equation*}
 
-\section{Finite elements in $H(\dive)$ and $H(\curl)$}
+\section{Finite elements in $H(\dive)$ and $H(\curl)$}\label{sec:finite-elements-Hdiv-Hcurl}
 \paragraph{$H(\dive)$:} Here we consider the local polynomial in $\R^d$ given by
-    $$ D_k = [\P_{k-1}]^d \oplus \widetilde{\P_{k-1}} \vec x, $$
-where $\vec x$ is the identity map, and $\widetilde{\P_k}$ is the set of homogeneous\footnote{A homogeneous polynomial is one whose non-zero terms all have the same degree, such as $x^2 + xy$.} polynomials of degree exactly $k$. If $k=1$, this space will have $d+1$ degrees of freedom, characterized in a triangle/tetrahedron by degrees of freedom defined through the normal component of the polynomial on its facets. These elements are known as Raviart-Thomas elements. Thus, given a triangulation of the geometry $\T_h$, this allows us to define the space
-    $$ W_h = \left\{ \vec u_h \in H(\dive; \Omega):  \vec u_h|_K \in D_k \qquad\forall K \in \T_h \right\}, $$
+\begin{equation}
+    D_k = [\P_{k-1}]^d \oplus \widetilde{\P_{k-1}} \vec x,
+\end{equation}
+where $\vec x$ is the identity map, and $\widetilde{\P_k}$ is the set of homogeneous\footnote{A homogeneous polynomial is one whose non-zero terms all have the same degree, such as $x^2 + xy$.} polynomials of degree exactly $k$. If $k=1$, this space will have $d+1$ degrees of freedom, characterized in a triangle/tetrahedron by degrees of freedom defined through the normal component of the polynomial on its facets. These elements are known as \emph{Raviart-Thomas elements}. Thus, given a triangulation of the geometry $\T_h$, this allows us to define the space
+\begin{equation}
+    W_h = \left\{ \vec u_h \in H(\dive; \Omega):  \vec u_h|_K \in D_k , \forall K \in \T_h \right\},
+\end{equation}
 where $W_h$ is conforming in $H(\dive)$. In addition, we get the following result regarding an interpolation operator: 
-    \begin{theorem}[$H(\dive)$ interpolation]
-        Consider $0<\delta<1/2$ and $s\in [1/2+\delta, k]$. Then, if $\vec u$ belongs to $\vec H^s(\Omega)$, there exists an interpolation operator $\vec w_h$ and a positive constant $C$ such that
-            $$ \|\vec u - \vec w_h \vec u\|_0 \leq C h^s \| \vec u \|_{\vec H^s(\Omega)} $$
-        and 
-            $$ \|\dive\left(\vec u - \vec w_h \vec u\right)\|_0 \leq C h^s \| \dive \vec u \|_{H^s(\Omega)}. $$
-    \end{theorem}
+\begin{theorem}[$H(\dive)$ interpolation]\label{thm:Hdiv-interpolation}
+    Consider $0<\delta<1/2$ and $s\in [1/2+\delta, k]$. Then, if $\vec u$ belongs to $\vec H^s(\Omega)$, there exists an interpolation operator $\vec w_h$ and a positive constant $C$ such that
+    \begin{equation}
+        \|\vec u - \vec w_h \vec u\|_0 \leq C h^s \| \vec u \|_{\vec H^s(\Omega)}
+    \end{equation}
+    and 
+    \begin{equation}
+        \|\dive\left(\vec u - \vec w_h \vec u\right)\|_0 \leq C h^s \| \dive \vec u \|_{H^s(\Omega)}.
+    \end{equation}
+\end{theorem}
+
 Naturally, this results implies the estimate in the $H(\dive)$ norm. 
-\paragraph{$H(\curl)$:} The procedure for this space is roughly similar to the previous one. For it, we define the space
-    $$ S_k = \{ \vec p \in [\widetilde{\P_k}]^3 | \vec p \cdot \vec x = 0 \}, $$
+\paragraph{$H(\curl)$} The procedure for this space is roughly similar to the previous one. For it, we define the space
+\begin{equation}
+    S_k = \{ \vec p \in [\widetilde{\P_k}]^3 | \vec p \cdot \vec x = 0 \},
+\end{equation}
 which is somehow the orthogonal complement to the space $\widetilde{\P_{k-1}}\vec x$. With it, we define the local space as 
-    $$ R_k = [\P_{k-1}]^3\oplus S_k, $$
+\begin{equation}
+    R_k = [\P_{k-1}]^3\oplus S_k,
+\end{equation}
 and given a triangulation $\T_h$ of the geometry, we consider the space
-    $$ V_h = \left\{ \vec u_h \in H(\curl;\Omega): \vec u_h|_K \in R_k\qquad \forall K\in \T_h\right\}. $$
+\begin{equation}
+    V_h = \left\{ \vec u_h \in H(\curl;\Omega): \vec u_h|_K \in R_k, \forall K\in \T_h\right\}.
+\end{equation}
 This space is conforming in $H(\curl)$. In addition, we also get some nice interpolation properties. 
-    \begin{theorem}[$H(\curl)$ interpolation] The theorem states: 
-        \begin{itemize}
-            \item Consider $\delta>0$ and $s$ in $[1/2+\delta, k]$. Then, if $\vec u$ is in $\vec H^s(\Omega)$, there exists a positive constant $C$ and an interpolation operator $\vec r_h$ such that 
-                $$ \| \vec u - \vec r_h \vec u\|_0 + \| \curl(\vec u - \vec r_h \vec u) \|_0 \leq C h^s \left(\| \vec u\|_{H^s} + \| \curl \vec u \|_{H^s}\right) . $$
-            \item Consider $0<\delta\leq 1/2$. If $\vec u$ belongs to $\vec H^{1/2+\delta}(\Omega)$ and $[\curl \vec u]|_K$ belongs to $D_k$ in all elements $K$, then we further have that
-                $$ \|\vec u - \vec r_h \vec u\|_0 \leq C\left(h_K^{1/2+\delta} \| \vec u\|_{\vec H^{1/2+\delta}} + h_K \| \curl \vec u\|_0 \right). $$
-        \end{itemize}
-    \end{theorem}
-\paragraph{$H^1$:} From the Lemma regarding conforming spaces, we can immediately see that the following is a conforming space in $H^1$: 
-    $$ U_h = \{ v_h \in H^1(\Omega): v_h|_K \in \P_k \qquad\forall K\in \T_h\}, $$
+\begin{theorem}[$H(\curl)$ interpolation] \phantom{.}
+    \begin{itemize}
+        \item Consider $\delta>0$ and $s$ in $[1/2+\delta, k]$. Then, if $\vec u$ is in $\vec H^s(\Omega)$, there exists a positive constant $C$ and an interpolation operator $\vec r_h$ such that 
+        \begin{equation}
+            \| \vec u - \vec r_h \vec u\|_0 + \| \curl(\vec u - \vec r_h \vec u) \|_0 \leq C h^s \left(\| \vec u\|_{H^s} + \| \curl \vec u \|_{H^s}\right) .
+        \end{equation}
+        \item Consider $0<\delta\leq 1/2$. If $\vec u$ belongs to $\vec H^{1/2+\delta}(\Omega)$ and $[\curl \vec u]|_K$ belongs to $D_k$ in all elements $K$, then we further have that
+        \begin{equation}
+            \|\vec u - \vec r_h \vec u\|_0 \leq C\left(h_K^{1/2+\delta} \| \vec u\|_{\vec H^{1/2+\delta}} + h_K \| \curl \vec u\|_0 \right).
+        \end{equation}
+    \end{itemize}
+\end{theorem}
+\paragraph{$H^1$} From the Lemma regarding conforming spaces, we can immediately see that the following is a conforming space in $H^1$: 
+\begin{equation}
+    U_h = \{ v_h \in H^1(\Omega): v_h|_K \in \P_k, \forall K\in \T_h\},
+\end{equation}
 with a nice interpolation operator:
-    \begin{theorem}
-        There exists a positive constant $C$ and an interpolation operator $\pi_h$ such that, for a positive $\delta$: 
-         $$\|p - \pi_h p \|_1 \leq C h^{s-1} \|p\|_{H^s} \qquad 3/2+\delta \leq s \leq k+1 . $$
-    \end{theorem}
-\paragraph{$L^2$:} We can finally write the space 
-    $$ Z_h = \{ p_h \in L^2(\Omega): p_h|K \in P_{k-1} \qquad \forall K\in \T_h\}, $$
+\begin{theorem}
+    There exists a positive constant $C$ and an interpolation operator $\pi_h$ such that, for a positive $\delta$: 
+    \begin{equation*}
+        \|p - \pi_h p \|_1 \leq C h^{s-1} \|p\|_{H^s}, \quad 3/2+\delta \leq s \leq k+1 .
+    \end{equation*}
+\end{theorem}
+\paragraph{$L^2$} We can finally write the space 
+\begin{equation}
+    Z_h = \{ p_h \in L^2(\Omega): p_h|K \in P_{k-1}, \forall K\in \T_h\},
+\end{equation}
 and there exists an interpolation operator $P_0$ such that for $v$ in $W^{l,p}(\Omega)$ and $0\leq l \leq k, p\in[1,\infty]$, there is some positive $C$ such that
-    $$ \| v - P_0v\|_{L^p} \leq C h^l |v|_{W^{l,p}}. $$
+\begin{equation}
+    \| v - P_0v\|_{L^p} \leq C h^l |v|_{W^{l,p}}.
+\end{equation}
 For sufficiently smooth functions ($\delta>0$ in the above), these spaces induce a de Rham complex that can be extremely useful in FEM analysis. For this, we can consider the following spaces for $\delta > 0$: 
-    $$
+\begin{equation}
     \begin{aligned}
         U &= H^{3/2+\delta}(\Omega) \\
         V &= \{\vec v \in \vec H^{1/2+\delta}(\Omega) : \curl \vec v \in \vec H^{1/2+\delta}(\Omega)\} \\
         W &= \{ \vec w \in \vec H^{1/2+\delta}(\Omega): \dive \vec w \in \vec L^2(\Omega) \}
     \end{aligned},
-    $$
+\end{equation}
 which yield the following: 
-
-    \begin{center} 
+\begin{center} 
     \begin{tabular}{ccccccc}
     $H^1(\Omega)$ & $\xrightarrow{\quad\nabla\quad}$& $H(\curl;\Omega)$ & $\xrightarrow{\quad\curl\quad}$ & $H(\dive;\Omega)$ & $\xrightarrow{\quad\dive\quad} $ & $L^2(\Omega)$ \\
     $U\subset$ & & $V\subset$ & & $W \subset$ & &  \\
     $\pi_h \Bigg\downarrow$ && $\vec r_h \Bigg\downarrow$ && $\vec w_h\Bigg\downarrow$ && $P_0 \Bigg\downarrow$ \\
     $U_h$ & $\xrightarrow{\quad\phantom{nabla}\quad}$& $V_h$ & $\xrightarrow{\quad\phantom{\curl}\quad}$ & $W_h$ & $\xrightarrow{\quad\phantom{\dive}\quad} $ & $Z_h$ \\
     \end{tabular}
-    \end{center} 
-There is an intrinsic relationship between this structure and inf-sup conditions. It additionally commutes, and thus one can obtain identities such as 
-    $$ \vec r_h \grad = \grad \pi_h, $$
+\end{center} 
+There is an intrinsic relationship between this structure and the \emph{inf-sup condition} studied in Chapter~\ref{chapter:beyond-ellipticity}. It additionally commutes, and thus one can obtain identities such as 
+\begin{equation*}
+\vec r_h \grad = \grad \pi_h,
+\end{equation*}
 which further relates the interpolation results. 
 
-\section{FEM Implementation}
+\section{FEM implementation}\label{sec:finite-element-implementation}
 % 8.1.2 Ern & Guermond
 % C21-23 Federico
-Let us now illustrate how to efficiently approximate the solution a boundary value problem using the finite element method. Given $\Omega\subset \R^d$ with boundary $\overline{\partial \Omega} = \overline{\partial\Omega_D} \cup \overline{\partial\Omega_N}$, we define an approximating mesh  $\mathcal{T}_h = \{\Omega^e\}_{e=1}^{N_{el}}$ with $N_{el}$ elements and parameterized by $h$ the mesh size. With a mild abuse of notation,  we can write the mesh describing the boundary $\partial\Omega$ as 
-$$\partial\mathcal{T}_h = \partial\mathcal{T}_h^D \cup\partial\mathcal{T}_h^N = \{\partial\Omega^e_D\}_{e=1}^{N_{el}^D} \cup \{\partial\Omega^e_N\}_{e=1}^{N_{el}^N}.$$
-Let $U$ be a Banach space of functions defined on $\Omega$. Consider the Poisson problem with mixed Dirichlet and Neumann boundary conditions, which consists in finding $u\in U$ such that
-$$
-\begin{cases}
-    -\Delta u = f & \text{in } \Omega, \\
-    u = g_D & \text{on } \partial\Omega_D, \\
-    \nabla u \cdot n = g_N & \text{on } \partial\Omega_N,
-\end{cases}
-$$
-where $\partial\Omega_D$ and $\partial\Omega_N$ are the non-overlapping Dirichlet and Neumann parts of the boundary. The discrete space $U_h$ associated to $U$ can be constructed from any of the finite element approximation spaces defined above, which is often chosen as a $U$-conforming space, and equipping it with appropriate boundary conditions. To this end, choose for instance $P_h^k$ as our approximation space. We apply a lifting to account for the (possibly) nonhomogeneous Dirichlet condition $u=g_D$ on $\partial\Omega_D$, and thus the suitable approximation space is
-$$U_h = P_h^k \cap U = \{v_h\in P_h^k: v_h = 0 \;\ton \partial\Omega_D\}.$$
-With this, the Galerkin scheme introduced in equation~\ref{eq:galerkinscheme} applied to our boundary value problem consists in finding $u_h \in U_h$ such that 
-$$ a_h(u_h, v_h) = l_h(v_h) \qquad \forall v_h \in U_h, $$
-where $a_h$ and $l_h$ are the discrete approximations of the bilinear form $a(u,v)=(\nabla u, \nabla v)$ and the linear form $l(v) = (f,v) + (g_N, v)_{\partial\Omega_N}$. These approximations are naturally defined by splitting the integrals into its discrete elements, that is, 
+Let us now illustrate how to efficiently approximate the solution a boundary value problem using the finite element method. Given $\Omega\subset \R^d$ with boundary $\overline{\partial \Omega} = \overline{\partial\Omega_D} \cup \overline{\partial\Omega_N}$, we define an approximating mesh  $\mathcal{T}_h = \{\Omega^e\}_{e=1}^{N_{el}}$ with $N_{el}$ elements and parameterized by the mesh size $h$. With a mild abuse of notation, we can write the mesh describing the boundary $\partial\Omega$ as 
+\begin{equation}
+    \partial\mathcal{T}_h = \partial\mathcal{T}_h^D \cup\partial\mathcal{T}_h^N = \{\partial\Omega^e_D\}_{e=1}^{N_{el}^D} \cup \{\partial\Omega^e_N\}_{e=1}^{N_{el}^N}.
+\end{equation}
 
-$$ a_h(u,v) = \sum_{e=1}^{N_{el}} \int_{\Omega^e} \nabla u \cdot \nabla v \, dx \qquad l(v) = \sum_{e=1}^{N_{el}} \int_{\Omega^e} f v \, dx + \sum_{e \in \mathcal{T}_h^N} \int_{\partial\Omega_N^e} g_N v \, dS. $$
-We note that one might be tempted to think that naturally the written $a_h$ matches $a$. This is typically not the case because we compute the integrals using quadrature rules, which might induce an approximation error. Another reason that we do not consider here is that the discrete problem might have some kind of stabilization to improve the overall conditioning of the linear system.  Since $U_h$ is finite-dimensional, we can expand $u_h$ through the basis functions $\{\varphi_i\}$ as 
-$$u_h = \sum_{i=1}^N \alpha_i \varphi_i,$$ 
-where the coordinate vector $\vec\alpha = (\alpha_1, \dots, \alpha_N)^T$ is the unknown that defines the discrete solution. Since the Galerkin scheme is valid for all $v_h \in U_h$, we can choose $v_h = \varphi_i$ for $i=1,\dots,N_{el}$. For every $i=1,\dots,N_{el}$ we have
-\begin{align*}
+Let $U$ be a Banach space of functions defined on $\Omega$. Consider the Poisson problem with mixed Dirichlet and Neumann boundary conditions, which consists in finding $u\in U$ such that
+\begin{equation}
+    \begin{aligned}
+        -\Delta u &= f && \tin \Omega, \\
+        u &= g_D && \ton \partial\Omega_D, \\
+        \nabla u \cdot n &= g_N && \ton \partial\Omega_N,
+    \end{aligned}
+\end{equation}
+where $\partial\Omega_D$ and $\partial\Omega_N$ are the non-overlapping Dirichlet and Neumann parts of the boundary. The discrete space $U_h$ associated to $U$ can be constructed from any of the finite element approximation spaces defined above, which is often chosen as a $U$-conforming space, and equipping it with appropriate boundary conditions. To this end, choose for instance $P_h^k$ as our approximation space. We apply a lifting to account for the (possibly) nonhomogeneous Dirichlet condition $u=g_D$ on $\partial\Omega_D$, and thus the suitable approximation space is
+\begin{equation}
+    U_h = P_h^k \cap U = \{v_h\in P_h^k: v_h = 0 \ton \partial\Omega_D\}.
+\end{equation}
+With this, the Galerkin scheme introduced in equation~\ref{eq:galerkinscheme} applied to our boundary value problem consists in finding $u_h \in U_h$ such that 
+\begin{equation}
+    a_h(u_h, v_h) = l_h(v_h) \qquad \forall v_h \in U_h,
+\end{equation}
+where $a_h$ and $l_h$ are the discrete approximations of the bilinear form $a(u,v)=(\nabla u, \nabla v)$ and the linear form $l(v) = (f,v) + (g_N, v)_{\partial\Omega_N}$. These approximations are naturally defined by splitting the integrals into its discrete elements, that is, 
+\begin{equation}
+    a_h(u,v) = \sum_{e=1}^{N_{el}} \int_{\Omega^e} \nabla u \cdot \nabla v \, dx \qquad l(v) = \sum_{e=1}^{N_{el}} \int_{\Omega^e} f v \, dx + \sum_{e \in \mathcal{T}_h^N} \int_{\partial\Omega_N^e} g_N v \, dS.
+\end{equation}
+
+We note that one might be tempted to think that naturally the written $a_h$ matches $a$. This is typically not the case because we compute the integrals using quadrature rules, which might induce an approximation error. Another reason that we do not consider here is that the discrete problem might have some kind of stabilization to improve the overall conditioning of the linear system. Since $U_h$ is finite-dimensional, we can expand $u_h$ through the basis functions $\{\varphi_i\}$ as 
+\begin{equation}
+    u_h = \sum_{i=1}^N \alpha_i \varphi_i,
+\end{equation} 
+where the coordinate vector $\vec\alpha = (\alpha_1, \dots, \alpha_N)^\top$ is the unknown that defines the discrete solution. Since the Galerkin scheme is valid for all $v_h \in U_h$, we can choose $v_h = \varphi_i$ for $i=1,\dots,N_{el}$. For every $i=1,\dots,N_{el}$ we have
+\begin{tightalign*}
     a_h(u_h, \varphi_i) &= a_h\left(\sum_{j=1}^{N_{el}}\alpha_j\varphi_j, \varphi_i\right)\\
     &= \sum_{j=1}^{N_{el}} \alpha_j a_h(\varphi_j, \varphi_i)\\
     &= l_h(\varphi_i),
-\end{align*}
+\end{tightalign*}
 and thus we obtain the linear system of equations 
-$$\ten K \vec \alpha = \vec F,$$
-where we have defined the \textit{stiffness matrix} $\ten K$ and the \textit{force vector} $\vec F$ as
-$$ K_{ij} = a_h(\varphi_j, \varphi_i) \quad \text{and} \quad F_i = l_h(\varphi_i). $$
-
+\begin{equation*}
+    \ten K \vec \alpha = \vec F,
+\end{equation*}
+where we have defined the \emph{stiffness matrix} $\ten K$ and the \emph{force vector} $\vec F$ as
+\begin{equation}\label{eq:stiffness-force-fem}
+    K_{ij} = a_h(\varphi_j, \varphi_i) \quad \text{and} \quad F_i = l_h(\varphi_i).
+\end{equation}
 Here, we note that computing $K_{ij} = a(\varphi_j, \varphi_i)$ by integrating over the entire domain $\Omega$ for all pairs $(i,j)$ is computationally inefficient, because the basis functions $\varphi_j$ in finite element methods are typically chosen to have compact support, meaning $\varphi_j(x)$ is non-zero only on a small part of the domain. For basis functions associated with nodes of a mesh, the supports of $\varphi_i$ and $\varphi_j$ only overlap for indices $i$ and $j$ corresponding to neighboring nodes or elements, and thus $a(\varphi_j, \varphi_i)$ will be nonzero only for those neighboring $(i,j)$ pairs. This results in the stiffness matrix $\ten K$ being sparse, i.e. most of its entries are zero, and thus a naïve computation method involving nested loops over all global indices $i$ and $j$ would spend an unnecessary amount of time computing zero entries. 
 
-To put this into practice, let $(\Omega, V_h, \Sigma)$ be a finite element. Within each element $\Omega^e$, the global basis functions $\varphi_j$ of $V_h$ that are non-zero on $\Omega^e$ are those associated with the nodes of that element. Let $n_{dof}$ number of degrees of freedom (nodes) of the finite element. We define local shape functions $\phi_a^e$, $a=1, \dots, n_{dof}$, which are the restrictions of the global basis functions to the element $\Omega^e$, re-indexed locally from 1 to $n_{dof}$. We define the local or \textit{element stiffness matrix} $\ten k^e \in \R^{n_{dof}\times n_{dof}}$ and local or \textit{element force vector} $\vec f^e \in \R^{n_{dof}}$ as integrals over $\Omega^e$ using these local shape functions, i.e.
-$$ k_{ab}^e = \int_{\Omega^e} \nabla \phi_b^e \cdot \nabla \phi_a^e \, dx \quad \text{and} \quad f_a^e = \int_{\Omega^e} f \phi_a^e \, dx. $$
+To put this into practice, let $(\Omega, V_h, \Sigma)$ be a finite element. Within each element $\Omega^e$, the global basis functions $\varphi_j$ of $V_h$ that are non-zero on $\Omega^e$ are those associated with the nodes of that element. Let $n_{dof}$ number of degrees of freedom (nodes) of the finite element. We define local shape functions $\phi_a^e$, $a=1, \dots, n_{dof}$, which are the restrictions of the global basis functions to the element $\Omega^e$, re-indexed locally from 1 to $n_{dof}$. We define the local or \emph{element stiffness matrix} $\ten k^e \in \R^{n_{dof}\times n_{dof}}$ and local or \emph{element force vector} $\vec f^e \in \R^{n_{dof}}$ as integrals over $\Omega^e$ using these local shape functions, i.e.
+\begin{equation}
+    k_{ab}^e = \int_{\Omega^e} \nabla \phi_b^e \cdot \nabla \phi_a^e \, dx \quad \text{and} \quad f_a^e = \int_{\Omega^e} f \phi_a^e \, dx.
+\end{equation}
 If the element $\Omega^e$ has a Neumann boundary segment on $\partial \Omega_N$, there is also a local Neumann boundary force vector $f_{N,a}^e$:
-$$ f_{N,a}^e = \int_{\partial\Omega_N^e} g_N \phi_a^e \, dS. $$
+\begin{equation}
+    f_{N,a}^e = \int_{\partial\Omega_N^e} g_N \phi_a^e \, dS.
+\end{equation}
 The assembly process of adding the contributions from the local element matrices and vectors into the global system requires precisely mapping the local effects within each element to their corresponding locations in the global stiffness matrix $\ten K$ and force vector $\vec{F}$. This mapping accounts for both the topological connectivity of the mesh elements and the boundary conditions applied to the domain. We use several arrays to manage this mapping.
 \begin{enumerate}
-    \item The element node matrix $\texttt{IEN}\in \mathbb{Z}^{n_{el}\times n_{dof}}$ is a connectivity array with terms $\texttt{IEN}[e, a]$, which provides the global node index corresponding to the local node $a$ (ranging from 1 to $n_{dof}$) within element $e$ (ranging from 1 to $N_{el}$). Explicitly, if we have three elements in 1D, whose global node indexes are $(0,1)$, $(1,2)$ and $(2,3)$, respectively, then the $\texttt{IEN}$ matrix is 
-        $$ \texttt{IEN} = \begin{bmatrix}
-    0 & 1 \\
-    1 & 2 \\
-    2 & 3
-    \end{bmatrix}. $$
-\item The destination array $\texttt{ID}\in \mathbb{Z}^{n_{nodes}}$ maps each global node index $i$ to its corresponding equation number or global degree of freedom index in the assembled linear system. If global node $i$ has a prescribed boundary condition (such as a Dirichlet value), $\texttt{ID}(i)$ is typically set to 0 or a negative value to indicate that this node does not correspond to an unknown degree of freedom in the system. For example, if we have $n_{nodes}=4$ nodes in a 1D mesh, where where nodes $1$ and $3$ have Dirichlet boundary conditions, the $\texttt{ID}$ array might look like:
-    $$ \texttt{ID} = \begin{bmatrix}
-    0 \\
-    1 \\
-    0 \\
-    2
-    \end{bmatrix}, $$
+    \item The \emph{element node matrix} $\texttt{IEN}\in \mathbb{Z}^{n_{el}\times n_{dof}}$ is a connectivity array with terms $\texttt{IEN}[e, a]$, which provides the global node index corresponding to the local node $a$ (ranging from 1 to $n_{dof}$) within element $e$ (ranging from 1 to $N_{el}$). Explicitly, if we have three elements in 1D, whose global node indexes are $(0,1)$, $(1,2)$ and $(2,3)$, respectively, then the $\texttt{IEN}$ matrix is 
+    \begin{equation}
+        \texttt{IEN} = \begin{bmatrix}
+            0 & 1 \\
+            1 & 2 \\
+            2 & 3
+        \end{bmatrix}.
+    \end{equation}
+    \item The \emph{destination array} $\texttt{ID}\in \mathbb{Z}^{n_{nodes}}$ maps each global node index $i$ to its corresponding equation number or global degree of freedom index in the assembled linear system. If global node $i$ has a prescribed boundary condition (such as a Dirichlet value), $\texttt{ID}(i)$ is typically set to 0 or a negative value to indicate that this node does not correspond to an unknown degree of freedom in the system. For example, if we have $n_{nodes}=4$ nodes in a 1D mesh, where where nodes $1$ and $3$ have Dirichlet boundary conditions, the $\texttt{ID}$ array might look like:
+    \begin{equation}
+        \texttt{ID} = \begin{bmatrix}
+            0 \\
+            1 \\
+            0 \\
+            2
+        \end{bmatrix},
+    \end{equation}
     where the nonzero entries correspond to free nodes.
-\item The location matrix $\texttt{LM}\in \mathbb{Z}^{n_{el}\times n_{dof}}$ corresponds to the composite local-to-global mapping, where for a given element $e$ and a local node $a$, $\texttt{LM}[e,a]$ corresponds to the global degree of freedom index. This allows us to write the important relation 
-    $$\texttt{LM}[e,a] = \texttt{ID}[\texttt{IEN}[e,a]].$$
+    \item The \emph{location matrix} $\texttt{LM}\in \mathbb{Z}^{n_{el}\times n_{dof}}$ corresponds to the composite local-to-global mapping, where for a given element $e$ and a local node $a$, $\texttt{LM}[e,a]$ corresponds to the global degree of freedom index. This allows us to write the important relation 
+    \begin{equation}
+        \texttt{LM}[e,a] = \texttt{ID}[\texttt{IEN}[e,a]].
+    \end{equation}
 \end{enumerate}
 The full mapping to degrees of freedom in the presence of general boundary conditions is captured by the $\texttt{ID}[\texttt{IEN}[e,a]]$ relation, which is the index ultimately used to locate the correct row and column in the global system during assembly. The pseudocode below details the assembly algorithm using this mapping to add the contributions from the element matrices $\ten k^e$ and vectors $\vec f^e$ to the global system $\ten K$ and $\vec F$.
 \begin{algorithmic}[1]
@@ -474,64 +644,118 @@ The full mapping to degrees of freedom in the presence of general boundary condi
             \EndIf
         \EndFor
         \EndFor
-    \end{algorithmic}
+\end{algorithmic}
 
-\paragraph{Efficient computation of element integrals via the master element}
-Computing the integrals for $\ten k^e$ and $\vec f^e$ directly on each physical element $\Omega^e$ can be complicated due to the varied shapes and sizes of elements in a mesh. The standard technique is to map each physical element $\Omega^e$ to a single, simple reference element, called the master element $\hat{\Omega}$. This master element is always the same (e.g., $[-1,1]$ for 1D segments, a standard triangle or square for 2D, etc.).
+\paragraph{Efficient computation of element integrals via the master element} Computing the integrals for $\ten k^e$ and $\vec f^e$ directly on each physical element $\Omega^e$ can be complicated due to the varied shapes and sizes of elements in a mesh. The standard technique is to map each physical element $\Omega^e$ to a single, simple reference element, called the \emph{master element} $\hat{\Omega}$. This master element is always the same (e.g., $[-1,1]$ for 1D segments, a standard triangle or square for 2D, etc.).
 
 Let $\vec{x} = \vec{x}(\vec{\xi})$ be the transformation mapping a point $\vec{\xi}$ in the master element $\hat{\Omega}$ to a point $\vec{x}$ in the physical element $\Omega^e$. This transformation is typically defined using the shape functions:
-$$ \vec{x}(\vec{\xi}) = \sum_{a=1}^{n_{dofs}} \vec{x}_a^e \hat{\phi}_a(\vec{\xi}), $$
+\begin{equation}
+    \vec{x}(\vec{\xi}) = \sum_{a=1}^{n_{dofs}} \vec{x}_a^e \hat{\phi}_a(\vec{\xi}),
+\end{equation}
 where $\vec{x}_a^e$ are the physical coordinates of the nodes of element $e$, and $\hat{\phi}_a(\vec{\xi})$ are the shape functions defined on the master element. The local shape functions on the physical element are related to the master element shape functions by $\phi_a^e(\vec{x}) = \hat{\phi}_a(\vec{\xi}(\vec{x}))$, where $\vec{\xi}(\vec{x})$ is the inverse transformation.
 
 The change of variables formula for integrals states that
-$$ \int_{\Omega^e} \psi(\vec{x}) \, d\Omega = \int_{\hat{\Omega}} \psi(\vec{x}(\vec{\xi})) |\det J| \, d\hat{\Omega}, $$
-where $J = \frac{\partial \vec{x}}{\partial \vec{\xi}}$ is the Jacobian matrix of the transformation, and $|\det J|$ is the determinant of the Jacobian.
-The gradient in physical coordinates is related to the gradient in master element coordinates by the inverse transpose of the Jacobian matrix:
-$$ \nabla_{\vec{x}} \phi_a^e(\vec{x}) = J^{-T}(\vec{\xi}) \nabla_{\vec{\xi}} \hat{\phi}_a(\vec{\xi}). $$
+\begin{equation}
+    \int_{\Omega^e} \psi(\vec{x}) \, d\Omega = \int_{\hat{\Omega}} \psi(\vec{x}(\vec{\xi})) |\det J| \, d\hat{\Omega},
+\end{equation}
+where $J = \frac{\partial \vec{x}}{\partial \vec{\xi}}$ is the \emph{Jacobian matrix} of the transformation, and $|\det J|$ is the determinant of the Jacobian. The gradient in physical coordinates is related to the gradient in master element coordinates by the inverse transpose of the Jacobian matrix:
+\begin{equation}
+    \nabla_{\vec{x}} \phi_a^e(\vec{x}) = J^{-T}(\vec{\xi}) \nabla_{\vec{\xi}} \hat{\phi}_a(\vec{\xi}).
+\end{equation}
 Using these, the element integrals become integrals over the master element:
-$$ k_{ab}^e = \int_{\hat{\Omega}} (J^{-T} \nabla_{\vec{\xi}} \hat{\phi}_b) \cdot (J^{-T} \nabla_{\vec{\xi}} \hat{\phi}_a) |\det J| \, d\hat{\Omega}, $$
-$$ f_a^e = \int_{\hat{\Omega}} f(\vec{x}(\vec{\xi})) \hat{\phi}_a(\vec{\xi}) |\det J| \, d\hat{\Omega}, $$
-$$ f_{N,a}^e = \int_{\partial\hat{\Omega}_N} g_N(\vec{x}(\vec{\xi})) \hat{\phi}_a(\vec{\xi}) |\det J_{\partial}| \, d\hat{\Gamma}, $$
-where $J_\partial$ is the Jacobian of the transformation on the boundary segment. These integrals over the master element can be computed efficiently using numerical integration rules, known as \textit{quadratures}. The shape functions $\hat{\phi}_a$ and their gradients on the master element, and the Jacobian and its determinant, only need to be evaluated at the fixed quadrature points on $\hat{\Omega}$.
+\begin{equation}
+    k_{ab}^e = \int_{\hat{\Omega}} (J^{-T} \nabla_{\vec{\xi}} \hat{\phi}_b) \cdot (J^{-T} \nabla_{\vec{\xi}} \hat{\phi}_a) |\det J| \, d\hat{\Omega},
+\end{equation}
+\begin{equation}
+    f_a^e = \int_{\hat{\Omega}} f(\vec{x}(\vec{\xi})) \hat{\phi}_a(\vec{\xi}) |\det J| \, d\hat{\Omega},
+\end{equation}
+\begin{equation}
+    f_{N,a}^e = \int_{\partial\hat{\Omega}_N} g_N(\vec{x}(\vec{\xi})) \hat{\phi}_a(\vec{\xi}) |\det J_{\partial}| \, d\hat{\Gamma},
+\end{equation}
+where $J_\partial$ is the Jacobian of the transformation on the boundary segment. These integrals over the master element can be computed efficiently using numerical integration rules, known as \emph{quadratures}. The shape functions $\hat{\phi}_a$ and their gradients on the master element, and the Jacobian and its determinant, only need to be evaluated at the fixed quadrature points on $\hat{\Omega}$.
 
 \example{In 2D, we can define a triangular (simplicial) element with vertices $\vec{x}_0^e$, $\vec{x}_1^e$, and $\vec{x}_2^e$. The master element is the reference triangle with vertices $(0,0)$, $(1,0)$, and $(0,1)$. In this setting the local shape functions are given by 
-\begin{align*}
+\begin{tightalign*}
 \hat{\phi}_0(\xi_1, \xi_2) &= \xi_1,\\
 \hat{\phi}_1(\xi_1, \xi_2) &= \xi_2, \\
 \hat{\phi}_2(\xi_1, \xi_2) &=  1 - \xi_1 - \xi_2.
-\end{align*}
+\end{tightalign*}
 Thus, the mapping from the master element with coordinates $\vec\xi = (\xi_1,\xi_2)$ to the physical element with coordinates $\vec x = (x_1, x_2)$ is given by
-$$ \vec{x}(\xi_1, \xi_2) =  \vec{x}_0^e\xi_1  + \vec{x}_1^e \xi_2 + \vec{x}_2^e (1-\xi_1-\xi_2). $$
+\begin{equation*}
+\vec{x}(\xi_1, \xi_2) =  \vec{x}_0^e\xi_1  + \vec{x}_1^e \xi_2 + \vec{x}_2^e (1-\xi_1-\xi_2).
+\end{equation*}\vspace{-20pt}
 }
-\subsection{Nonhomogeneous Dirichlet boundary conditions}
+\paragraph{Nonhomogeneous Dirichlet boundary conditions}
 % 8.4 Ern & Guermond
-There exist several approaches to treat the implementation of nonhomogeneous Dirichlet boundary conditions, which we introduce from \cite{ern2004theory}. Assume that there exist $N_D$ Dirichlet nodes in the mesh, and thus $N_{free} = N_{el} - N_D$ free nodes.
+There exist several approaches to handle the numerical implementation of nonhomogeneous Dirichlet boundary conditions, which we introduce from~\cite{ern2004theory}. Assume that there exist $N_D$ Dirichlet nodes in the mesh, and thus $N_{free} = N_{el} - N_D$ free nodes.
 \begin{itemize}
     \item \emph{Eliminating the Dirichlet nodes}: a straightforward method is to reorder the global degrees of freedom so that the first $N_D$ rows of the system correspond to the Dirichlet nodes, and the remaining $N_{free}$ rows correspond to the free nodes. Introduce the notation $\vec x = (\hat{\vec x},\tilde{\vec x})$ where $\hat{\vec x} = (x_1,\dots,x_{N_D})^\top$ and $\tilde{\vec x} = (x_{N_D + 1},\dots,x_{N_el})$ are the Dirichlet and non-Dirichlet parts of the vector $\vec x$. This induces a block problem 
-    $$
+    \begin{equation}
         \left[
-    \begin{array}{cc}
-    \ten I & \vec{0} \\
-    \ten B & \ten{\tilde{K}}
-    \end{array}
-    \right]
-    \begin{bmatrix}
-    \hat{\vec\alpha} \\
-    \tilde{\vec\alpha}
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-    \hat{\vec F} \\
-    \tilde{\vec F}
-    \end{bmatrix},
-    $$
+        \begin{array}{cc}
+        \ten I & \vec{0} \\
+        \ten B & \ten{\tilde{K}}
+        \end{array}
+        \right]
+        \begin{bmatrix}
+        \hat{\vec\alpha} \\
+        \tilde{\vec\alpha}
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        \hat{\vec F} \\
+        \tilde{\vec F}
+        \end{bmatrix},
+    \end{equation}
     where $B_{ij} = a_h(\varphi_j, \varphi_i)$ for $i=N_D+1,\dots,N_{el}$ and $j=1,\dots,N_{D}$ and $\tilde{K}_{ij} = a_h(\varphi_j, \varphi_i)$ for $i,j=N_D+1,\dots,N_{el}$. Here, it is clear that the subsystem associated to the Dirichlet nodes is trivial, i.e. $\hat{\vec \alpha} = \hat{\vec F}$, and thus we can eliminate the Dirichlet nodes from the system. The resulting system is given by 
-    $$\ten{\tilde{K}} \tilde{\vec\alpha} = \tilde{\vec F} - \ten B \hat{\vec F},$$
-    which implies that we need to assemble now two matrices, with sparsity profiles that may not be inherited from $\ten K$. This is exactly equivalent to performing a lifting on the original system, as seen in Remark 8.17 in \cite{ern2004theory}.
+    \begin{equation}
+        \ten{\tilde{K}} \tilde{\vec\alpha} = \tilde{\vec F} - \ten B \hat{\vec F},
+    \end{equation}
+    which implies that we need to assemble now two matrices, with sparsity profiles that may not be inherited from $\ten K$. This is exactly equivalent to performing a lifting on the original system, as seen in Remark 8.17 in~\cite{ern2004theory}.
     \item \emph{Keeping the Dirichlet nodes}: instead of eliminating the Dirichlet nodes, we can keep them in the system and assemble as usual, which leads to the stiffness matrix and force vector associated to the Neumann problem. After assembling, we correct the rows of $\ten K$ corresponding to the $N_D$ Dirichlet nodes, by setting them equal to zero, except the diagonal which is set to 1. Similarly, we set the entries of $\vec F$ corresponding to the Dirichlet nodes equal to the prescribed values. Although the resulting system has more degrees of freedom, by using an appropriate iterative solver (such as a Krylov subspace method), the Dirichlet data will be exactly satisfied in the solution for every iteration. 
-    \item \emph{The penalty method}: as we studied previously in the context of non-conforming spaces, one can add a penalty term to the Dirichlet nodes to enforce them approximately. First, one assembles $\ten K$ and $\vec F$ as usual, which corresponds to the Neumann problem system. Then, in every row corresponding to a Dirichlet node, one adds the penalty term 
-    $$\varepsilon^{-1}\alpha_i = \varepsilon^{-1}g_{D,i}$$
+    \item \emph{The penalty method}: as we studied in Section~\ref{sec:non-conforming-schemes}, one can add a penalty term to the Dirichlet nodes to enforce them approximately. First, one assembles $\ten K$ and $\vec F$ as usual, which corresponds to the Neumann problem system. Then, in every row corresponding to a Dirichlet node, one adds the penalty term 
+    \begin{equation}
+        \varepsilon^{-1}\alpha_i = \varepsilon^{-1}g_{D,i}
+    \end{equation}
     where $g_{D,i}$ is the Dirichlet data at node $i$ and $\varepsilon$ is a small positive parameter. In contrast to the previous two methods, this method does not ensure that the Dirichlet data is satisfied exactly, but it allows one to inherit the possible symmetry of the original stiffness matrix $\ten K$, which is a very useful property for iterative solvers. The penalty method is also particularly useful when the Dirichlet data is not smooth, as it allows one to control the convergence of the solution to the Dirichlet data by adjusting the penalty parameter $\varepsilon$.
 \end{itemize}
 
+\section{Inverse inequalities}\label{thm:inverse-inequalities}
+The approximation spaces are all finite-dimensional, which means that all their norms are equivalent. Of course, these relationships don't hold in the continuous setting, so there is bound to be some dependence of these constants on $h$. The great thing about inverse inequalities is that in the discrete settings we can sometimes get away with operations that would be otherwise not feasible, but using adequate bounds can yield convergence anyway. We provide a general result first, which requires the concepts of \emph{shape-regular} and \emph{quasi-uniform} families of meshes, and then show some important consequences. For details, see~\cite{ern2004theory}.
+\begin{definition}[Shape-regularity, quasi-uniformity]
+    A family of affine meshes $\{\T_h\}_h$ in $\R^d$ is said to be \emph{shape-regular} if there exists $\sigma_0$ such that 
+    \begin{equation}
+        \forall h: \sigma_K\coloneqq \frac{h_K}{\rho_K} \leq \sigma_0 \quad\forall K\in \T_h,
+    \end{equation}
+    where $\rho_K$ is the diameter of the largest ball that can be inscribed in $K$, and $h_K$ is the diameter of $K$.
 
+    Further, the family of meshes is said to be \emph{quasi-uniform} if it is shape-regular and there exists $C>0$ such that
+    \begin{equation}\label{eq:def-quasi-uniform}
+        \forall h: h_K \geq C h \quad \forall K\in \T_h.
+    \end{equation}
+    This quantity allows us to control the quantity $h_K^{-1}$. 
+\end{definition}
+
+We now state the global inverse inequality.
+\begin{theorem}[Global inverse inequality]\label{thm:global-inverse-inequality}
+    Consider a finite element $(\hat K, \hat P, \hat \Sigma)$, $l\geq 0$ such that $\hat P\subset W^{l,\infty}(\hat K)$, a family of shape-regular and quasi-uniform meshes $\{\T_h\}_{h>0}$ with $h<1$, and set
+    \begin{equation}
+        W_h = \{v_h: v_h\circ T_K \in \hat P \qquad\forall K\in \T_h \},
+    \end{equation}
+    where $T_K$ is the affine mapping from an element $K$ to the reference element $\hat K$; i.e. the family of discrete functions that locally belong to the finite element considered. Then, there is some positive $C$ such that for all $v_h$ in $W_h$ and $m\in [0,l]$ it holds that
+    \begin{equation}\label{eq:global-inverse-inequality}
+        \left(\sum_K \| v_h\|^p_{W^{l,p}(K)}\right)^{1/p} \leq Ch^{m-l+\min(0, d/p - d/q)} \left(\sum_K \|v_h\|_{W^{m,q}(K)}^q\right)^{1/q}.
+    \end{equation}
+\end{theorem}
+
+In particular, a simple consequence of~\eqref{thm:global-inverse-inequality} is that we can bound $W^{1,p}$ norms by $L^p$ norms, i.e.
+\begin{equation*}
+    \| v_h \|_{W^{1,p}} \leq C h^{-1} \| v_h \|_{L^p}.
+\end{equation*}
+One can also obtain the following local estimate in 2D for simplices~\cite{warburton2003constants}:
+\begin{equation}
+    \| \vec v_h \|_{0,F} \leq C h_K^{-1/2} \| \vec v_h \|_{0,K},
+\end{equation}
+where $F$ is a facet (line or triangle) and $K$ is the element (triangle or tetrahedron). 
+
+A similar result to the global inverse inequality~\eqref{eq:global-inverse-inequality} is obtained for a single element, which is called a \emph{local inverse inequality}. For details, see~\cite[Lemma 1.138]{ern2004theory}. Further, in two and three dimensions, there exist algorithms that refine triangulations and tetrahedralizations from an initial, coarse discretization, by subdividing the original elements at the midpoints. Repeating this procedure yields a quasi-uniform family of meshes. 

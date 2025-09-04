@@ -1,173 +1,410 @@
-We now study time-dependent problems, where the solutions are functions $V\ni u:[0,T]\times \Omega\to \R$. In this section, we consider $\mathcal{L}:V\to V'$ an elliptic operator, and follow the presentations from \cite{thomee2007galerkin,quarteroni2008numerical}.
+Our analysis so far has focused on stationary problems. We now turn our attention to the more general case of time-dependent problems, where the solution $u(t,x)$ evolves over a time interval $[0,T]$. The inclusion of a time derivative fundamentally alters the nature of the governing equations, leading to a rich classification of physical behaviors. 
 
-\begin{definition}[Parabolic and hyperbolic generic operators]
+This chapter introduces framework for analyzing such evolution problems. We begin by distinguishing between two primary classes of time-dependent systems based on their energy behavior: \emph{parabolic} systems, which are dissipative and model processes like heat diffusion, and \emph{hyperbolic} systems, which are conservative and describe wave propagation.
+
+To rigorously formulate these problems, we must extend our functional analysis toolkit to handle functions that map time to a function space. This leads naturally to the theory of \emph{Bochner spaces}, such as $L^2(0,T;V)$, which provide the proper setting for our analysis. With this machinery in place, we will establish the well-posedness of parabolic problems using the powerful \emph{Faedo-Galerkin method}. This constructive proof serves as the foundation for the numerical discretization strategy known as the \emph{method of lines}, where we first discretize in space to obtain a large system of ordinary differential equations, and then apply a subsequent time-stepping scheme to obtain a fully-discrete solution. This chapter follows the presentations from~\cite{thomee2007galerkin,quarteroni2008numerical}.
+
+\section{Parabolic and hyperbolic systems}\label{sec:parabolic-hyperbolic-systems}
+From now on, our time-dependent solutions are functions $V\ni u:[0,T]\times \Omega\to \R$. In this section, we consider $A:V\to V'$ an elliptic operator.
+
+\begin{definition}[Parabolic and hyperbolic generic operators]\label{def:parabolic-hyperbolic-operators}
     Let $\partial_t$ and $\partial_{tt}$ represent the first and second order time derivative operators, respectively. Then, we say that
-    \begin{align*}
-        \partial_t + \mathcal{L} &\qquad \text{is parabolic,}\\
-        \partial_{tt} + \mathcal{L} &\qquad \text{is hyperbolic.}
-    \end{align*}
+    \begin{tightalign*}
+        \partial_t + A &\quad \text{is parabolic,}\\
+        \partial_{tt} + A &\quad \text{is hyperbolic.}
+    \end{tightalign*}
 \end{definition}
-The fundamental difference between parabolic and hyperbolic systems is the behaviour of their \textit{energy} $E(t)$. Let us formally derive this fact.
-
+The fundamental difference between parabolic and hyperbolic systems is the behaviour of their \emph{energy} $E(t)$. Let us formally derive this fact.
 \begin{enumerate}
-    \item Parabolic systems: we can readily write the weak form of the parabolic equation $(\partial_t + \mathcal{L})u=0$ as
+    \item Parabolic systems: we can readily write the weak form of the parabolic equation $(\partial_t + A)u=0$ as
+    \begin{equation}
+        (\partial_t u, v) + (Au, v) = 0 \qquad \forall v\in V.
+    \end{equation}
+    We note that this weak formulation seems unbalanced as it is being tested only on the space variable. We will accept this for now, but see later on that it is indeed a good weak formulation for analyzing the problem using our knowledge of elliptic and Gårding operators. Since this is true for all $v\in V$, we can choose $v=u$, and we obtain
     \begin{equation*}
-        (\partial_t u, v) + (\mathcal{L}u, v) = 0 \qquad \forall v\in V.
-    \end{equation*}
-    We note that this weak formulation seems unbalanced as it is being tested only on the space variable. We will accept this for now, but see later on that it is indeed a good weak formulation for analyzing the problem using our knowledge of elliptic (and Gårding) operators. Since this is true for all $v\in V$, we can choose $v=u$, and we obtain
-    \begin{equation*}
-        (\partial_t u, u) + (\mathcal{L}u,u) = 0.
+        (\partial_t u, u) + (Au,u) = 0.
     \end{equation*}
     Note that $\partial_t(u^2) = 2u\dot{u}$, and thus we can write $(\partial_t u, u) = \int_\Omega u\dot{u} = \frac{1}{2}\int_\Omega \partial_t (u^2)$, which leads to
     \begin{equation*}
-        \frac{1}{2}\int_\Omega \partial_t (u^2) + \underbrace{\int \mathcal{L}u \cdot u}_{:= a(u,u)} = 0, 
+        \frac{1}{2}\int_\Omega \partial_t (u^2) + \underbrace{\int Au \cdot u}_{ \coloneqq  a(u,u)} = 0, 
     \end{equation*}
     and integrating in time in $[0,t]$ with $t\leq T$ we get
     \begin{equation*}
-        \frac{1}{2} \int_\Omega (u(t)^2-u(0)^2)  + \int_0^t a(u,u)ds = 0,
+        \frac{1}{2} \int_\Omega (u(t)^2-u(0)^2)  + \int_0^T a(u,u)ds = 0,
     \end{equation*}
     where $u(0) = u(0,x)$ is a (fixed) initial condition. This implies that
     \begin{equation*}
-        \frac{1}{2}\int_\Omega u(t)^2 =  \frac{1}{2} \int_\Omega u(0)^2 - \int_0^t a(u,u)ds.
+        \frac{1}{2}\int_\Omega u(t)^2 =  \frac{1}{2} \int_\Omega u(0)^2 - \int_0^T a(u,u)ds.
     \end{equation*}
-    Defining the energy as $E(t) := \int_\Omega u(t)^2$, we get
-    \begin{equation*}
-        \frac{1}{2}E(t) = \frac{1}{2}E(0) - \int_0^t \underbrace{a(u,u)}_{\geq \alpha\|u\|^2>0} ds \implies \boxed{E(t) < E(0)}.
-    \end{equation*}
-    We observe that energy decreases from the initial condition in a parabolic system. Thus, parabolic systems are called \textit{dissipative}.
+    Defining the energy as $E(t) \coloneqq \int_\Omega u(t)^2$, we get
+    \begin{equation}
+        \frac{1}{2}E(t) = \frac{1}{2}E(0) - \int_0^T \underbrace{a(u,u)}_{\geq \alpha\|u\|^2>0} ds \implies \boxed{E(t) < E(0)}.
+    \end{equation}
+    We observe that energy decreases from the initial condition in a parabolic system. Thus, parabolic systems are called \emph{dissipative}.
     \item Hyperbolic systems: since we need a second-order time derivative, we note that $\partial_t(\dot{u}^2) = 2\dot{u}\ddot{u}$, and thus as before we can write
-    \begin{equation*}
+    \begin{equation}
         \int_\Omega \ddot{u}v + \int_\Omega \mathcal{L}u\cdot v = 0 \qquad \forall v\in V.
-    \end{equation*}
+    \end{equation}
     Setting $v=\dot{u}$, we obtain
-    \begin{equation*}
-        \frac{1}{2}\int_\Omega \partial_t (\dot{u}^2) + \int_\Omega \mathcal{L}u\cdot \dot{u} = 0 \qquad \forall v\in V.
-    \end{equation*}
-    We now restrict ourselves to elliptic operators $\mathcal{L}$ that can be written as $\mathcal{L}=B^\top B$, such that $\mathcal{L}u\cdot v = Bu\cdot Bv$. This way, we see that 
-    \begin{equation*}
-        \partial_t (Bu)^2 = 2Bu \cdot B\dot{u} = 2\mathcal{L}u\cdot \dot{u}.
-    \end{equation*}
+    \begin{equation}
+        \frac{1}{2}\int_\Omega \partial_t (\dot{u}^2) + \int_\Omega Au\cdot \dot{u} = 0 \qquad \forall v\in V.
+    \end{equation}
+    We now restrict ourselves to elliptic operators $A$ that can be written as $A=B^\top B$, such that $Au\cdot v = Bu\cdot Bv$. This way, we see that 
+    \begin{equation}
+        \partial_t (Bu)^2 = 2Bu \cdot B\dot{u} = 2Au\cdot \dot{u}.
+    \end{equation}
     As before, we integrate in time and get 
-    \begin{equation*}
+    \begin{equation}
         \frac{1}{2} \int_\Omega \left[\dot{u}^2(t) + (Bu(t))^2\right] = \frac{1}{2} \int_\Omega \left[\dot{u}^2(0) + (Bu(0))^2\right].
-    \end{equation*}
-    Now, setting the energy as $E(t) := \int_\Omega \left[u(t)^2 + (Bu(t))^2\right]$, we conclude that $E(t) = E(0)$. Thus, hyperbolic systems are \textit{conservative}.
+    \end{equation}
+    Now, setting the energy as $E(t)  \coloneqq  \int_\Omega \left[u(t)^2 + (Bu(t))^2\right]$, we conclude that $E(t) = E(0)$. Thus, hyperbolic systems are \emph{conservative}.
 \end{enumerate}
-The parabolic initial value problem is given by:
-\begin{equation*}
+Our generic, parabolic initial boundary value problem is given by
+\begin{equation}\label{eq:parabolic-IBVP}
     \begin{aligned}
-        \partial_t + \mathcal{L}u &= f &&\quad \text{in }\Omega_T := (0,T) \times \Omega\\
-        \hfill Bu &= g &&\quad \text{in }\Sigma_T := (0,T) \times \partial\Omega\\
-        \hfill u(0,x)&= u_0(x) &&\quad \text{in }\Omega,
+        \partial_t + Au &= f &&\quad \tin\Omega_T  \coloneqq  (0,T) \times \Omega\\
+        \hfill Bu &= g &&\quad \tin\Sigma_T  \coloneqq  (0,T) \times \partial\Omega\\
+        \hfill u(0,x)&= u_0(x) &&\quad \tin\Omega,
     \end{aligned}
-\end{equation*}
-with $f,g:\Omega_T\to \R$ and $u_0:\Omega\to\R$. Let us analyze how to deal with the time dependence of our system by introducing the Bochner integral.
+\end{equation}
+with $f,g:\Omega_T\to \R$ and $u_0:\Omega\to\R$. We can analyze how to deal with the time dependence of our system by introducing the \emph{Bochner integral}.
 
-\begin{definition}[Bochner integral]
-We seek to integrate functions $f:\R\to X$, where $X$ is a Banach space. We extend the notion of simple functions
-\begin{equation*}
-    f^N(t) = \sum_{i=1}^N \lambda_i \phi_i(t),
-\end{equation*}
-where $\lambda_i \in X$ $\forall i$, and $\phi_i(t)$ are indicator functions. If $I\subset \R$, then the time integral yields
-\begin{equation*}
-    \int_I f^N(t) dt = \sum_{i=1}^N \lambda_i \int_I \phi_i(t) dt.
-\end{equation*}
-Here, if we have absolute convergence of the corresponding series, i.e. 
-\begin{equation*}
-    \sum_{i=0}^{\infty} \|\lambda_i\|_X \int_I \phi_i(t)dt <\infty,
-\end{equation*}
-and if $f(t) = \sum_{i=1}^{\infty} \lambda_i \phi_i(t)$ for every $t$ where the series converges, then we say $f$ is Bochner-integrable, and
-\begin{equation*}
-    \int_0^t f(s)ds = \sum_{i=1}^\infty \lambda_i \int_0^t \phi_i(s)ds.
-\end{equation*}    
+\section{The Bochner integral}\label{sec:bochner}
+We seek to integrate functions $f:\R\to X$, where $X$ is a Banach space. To this end, we need to redefine our notion of simple functions. 
+\begin{definition}[Bochner integral]\label{def:bochner-integral}
+    We seek to integrate functions  We extend the notion of simple functions introduced in~\ref{def:simple-functions} as
+    \begin{equation}
+        f^N(t) = \sum_{i=1}^N \lambda_i \phi_i(t),
+    \end{equation}
+    where $\lambda_i \in X$ $\forall i\in\{1,\dots,N\}$, and $\phi_i(t)$ are indicator functions. If $I\subset \R$, then the time integral yields
+    \begin{equation}
+        \int_I f^N(t) dt = \sum_{i=1}^N \lambda_i \int_I \phi_i(t) dt.
+    \end{equation}
+    Here, if we have absolute convergence of the corresponding series, i.e. 
+    \begin{equation}
+        \sum_{i=0}^{\infty} \|\lambda_i\|_X \int_I \phi_i(t)dt <\infty,
+    \end{equation}
+    and if $f(t) = \sum_{i=1}^{\infty} \lambda_i \phi_i(t)$ for every $t$ where the series converges, then we say $f$ is \emph{Bochner integrable}, and
+    \begin{equation}
+        \int_0^T f(s)ds \coloneqq  \sum_{i=1}^\infty \lambda_i \int_0^T \phi_i(s)ds.
+    \end{equation}    
 \end{definition}
-\begin{remark}
-    A useful property: if $f$ is Bochner-integrable, then $|f|$ is Lebesgue-integrable. 
-\end{remark}
+\begin{corollary}
+    If $f$ is Bochner integrable, then $|f|$ is Lebesgue integrable. 
+\end{corollary}
 
-We now define the Bochner spaces we will be using for our analysis:
-\begin{equation*}
-    L^p(0,T; X) := \left\{v:(0,T)\to X: v \text{ is Bochner-integrable}, \int_0^T \|v\|_X^p ds <\infty \right\}.
-\end{equation*}
-\begin{equation*}
-    H^1(0,T; X) := \left\{v:(0,T)\to X: v\in L^2(0,T;X), \partial_t v\in L^2(0,T;X) \right\}.
-\end{equation*}
+We now define the \emph{Bochner spaces} we will be using for our analysis:
+\begin{tightalign}
+    L^p(0,T; X)  &\coloneqq  \left\{v:(0,T)\to X: v \text{ is Bochner integrable}, \int_0^T \|v\|_X^p ds <\infty \right\}\\
+    H^1(0,T; X)  &\coloneqq  \left\{v:(0,T)\to X: v\in L^2(0,T;X), \partial_t v\in L^2(0,T;X) \right\}.
+\end{tightalign}
 In general, $\partial_t v$ should be interpreted as an element of $V'$, since the weak form we will be using is, given $f:\Omega_T\to \R$,
-\begin{equation*}
+\begin{equation}
     (\dot{u},v) + a(u,v) = \langle f, v\rangle \quad \forall v\in V,
-\end{equation*}
-and thus $\dot{u}\in V'$ for the first term to exist. The natural definition that gives sense to this object is as follows: setting $X=L^2(\Omega)$ and $L^2(\Omega_T) := L^2(0,T; L^2(\Omega))$, we denote
-\begin{equation*}
-    H^1(0,T;L^2(\Omega)) := \left\{v:(0,T)\to X: v\in L^2(\Omega_T), \partial_t v\in L^2(\Omega_T) \right\}.
-\end{equation*}
+\end{equation}
+and thus $\dot{u}\in V'$ for the first term to exist. The natural definition that gives sense to this object is as follows: setting $X=L^2(\Omega)$ and $L^2(\Omega_T)  \coloneqq  L^2(0,T; L^2(\Omega))$, we denote
+\begin{equation}
+    H^1(0,T;L^2(\Omega))  \coloneqq  \left\{v:(0,T)\to X: v\in L^2(\Omega_T), \partial_t v\in L^2(\Omega_T) \right\}.
+\end{equation}
 This yields a norm equivalence:
-\begin{align*}
+\begin{tightalign*}
     \|v\|_{L^2(\Omega_T)} &= \int_0^T \|v(s)\|_{0,\Omega}^2 ds\\
     &= \int_0^T \left(\left(\int_\Omega v(s,x)^2 dx\right)^{1/2}\right)^2ds\\
     &= \int_0^T \int_\Omega v^2 dxds\\
     &= \int_{\Omega_T} v^2\\
     &= \|v\|^2_{L^2(\Omega_T)}.
-\end{align*}
+\end{tightalign*}
 We now state an embedding theorem for Bochner spaces.
-\begin{theorem}
-    Let $\Omega\subseteq \R^d$ be a Lipschitz domain, $s\geq 0$ and $r>1/2$. For any $\theta\in[0,1]$, the following embedding is continuous:
-    \begin{equation*}
+\begin{theorem}\label{thm:embedding-bochner}
+    Let $\Omega\subseteq \R^n$ be a Lipschitz domain, $s\geq 0$ and $r>1/2$. For any $\theta\in[0,1]$, the following embedding is continuous:
+    \begin{equation}
         L^2(0,T;H^s(\Omega))\cap H^r(0,T;L^2(\Omega)) \longrightarrow H^{\theta r}(0,T;H^{(1-\theta)s}(\Omega))\cap C^0(0,T;H^{\sigma_0}(\Omega)),
-    \end{equation*}
-    with $\sigma_0 = \frac{(2r-1)s}{2r}$. Furthermore, if $s>0$ and $|\Omega|<\infty$, then the following is compact:
-    \begin{equation*}
+    \end{equation}
+    with $\sigma_0 = \frac{(2r-1)s}{2r}$. Furthermore, if $s>0$ and $|\Omega|<\infty$, then the following embedding is compact:
+    \begin{equation}
         L^2(0,T;H^s(\Omega))\cap H^r(0,T;L^2(\Omega)) \longrightarrow H^{r_1}(0,T;H^{s_1}(\Omega))\cap C^0(0,T;H^{\sigma_1}(\Omega)),
-    \end{equation*}
+    \end{equation}
     for any $s_1\geq 0$, $0\leq r_1 < r(1-s_1/s)$ and $0\leq \sigma_1 < \sigma$.
 \end{theorem}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Faedo-Galerkin and the method of lines}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\todo[inline]{TODO}
 
+\section{Faedo-Galerkin and the method of lines}\label{sec:faedo-galerkin}
+In this section we seek to generalize the error analysis we performed for stationary PDEs via Galerkin schemes. We will limit ourselves to analyzing the parabolic initial boundary value problem~\eqref{eq:parabolic-IBVP} with an elliptic operator, and in a finite interval in time, assuming that the Dirichlet condition is $g=0$ for simplicity.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Space and time discretization}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-As usual, we consider an approximation space $V_h\subset V$  and compute first the semi-discrete problem: 
-
-\begin{equation}\label{eq:semi-discrete in time}
+In a continuous setting, for $f\in L^2(\Omega_T)$ and $u_0\in L^2(\Omega)$, we seek a solution $u\in L^2(0,T;V)\cap C([0,T];V)$ such that 
+\begin{equation}\label{eq:weak-form-continuous-parabolic-IBVP}
     \begin{aligned}
-        (\dot u_h(t), v_h) + a(u_h(t), v_h) &= (f(t),v_h) &&\qquad \forall v_h\in V_h, t \in(0,T)  \\
-                                u_h(0)&= \Pi_h(u_0), 
+        (\partial_t u(t), v) + a(u(v), v) &= \langle f(t), v\rangle\quad \forall v\in V,\\
+        u(0) &= u_0.
     \end{aligned}
 \end{equation}
-where $\Pi_h:V\to V_h$ is an orthogonal projector. In what follows, for any given bilinear form $a:V\times V\to \R$ we well denote the \textbf{Ritz projector} as the operator $R_h:V\to V_h$ such that 
-    $$ a(R_h z, v_h) = a(z, v_h) \qquad \forall v_h \in V_h. $$
-In particular, the \emph{a-priori} bound yields $\|R_h z \| \leq \| z \|$.  We first prove the following convergence result for the semi-discrete problem: 
-
-\begin{theorem}
-In problem \eqref{eq:semi-discrete in time}, if both $u(t)$ and $\dot u(t)$ belong to $H^1(\Omega)$ for all $t$ in $(0,T)$, then 
-    $$ \| u(t) - u_h(t) \|_V \leq \|u_0 - \Pi_h(u_0)\|_v + Ch^r\left(\|u_0\|_r+\int_0^t\|\dot u(s)\|_r\,ds\right). $$
-\begin{proof}
-The methodology consists in separating the error into \emph{projection} and \emph{consistency} errors: 
-    $$ e_h \coloneqq u - u_h = \underbrace{u - \Pi_h u}_{\xi_h} + \underbrace{\Pi_h u - u_h}_{\eta_h} = \xi_h + \eta_h. $$
-We now consider the error equation: 
-    $$ (\dot e_h, v_h) + a(e_h, v_h) = 0 \qquad \forall v_h\in V_h, $$
-and we consider as the projector the Ritz projector, i.e. $\Pi_h=R_h$, which gives
-    $$ (\dot \xi_h + \dot \eta_h, v_h) + a(\eta_h, v_h) = 0 \qquad \forall v_h\in V_h. $$
-Setting $v_h = \eta_h$, we obtain 
-    $$ \frac 1 2 \partial_t(\|\eta_h\|^2_0)+a(\eta_h,\eta_h) = -(\dot \xi_h, v_h). $$
-Note that 
-    $$ \frac 1 2 \partial_t(\|\eta_h\|_0^2) = \|\eta_h\|_0 \partial_t(\|\eta_h\|_0), $$
-and thus using the ellipticity of $a$ we obtain the following: 
-    $$ \|\eta_h\|\partial_t(\|\eta_h\|_0) \leq \partial_t(\|\eta\|_0^2) + a(\eta_h, \eta_h) \leq \|\dot \eta_h\|_0 \|v_h\|_0, $$
-which after dividing by $\|v_h\|_0$ and integrating yields
-    $$ \| \eta_h(t)\|_0 \leq \|\eta_h(0)\|_0 + \int_0^t \| \dot \eta_h(s) \|_0\,ds. $$
-Bounding each of the terms appearing gives the remaining estimates: 
-    \begin{align*}
-        \| \eta_h(0) \|_0 &= \|\Pi_h u_0 - R_h u_0 \|_0 \leq \|u_0 - \Pi_h\|_0 + \| u_0 - R_h u_0\|\\ 
-        \| \dot \xi_h \|_0 &= \| \dot u - \R_h \dot u \|.
-    \end{align*}
-The resulting estimate comes from the convergence rate obtained from the Ritz projector. Another common choice is the Scott-Zhang projector. Another common way for deriving this type of estimate is using the Gronwall inequality.
-\end{proof}
+Note that we simplify the notation for the duality pairing $\langle f, v\rangle = \langle f, v\rangle_{V'\times V}$, since~\ref{eq:parabolic-IBVP} is understood distributionally. 
+\paragraph{The semi-discrete problem}
+As with stationary problems, we can prove a continuous a priori estimate. To derive it, we will work on a finite-dimensional approximation and take weak limits at the end, which will require solving a finite-dimensional initial value problem (i.e. a system of ODEs), where the existence and uniqueness of solutions is justified by \emph{Carathéodory's existence theorem}\footnote{This theorem essentially relaxes the conditions that other stronger existence and/or uniqueness theorems require for the right hand side $\vec g$, as we now need continuity in $t$ and measurability in $\vec y$. In this sense, Carathéodory's existence theorem is a relaxation of the Peano existence theorem, which requires continuity in $t$ and $\vec y$, and this is itself a relaxation of the well-known Picard-Lindelöf existence and uniqueness theorem, which requires continuity in $t$ and Lipschitz continuity in $\vec y$.}. 
+\begin{theorem}[Carathéodory's existence theorem]\label{thm:caratheodory-existence}
+    Let $R = \{(t,y)\in \R\times \R^n: |t-t_0|\leq a, \|y-y_0\|\leq b\}$ be a rectangular domain. Consider the initial value problem
+    \begin{equation}\label{eq:caratheodory-problem}
+        \begin{aligned}
+            \dot{\vec y} &= \vec g(t, \vec y) &&\tin R\\
+            \vec y(0) &= \vec y_0.
+        \end{aligned}
+    \end{equation}
+    If the function $\vec g$ is such that 
+    \begin{enumerate}
+        \item the map $\vec y \mapsto \vec g(t, \vec y)$ is continuous for each fixed $t$, 
+        \item the map $t\mapsto \vec g(t, \vec y)$ is measurable for each fixed $\vec y$, and 
+        \item $\vec g$ is dominated in $\vec L^1(0,T;\R^N)$, i.e. there exists a Lebesgue integrable function $m:[t_0-a,t_0+a]\to\R^+$ such that $\|f(t, \vec y)\|\leq m(t)$ for all $y\in\R^n$ with $\|y-y_0\|\leq b$,
+    \end{enumerate}
+    then a solution to~\ref{eq:caratheodory-problem} exists. Moreover, if there exists a function $k:[t_0-a,t_0+a]\to \R^+$ such that for all $(t,\vec y_1),(t,\vec y_2)\in\R$, it holds that 
+    \begin{equation*}
+        \|\vec g(t, \vec y_1) - \vec g(t,\vec y_2)\| \leq k(t)\|\vec y_1-\vec y_2\|,
+    \end{equation*}
+    then the solution is unique.
 \end{theorem}
-We finally derive a convergence estimate for the fully-discrete problem. [TODO]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+With this theorem at hand, we are ready to prove the a priori estimate.
+\begin{theorem}[A priori estimate, time-dependent parabolic problem]\label{thm:a-priori-continuous-time-dependent}
+    If $a$ is an elliptic form, then there exists a unique $u\in L^2(0,T;V)\cap C([0,T];V)$, such that $\partial_t u\in L^2(0,T;V)$ and 
+    \begin{equation}
+        \|u(t)\|_0^2 + \alpha \int_0^T \|u(s)\|_V^2 ds \leq \|u_0\|_0^2 + \frac{1}{\alpha} \int_0^T \|f(s)\|^2 ds.
+    \end{equation}
+    \begin{proof}
+        Let $V^N\subset V$ be a finite-dimensional subspace of $V$ with $\dim V^N = N$ and let $\{\phi_j\}_{j=1}^N$ be a fixed basis. We approximate the solution $u$ as 
+        \begin{equation*}
+            u\approx u^N \coloneqq \sum_{j=1}^N u_j(t)\phi_j.
+        \end{equation*}
+        Then, the weak formulation~\eqref{eq:weak-form-continuous-parabolic-IBVP} results in the system of $N$ equations
+        \begin{equation*}\label{eq:semi-discrete}
+            (\partial_t u^N, \phi_i) + a(u^N, \phi_i) = \langle f(t), \phi_i\rangle \quad \forall i=1,\dots, N.
+        \end{equation*}
+        Similar to the stiffness matrix and force vector defined in~\eqref{eq:stiffness-force-fem}, we define
+        \begin{equation*}
+            M_{ij} \coloneqq (\phi_j, \phi_i),\quad A_{ij} \coloneqq a(\phi_j, \phi_i),\quad F_i \coloneqq \langle f(t), \phi_i\rangle,
+        \end{equation*}
+        where we now denote $\vec u = (u_1(t),\dots,u_N(t))$ the discrete coordinate vector of $u^N$. With this notation, we can rewrite~\eqref{eq:weak-form-continuous-parabolic-IBVP} as the discrete, linear system of ODEs on $\vec u$:
+        \begin{equation}\label{eq:weak-parabolic-IBVP-discrete}
+            \begin{aligned}
+                \ten M \dot{\vec u} + \ten A \vec u &= \vec F\\
+                \vec u(0) &= \Pi_{V^N}(\vec u_0),
+            \end{aligned}
+        \end{equation}
+        where $\Pi_{V^N}$ is the projection operator $\Pi_{V^N}:V\to V^N$. We can prove that all conditions in Carathéodory's existence theorem~\ref{thm:caratheodory-existence} are met, with $\vec y = \vec u$, $t_0=0$ and $\vec y_0=\Pi_{V^N}\vec u_0$, by taking
+        \begin{equation*}
+            \vec g(t, \vec u) \coloneqq \ten M^{-1}(\vec F(t)-\ten A\vec u),
+        \end{equation*}
+        which is well-defined since $\ten M$ is invertible due to the linear independence of the basis. Thus, there exists a unique solution $\dot{\vec u}$ to equation to~\eqref{eq:weak-parabolic-IBVP-discrete}. 
 
+        Now, since the discrete right hand side is $\vec F\in L^2(0,T;\R^N)$, then $\dot{\vec u} = \ten M^{-1}(\vec F(t)-\ten A\vec u)$ is in $L^2$, and thus $u^N\in \vec H^1(0,T;\R^N)$ and $u\in \vec H^1(0,T;V)$. By taking $\phi_i = u^N$ in~\eqref{eq:semi-discrete}, we obtain 
+        \begin{equation*}
+            (\dot{u}^N, u^N) + a(u^N,u^N) = \langle f, u^N\rangle,
+        \end{equation*}
+        and using the identity $u\dot{u} = \frac{1}{2}\partial_t(u^2)$, and integrating in time between $0$ and $T$ we get 
+        \begin{equation*}
+            \frac{1}{2}\left(\|u^N\|^2 - \|u_0^N\|^2\right) + \int_0^T a(u^N,u^N) ds = \int_0^T  \langle f, u^N\rangle ds.
+        \end{equation*}
+        The ellipticity property allows us to bound $\int_0^T a(u^N,u^N)ds \geq \alpha\int_0^T \|u^N\|^2 ds$, and bounding the product $\langle f, u^N\rangle\leq \|f\|_{V'}\|u^N\|_{V^N}$, we get 
+        \begin{equation*}
+            \frac{1}{2}\|u^N\|^2_{V^N}  + \alpha \int_0^T \|u^N\|_V^2 ds \leq \frac{1}{2}\|u_0^N\|^2_{V^N} + \int_0^T \|f\|_{V'}\|u^N\|_{V^N} ds.
+        \end{equation*}
+        To bound the last term, we invoke Young's inequality~\eqref{thm:young-inequality} with $a=\|f\|_{V'}$, $b=\|u^N\|_{V^N}$ and $\varepsilon=\alpha$ (i.e. the ellipticity constant), where we get 
+        \begin{equation*}
+            \|f\|_{V'}\|u^N\|_{V^N} \leq \frac{\|f\|_{V'}^2}{2\alpha} + \frac{\alpha \|u^N\|_{V^N}}{2},
+        \end{equation*}
+        and substituting, factoring and multiplying by $2$, we get 
+        \begin{equation*}
+            \|u^N\|^2_{V^N} + \alpha \int_0^T \|u^N\|_V^2 ds \leq \|u_0^N\|^2_{V^N} + \frac{1}{\alpha}\int_0^T \|f(s)\|_{V'} ds.
+        \end{equation*}
 
+        Note that $u^N$ is bounded in $L^\infty(0,T;L^2)$ and in $L^2(0,T;V)$, and by the weak$-^*$ convergence we can conclude that there exists a weak limit $u\in L^\infty(0,T;L^2)\cap L^2(0,T;V)$ for $u^N$ and its gradient $\nabla u^N$, such that 
+        \begin{tightalign*}
+            \int_0^T (u^N(t),\varphi(t)) ds &\to \int_0^T (u(t), \varphi(t)) ds \qquad \forall  \varphi\in L^1(0,T; L^2)\\
+            \int_0^T (\nabla u^N(t), \Phi(t))ds &\to \int_0^T (\nabla u(t), \Phi(t))ds \qquad \forall  \Phi\in  L^2(0,T; L^2).
+        \end{tightalign*}
+
+        We can take $\Psi\in C^1([0,T])$ such that $\Psi(T)= 0$, such that for all test functions $ v^N\in V^N$, the weak form
+        \begin{equation*}
+            (\dot{u}^N), v^N) + a(u^N, v^N) = \langle f, v^N\rangle
+        \end{equation*}
+        can be equivalently written without compromising the time dependence as 
+        \begin{equation*}
+            (\dot{ u}^N), \Psi v^N) + a(u^N, \Psi v^N) = \langle f, \Psi v^N\rangle.
+        \end{equation*}
+        Integrating between $0$ and $T$, and integrating by parts, we get that for all $ v^N\in V^N$, 
+        \begin{tightalign*}
+            \cancel{(u^N(T),\Psi(T) v^N)} - (u^N(0),\Psi(0) v^N) + \int_0^T a(u^N,\Psi v^N) ds &- \int_0^T (u^N,  v^N)\Psi'(t)ds\\
+            &\quad = \int_0^T \langle f, \Psi v^N\rangle ds.
+        \end{tightalign*}
+        Here, note that $\Psi(t) v^N\in  L^2(0,T;V)\cap L^1(0,T; L^2)$ because $\Psi(t) v^N\in C^1([0,T];V)$, and by the weak$-^*$ convergence, we have 
+        \begin{tightalign*}
+            \int_0^T \langle f, \Psi v^N\rangle ds = -\int_0^T (u^N(0), \Psi(0)v^N)&ds - \int_0^T (u^N,  v^N)\Psi'(t) ds + \int_0^T a(u^N, \Psi v^N) ds\\
+            &\big\downarrow \text{ weakly}\\
+            -\int_0^T ( u(0),\Psi(0) v^N)ds &-\int_0^T (u, v^N)\Psi'(t)ds + \int_0^T a( u, \Psi v^N)ds.
+        \end{tightalign*}
+        By density of $V^N$ in $V$, we have 
+        \begin{equation*}
+            |a(u, v) - a(u, v^N)|\to 0,
+        \end{equation*}
+        which implies that for all $v \in V$, we get 
+        \begin{equation*}
+            -( u(0),\Psi(0) v) - \int_0^T (u,  v)\Psi' ds + \int_0^T a(u, \Psi v)ds = \int_0^T \langle f, \Psi v^N\rangle ds \qquad \forall v\in V,\forall \Psi.
+        \end{equation*}
+        Integrating by parts, we get
+        \begin{equation*}
+            \int_0^T (\dot{ u}, \Psi v) ds + \int_0^T a( u, \Psi v)ds = \int_0^T \langle f, \Psi \rangle ds \qquad \forall v\in V,\forall \Psi,
+        \end{equation*}
+        and thus since this result holds for all $\Psi\in C^1([0,T])$, it holds for distributions $\D((0,T])$. Carrying all terms to the left hand side, we get 
+        \begin{equation*}
+            \int_0^T (\dot{u}, \Psi v) ds + \int_0^T a( u, \Psi v)ds -\int_0^T \langle f, \Psi v\rangle ds = 0,.
+        \end{equation*}
+        By the bilinearity of $a$ we note that $a(u, \Psi v) = \Psi(t)a(u, v)$, and by linearity of the inner product we can take $\Psi$ outside the inner products, to get 
+        \begin{equation*}
+            \int_0^T \Psi\left[(\dot{u},  v) + a(u, v) - \langle f, v\rangle \right] ds = 0.
+        \end{equation*}
+        Borrowing the localization theorem~\ref{thm:localization} from the next chapter, since $\Psi$ is arbitrary, the above equality implies
+        \begin{equation*}
+            (\dot{u}, v) + a(u, v) - \langle f, v\rangle = 0 \qquad \forall v\in V.
+        \end{equation*}
+
+        To have $u(0) = u_0$, we can just take $\Psi(0)=1$, such that 
+        \begin{equation*}
+            (u(0)-u_0^N, \Psi(0) v) = (u(0)-u_0^N, v) \to 0,
+        \end{equation*}
+        and the regularity of $\partial_t u\in L^2(V')$ can be derived from the continuity of $a$: note that 
+        \begin{tightalign*}
+            (\partial_t u, v) &= \langle f, v\rangle -a(u,v)\\
+            &\leq \|f\|_{V'}\|v\|_V + C_{\text{cont}}^\alpha \|u\|_V\|v\|_V \tag{Cauchy-Schwarz, continuity of $a$} \\
+            &\leq C(u)\|v\|_V \tag{continuity of $F$},
+        \end{tightalign*}
+        and taking supremum over $v$ we get $\|\partial_t u\|_{V'}\leq C(u)$, thus $\partial_t u$ is bounded and, in particular, in $L^2(V')$. 
+    \end{proof}
+\end{theorem}
+
+Now that we have an a priori estimate, we can analyze the convergence of a discrete method that involves a finite-dimensional discrete space $V_h$. In what follows, for any given bilinear form $a:V\times V\to \R$ we denote the \emph{Ritz projector}\footnote{Another common choice for the projector is the \emph{Scott-Zhang projector}.} as the operator $R_h:V\to V_h$ such that 
+\begin{equation}
+    a(R_h z, v_h) = a(z, v_h) \qquad \forall v_h \in V_h.
+\end{equation}
+In particular, the a priori bound yields
+\begin{equation}
+    \|R_h z \| \leq \| z \|.
+\end{equation}
+
+We first prove the following convergence result for the semi-discrete problem, similar to Céa's estimate~\ref{eq:cea-estimate-fem}:
+\begin{theorem}\label{thm:convergence-semidiscrete-time}
+    In problem~\eqref{eq:semi-discrete}, if both $u(t)$ and $\dot u(t)$ belong to $H^1(\Omega)$ for all fixed $t$ in $(0,T)$, then for $u_h\in V_h$, we have
+    \begin{equation}
+        \| u(t) - u_h(t) \|_V \leq \|u_0 - \Pi_h(u_0)\|_v + Ch^r\left(\|u_0\|_r+\int_0^T\|\dot u(s)\|_r\,ds\right).
+    \end{equation}
+    \begin{proof}
+        The methodology consists in separating the error into \emph{projection} and \emph{consistency} errors\footnote{A common way for deriving this type of estimate is using the \emph{Gronwall inequality}.}: 
+        \begin{equation*}
+            e_h \coloneqq u - u_h = \underbrace{u - \Pi_h u}_{\xi_h} + \underbrace{\Pi_h u - u_h}_{\eta_h} = \xi_h + \eta_h,
+        \end{equation*}
+        where $\xi_h$ is the projection error and $\eta_h$ is the consistency error. We now consider the error equation
+        \begin{equation*}
+            (\dot e_h, v_h) + a(e_h, v_h) = 0 \qquad \forall v_h\in V_h,
+        \end{equation*}
+        and we consider as the projector the Ritz projector, i.e. $\Pi_h=R_h$, which gives
+        \begin{equation*}
+            (\dot \xi_h + \dot \eta_h, v_h) + a(\eta_h, v_h) = 0 \qquad \forall v_h\in V_h.
+        \end{equation*}
+        Setting $v_h = \eta_h$, we obtain 
+        \begin{equation*}
+            \frac 1 2 \partial_t(\|\eta_h\|^2_0)+a(\eta_h,\eta_h) = -(\dot \xi_h, v_h).
+        \end{equation*}
+        Note that 
+        \begin{equation*}
+            \frac 1 2 \partial_t(\|\eta_h\|_0^2) = \|\eta_h\|_0 \partial_t(\|\eta_h\|_0),
+        \end{equation*}
+        and thus using the ellipticity of $a$ we obtain the following: 
+        \begin{equation*}
+            \|\eta_h\|\partial_t(\|\eta_h\|_0) \leq \partial_t(\|\eta\|_0^2) + a(\eta_h, \eta_h) \leq \|\dot \eta_h\|_0 \|v_h\|_0,
+        \end{equation*}
+        which after dividing by $\|v_h\|_0$ and integrating between $0$ and $T$ yields
+        \begin{equation*}
+            \| \eta_h(t)\|_0 \leq \|\eta_h(0)\|_0 + \int_0^T \| \dot \eta_h(s) \|_0\,ds.
+        \end{equation*}
+        Bounding each of the terms appearing gives the remaining estimates: 
+        \begin{tightalign*}
+            \| \eta_h(0) \|_0 &= \|\Pi_h u_0 - R_h u_0 \|_0 \leq \|u_0 - \Pi_h\|_0 + \| u_0 - R_h u_0\|\\ 
+            \| \dot \xi_h \|_0 &= \| \dot u - R_h \dot u \|.
+        \end{tightalign*}
+        The resulting estimate comes from the convergence rate obtained from the Ritz projector.
+    \end{proof}
+\end{theorem}
+\paragraph{The fully-discrete problem}
+We finally derive a convergence estimate for the fully-discrete problem. As for finite differences, we could choose a forward, backward or centered difference scheme, and we will choose an implicit scheme. Let $M\in \N$ be the number of time steps with $\Delta t = T/M$, and $t_n = n\Delta t$ with $1\leq n\leq M$, such that $u(t_n)\approx u^n$. Recall the backward difference scheme
+\begin{equation}\label{eq:discrete-un}
+    D^-_{\Delta t}u^n = \frac{u^{n+1}-u^n}{\Delta t},
+\end{equation}
+which we will simply call $D_{\Delta t} u^n$. Substituting this difference in our continuous weak formulation~\ref{eq:weak-form-continuous-parabolic-IBVP} results in 
+\begin{equation}
+    (D_{\Delta t}u_h^n, v_h) + a(u_h^n, v_h) = \langle f^n, v_h\rangle \qquad \forall v_h\in V_h, \forall n\in\{1,\dots,M\}.
+\end{equation}
+It is easy to prove the existence and uniqueness to this equation using the Lax-Milgram lemma. To derive a bound for the error, we bound the error of each time step. At time $t_n$, we have the error equation 
+\begin{equation}\label{eq:error-eq-fully-discrete}
+    e_h^n \coloneqq u(t_n) - u_h^n = \underbrace{u(t_n) - \Pi_h u(t_n)}_{\xi_h^n} + \underbrace{\Pi_h u(t_n) - u_h^n}_{\eta_h^n} = \xi_h^n + \eta_h^n,
+\end{equation}
+where $\xi_h^n$ is the projection error and $\eta_h^n$ is the consistency error. Note that
+\begin{tightalign*}
+    \dot u(t_n) - D_{\Delta t}u_h^n &= \dot u(t_n) - \Pi_h D_{\Delta t} u(t_n) + \Pi_h D_{\Delta t} u(t_n) - D_{\Delta t} u_h^n \tag{adding zero}\\
+    &= \dot u(t_n) - D_{\Delta t} u(t_n) + D_{\Delta t}(\xi_h^n + \eta_h^n) \tag{linearity of $D_{\Delta t}$},
+\end{tightalign*}
+and replacing back in the error equation~\ref{eq:error-eq-fully-discrete} we get 
+\begin{equation}
+    (\dot u(t_n) - D_{\Delta t}u(t_n) + D_{\Delta t}\xi_h^n + D_{\Delta t}\eta_h^n, v_h) + a(\xi_h^n + \eta_h^n, v_h) = 0\qquad \forall v_h\in V_h.
+\end{equation}
+Choosing $\Pi_h$ as the Ritz projector, then we have $a(\xi_h^n, v_h) = 0$. Reordering, we can now bound as 
+\begin{equation}\label{eq:semi-discrete-eta}
+    (D_{\Delta t} \eta_h^n, v_h) + a(\eta_h^n, v_h) = \underbrace{-(\dot{u}(t_n) - D_{\Delta t}u(t_n), v_h)}_{(w_1^n, v_h)} \underbrace{-(D_{\Delta t}\xi_h^n, v_h)}_{(w_2^n, v_h)}.
+\end{equation}
+We bound the two terms separately. For $w_2$, we note that 
+\begin{tightalign*}
+    w_1^n &= \dot{u}(t_n) - D_{\Delta t}u(t_n) \tag{definition of $\xi_h^n$}\\
+    &= \int_{t_{n-1}}^{t^n} \frac{\dot{u}(t_n) - \dot{u}(s)}{\Delta t} ds \tag{$\dot{u}(t)$ is constant in $[t_{n-1}, t_n]$}\\
+    &= \int_{t_{n-1}}^{t^n} \frac{1}{\Delta t} \int_s^{t_n} \ddot{u}(w)dwds\\
+    &\leq \int_{t_{n-1}}^{t^n} \frac{1}{\Delta t} \left[\underbrace{(t-s)}_{\leq \Delta t}\sup_{w\in[t_{n-1},t_n]}|\ddot{u}(w)|\right] ds\\
+    &\leq \Delta t \|\ddot u\|_\infty,
+\end{tightalign*}
+and
+\begin{tightalign*}
+    w_2^n = D_{\Delta t}\xi_h^n &= D_{\Delta t}(u(t_n) - \Pi_h u(t_n)) \tag{definition of $\xi_h^n$}\\
+    &= (I-\Pi_h) D_{\Delta t}u_h^n\\
+    &= (I-\Pi_h)\frac{u^n_h - u_h^{n-1}}{\Delta t}\\
+    &= \frac{1}{\Delta t}(I-\Pi_h) \int_{t_{n-1}}^{t^n}\dot{u}_h(s)ds\\
+    &\leq \frac{Ch}{\Delta t}\|\dot{u}\|_X,
+\end{tightalign*}
+Now, since $v_h\in V_h$ is arbitrary, we substitute $v_h = \eta_h^n$ in~\eqref{eq:semi-discrete-eta} and obtain 
+\begin{equation}\label{eq:fully-discrete-eta-bnd}
+    (D_{\Delta t} \eta_h^n, \eta_h^n) + a(\eta_h^n, \eta_h^n) = (w_1^n, \eta_h^n) + (w_2^n, \eta_h^n).
+\end{equation}
+The first term can be bounded via Young's inequality:
+\begin{tightalign*}
+    (D_{\Delta t} \eta_h^n, \eta_h^n) = \left(\frac{\eta_h^{n-1}-\eta_h^n}{\Delta t}, \eta_h^n\right) &= \frac{(\eta_h^n, \eta_h^n}{\Delta t} - \frac{(\eta_h^{n}, \eta_h^{n-1})}{\Delta t}\\
+    &\geq \frac{\|\dot\eta_h^n\|^2}{\Delta t} - \frac{1}{2\Delta t}\left(\|\dot\eta_h^n\|^2 + \|\eta_h^{n-1}\|^2\right) \tag{Young} \\ %! what choice was done here?
+    &= \frac{1}{2}\left(\frac{\|\dot\eta_h^n\|^2 - \|\dot\eta_h^{n-1}\|^2}{\Delta t}\right),
+\end{tightalign*}
+and substituting in~\eqref{eq:fully-discrete-eta-bnd} we get 
+\begin{equation}
+    \frac{1}{\Delta t}\left(\|\eta_h^n\|^2 + (\eta_h^n, \eta_h^{n-1})\right) + \underbrace{\alpha\|\eta_h^n\|^2}_{\geq 0} \leq (w_1^n + w_2^n, \eta_h^n).
+\end{equation}
+Dropping the coercive term, and using $ab\geq \|a\|\|b\|$ and the Cauchy-Schwarz inequality on the right hand side, we obtain
+\begin{equation}
+    \frac{1}{\Delta t}\left(\|\eta_h^n\|^2 - \|\eta_h^n\|\|\eta_h^{n-1}\|\right) \leq \|w_1^n+w_2^n\|\|\eta_h^n\|,
+\end{equation}
+and dividing by $\|\eta_h^n\|/\Delta t$ and adding $\|\eta_h^{n-1}\|$ on both sides, we get the bound
+\begin{equation}
+    \|\eta_h^n\|\leq \|\eta_h^{n-1}\| + \Delta t\|w_1^n+w_2^n\|.
+\end{equation} 
+Summing over $n\in\{1,\dots,M\}$, and telescoping on the left hand side, we get 
+\begin{tightalign*}
+    \|\eta_h^M\| &\leq \|\eta_h^0\| + \Delta t \sum_{n=1}^M \left(\|w_1^n+ w_2^n\|_0\right)\\
+    &\leq \|\eta_h^0\| + \Delta t \sum_{n=1}^M \left(\|w_1^n\|_0 + \|w_2^n\|_0\right)\tag{triangle inequality}\\
+    &= \|\eta_h^0\| + \Delta t \sum_{n=1}^M \|w_1^n\|_0 + \Delta t \sum_{n=1}^M \|w_2^n\|_0\\
+    &\leq  \|\eta_h^0\| + \Delta t \sum_{n=1}^M \frac{1}{\Delta t} \int_{t_{n-1}}^{t_n} \|w_1^n\|_0 ds + \Delta t \sum_{n=1}^M \frac{1}{\Delta t} \int_{t_{n-1}}^{t_n} \|w_2^n\|_0 ds\\
+    &=  \|\eta_h^0\| + \int_{0}^{T} \|w_1^n\|_0 ds + \int_{0}^{T} \|w_2^n\|_0 ds\\
+    &\leq \|\eta_h^0\| + (I-\Pi_h)\|\dot u\|_{L^1} + \Delta t \int_0^T \|\ddot{u}\| ds\\
+    &\leq \|\eta_h^0\| + Ch\|\dot u\|_{L^1} + \Delta t \int_0^T \|\ddot{u}\| ds. %! \Delta t missing in first term?!
+\end{tightalign*}
+Thus, we got the final bound for the fully-discrete problem 
+\begin{equation}
+    \|\eta_h^M\| \leq \|\eta_h^0\| + C\Delta t \|\ddot u\|_{L^1(L^2)} + Ch \|\dot u\|_{L^1(L^2)}.
+\end{equation}
+Here, we can often take $\Delta t = h$, which allows us to control both terms linearly in $h$ and ensure the consistency of the method. Finally, due to the convergence rate of the Ritz projector we can immediately bound the norm of $\xi_h^n$, and thus we can conclude the convergence $\|e_h\|$ by summing the errors over $n$.

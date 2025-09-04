@@ -1,106 +1,491 @@
-In this section we set most of the foundational mathematics required to understand these notes. In general, this consists in defining rigorously the abstract functional setting and preparing the student for what a colleague calls the \emph{tensor-fu}, i.e. the capability of derivating anything. 
+In this section we set most of the foundational mathematics required to understand these notes. In general, this consists in defining rigorously the abstract functional setting and preparing the student for what a colleague calls the \emph{tensor-fu}, i.e. the capability of deriving anything.
 
-\section{Banach and Hilbert spaces}
-Throughout the entire manuscript, we will rely on Banach spaces, Hilbert spaces, and their duals. Despite the existence of a flexible theory of Banach space formulations, we will mostly rely on Hilbert spaces because of their many nice properties. 
+\section{Elements of functional analysis and measure theory}\label{sec:elements-functional-analysis}
+In this section we recall some basic definitions and theorems of functional analysis and measure theory. The functional analysis presentation follows closely the presentation by Long Chen in~\cite{chen2024infSup} and the amazing book by H. Brezis~\cite{BrezisFA}, and the measure theory presentation is partially adapted from~\cite{Tao_2021,Rudin_2013}. We refrain from giving detailed explanations and proofs, which are covered in detail in the aforementioned references.
 
-\begin{definition}[Banach space]
-    We say that a metric vector space $X$, with a fixed metric $d$, is a Banach space if it is complete (i.e. that all Cauchy sequences converge to a well defined limit in $X$). Just for reference, we recall that a function $d:X\times X\to \R$ is a metric if it satisfies the following properties: 
-    \begin{itemize}
-        \item $d(x,x) = 0$ for all $x$ in $X$. 
-        \item (Positivity) $d(x,y) > 0$ for all $x\neq y$ in $X$. 
-        \item (Symmetry) $d(x,y) = d(y,x)$ for all $x,y$ in $X$. 
-        \item (Triangle inequality) $d(x,z) \leq d(x,y) + d(y,z)$ for all $x,y,z$ in $X$. 
-    \end{itemize}
+In order to transfer the notions that are developed in undergraduate calculus and linear algebra courses to functional analysis, we need to define conditions on the \emph{spaces} and on the \emph{operators}. This occurs mainly due to the fact that we are now in an infinite-dimensional setting, which leads to non-intuitive results. There are three key properties that we will study: \emph{closeness} (or \emph{completeness}), \emph{continuity} (or \emph{boundedness}) and \emph{compactness}.
+
+We will study spaces of scalar-valued and vector-valued functions, which will often be denoted by $f, g$ and $\vec u, \vec v$, respectively. The domains of these functions will be usually denoted by $\Omega\subset\R^n$ for some $n\in\N$, and the properties of $\Omega$ (e.g. closed/open, compactness, boundedness) can impact the properties of the function spaces defined on $\Omega$.
+
+\paragraph{Topology, normed spaces and metric spaces}
+We begin by considering a set $V$ with infinitely many elements, and introduce structures on this set. A fundamental structure is the \emph{linear structure}:
+\begin{equation}\label{eq:linearity}
+    \alpha u + \beta v \in V,\quad \forall u,v\in V, \; \alpha, \beta\in \mathbb{F},
+\end{equation}
+where $\mathbb{F}$ is a field. In our notes, we will always consider $\mathbb{F}=\R$, and thus the set $V$ equipped with property~\eqref{eq:linearity} is a \emph{real vector space}. It is clear here that properties from finite-dimensional vector spaces are not inherited to our infinite-dimensional setting, since we would have an infinite basis (e.g. a Hamel or Schauder basis) and infinitely many coordinates. 
+
+Another important structure is the \emph{topology}, which allow us to define concepts such as the interior, exterior and boundary of a set.
+\begin{definition}[Topology, open sets, closed sets, topological space] 
+    A \emph{topology} $\tau$ on a set $X$ is a collection of subsets of $X$, called \emph{open sets}, that satisfies the following three properties:
+    \begin{enumerate}
+        \item The empty set $\emptyset$ and $X$ are open, i.e. $\emptyset\in\tau$ and $X\in\tau$.
+        \item Any union (finite or infinite) of open sets is also open.
+        \item The intersection of finitely many open sets is open.
+    \end{enumerate}
+    A \emph{topological space} is a pair $(X,\tau)$ where $X$ is a set and $\tau$ is a topology on $X$. A subset $C\in X$ is a \emph{closed set} if and only if its complement $X\setminus C$ is an open set. 
 \end{definition}
 
-\begin{definition}[Hilbert space]
-    We say that an inner product space $H$ is a Hilbert space if it is complete with respect to the metric induced by the inner product. Throughout this manuscript, we will consider only real numbers, so the inner product $\langle\cdot, \cdot\rangle: H\times H \to \R$ is a function that satisfies the following: 
-    \begin{itemize}
-        \item (Symmetry) $\langle x,y\rangle = \langle y,x\rangle$ for all $x,y$ in $H$.
-        \item (Linear) $\langle ax_1 + bx_2, y\rangle = a\langle x_1, y\rangle + b\langle x_2, y\rangle$ for all $a,b$ in $\R$ and $x,y$ in $H$. 
-        \item (Positive definite) $\langle x, x\rangle \geq 0$ for all $x$ in $H$. The equality holds only for $x=0$. 
-    \end{itemize}
-    We will denote inner products mostly by $\langle\cdot, \cdot\rangle$ and $(\cdot, \cdot)$. Sometimes it will be important to distinguish the specific product we consider, i.e. $(\cdot, \cdot)_H$. 
+Informally, we say that $X$ is a topological space when the topology is obvious, and it is often the topology induced by a \emph{metric}, as defined later in this section.
+
+Using open sets, we can define the three important notions: \emph{neighborhood} of an element, the \emph{closure} of a set, and the \emph{continuity} of a function.
+\begin{definition}[Neighborhood]
+    Let $X$ be a topological space. A \emph{neighborhood} of an element $x\in X$ is an open subset of $X$ that contains $x$. 
+\end{definition}
+\begin{definition}[Closure]
+    For a subset $S$ of a topological space $X$, its \emph{closure} $\overline{S}$ is the intersection of all closed sets containing $S$, i.e. the smallest closed set that contains $S$.
+\end{definition}
+\begin{definition}[Compactness]
+    Let $K\subset X$ where $X$ is a topological space. A collection $\{V_\alpha\}_{\alpha\in I}$ of subsets of $X$, where $I$ an index set (possibly infinite), is called an \emph{open cover} of $K$ if $K\subset \cup_{\alpha\in I}V_\alpha$. We say that $K$ is \emph{compact} if every open cover $\{V_\alpha\}_{\alpha\in I}$ of $K$ contains a finite sub-cover (subset) that also contains $K$. If $X$ is itself compact, then we say that $X$ a \emph{compact space}. Further, closed subsets of compact spaces are also compact.
+\end{definition}
+\begin{definition}[Support, compactly-supported functions]
+    The \emph{support} $\supp f$ of a function $f:X\to Y$ between topological spaces $X, Y$ is defined as the closure of the set of $x\in X$ whose images under $f$ are nonzero, i.e.
+    \begin{equation}
+        \supp f \coloneqq \overline{\{x\in X: f(x)\neq 0\}}.
+    \end{equation}
+    The space of continuous functions $f:\R^n \to \R$ with compact support is denoted by $C_0(\R^n)$.
+\end{definition}
+\begin{definition}[Continuity]\label{def:continuity-topological}
+    A function $f:X\to Y$ between two topological spaces $X$ and $Y$ is \emph{continuous} if the preimage $f^{-1}(U)\subset X$ of an open set $U\subset Y$ is also open. 
+\end{definition}
+Note that if $X=Y=\R$, then this definition is equivalent to the definition of an introductory calculus course, such as the $\varepsilon-\delta$ definition. If a continuous function $f$ is injective and surjective, then its inverse $f^{-1}:Y\to X$ is also continuous.
+\begin{definition}[Interior, exterior and boundary of a set]
+    Let $S$ be a subset of a topological space $X$.
+    \begin{enumerate}
+        \item An element $x\in S$ is an \emph{interior point} of $S$ if there exists an open set such that $x\in U\subset S$.
+        \item The \emph{interior} of $S$, denoted by $\interior S$, is the set of all interior points, i.e. the union of all open subsets of $S$.
+        \item The \emph{exterior} of $S$ is the complement of the closure of $S$.
+        \item The \emph{boundary} $\partial S = \overline{S}\setminus\interior S$ is the set of points of the closure that are not in the interior. 
+    \end{enumerate}       
 \end{definition}
 
-For now, let's simply review some relevant properties: 
+An important type of topological vector spaces are \emph{normed vector spaces}.
+\begin{definition}[Normed vector space]
+    A \emph{normed vector space} $(X,\|\cdot\|)$ is a vector space $X$ endowed with a \emph{norm}, which is a map $\|\cdot\|:X\to \R_{\geq 0}$ that for any $x,y\in X$ satisfies
     \begin{itemize}
-        \item Continuous linear operators acting on Banach spaces have an induced operator norm: if $T: X\mapsto Y$, then 
-        $$ \| T\| =  \sup_{x\in X}\frac{|Tx|_Y}{|x|_X}. $$
-        We denote the space of continuous linear operators from $X$ to $Y$ as $L(X,Y)$. 
-        \item Given a Banach space $X$ and a linear operator $T:X\to Y$, where $Y$ is a normed space, we can define the norm induced by $T$ in the space $W=\text{Dom}(T)\subseteq X$ as
-        $$ \|x\|_{W} \coloneqq \|x\|_X + \|Tx\|_Y. $$
-        This will be important when constructing Sobolev spaces and their norms. We can show this is indeed a norm: taking $x,y\in W$ and $\alpha\in \R$ we get
-        \begin{itemize}
-            \item Triangle inequality:
-            \begin{align*}
-                \|x+y\|_W &= \|x+y\|_X + \|T(x+y)\|_Y \\
-                &\leq \|x\|_X + \|y\|_X + \|Tx\|_Y + \|Ty\|_Y \tag{$\|\cdot\|_X$ and $\|\cdot\|_Y$ are norms}\\
-                &= \|x\|_W + \|y\|_W.
-            \end{align*}
-            \item Homogeneity: since $T$ is linear, we get 
-            $$\|\alpha x\|_W = \|\alpha x\|_X + \|T(\alpha x)\|_Y = |\alpha|\|x\|_X + |\alpha|\|Tx\|_Y = |\alpha|\|x\|_W.$$
-            \item Positive-definiteness: we note that $0=\|x\|_W\geq \|x\|_X\geq 0$, which implies $x=0$.
-        \end{itemize}
-        \item Banach spaces are complete metric spaces. For a given Banach space $X$, its (topological) dual is the space $X'$ of functions $X\mapsto \R$, which is always Banach. The norm in $X'$ is referred to as the dual norm, and for $T\in X'$ it is defined as 
-            $$\|T\|_{X'} = \sup_{\substack{x\in X\\ \|x\|_X\leq 1}} |T(x)|= \sup_{x\in X}\frac{|T(x)|}{\|x\|_X}.$$
-        The action of an element of the dual space is sometimes denoted as $\langle T, x\rangle_{X'\times X}$, so as to resemble the notation of an inner product. In general, one can identify a part of the bidual space $X'' = (X')'$ through the evaluation operator $T_f:X'\mapsto \R$ in $X''$ defined as $T_f(L) = L(f)$. This immersion is not surjective. 
-        \item Inner products are mostly used as projections. This means that, in the same way that we can orthogonalize a vector $x$ with respect to $y$, we can also do this in the Hilbert space setting analogously as 
-            $$ x_\perp \coloneqq x - (x, y)_H y. $$
-        It can be quickly verified that the function $x_\perp$ is indeed perpendicular to $y$ in the sense that $(x_\perp, y)_H=0$. 
-        \item The inner product yields the fantastic Riesz map, which is actually an isometry. This is given as follows: consider a Hilbert space $H$ with inner product $(\cdot, \cdot)_H$, then a Riesz map is an operator $R_H: H\mapsto H'$ such that for any $x,y$ in $H$ it holds that $\langle R_H(x), y\rangle_{H'\times H} = (x, y)_H$. Notably, $\|R_H(x)\|_{H'} = \| x \|_H$. 
+        \item a scalar multiplication property $\|\alpha x\|=|\alpha|\|x\|$ for all $\alpha\in\R$,
+        \item a triangle inequality $\|x+y\|\leq \|x\|+\|y\|$, and 
+        \item is non-negative, i.e. $\|x\|\geq 0$ and $\|x\|=0$ if and only if $x=0$.
     \end{itemize}
-One fundamental aspect of Hilbert spaces is that they provide some intuitive properties related to projections, which we recall through the following results: 
+    We also say that a function $|\cdot|$ is a \emph{seminorm} if the last property is missing, i.e. there exist $0 \neq x\in X$ such that $|x|=0$.
+\end{definition}
+
+A norm will induce a topology by considering \emph{open balls}
+\begin{equation}
+    \mathcal{B}(x,r) \coloneqq \{y\in X: \|x-y\|<r\}
+\end{equation}
+as the open sets, and it is easy to prove that a normed vector space is indeed a topological vector space. This norm structure allows us to calculate lengths (norms) of vectors, and also to induce a \emph{metric}.
+\begin{definition}[Metric and metric space]
+    A function $d:X\times X\to \R_{\geq 0}$ is a \emph{metric} on $X$ if for any $x,y,z\in X$, it satisfies
+    \begin{itemize}
+        \item a symmetry property $d(x,y) = d(y,x)$ ,
+        \item a triangle inequality $d(x,z) \leq d(x,y) + d(y,z)$,
+        \item is non-negative, i.e. $d(x,x) \geq 0$, and
+        \item $d(x,y) = 0 \iff x=y$.
+    \end{itemize}
+    A \emph{metric space} $(X,d)$ is a set $X$ with a metric $d:X\times X\to \R_{\geq 0}$ on $X$. If $X$ is a normed vector space, then we define a \emph{metric induced by the norm} 
+    \begin{equation}
+        d(x,y) \coloneqq \|x-y\|,
+    \end{equation}
+    which indeed is easily proven to be a metric, and thus all normed vector spaces are metric spaces. 
+\end{definition}
+A broad class of norms are the $p$-norms, which will be useful when dealing with $L^p$ spaces later on. 
+\begin{definition}[$p$-norm of a vector]
+    Let $x\in\R^n$. For $1\leq p\leq \infty$, the \emph{$p$-norm} of $x$ is defined as 
+    \begin{equation}
+        \|x\|_p \coloneqq \left(\sum_{i=1}^n |x_i|^p\right)^{1/p},
+    \end{equation}
+    and for $p=\infty$, the $p$-norm is the \emph{supremum} norm
+    \begin{equation}
+        \|x\|_\infty \coloneqq \sup_{i=1,\dots,n} |x_i|.
+    \end{equation}
+    A simple exercise proves that these functions are indeed norms, and we can further prove that $\R^n$ is complete with respect to these norms, which implies that $(\R^n, \|\cdot\|_p)$ is a Banach space for $1\leq p\leq \infty$.
+\end{definition}
+An important characterization of compact sets in $\R^n$ is through the \emph{Heine-Borel} theorem.
+\begin{definition}[Boundedness]
+    A subset $S\subset X$ of a metric space $(X,d)$ is \emph{bounded} if there exists $R>0$ such that for all $s,t\in S$, $d(s,t)<r$. If $X$ is bounded itself, then it is called a \emph{bounded metric space}.
+\end{definition}
+\begin{theorem}[Heine-Borel]
+    If $K\subset\R^n$, then $K$ is compact if and only if $K$ is closed and bounded.  
+\end{theorem}
+There exist special characterizations of boundedness and compactness that we will not use in these notes, namely \emph{total boundedness}, \emph{pre-compactness}, \emph{relative compactness} and \emph{local compactness}. Total boundedness and pre-compactness are similar (and coincide in Banach spaces), and refer to a generalization of the boundedness property via finite open set coverings.
+
+Through the structure provided by the norm and the metric it induces, we can talk about the length (norm) of vectors in a space, and the distances (metric) between two vectors. In some cases, we will have additional geometric structure in our space thanks to an \emph{inner product}. 
+\begin{definition}[Inner product space]
+    Let $X$ be a vector space, not necessarily normed. An \emph{inner product} $(\cdot,\cdot):X\times X\to \R$ is a function that for any $x,y,z\in X$, $\alpha, \beta\in\R$, satisfies
+    \begin{itemize}
+        \item $(x,x)\geq 0$ and $(x,x)=0$ if and only if $x=0$, 
+        \item a symmetry property $(x,y)=(y,x)$, and
+        \item a \emph{linearity} property $(\alpha x+\beta y, z)=\alpha(x,z)+\beta(y,z)$.
+    \end{itemize}
+    An \emph{inner product space} $(X,(\cdot,\cdot))$ is a vector space $X$ with an inner product defined on $X$. Given an inner product $(\cdot,\cdot)$, there always exists a \emph{norm induced by the inner product} $\|x\|\coloneqq (x,x)^{1/2}$ and a \emph{metric induced by the inner product} $d(x,y)\coloneqq (x-y, x-y)^{1/2}$, and thus all inner product spaces are normed spaces and metric spaces. In the case that a norm $\|\cdot\|$ is induced by an inner product, we obtain three important properties: 
+    \begin{enumerate}
+        \item the \emph{Cauchy-Schwarz inequality}, which states that for any $x,y$ in an inner product space, 
+            \begin{equation}
+                |(x, y)| \leq \|x\| \|y\|,
+            \end{equation}
+            where $\|\cdot\|$ is the induced norm,
+        \item the \emph{parallelogram property}:
+            \begin{equation}
+                \|x+y\|^2 + \|x-y\|^2 = 2\|x\|^2 + 2\|y\|^2,
+            \end{equation}
+        \item and the useful property 
+            \begin{equation}
+                \|x\pm y\|^2 = \|x\|^2 \pm 2(x,y) + \|y\|^2.
+            \end{equation}
+    \end{enumerate}
+    We will denote inner products mostly by $(\cdot, \cdot)$, and sometimes by $\langle\cdot, \cdot\rangle$. Sometimes it will be important to distinguish the specific product we consider, i.e. $(\cdot, \cdot)_H$. 
+\end{definition}
+
+\paragraph{Banach and Hilbert spaces}\label{sec:banach-hilbert-spaces}
+Throughout the entire manuscript, we will rely on \emph{Banach spaces}, \emph{Hilbert spaces}, and their dual spaces. Despite the existence of a flexible theory of Banach space formulations, we will mostly rely on Hilbert spaces because of their many nice properties. To define these spaces, we need to define \emph{completeness}.
+\begin{definition}[Completeness]
+    A metric space $(X,d)$ is \emph{complete} if all Cauchy sequences $\{x_n\}_{n\in\N}\subset X$ converge to a limit $x$ that is also in $X$, i.e.
+    \begin{equation}
+        \left(\forall \epsilon > 0, \exists N\in\N, \forall n,m\geq N,\quad  d(x_n, x_m) < \epsilon\right) \implies x_n \to x\in X.
+    \end{equation}
+\end{definition}
+Completeness allows us to take limits in a safe and consistence manner, without having to worry about converging to points outside the space, e.g. having a space of continuous functions that contains a sequence whose limit is not continuous. 
+\begin{definition}[Banach space]\label{def:banach-space}
+    We say that a normed space $(X,\|\cdot\|)$ is a \emph{Banach space} if it is complete in the metric induced by its norm.
+\end{definition}
+\begin{definition}[Hilbert space]\label{def:hilbert-space}
+    We say that an inner product space $H$ is a \emph{Hilbert space} if it is complete with respect to the metric induced by the inner product.
+\end{definition}
+\begin{definition}[Linear operators]\label{def:linear-operator}
+    Given two Banach spaces $X$ and $Y$, we denote the set of continuous linear operators from $X$ to $Y$ as $\mathcal{L}(X,Y)$. The image of $x\in X$ under $T$ is $T(x)\in Y$, and often one just writes $Tx = T(x)$, as to resemble the notation from finite-dimensional linear operators, which are isomorphic to matrices. Naturally, for a linear operator $T\in \mathcal{L}(X,Y)$, for $x_1,x_2\in X$ and $\alpha\in\R$, it holds that 
+    \begin{equation}
+        T(x_1+\alpha x_2) = T(x_1) + \alpha T(x_2).
+    \end{equation}
+\end{definition}
+\begin{definition}[Topological dual of a Banach space]
+    For a given Banach space $X$, its \emph{(topological) dual} is the space $X'\coloneqq \mathcal{L}(X,\R)$ of bounded, linear functionals $X\mapsto \R$, which is always a Banach space. The norm in $X'$ is referred to as the \emph{dual norm}, and for $T\in X'$ it is defined as 
+    \begin{equation}\label{eq:dual-norm}
+        \|T\|_{X'} = \sup_{\substack{x\in X\\ \|x\|_X\leq 1}} |T(x)|= \sup_{x\in X}\frac{|T(x)|}{\|x\|_X}.
+    \end{equation}
+\end{definition}
+\begin{definition}[Duality pairing, transpose, bidual space, reflexive space]
+    Given $x\in X$, $f\in Y'$ and $T\in X'$, the action of $T$ on $x$ which is called the \emph{duality pairing} and is denoted by $\langle T, x\rangle_{X'\times X}$, or simply $T(x)$. The \emph{transpose} operator $T^*\in \mathcal{L}(Y',X')$ is defined by the equation 
+    \begin{equation}
+        \langle T^* f, x\rangle_{X',X} = \langle f, Tx\rangle_{Y',Y},
+    \end{equation}
+    The \emph{bidual space} is the dual of the dual space, i.e. $X'' \coloneqq (X')'$. One can identify a part $X''$ through the evaluation operator $X''\ni T_f = X'\to \R$ defined as $T_f(L) \coloneqq L(f)$ for $L\in X'$. This immersion is always injective by the Hahn-Banach theorem~\ref{thm:hahn-banach}, but it is not necessarily surjective, and in the case that indeed $X''=X$ (i.e. $T_f$ is surjective), the space $X$ is said to be \emph{reflexive}. In reflexive spaces, bounded sequences always have weakly convergent subsequences. %! weak convergence
+\end{definition}
+\begin{definition}[Bounded operators and operator norm]\label{def:bounded-operator}
+    An operator $T:X\to Y$ is \emph{bounded} if it maps bounded sets into bounded sets. When $X$ and $Y$ are normed spaces, (i) boundedness is equivalent to continuity, and thus $\mathcal{L}(X,Y)$ is the set of continuous, bounded linear operators, and (ii) for every bounded operator there exists a constant $M\geq 0$ such that $\|T(x)\|\leq M\|x\|$. The smallest constant $M$ is defined as the \emph{operator norm}
+    \begin{equation}\label{eq:operator-norm}
+        \| T\| =  \sup_{x\in X}\frac{\|Tx\|_Y}{\|x\|_X} = \sup_{x\in X,\|x\|=1}\|Tx\|_Y.
+    \end{equation}
+\end{definition}
+Let us now review some relevant properties: 
+\begin{itemize}
+    \item Given a Banach space $X$ and a linear operator $T\in \mathcal{L}(X,Y)$, where $Y$ is a normed space, we can define the norm induced by $T$ in the space $W=\dom(T)\subseteq X$ as
+    \begin{equation}\label{eq:banach-induced-norm}
+    \|x\|_{W} \coloneqq \|x\|_X + \|Tx\|_Y.
+    \end{equation}
+    This will be important when constructing Sobolev spaces and their norms in Section~\ref{sec:weak-derivatives-sobolev-spaces}. We can show this is indeed a norm: taking $x,y\in W$ and $\alpha\in \R$ we get
+    \begin{itemize}
+        \item Triangle inequality:
+        \begin{tightalign*}\label{eq:banach-triangle-inequality}
+            \|x+y\|_W &= \|x+y\|_X + \|T(x+y)\|_Y \\
+            &\leq \|x\|_X + \|y\|_X + \|Tx\|_Y + \|Ty\|_Y \tag{$\|\cdot\|_X$ and $\|\cdot\|_Y$ are norms} \\
+            &= \|x\|_W + \|y\|_W.
+        \end{tightalign*}
+        \item Homogeneity: since $T$ is linear, we get 
+        \begin{equation*}\label{eq:banach-homogeneity}
+        \|\alpha x\|_W = \|\alpha x\|_X + \|T(\alpha x)\|_Y = |\alpha|\|x\|_X + |\alpha|\|Tx\|_Y = |\alpha|\|x\|_W.
+        \end{equation*}
+        \item Positive-definiteness: we note that $0=\|x\|_W\geq \|x\|_X\geq 0$, which implies $x=0$.
+    \end{itemize}
+    \item Inner products are mostly used as projections. This means that, in the same way that we can orthogonalize a vector $x$ with respect to $y$, we can also do this in the Hilbert space setting analogously as 
+    \begin{equation}\label{eq:projection-orthogonalization}
+        x_\perp \coloneqq x - \frac{(x, y)_H}{(y, y)_H} y.
+    \end{equation}
+    It can be quickly verified that the function $x_\perp$ is indeed perpendicular to $y$ in the sense that $(x_\perp, y)_H=0$.
+    \item The inner product yields the fantastic Riesz map, which is actually an isometry. This is given as follows: consider a Hilbert space $H$ with inner product $(\cdot, \cdot)_H$, then a Riesz map is an operator $R_H: H\mapsto H'$ such that for any $x,y$ in $H$ it holds that $\langle R_H(x), y\rangle_{H'\times H} = (x, y)_H$. Notably, $\|R_H(x)\|_{H'} = \| x \|_H$. 
+\end{itemize}
+
+One fundamental aspect of Hilbert spaces is that they provide a precise way to \emph{project} elements into subspaces, and thus defining \emph{orthogonal complements}. We state the theorems that define these objects without proving them. 
 \begin{theorem}[Best approximation]\label{thm:best-approximation}
-    Set $U\subset H$ a closed subspace of a Hilbert space $H$ and set $f$ in $H$. Then there exists a unique $g$ in $U$ such that
-        $$ \|f - g \|_H = \inf_{u\in U} \| f - u\|_H. $$
+    Set $U\subset H$ a closed subspace of a Hilbert space $H$ and fix $f$ in $H$. Then there exists a unique $g$ in $U$ such that
+        \begin{equation}\label{eq:best-approximation} 
+            \|f - g \|_H = \inf_{u\in U} \| f - u\|_H.
+        \end{equation}
+    The element $g$ is often called the \emph{projection} of $f$ onto $U$. 
 \end{theorem}
 Using this, we can uniquely define the orthogonal complement of a set $U$: 
-    $$ U^\perp \coloneqq \{v\in H: (v, u)_H = 0 \quad\forall u\in U\}. $$
-\begin{theorem}\label{thm:orthogonal-decomposition}
+\begin{equation}\label{eq:orthogonal-complement}
+    U^\perp \coloneqq \{v\in H: (v, u)_H = 0 \quad\forall u\in U\}.
+\end{equation}
+\begin{theorem}\label{thm:orthogonal-decomposition} 
     Set $U$ a closed subspace of a Hilbert space $H$. Then, if $f$ is in $H$, there exists a unique pair $(u,v)$ in $U\times U^\perp$ such that 
-        $$f = u + v.$$
+    \begin{equation}\label{eq:orthogonal-decomposition} 
+        f = u + v.
+    \end{equation}
 \end{theorem}
-Some common and/or simple examples: Helmholtz decomposition, zero average functions, zero trace tensors, symmetric tensors. Note that the orthogonal complement is defined with respect to a \emph{given} inner product.
+Some common and simple examples: Helmholtz decomposition, zero average functions, zero trace tensors, symmetric tensors. Note that the orthogonal complement is defined with respect to a \emph{given} inner product.\\
 
 \example{
-  Assume we want to orthogonalize with respect to $U=\R$. Then, we have that there is a constant $c$ such that for $f$ in a Hilbert space $H$ we can write
-    $$ f = h + c, $$
-  with $h\perp U$. Noting that a function $x$ satisfies $x\perp U$ iff $(x,1)_H = 0$, then we can use the previous expression to obtain 
-    $$ (f,1)_H = (c,1) = c(1,1)_H, $$ 
-  which yields
-    $$ c = \frac{(f,1)_H}{(1,1)_H}, $$
-  and
-    $$h = f - c = f -  \frac{(f,1)_H}{(1,1)_H}f.$$
+    Assume we want to orthogonalize with respect to $U=\R$. Then, we have that there is a constant $c$ such that for $f$ in a Hilbert space $H$ we can write
+    \begin{equation*}
+        f = h + c,
+    \end{equation*}
+    with $h\perp U$. Noting that a function $x$ satisfies $x\perp U$ iff $(x,1)_H = 0$, then we can use the previous expression to obtain 
+    \begin{equation*}
+        (f,1)_H = (c,1) = c(1,1)_H,
+    \end{equation*} 
+    which yields
+    \begin{equation*}
+        c = \frac{(f,1)_H}{(1,1)_H},
+    \end{equation*}
+    and
+    \begin{equation*}
+        h = f - c = f -  \frac{(f,1)_H}{(1,1)_H}    .
+    \end{equation*}\vspace{-10pt}
 }
+\paragraph{$L^p$ spaces}
+The most important spaces for us are the Lebesgue spaces $L^p(\Omega;\R^n)$, which are equipped with a $p$-norm. To this end, we need to recall some basic definitions of measure theory. We will denote $\mathcal{P}(\Omega)$ as the \emph{power set} of $\Omega$, that is, the set of all subsets of $\Omega$. 
+\begin{definition}[Measure space, measurable sets, measure]
+    A triplet $(\Omega, \Sigma, \mu)$ is called a \emph{measure space}, if 
+    \begin{itemize}
+        \item $\Omega\subset\R^n$ is a set,
+        \item $\Sigma$ is a $\sigma$-algebra on $\Omega$, i.e. $\Omega\in\Sigma$ and  $\Sigma$ is closed under complement (which implies $\emptyset\in\Sigma)$ and under countable unions, and
+        \item $\mu$ is a \emph{measure} on $(\Omega,\Sigma)$, i.e. $\mu$ is non-negative, $\mu(\emptyset) = 0$, and it satisfies the $\sigma$-additivity property
+        \begin{equation*}
+            \mu\left(\bigcup_{k=1}^\infty E_k\right) = \sum_{k=1}^\infty \mu(E_k),
+        \end{equation*}
+        for any countable, pairwise-disjoint collection $\{E_k\}_{k=1}^\infty$ of subsets of $\Sigma$.
+    \end{itemize}
+    The elements (sets) contained in $\Sigma$ are called \emph{measurable sets}, and the pair $(\Omega,\Sigma)$ is often called a \emph{measurable space} without fixing a measure. We will always implicitly choose $\mu$ the \emph{Lebesgue measure}, which coincides with the usual length, area and volume in $\R^1$, $\R^2$ and $\R^3$, respectively. 
+\end{definition}
+\begin{definition}[Measurable functions, equality and boundedness almost everywhere]
+    Let $(X,\Sigma_X)$ and $(Y, \Sigma_Y)$ be measurable spaces. A function $f:X\to Y$ is \emph{measurable} if for every measurable set $S_Y\in\Sigma_Y$, the preimage $f^{-1}(S_Y)$ is in $\Sigma_X$. 
+    
+    Two measurable functions $f,g:\Omega\to\R$ are \emph{equal almost everywhere} if the set 
+    \begin{equation*}
+        \{x\in \Omega: f(x)\neq g(x)\}
+    \end{equation*}
+    is measurable and has measure zero. Similarly, a function $f:\Omega\to \R$ is \emph{bounded almost everywhere} by $C\in\R$, written as $|f|\leq C$, if the set $\{x\in\Omega: |f(x)|>C\}$ is measurable and has measure zero.
+\end{definition}
+\begin{definition}[Indicator functions, simple functions]
+    Let $(\Omega,\Sigma,\mu)$ be a measure space with $\Omega\subset\R^n$. The \emph{indicator function} $1_S$ of a set $S\in\Sigma$ is defined by 
+    \begin{equation*}
+        1_S(x) = \begin{cases}
+            1 & x\in S\\
+            0 & x\notin S.
+        \end{cases}
+    \end{equation*}
+    A function $f:\Omega\to \R$ is called a \emph{simple function} if it can be expressed as a linear combination of indicator functions 
+    \begin{equation}\label{def:simple-functions}
+        f(x) = \sum_k a_k 1_{S_k}(x),
+    \end{equation}
+    where $a_k\in\R$ and $\{S_k\}_k\subset \Sigma$ are disjoint measurable sets. A simple function is measurable. 
+\end{definition}
+\begin{definition}[Lebesgue integral]
+    Let $\sum_k a_k 1_{S_k} \eqqcolon f_s^+:\Omega\to \R$ be a non-negative simple function with non-negative coefficients $\alpha_k\geq 0$. The integral of the indicator of each $S_k$ is defined as the measure of $S_k$, namely,
+    \begin{equation*}
+        \int 1_{S_k}d\mu \coloneqq \mu(S_k),
+    \end{equation*}
+    where $\mu$ is a fixed measure on the $\sigma$-algebra, and by imposing linearity, we set
+    \begin{equation*}
+        \int f_s^+ d\mu = \int \left(\sum_k a_k 1_{S_k}\right) d\mu = \sum_k a_k \int 1_{S_k} d\mu = \sum_k a_k \mu(S_k),
+    \end{equation*}
+    which is uniquely defined modulo a different choice of the $S_k$ subsets that make up the integration domain $\cup_k S_k$. An analogous definition follows for a non-positive simple function $f_s^-$ with non-positive coefficients. Now, for any subset $B\subset \Omega$ define 
+    \begin{equation*}
+        \int_B f_s^+ d\mu \coloneqq \int 1_B f_s^+ d\mu = \sum_k a_k \mu(S_k \cap B),
+    \end{equation*}
+    where it is clear that $1_B 1_{S_k} = 1_{B \cap S_k}$. Now, for an arbitrary positive function $f^+$ that is not necessarily simple, we define its integral as 
+    \begin{equation*}
+        \int_B f^+ d\mu \coloneqq \sup \left\{\int_B s\,d\mu: 0\leq s\leq f,\; s\text{ is simple}\right\},
+    \end{equation*}
+    which can attain the value $+\infty$. To handle signed functions, we can repeat the above procedure to define non-positive simple functions $f_s^-$ and for any non-positive function $f^-$.
 
-The most important spaces for us will be the Lebesgue spaces $L^p(\Omega;\R^d)$ given by measurable functions $f:\Omega \mapsto \R^d$ such that
-$$ \|f\|_{L^p(\R^d)}^p \coloneqq \int_\Omega |f|_{\R^d}^p\,dx < \infty. $$
+    For an arbitrary signed function $f=f^+ - f^-$ with non-negative and non-positive parts 
+    \begin{equation*}
+        f^+(x) = \begin{cases}
+            f(x)& f(x)>0\\
+            0 & f(x)\leq 0
+        \end{cases},\quad 
+        f^-(x) = \begin{cases}
+            -f(x)&f(x)<0\\
+            0& f(x)\geq 0,
+        \end{cases}
+    \end{equation*}
+    we define the \emph{Lebesgue integral} of $f$ as 
+    \begin{equation*}
+        \int_B f\,d\mu \coloneqq \int_B f^+ d\mu - \int_B f^-d\mu,
+    \end{equation*}
+    which exists if and only if
+    \begin{equation*}
+        \min\left\{\int_B f^+d\mu, \int_B f^- d\mu\right\}<\infty.
+    \end{equation*}
+    In this case, we say that $f$ is \emph{Lebesgue integrable}. A direct consequence of this definition is that $f$ is Lebesgue integrable if and only if $|f|=f^+ + f^-$ is Lebesgue integrable.
+\end{definition}
+\begin{definition}[$L^p$ space and norm]
+    Let $(\Omega, \Sigma, \mu)$ be a measure space, and $1\leq p<\infty$. We define the \emph{Lebesgue space} $(L^p(\Omega,\mu), \|\cdot\|_p)$ as the set of measurable functions $f:\Omega\to \R$ such that $|f|^p$ is Lebesgue integrable, i.e. its $p$-norm is finite:
+    \begin{equation*}
+        \|f\|_p \coloneqq \left(\int_\Omega |f|^p d\mu\right)^{1/p} < \infty.
+    \end{equation*}
+    For $p=\infty$, the space $L^\infty(\Omega,\mu)$ is the set of measurable functions $f$ that are bounded almost everywhere, and the $p$-norm (i.e. the $\infty$-norm) is defined as the infimum of such bounds: 
+    \begin{equation*}
+        \|f\|_\infty \coloneqq \inf\{C\in\R^+: |f(x)|\leq C \text{ almost everywhere}\}.
+    \end{equation*}
+
+    When the choice of $\mu$ and/or the space $\Omega$ is obvious, then we simply write $L^p(\Omega)$ or even just $L^p$. Note that $L^1$ is the space of Lebesgue integrable functions.
+\end{definition}
+\begin{theorem}
+    For $1\leq p\leq\infty$, the space $(L^p(\Omega, \mu), d_p)$ is a Banach space, where $d_p(f,g) \coloneqq \|f-g\|_p$ is the metric induced by the $p$-norm.
+    \begin{proof}
+        The proof uses the Minkowski inequality, Fatou's lemma and the properties of measures. For details, see~\cite[Theorem 3.11]{Rudin_2013}.
+    \end{proof}
+\end{theorem}
+In $L^p$, one has to be careful with the interpretation of the metric $d_p$ induced by $\|\cdot\|_p$, since we may have two functions $f,g\in L^p$ that are equal almost everywhere, and the choice of the set of measure zero where $f\neq g$ could be arbitrary. This implies that, when regarding $L^p$ as a metric space, then the elements $f\in L^p$ are not functions, but \emph{equivalence classes} of functions, which is always omitted for the sake of simplicity, see~\cite[Remark 3.10]{Rudin_2013}.
+
+For $1\leq p\leq \infty$, we can prove that $\|\cdot\|_p$ is indeed a norm. There are three central inequalities that stem from these definitions, whose proofs we omit here since they are covered in standard real analysis courses. 
+\begin{theorem}[Minkowski inequality]
+    The triangle inequality for $\|\cdot\|_p$ is known as the \emph{Minkowski inequality}, which states that for $1\leq p\leq \infty$ and $f,g\in L^p(\Omega,\mu)$, we have
+    \begin{equation}
+        \|f+g\|_p \leq \|f\|_p + \|g\|_p.
+    \end{equation}
+\end{theorem}
+\begin{theorem}[Young's inequality]\label{thm:young-inequality}
+    Let $a,b,p,q\geq 0$ be non-negative real numbers, where $p$ and $q$ are \emph{Hölder conjugates}, i.e. $\frac{1}{p}+\frac{1}{q}=1$. If $p,q>1$ (i.e. $p,q<\infty$), it holds that 
+    \begin{equation}
+        ab\leq \frac{a^p}{p} + \frac{b^q}{q},
+    \end{equation}
+    and the equality holds if and only if $a^p=b^q$. A very useful case is $p=q=2$, where Young's inequality is 
+    \begin{equation}
+        ab\leq \frac{a^2}{2}+\frac{b^2}{2},
+    \end{equation}
+    and if we choose the non-negative real numbers $a'=a/\sqrt{\varepsilon}$ and $b'=b\sqrt{\varepsilon}$ for $\varepsilon>0$, we get
+    \begin{equation}
+        ab\leq \frac{a^2}{2\varepsilon} + \frac{\varepsilon b^2}{2}.
+    \end{equation}
+    This last inequality allows us to tighten the control on one term by losing the control on the other term, by taking limits as $\varepsilon\to 0+$ or $\varepsilon\to+\infty$. 
+\end{theorem}
+\begin{theorem}[Hölder's inequality]
+    Suppose that $1\leq p,q,r\leq \infty$ satisfy $\frac{1}{p}+\frac{1}{q}=\frac{1}{r}$. If $f\in L^p(\Omega,\mu)$ and $g\in L^q(\Omega,\mu)$, then the product $fg\in L^r(\Omega,\mu)$, and its norm is bounded as 
+    \begin{equation}
+        \|fg\|_r \leq \|f\|_p\|g\|_q.
+    \end{equation}
+    In the case $r=1$, $p$ and $q$ are Hölder conjugates, and two common examples are for $p=q=2$ and $p=1$, $q=\infty$:
+    \begin{equation*}
+        \|fg\|_1 \leq \|f\|_2\|g\|_2,\qquad \|fg\|_1 \leq \|f\|_1\|g\|_\infty.
+    \end{equation*}
+\end{theorem}
+
 It will be important to know that if $|\Omega|<\infty$, then these spaces form an ordered inclusion: 
-    $$ L^\infty(\Omega) \subset L^p(\Omega) \subset ... \subset L^1(\Omega). $$
+\begin{equation}
+    L^\infty(\Omega) \subset L^p(\Omega) \subset \dots \subset L^1(\Omega).
+\end{equation}
 A simple way to remember this is to split a function as $f = I_{|f|\leq 1}f + I_{|f|\geq 1}f$ and note that $|x|^p < |x|^{p+\epsilon}$ for $\epsilon > 0$. 
 
+\paragraph{The fundamental theorems}
+In the finite dimensional case, elements in a space $V$ and its topological dual $V'$ can be represented by vectors in $\R^n$ with $n=\dim V$ when a basis is chosen, and a linear, bounded operator between two spaces can be represented as a matrix. In the infinite dimensional setting, we need to extend this result, which is done via the Riesz representation theorem. 
 
-\section{Fundamental theorems of Functional Analysis}
-\todo[inline]{Add: Closed Graph, Open Mapping, Hahn-Banach as written by Long Chen.}
+\begin{theorem}[Riesz representation theorem]\label{thm:riesz-representation}
+    Let $V$ be a Hilbert space with inner product $(\cdot,\cdot)$. For any $u\in V$, the map $f_u\coloneqq (u,\cdot):V\to \R$ is a continuous linear functional, i.e. $f_u\in V'$, and we have a mapping $V\to V'$ via $u\mapsto f_u=(u,\cdot)$. It holds that for any $f\in V'$ there exists a unique element $u\in V$ such that 
+    \begin{equation}
+        \langle f, v\rangle_{V'\times V} = (u,v)\quad \forall v\in V,
+    \end{equation}
+    where we identify $f=f_u$. Furthermore, $\|f\|_{V'} = \|u\|_V$, and thus $V$ and $V'$ are isometric.
+\end{theorem}
 
+In an infinite-dimensional setting, a subspace $S\subset V$ of a vector space $V$ is itself a vector space. For any normed vector space, a closed subspace is closed under the topology, i.e. for every convergent sequence, the limit also lies in the subspace. If a function is defined only in the subspace, the Hahn-Banach theorem allows us to extend our function to the whole space. 
+\begin{theorem}[Hahn-Banach]\label{thm:hahn-banach}
+    Let $V$ be a normed vector space and $S\subset V$ a subspace. For any $f\in S'$, i.e. $f:S\to\R$, there exists an extension $\tilde{f}\in V'$ that preserves the norm $\|f\|_{S'} = \|\tilde{f}\|_{V'}$.
+\end{theorem}
 
-\section{Fréchet and Gateaux derivatives}
-We will now cover the notion of differentiability in Banach spaces. The presentation closely follows that of \cite{ambrosetti1995primer}, with substantially less detail.
-\begin{definition}
-    Set $u\in U \subset X$ with $U$ an open set, and $F:U\to Y$. We say $F$ is Fréchet differentiable at $u$ if there exists a linear operator $A\in\mathcal{L}(X,Y)$ such that
+For any continuous linear functional $f$ defined on the subspace $S'$, the natural extension by density can extend the domain of $f$ to $\overline{S}$, so we can take the closure of $S$ and consider closed subspaces only. The following corollary says that we can find a functional to separate a point with a closed subspace. 
+\begin{corollary}\label{cor:hahn-banach-extension}
+    Let $V$ be a normed vector space and $S\subset V$ a closed subspace. Let $v\in V$ such that $v\notin S$. Then, there exists a functional $f\in V'$ such that $f(S)=0$ and $f(v)=1$, with $\|f\| = \dist^{-1}(v, S)$.
+    \begin{proof}
+        Consider the subspace $S_v \coloneqq \spanned(S,v)$. For any $u\in S_v$, decompose $u=u_s+\lambda v$ with $u_s\in S$ and $\lambda\in \R$. We define $f(u)=\lambda$, and by the Hahn-Banach theorem~\ref{thm:hahn-banach}, we can extend the domain of $f$ to the entire space $V$. Then, $f(S)=0$ and $f(v)=1$. The norm is left as an exercise. 
+    \end{proof}
+\end{corollary}
+Note that this corollary is (i) an improvement over Urysohn's lemma, which provides a possibly nonlinear function, and (ii) is obvious in an inner product space, where we can just use $\overline{f} = v - \Pi_S v$, which is orthogonal to $S$, then scale $\overline{F}$ with the distance such that $f(v)=1$, and finally extend $f$ through the inner product. 
+
+While the Hahn-Banach theorem deals with a single functional, the \emph{uniform boundedness principle} makes a powerful statement about a \emph{family} of operators. It establishes that if a family of continuous linear operators is pointwise bounded, it must also be uniformly bounded in norm.
+\begin{theorem}[Uniform boundedness principle, Banach-Steinhaus theorem]\label{thm:banach-steinhaus}
+    Let $X$ be a Banach space and $Y$ be a normed vector space. Let $\mathcal{F}\subset \mathcal{L}(X,Y)$ be a collection of continuous linear operators from $X$ to $Y$. If for every $x \in X$, the set of norms of the images $\{ \|Tx\|_Y : T \in \mathcal{F} \}$ is bounded, i.e.,
     \begin{equation*}
-        F(u+h)=F(u)+A(h)+o(\|h\|),
+        \sup_{T \in \mathcal{F}} \|Tx\|_Y < \infty,
     \end{equation*}
-    where we denote $\mathcal{L}(X,Y)$ as the set of linear operators from $X$ to $Y$, and the residual term $o(h)$ corresponds to a function $f(h)$ such that $\|f(h)\|/\|h\| \to 0$ when $h\to 0$. We denote the Fréchet derivative at $u$ in the direction $h$ as $dF(u)[h] \coloneqq A(h)$.
+    then the collection of norms is uniformly bounded, i.e.
+    \begin{equation}
+        \sup_{T \in \mathcal{F}} \|T\|_{\mathcal{L}(X,Y)} < \infty.
+    \end{equation}
+\end{theorem}
+This theorem is a non-constructive result that relies on the completeness of $X$ via the Baire category theorem.
+
+Now, let $T\in \mathcal{L}(U,V)$ be a continuous, bounded linear operator, where $U,V$ are Banach spaces. Denote $\ker T\subset U$ and $\im T\subset V$ the \emph{kernel} (or \emph{null space}) and \emph{image} of $T$. Due to the continuity of $T$, $\ker T$ is a closed subspace of $U$. Recall that in a Hilbert space $H$, the \emph{orthogonal complement} of $S\subset H$, defined as
+\begin{equation*}
+    S^\perp \coloneqq \{u\in H: (u,v)=0,\forall v\in S\}
+\end{equation*}
+is also a closed subspace. For a general Banach space $V$, we do not have the inner product structure, but we can use the duality pairing $\langle\cdot,\cdot\rangle:V'\times V\to \R$ to define an orthogonal complement for $S\subset V$, called the \emph{annhilator}, as 
+\begin{equation*}
+    S^\circ \coloneqq \{f\in V': \langle f, v\rangle = 0,\forall v\in S\},
+\end{equation*}
+which is a closed subspace, and similarly, for $F\subset V'$, define
+\begin{equation*}
+    \phantom{.}^\circ F \coloneqq \{v\in V:\langle f,v\rangle = 0,\forall f\in F\}.
+\end{equation*}
+For a subset (not necessarily a subspace) $S\subset V$, $S\subseteq S^{\perp\perp}$ if $V$ is an inner product space, and $S\subseteq\phantom{.}^\circ(S^\circ)$ if $V$ is a normed space. The equality holds if and only if $S$ is a closed subspace, due to the Hahn-Banach theorem, and thus they are the smallest closed subspaces containing $S$. These definitions allow us to obtain a topological characterization of $\im T$ and $\ker T$, through the \emph{closed range theorem}. 
+\begin{theorem}[Closed range]\label{thm:closed-range-theorem}
+    Let $U,V$ be Banach spaces and $T\in\mathcal{L}(U,V)$. Then, the following conditions are equivalent: 
+    \begin{enumerate}
+        \item $\im T$ is closed in $V$. 
+        \item $\im T^*$ is closed in $U'$.
+        \item $\im T = \phantom{.}^\circ (\ker T^*)$.
+        \item $\im T^* = (\ker T)^\circ$.
+    \end{enumerate}
+\end{theorem}
+
+Further, the \emph{closeness} of an operator is a very important property to study.
+\begin{definition}[Closed operator]
+    An operator $T:U\to V$ is \emph{closed} if its graph 
+    \begin{equation}
+        G(T) \coloneqq \{(u,Tu):u\in U\}\subset U\times V
+    \end{equation}
+    is closed in the product space $U\times V$.
+\end{definition}
+
+It is an easy exercise to show that a continuous linear operator is always closed, but the inverse is not necessarily true. When $U, V$ are Banach, then closeness and continuity are indeed equivalent, as justified by the \emph{closed graph theorem}. 
+\begin{theorem}[Closed graph]\label{thm:closed-graph-theorem}
+    Let $U,V$ be Banach spaces and $T\in\mathcal{L}(U,V)$. Then, $T$ is closed if and only if $T$ is continuous. 
+\end{theorem}
+
+Note that a closeness of the range (image) of $T$ is stronger than the closeness of $T$, as seen by comparing the convergence in the definitions: 
+\begin{itemize}
+    \item If the graph is closed, $(u_n, Tu_n)\to (u,v)$ implies $v=Tu$.
+    \item If the range is closed, then $Tu_n\to v$ implies that there exists $u\in U$ such that $v=Tu$. 
+\end{itemize}
+In the first case, we do not know if $u_n$ converges or not, but in the second one we assume that such limit $u$ exists. 
+
+\emph{Open} mappings (operators) are functions between topological spaces that map open sets into open sets. To determine the surjectivity of the operator, we can use the \emph{open mapping theorem}, and a corollary allows us to define an \emph{inverse operator}.
+
+\begin{theorem}[Open mapping]\label{thm:open-mapping-theorem}
+    Let $U,V$ be Banach spaces and $T\in \mathcal{L}(U,V)$ be a continuous, bounded linear operator. If $T$ is surjective (onto), then $T$ is open. 
+\end{theorem}
+\begin{corollary}
+    For $T\in\mathcal{L}(U,V)$ with $U,V$ Banach, if $T$ is injective (into) and surjective (onto), then $T^{-1}\in \mathcal{L}(V,U)$ exists and is continuous. 
+\end{corollary}
+
+\section{Fréchet and Gâteaux derivatives}\label{sec:frechet-gateaux-derivatives}
+We will now cover the notion of differentiability in Banach spaces. The presentation closely follows that of~\cite{ambrosetti1995primer}, with substantially less detail.
+\begin{definition}
+    Set $u\in U \subset X$ with $U$ an open set, and $F:U\to Y$. We say $F$ is \emph{Fréchet differentiable} at $u$ if there exists a linear operator $A\in \mathcal{L}(X,Y)$ such that
+    \begin{equation}\label{eq:frechet-derivative}
+        F(u+h)=F(u)+A(h)+o(\|h\|),
+    \end{equation}
+    where the residual term $o(h)$ corresponds to a function $f(h)$ such that $\|f(h)\|/\|h\| \to 0$ when $h\to 0$. We denote the Fréchet derivative at $u$ in the direction $h$ as $dF(u)[h] \coloneqq A(h)$.
 \end{definition}
 This construction yields two properties about Fréchet differentiability:
 \begin{enumerate}
     \item For a given $F:U\to Y$, $dF(u)$ is unique. To prove this, assume $A\neq B$ are two Fréchet derivatives of $F$, that is, 
-    \begin{align*}
-        F(x+h) &= F(x) + Ah + o(\|h\|), \\
-        F(x+h) &= F(x) + Bh + o(\|h\|).
-    \end{align*}
+    \begin{tightalign*}
+            F(x+h) &= F(x) + Ah + o(\|h\|), \\
+            F(x+h) &= F(x) + Bh + o(\|h\|).
+    \end{tightalign*}
     Subtracting these equations, we have $Ah - Bh = o(\|h\|)$. Since $A\neq B$, there exists a direction $h^*$ such that $Ah^* \neq Bh^*$. Setting $h=th^*$, with $t\in \mathbb{R}$, we note that
     \begin{equation*}
         \frac{\|Ah-Bh\|}{\|h\|} = \frac{t\|Ah^*-Bh^*\|}{t\|h^*\|} = \text{const.} \nrightarrow 0,
@@ -113,88 +498,93 @@ Furthermore, we recover some classical properties of differentiation:
 \begin{enumerate}
     \item (Linear combination) If $F$ and $G$ are Fréchet differentiable, then for any $a,b\in\mathbb{R}$, $aF+bG$ is Fréchet differentiable.
     \item (Chain rule) Let $F:U\to Y$ and $G:V\to Z$, with $U\subset X$ an open set and $F(U)\subset V\subset Y$. Then, if $F$ is Fréchet differentiable at $u\in U$ and $G$ is Fréchet differentiable at $F(u)\in V$, then the composition $G\circ F:U\to Z$ is Fréchet differentiable at $u$, and we have
-        \begin{equation*}
-            dG\circ F(u)[h] = dG(F(u))[dF(u)[h]].
-        \end{equation*}
+    \begin{equation*}
+        dG\circ F(u)[h] = dG(F(u))[dF(u)[h]].
+    \end{equation*}
 \end{enumerate}
 
 We now define the Fréchet derivative map.
 \begin{definition}
     Let $F:U\to Y$ be a Fréchet differentiable function in $U$ (i.e. Fréchet differentiable at every point $u\in U$). The map
-    \begin{align*}
-        F':U&\to \mathcal{L}(X,Y)\\
-        u&\mapsto dF(u)
-    \end{align*}
-    is called the Fréchet derivative of $F$. If $F'$ is continuous, we say that $F\in C^1$ and write $F\in C^1(U,Y)$.
+    \begin{equation}
+        \begin{aligned}
+            F':U &\to \mathcal{L}(X,Y)\\
+            u &\mapsto dF(u)
+        \end{aligned}
+    \end{equation}
+    is called the \emph{Fréchet derivative} of $F$. If $F'$ is continuous, we say that $F\in C^1(U,Y)$.
 \end{definition}
 
 We note that the definition of the Fréchet derivative gives no hints to actually compute it from a given $F$. We begin by defining a different notion of differentiability.
 \begin{definition}
-    We define the Gâteaux derivative of $F:U\to Y$ at a fixed $u\in U$ as
-    \begin{equation*}
+    We define the \emph{Gâteaux derivative} of $F:U\to Y$ at a fixed $u\in U$ as
+    \begin{equation}\label{eq:gateaux-derivative}
         d_G F(u)[h] \coloneqq \lim_{\varepsilon\to 0} \frac{F(u+\varepsilon h)-F(u)}{\varepsilon} = \frac{d}{d\varepsilon}\left.\left(F(u+\varepsilon h)\right)\right|_{\varepsilon = 0}.
-    \end{equation*}
+    \end{equation}
     This corresponds to the directional derivative of $F$ in the direction $h$.
 \end{definition}
+
 In order to show the equivalence between Fréchet and Gâteaux derivatives, we require the mean value theorem. 
-
 \begin{theorem}[Mean value]\label{thm:mean-value-banach}
-Let $F:U\to Y$ be a function that is Gâteaux differentiable in $U$ (i.e. at every point $u\in U$). Define the function interval (convex combination)
-\begin{equation*}
-    [u,v] \coloneqq \{tu+(1-t)v, t\in[0,1]\}.
-\end{equation*}
-Then, we have
-\begin{equation*}
-    \|F(u)-F(v)\| \leq \left(\sup_{w\in[u,v]} \|d_G F(w)\|\right) \|u-v\|. 
-\end{equation*}
+    Let $F:U\to Y$ be a function that is Gâteaux differentiable in $U$ (i.e. at every point $u\in U$). Define the function interval (convex combination)
+    \begin{equation}
+        [u,v] \coloneqq \{tu+(1-t)v, t\in[0,1]\}.
+    \end{equation}
+    Then, we have
+    \begin{equation}
+        \|F(u)-F(v)\| \leq \left(\sup_{w\in[u,v]} \|d_G F(w)\|\right) \|u-v\|. 
+    \end{equation}
+    \begin{proof}
+        Assume that $F(u)-F(v)\neq 0$. We build the norm using the Hahn-Banach theorem: there exists $\psi \in Y^*$ with $\|\psi\|=1$ such that 
+        \begin{equation*}
+            \langle \psi, F(u)-F(v)\rangle = \|F(u)-F(v)\|. 
+        \end{equation*}    
+        Define $\gamma(t) = tu + (1-t)v$, with $t\in [0,1]$, and $h(t)=\langle \psi, F(\gamma(t))\rangle$. Then, by linearity, 
+        \begin{equation*}
+            \frac{h(t+\tau) - h(t)}{\tau} = \left\langle \psi, \frac{F(\gamma(t) + \tau(u-v)) - F(\gamma(t))}{\tau} \right\rangle.
+        \end{equation*}
+        By definition of the Gâteaux derivative, we have
+        \begin{equation*}
+            \lim_{\tau\to 0} \frac{h(t+\tau) - h(t)}{\tau} = h'(t) = \langle \psi, d_G F(\gamma(t)) [u-v]\rangle, 
+        \end{equation*}
+        and the scalar mean-value yields $h(1)-h(0) = h'(\theta)$ for some $\theta\in(0,1)$. Computing all the terms, we get
+        \begin{equation*}
+            h(1)-h(0) = \langle \psi, F(u)-F(v)\rangle = \|F(u)-F(v)\|,
+        \end{equation*}
+        and 
+        \begin{equation*}
+            h'(\theta) = \langle \psi, d_G F(\gamma(\theta))[u-v]\rangle \leq \underbrace{\|\psi\|}_{=1} \|d_G F(\gamma(\theta))\| \|u-v\|,
+        \end{equation*}
+        where we used the Cauchy-Schwarz inequality followed by the continuity of $d_G F(\gamma(\theta))$. Taking $\sup$ over $\theta$ completes the proof. 
+    \end{proof}
 \end{theorem}
-\begin{proof}
-    Assume that $F(u)-F(v)\neq 0$. We build the norm using the Hahn-Banach theorem: there exists $\psi \in Y^*$ with $\|\psi\|=1$ such that 
-    \begin{equation*}
-        \langle \psi, F(u)-F(v)\rangle = \|F(u)-F(v)\|. 
-    \end{equation*}    
-    Define $\gamma(t) = tu + (1-t)v$, with $t\in [0,1]$, and $h(t)=\langle \psi, F(\gamma(t))\rangle$. Then, by linearity, 
-    \begin{equation*}
-        \frac{h(t+\tau) - h(t)}{\tau} = \left\langle \psi, \frac{F(\gamma(t) + \tau(u-v)) - F(\gamma(t))}{\tau} \right\rangle.
-    \end{equation*}
-    By definition of the Gâteaux derivative, we have
-    \begin{equation*}
-        \lim_{\tau\to 0} \frac{h(t+\tau) - h(t)}{\tau} = h'(t) = \langle \psi, d_G F(\gamma(t)) [u-v]\rangle, 
-    \end{equation*}
-    and the scalar mean-value yields $h(1)-h(0) = h'(\theta)$ for some $\theta\in(0,1)$. Computing all the terms, we get
-    \begin{equation*}
-        h(1)-h(0) = \langle \psi, F(u)-F(v)\rangle = \|F(u)-F(v)\|,
-    \end{equation*}
-    and 
-    \begin{equation*}
-        h'(\theta) = \langle \psi, d_G F(\gamma(\theta))[u,v]\rangle \leq \underbrace{\|\psi\|}_{=1} \|d_G F(\gamma(\theta))\| \|u-v\|,
-    \end{equation*}
-    where we used the Cauchy-Schwarz inequality followed by the continuity of $d_G F(\gamma(\theta))$. Taking $\sup$ over $\theta$ completes the proof. 
-\end{proof}
-\begin{theorem}[Equivalence of Gâteaux and Fréchet derivatives]\label{thm:frechet-gateaux-equivalence}
-    If the Gâteaux derivative $d_G F$ of a function $F:X\to Y$ is continuous at $u^*\in X$, then $F$ is Fréchet differentiable at $u^*$, and they coincide, i.e. $dF(u^*) = d_G F(u^*)$.
-\end{theorem}
-\begin{proof}
-    Because of uniqueness, we simply need to verify that the Gâteaux derivative is indeed the Fréchet one. Fix $u\in U$ and define $R(h) = F(u+h) - F(u) - d_G F(u)[h]$. We now need to prove $R(h)=o(\|h\|)$, so that $Ah=d_G F(u)[h]$ in the definition of the Fréchet derivative. The Gâteaux derivative of $R$ at $h$ in the direction $k$ is
-    \begin{align*}
-        d_G R(h)[k] &= \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} R(h+\varepsilon k) \\
-        & = \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} F(u+h+\varepsilon k) - F(u) - d_G F(u)[h + \varepsilon k] \\
-        & = d_G F(u+h)[k] - d_G F(u)[k].
-    \end{align*}    
-    Thus, by the mean value theorem, we get
-    \begin{align*}
-        \|R(h)\| &\leq \sup_{w\in [0,h]} \|d_G(R(w))\| \|h\|\\
-        &=    \sup_{t\in [0,1]} \|d_G R(th)\| \|h\|\\
-        &=    \sup_{w\in [0,h]} \|d_G F(u+h)[k] - d_G F(u)[k]\| \|h\|,
-    \end{align*}
-    and thus dividing by $\|h\|$ and taking the limit $\|h\|\to 0$ yields
-    \begin{equation*}
-        \lim_{\|h\|\to 0} \frac{\|R(h)\|}{\|h\|} \leq \lim_{\|h\|\to 0} \|d_G F(u+th) - d_G F(u)\| = 0,
-    \end{equation*}    
-    because of the continuity of $d_G F$.
-\end{proof}
-Typically, one computes the Gâteaux derivative and hope it is continuous.
 
+\begin{theorem}[Equivalence of Gâteaux and Fréchet derivatives]\label{thm:frechet-gateaux-equivalence}
+    If the Gâteaux derivative $d_G F$ of a function $F:X\to Y$ is continuous at $u^*\in X$, then $F$ is Fréchet differentiable at $u^*$, and they coincide, i.e.
+    \begin{equation}
+        dF(u^*) = d_G F(u^*).
+    \end{equation}
+    \begin{proof}
+        Because of uniqueness, we simply need to verify that the Gâteaux derivative is indeed the Fréchet one. Fix $u\in U$ and define $R(h) = F(u+h) - F(u) - d_G F(u)[h]$. We now need to prove $R(h)=o(\|h\|)$, so that $Ah=d_G F(u)[h]$ in the definition of the Fréchet derivative. The Gâteaux derivative of $R$ at $h$ in the direction $k$ is
+        \begin{tightalign*}
+            d_G R(h)[k] &= \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} R(h+\varepsilon k) \\
+            & = \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} F(u+h+\varepsilon k) - F(u) - d_G F(u)[h + \varepsilon k] \\
+            & = d_G F(u+h)[k] - d_G F(u)[k].
+        \end{tightalign*}    
+        Thus, by the mean value theorem, we get
+        \begin{tightalign*}
+            \|R(h)\| &\leq \sup_{w\in [0,h]} \|d_G(R(w))\| \|h\|\\
+            &=    \sup_{t\in [0,1]} \|d_G R(th)\| \|h\|\\
+            &=    \sup_{w\in [0,h]} \|d_G F(u+h)[k] - d_G F(u)[k]\| \|h\|,
+        \end{tightalign*}
+        and thus dividing by $\|h\|$ and taking the limit $\|h\|\to 0$ yields
+        \begin{equation*}
+            \lim_{\|h\|\to 0} \frac{\|R(h)\|}{\|h\|} \leq \lim_{\|h\|\to 0} \|d_G F(u+th) - d_G F(u)\| = 0,
+        \end{equation*}    
+        because of the continuity of $d_G F$.
+    \end{proof}
+\end{theorem}
+Typically, one computes the Gâteaux derivative of $f$ by definition~\eqref{eq:gateaux-derivative}, which requires handling the term $f(x+\varepsilon d)$ by using the properties of $f$, and finish by checking its continuity.
 
 For higher order derivatives, we start from the Fréchet derivative $F'(u) \coloneqq dF(u)\in \mathcal{L}(X,Y)$, where $F:U\to Y$. Repeating the calculation, we have
 \begin{equation*}
@@ -204,81 +594,95 @@ where $F': U\to \mathcal{L}(X,Y)$, and so $dF'(u) \in \mathcal{L}(X, \mathcal{L}
 \begin{equation*}
     \Psi_A(u_1,u_2) = [A(u_1)](u_2),
 \end{equation*} 
-for $A\in \mathcal{L}(X,\mathcal{L}(X,Y))$. For this reason, most people write the second derivative as $d^2 F(u) [h_1,h_2]$, instead of $(d^2 F(u)[h_1])[h_2]$. In calculus of variations, it is common to study the second varition of a functional. This is simply $d^2 \Pi(u)[h,h]$, as seen in the second order term of the Taylor series
+for $A\in \mathcal{L}(X,\mathcal{L}(X,Y))$. For this reason, most people prefer the notation $d^2 F(u) [h_1,h_2]$ instead of $(d^2 F(u)[h_1])[h_2]$. In calculus of variations, it is common to study the second varition of a functional. This is simply $d^2 \Pi(u)[h,h]$, as seen in the second order term of the Taylor series
 \begin{equation*}
     f(x+h)\approx f(x) + \nabla f(x) \cdot h + \frac{1}{2} h^\top (Hf)(x) h,
 \end{equation*} 
-where we wrote $d^2 f = Hf$ as the Hessian of $f$ at $x$.
+where we wrote $d^2 f(x) = Hf(x)$ as the Hessian of $f$ at $x$.
 
 Let us list some useful properties:
 \begin{itemize}
     \item Set $F$ twice differentiable and define $F_h(u)=dF(u)[h]$. Then,
-    \[ dF_h(u)[k] = F''(u)[h,k]. \] 
+    \begin{equation}\label{eq:second-derivative-property}
+        dF_h(u)[k] = F''(u)[h,k]. 
+    \end{equation}
     We can then compute the second derivative by fixing $h$ in the first derivative and differentiating like we've done in respect to $u$ for a direction $k$.
-    \item If $F$ is twice differentiable, then $F''(u)\in\mathcal{L}(X\times X, Y)$ is symmetric.
+    \item If $F$ is twice differentiable, then $F''(u)\in \mathcal{L}(X\times X, Y)$ is symmetric.
     \item Partial derivatives are defined using projections, i.e. if $F: U\times V \to Y$, set $\sigma_v(u)=(u,v)$. Then, the partial derivatives w.r.t. $u$ is
-    \[ d(F\circ \sigma_v)(u)[h], \]
+    \begin{equation*}
+        d(F\circ \sigma_v)(u)[h],
+    \end{equation*}
     denoted simply $d_u F(u^*,v^*)$. Notably, one obtains
-    \[ d_u F(u^*,v^*)[h] = d_G(F\circ \sigma_v)(u)[h] = \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} F(u+\varepsilon h, v). \]
+    \begin{equation*}
+        d_u F(u^*,v^*)[h] = d_G(F\circ \sigma_v)(u)[h] = \left.\frac{d}{d\varepsilon}\right|_{\varepsilon = 0} F(u+\varepsilon h, v).
+    \end{equation*}
 \end{itemize}
 
 \example{
-    Let $\psi(u)=\frac{1}{p}\int_\Omega u^p dx$, defined in $L^p(\Omega)$.
-
-    \begin{align*}
+    Let $\psi(u)=\frac{1}{p}\int_\Omega u^p dx$, defined in $L^p(\Omega)$. Its first and second Gâteaux derivatives are then
+    \begin{tightalign*}
         d\psi(u)[v] &= \frac{1}{p}\frac{d}{d\varepsilon} |_{\varepsilon=0} \int_\Omega (u+\varepsilon v)^p dx \\
         &= \frac{1}{p} \int_\Omega p(u+\varepsilon v)^{p-1}v dx|_{\varepsilon=0} \\
-        &= \int_\Omega u^{p-1}v dx
-    \end{align*}
-
-    \begin{align*}
+        &= \int_\Omega u^{p-1}v dx,
+    \end{tightalign*}
+    and
+    \begin{tightalign*}
         d^2\psi(u)[v_1,v_2] &= d(d F_{v_1}(u))[v_2] \\
         &= \frac{d}{d\varepsilon}|_{\varepsilon=0}\int_\Omega(u+\varepsilon v_2)^{p-1} v_1 dx\\
         &= (p-1)\int_\Omega u^{p-2}v_1 v_2 dx
-    \end{align*}
+    \end{tightalign*} \vspace{-10pt}
 }
 
-In calculus of variations $d^2 F(u)[h] = d^2 F(u)[h,h]$ is used for checking the properties of the minimizers of  problem in the same way one would do in finite-dimensional optimization.
+In calculus of variations $d^2 F(u)[h] = d^2 F(u)[h,h]$ is used for checking the properties of the minimizers of problems in the same way one would do in finite-dimensional optimization.
 
+\begin{definition}[$C^k$, $C^\infty$ and $C_0^\infty$ functions]
+    Let $f:U\to Y$ be a function. 
+    \begin{enumerate}
+        \item If for $k\in \N$ fixed, all derivatives up to $d^k f$ exist and are continuous, then we say that $f\in C^k(U)$ i.e. the space of \emph{$k$-times differentiable functions}.
+        \item If $f\in C^k(U)$ for all $k\in \N$, then we say that $f\in C^\infty(U)$, i.e. the space of \emph{infinitely-differentiable functions}.
+        \item If $f\in C^\infty(U)$ and $\supp f$ is compact, then we say that $f\in C_0^\infty(U)$, i.e. the space of \emph{infinitely-differentiable functions with compact support.}
+    \end{enumerate}
+\end{definition}
 
-
-
-\section{Tensors}
-Tensors are the natural way to put into one consistent algebraic setting all indexed objects, by further considering them to be independent of the coordinate system being used. In the end we will have that scalars are 0-tensors, vectors are 1-tensors, matrices are 3-tensors and so on. In addition, it will be fundamental to extend common calculus derivatives to tensor functions, which is the second topic of this section. Tensors are object of deep study in both algebra and geometry communities, so to maintain the presentation under control (and within our knowledge), we will present everything in Euclidean space $\R^3$. Generalizations should be clear by context. 
+\section{Tensors}\label{sec:tensors}
+\emph{Tensors} are the natural way to put into one consistent algebraic setting all indexed objects, by further considering them to be independent of the coordinate system being used. In the end we will have that scalars are 0-tensors, vectors are 1-tensors, matrices are 2-tensors and so on. In addition, it will be fundamental to extend common calculus derivatives to tensor functions, which is the second topic of this section. Tensors are object of deep study in both algebra and geometry communities, so to maintain the presentation under control (and within our knowledge), we will present everything in Euclidean space $\R^3$. Generalizations should be clear by context. 
 
 In addition, we also mention that we will stick to the convention that scalars, vectors, and matrices are denoted with $a$, $\vec a$, and $\mat A$. Higher order tensors are sometimes denoted with $\mathcal A$ (3rd order) and $\mathbb A$ (4th order), but we will not use those too much. 
 
-\subsection{Tensor algebra}
-We begin by introducing the \textit{Einstein notation}, where repeated indices imply summation:
-$$a_ib_i = a_1b_1 + \dots + a_n b_n.$$ 
-Here, the index $i$ is called a \textit{dummy index}, because its replacement with another symbol does not change the value of the sum. When an index is not summed over in a given term, we call it a \textit{free index}. With this notation, we write the \textit{dot (inner) product} $\vec a \cdot \vec b = a_ib_i$, and the matrix-vector multiplication $\ten A\vec b = A_{ij}b_j\vec e_i$, where $\vec e_i$ is the canonical vector given by 
-    $$ \vec e_i = \begin{bmatrix} 0 \\ \vdots \\ 0 \\ 1 \\ 0 \\ \vdots \\  0  \end{bmatrix}\to \text{i-th entry} . $$ 
-    We now define the concept of a \textit{tensor} on the standard Euclidean space. 
-\begin{definition}[Tensor and tensor product]
-    A \textit{second-order tensor} $\ten T$ is a linear operator $\ten T\in \mathcal{L}(\R^3, \R^3)$. We write its action on $\vec u\in\R^3$ as $\ten T(\vec u) \equiv \ten T \vec u$. The \textit{components} $T_{ij}\in\R$ of $\ten T$ are defined as the $i$-th component of $\ten T\vec e_j$, i.e. $T_{ij}\vec e_i \coloneqq \ten T\vec e_j$, or equivalently, $T_{ij} = \vec e_i\cdot\ten T\vec e_j$. Since $\mathcal{L}(\R^3,\R^3)$ and $\R^{3\times 3}$ are isomorphic, we can always uniquely identify a second-order tensor $\ten T$ via its coefficient matrix $[\ten T]\in\R^{3\times 3}$, and thus we just write $\ten T$ for ease of notation.
+\paragraph{Tensor algebra}
+We begin by introducing the \emph{Einstein notation}, where repeated indices imply summation:
+\begin{equation}\label{eq:einstein-notation}
+    a_i b_i = a_1b_1 + \dots + a_n b_n.
+\end{equation} 
+Here, the index $i$ is called a \emph{dummy index}, because its replacement with another symbol does not change the value of the sum. When an index is not summed over in a given term, we call it a \emph{free index}. With this notation, we write the \emph{dot (inner) product} $\vec a \cdot \vec b = a_i b_i$, and the matrix-vector multiplication $\ten A\vec b = A_{ij}b_j\vec e_i$, where $\vec e_i$ is the canonical vector given by 
+\begin{equation*}
+    \vec e_i = \begin{bmatrix} 0 \\ \vdots \\ 0 \\ 1 \\ 0 \\ \vdots \\  0  \end{bmatrix}\to \text{i-th entry} .
+\end{equation*} 
+We now define the concept of a \emph{tensor} on the standard Euclidean space. 
+\begin{definition}[Tensor and tensor product]\label{def:tensor-tensor-product}
+    A \emph{second-order tensor} $\ten T$ is defined as a linear operator $\ten T\in \mathcal{L}(\R^3, \R^3)$. We write its action on $\vec u\in\R^3$ as $\ten T(\vec u) \equiv \ten T \vec u$. The \emph{components} $T_{ij}\in\R$ of $\ten T$ are defined as the $i$-th component of $\ten T\vec e_j$, i.e. $T_{ij}\vec e_i \coloneqq \ten T\vec e_j$, or equivalently, $T_{ij} = \vec e_i\cdot\ten T\vec e_j$. Since $\mathcal{L}(\R^3,\R^3)$ and $\R^{3\times 3}$ are isomorphic, we can always uniquely identify a second-order tensor $\ten T$ via its coefficient matrix $[\ten T]\in\R^{3\times 3}$, and thus we just write $\ten T$ for ease of notation.
 
-    Given two vectors $\vec a, \vec b\in\R^3$, we can construct a second-order tensor through the \textit{tensor product} $\otimes$, where we identify
-    \begin{align*}
+    Given two vectors $\vec a, \vec b\in\R^3$, we can construct a second-order tensor through the \emph{tensor product} $\otimes$, where we identify
+    \begin{tightalign*}\label{eq:tensor-product-definition}
         \otimes: \R^3\times\R^3 &\to \R^{3\times 3}\\
         (\vec a,\vec b) \mapsto \vec a\otimes\vec b \coloneqq \vec a\vec b^\top.
-    \end{align*}
-    From the definition, we note that $(\vec a\otimes \vec b)_{ij} = a_ib_j$, and we define the action of $(\vec a\otimes\vec b)$ on vector $\vec c$ as 
-    \begin{equation*}
+    \end{tightalign*}
+    From the definition, we note that $(\vec a\otimes \vec b)_{ij} = a_i b_j$, and we define the action of $(\vec a\otimes\vec b)$ on vector $\vec c$ as 
+    \begin{equation}\label{eq:tensor-product-action}
         (\vec a\otimes\vec b)\vec c = (\vec b\cdot\vec c)\vec a.
-    \end{equation*}
-    
+    \end{equation}
     More generally, a $n$th-order tensor may be expressed in the form 
-    \begin{equation*}
+    \begin{equation}
         A_{i_1i_2\dots i_n}\vec e_{i_1}\otimes\vec e_{i_2}\otimes\dots\otimes\vec e_{i_n},
-    \end{equation*}
+    \end{equation}
     which is a linear operator with $3^n$ components, and where its action on $\vec a\in\R^3$ yields a $(n-1)$th-order tensor:
-    \begin{equation*}
+    \begin{equation}
         \left(A_{i_1i_2\dots i_n}\vec e_{i_1}\otimes\vec e_{i_2}\otimes\dots\otimes\vec e_{i_n}\right)\vec a = (\vec e_{i_n}\cdot\vec a)\left(A_{i_1i_2\dots i_n}\vec e_{i_1}\otimes\vec e_{i_2}\otimes\dots\otimes\vec e_{i_{n-1}}\right).
-    \end{equation*}
-    From this definition, a $0$th-order tensor is identified as a \textit{scalar}, a first-order tensor is identified as a \textit{vector}, a second-order tensor is identified as a \textit{matrix} and higher-order tensor are identified as higher-dimensional matrices.
+    \end{equation}
+    From this definition, a $0$th-order tensor is identified as a \emph{scalar}, a first-order tensor is identified as a \emph{vector}, a second-order tensor is identified as a \emph{matrix} and higher-order tensor are identified as higher-dimensional matrices.
 \end{definition}
-\begin{definition}[Zero and identity tensor]
-    The zero tensor $\ten 0$ is the tensor whose components are all zero. The second-order \textit{identity tensor} $\ten I$ is defined by components as $I_{ij} = \delta_{ij}$, i.e. $\ten I = \delta_{ij} \vec e_i\otimes\vec e_j = \vec e_j \otimes \vec e_j$. Note that the Kronecker delta allows us to change indices in another factor of a given term, that is, 
+\begin{definition}[Zero and identity tensor]\label{def:zero-identity-tensor}
+    The zero tensor $\ten 0$ is the tensor whose components are all zero. The second-order \emph{identity tensor} $\ten I$ is defined by components as $I_{ij} = \delta_{ij}$, i.e. $\ten I = \delta_{ij} \vec e_i\otimes\vec e_j = \vec e_j \otimes \vec e_j$. Note that the Kronecker delta allows us to change indices in another factor of a given term, that is, 
     \begin{equation*}
         A_{ij}\delta_{jk} = \begin{cases}
             A_{ij} &j=k\\
@@ -287,72 +691,82 @@ Here, the index $i$ is called a \textit{dummy index}, because its replacement wi
         = A_{ik}.
     \end{equation*}
 \end{definition}
-\begin{definition}[Cross product and the Levi-Civita symbol]
-    We define the \textit{Levi-Civita symbol} $\ten\varepsilon$ as the third-order tensor with components $\varepsilon_{ijk}$, where 
-    \begin{equation*}
+\begin{definition}[Cross product and the Levi-Civita symbol]\label{def:levi-civita}
+    We define the \emph{Levi-Civita symbol} $\ten\varepsilon$ as the third-order tensor with components $\varepsilon_{ijk}$, where 
+    \begin{equation}\label{eq:def-levi-civita}
         \varepsilon_{ijk} = \begin{cases}
             +1&\text{ if }(i,j,k)\in\{(1,2,3),(2,3,1),(3,1,2)\}\\
             -1&\text{ if }(i,j,k)\in\{(1,3,2),(2,1,3),(3,2,1)\}\\
             0&\text{ otherwise.}
         \end{cases}
-    \end{equation*}
-    With this, given two vectors $\vec a, \vec b\in\R^3$, we can write their \textit{cross product} $\vec a\times\vec b\in\R^3$ as
-    \begin{equation*}
+    \end{equation}
+    With this, given two vectors $\vec a, \vec b\in\R^3$, we can write their \emph{cross product} $\vec a\times\vec b\in\R^3$ as
+    \begin{equation}\label{eq:cross-product-levi-civita}
         \vec a\times\vec b = \varepsilon_{ijk}a_jb_k\vec e_i.
-    \end{equation*}
+    \end{equation}
 \end{definition}
-\begin{definition}{Product and transpose of second-order tensors}
-    The \textit{product} $\ten A \ten B$ of two second-order tensors $\ten A$, $\ten B$ is again a second-order tensor that follows $(\ten A\ten B)\vec u = \ten A(\ten B\vec u)$ for all vectors $\vec u$, whose components are 
-    \begin{equation*}
+\begin{definition}{Product and transpose of second-order tensors}\label{product-transpose-tensors}
+    The \emph{product} $\ten A \ten B$ of two second-order tensors $\ten A$, $\ten B$ is again a second-order tensor that follows $(\ten A\ten B)\vec u = \ten A(\ten B\vec u)$ for all vectors $\vec u$, whose components are 
+    \begin{equation}\label{def-tensor-mult}
         (\ten A \ten B)_{ij} = A_{ik}B_{kj}.
-    \end{equation*}
-    The (unique) \textit{transpose} of a second-order tensor $\ten A$ is denoted as $\ten A^\top$ and is given by the identity
-    \begin{equation*}
+    \end{equation}
+    The (unique) \emph{transpose} of a second-order tensor $\ten A$ is denoted as $\ten A^\top$ and is given by the identity
+    \begin{equation}\label{def-transpose}
         \vec v\cdot (\ten A^\top \vec u) = \ten A\vec v\cdot\vec u.
-    \end{equation*}
+    \end{equation}
     Clearly, $(\ten A^\top)^\top = \ten A$, and its components are $(\ten A^\top)_{ij} = A_{ji}$.
 \end{definition}
-\begin{definition}[Trace and contraction]
-    The \textit{trace} of a tensor $\ten A$ is the scalar denoted by $\tr \ten A = A_{ii}$, i.e. the sum of its diagonal. This operator is defined through the identity $\tr(\vec u\otimes\vec v) \coloneqq\vec u\cdot\vec v = u_iv_i$, which for a general tensor $\ten A$ yields 
-    \begin{equation*}
+\begin{definition}[Trace and contraction]\label{def:tensor-trace}
+    The \emph{trace} of a tensor $\ten A$ is the scalar denoted by $\tr \ten A = A_{ii}$, i.e. the sum of its diagonal. This operator is defined through the identity $\tr(\vec u\otimes\vec v) \coloneqq\vec u\cdot\vec v = u_i v_i$, which for a general tensor $\ten A$ yields 
+    \begin{equation}\label{eq:def-tensor-trace}
         \tr\ten A = \tr(A_{ij}\vec e_i\otimes\vec e_j) = A_{ij}\tr(\vec e_i\otimes\vec e_j) = A_{ij}(\vec e_i\cdot\vec e_j) = A_{ij}\delta_{ij} = A_{ii}.
-    \end{equation*}
-    It follows from the definition that the trace is linear, does not change under transposition and is invariant under permutation of factors, that is, $\tr(\ten A\ten B) = \tr(\ten B\ten A)$. A \textit{contraction} of indices refers to identifying two indices and summing over them as if they were dummy indices, which is characterized for vectors by the dot product. The (double) contraction for second-order tensors is defined in terms of the trace as 
-    \begin{equation*}
+    \end{equation}
+    It follows from the definition that the trace is linear, does not change under transposition and is invariant under permutation of factors, that is, $\tr(\ten A\ten B) = \tr(\ten B\ten A)$. A \emph{contraction} of indices refers to identifying two indices and summing over them as if they were dummy indices, which is characterized for vectors by the dot product.     The (double) contraction for second-order tensors is defined in terms of the trace as 
+    \begin{equation}\label{eq:tensor-contraction} 
         \ten A:\ten B = A_{ij}B_{ij} = \tr(\ten A^\top\ten B) = \tr(\ten A\ten B^\top) = B_{ij}A_{ij} =  \ten B:\ten A,
-    \end{equation*}
+    \end{equation}
     and is a well-defined inner product over $\R^{n\times n}$. 
 \end{definition}
-\begin{definition}[Determinant and cofactor matrix]
-    The \textit{determinant} of a tensor $\ten A$ is the scalar $\det \ten A$ and is defined as the determinant of the matrix $[\ten A]$ of its coefficients. This operation satisfies $\det(\ten A\ten B) = (\det\ten A)(\det\ten B)$ and $\det\ten A^\top = \det\ten A$. If a tensor has nonzero determinant, we say it is \textit{invertible}, i.e. there exists a unique tensor $\ten A^{-1}$ such that $\ten A \ten A^{-1} = \ten A^{-1}\ten A = \ten I$. 
+\begin{definition}[Determinant and cofactor matrix]\label{def:det-cofactor}
+    The \emph{determinant} of a (square) tensor $\ten A$ is the scalar $\det \ten A$ and is defined through the Levi-Civita tensor as 
+    \begin{equation}\label{eq:def-determinant}
+        \det \ten A \coloneqq \varepsilon_{ijk}A_{1i}A_{2j}A_{3k}.
+    \end{equation}    
+    This determinant can also be computed as the determinant of the coefficient matrix $[\ten A]$, and the reader is encouraged to verify this in the $2\times 2$ and $3\times 3$ cases. 
+    This operation satisfies two useful properties, namely, 
+    \begin{tightalign}
+        \det(\ten A\ten B) &= (\det\ten A)(\det\ten B)\\
+        \det\ten A^\top &= \det\ten A.
+    \end{tightalign}
+    If a tensor has nonzero determinant, we say it is \emph{invertible}, i.e. there exists a unique tensor $\ten A^{-1}$ such that $\ten A \ten A^{-1} = \ten A^{-1}\ten A = \ten I$. 
     An important observation is that the inverse and the transpose commute, so we write $(\ten A^\top)^{-1} = (\ten A^{-1})^\top = \ten A^{-\top}$. To differentiate and derive useful properties that will simplify the calculations later on, we recall the cofactor matrix of $\ten A\in\R^{m\times n}$ is
-    \begin{equation*}
+    \begin{equation}\label{eq:cofactor-matrix}
         \Cof(\ten A)_{ij} \coloneqq (-1)^{i+j}\det \ten A'_{ij},
-    \end{equation*}
+    \end{equation}
     where $\ten A'_{ij}\in\R^{(m-1)\times(n-1)}$ is the same tensor after removing row $i$ and column $j$. Expanding this calculation we can deduce that 
-    \begin{equation*}
+    \begin{equation}
         \Cof(\ten A) \coloneqq \det(\ten A)\ten A^{-\top}, 
-    \end{equation*}
-    and thus
+    \end{equation}
+    which can be 
     \begin{equation*}
-        \ten A\Cof(\ten A)^\top = (\det\ten A)\ten I. %! determinant as a function of the Levi-Civita tensor
+        \ten A\Cof(\ten A)^\top = (\det\ten A)\ten I.
     \end{equation*}
 \end{definition}
-\subsection{Tensor derivative}
+\paragraph{Tensor derivative}\label{sec:tensor-derivative}
 Now that we are equipped with tensor algebra and index notation, we need to adapt our standard derivative definitions to this setting. For simplicity, we refer to zero-order tensors as scalars, and to first-order tensors as vectors. The derivative of scalars and vectors with respect to a scalar variable are defined just as in standard vector calculus. We do need to define the derivative of vectors with respect to other vectors, and the derivatives of scalars with respect to second-order tensors, both of which appear naturally in the conservation laws that will follow later in this chapter.
-\begin{definition}[(Tensor) derivative of a scalar field]
+\begin{definition}[(Tensor) derivative of a scalar field]\label{def:tensor-derivative-scalar}
     Let $\psi=\psi(\ten A)$ be a scalar-valued function defined over a second-order tensor argument $\ten A$. The first-order Taylor approximation of $\psi$ at $\ten A$ followed by a perturbation $d\ten A$ is $\psi(\ten A + d\ten A) = \psi(\ten A) + d\psi + o(d\ten A)$, which satisfies
     \begin{equation*}
         d\psi = \frac{\partial\psi}{\partial\ten A} : d\ten A, 
     \end{equation*}
-    where $\frac{\partial\psi}{\partial\ten A}$ is a second-order tensor defined as the \textit{(tensor) derivative} of $\psi$ at $\ten A$. In some cases, $\psi$ can be differentiated directly in tensor form, but sometimes it is useful to differentiate it component-wise as 
-    \begin{equation*}
-        \left[\frac{\partial \phi}{\partial\ten A}\right]_{ij} = \frac{\partial\phi}{A_{ij}},
-    \end{equation*}
+    where $\frac{\partial\psi}{\partial\ten A}$ is a second-order tensor defined as the \emph{(tensor) derivative} of $\psi$ at $\ten A$. In some cases, $\psi$ can be differentiated directly in tensor form, but sometimes it is useful to differentiate it component-wise as 
+    \begin{equation}
+        \left[\frac{\partial \phi}{\partial\ten A}\right]_{ij} = \frac{\partial\phi}{\partial A_{ij}},
+    \end{equation}
     which may be written back in tensor form. 
 \end{definition}
-\begin{definition}[Nabla operator]
-    In index notation, the \textit{nabla operator} $\nabla$ acting on a scalar, vector or tensor field $(\cdot)$ is defined ias 
+\begin{definition}[Nabla operator]\label{def:nabla-operator}
+    In index notation, the \emph{nabla operator} $\nabla$ acting on a scalar, vector or tensor field $(\cdot)$ is defined ias 
     \begin{equation*}
         \nabla(\cdot) \coloneqq \frac{\partial(\cdot)}{\partial x_i}\vec e_i.
     \end{equation*}
@@ -361,47 +775,35 @@ Now that we are equipped with tensor algebra and index notation, we need to adap
         \nabla\cdot(\cdot) = \frac{\partial(\cdot)}{\partial x_i}\cdot\vec e_i,\qquad \nabla\times(\cdot) = \vec e_i \times \frac{\partial(\cdot)}{\partial x_i},\qquad \nabla\otimes(\cdot) = \frac{\partial(\cdot)}{\partial x_i}\otimes \vec e_i.
     \end{equation*}
 \end{definition}
-\begin{definition}[Gradient, divergence and curl of a vector field]
-    Let $\vec u=\vec u(\vec x)$ be a smooth vector field. The \textit{gradient} of $\vec u$ is denoted by $\text{grad } \vec u$, $\vX \vec u$ or $\nabla\otimes\vec u$, and is defined as 
-    \begin{equation*}
+\begin{definition}[Gradient, divergence and curl of a vector field]\label{def:grad-div-curl-vector}
+    Let $\vec u=\vec u(\vec x)$ be a smooth vector field. The \emph{gradient} of $\vec u$ is denoted by $\text{grad } \vec u$, $\vX \vec u$ or $\nabla\otimes\vec u$, and is defined as 
+    \begin{equation}\label{eq:def-grad-vector}
         \nabla \vec u = \frac{\partial u_i}{\partial x_j}\vec e_i\otimes\vec e_j,
-    \end{equation*}
+    \end{equation}
     or in component notation,
-    \begin{equation*}
+    \begin{equation}
         [\nabla \vec u] = \begin{bmatrix}
             \frac{\partial u_1}{\partial x_1} & \frac{\partial u_1}{\partial x_2} & \frac{\partial u_1}{\partial x_3}\\
             \frac{\partial u_2}{\partial x_1} & \frac{\partial u_2}{\partial x_2} & \frac{\partial u_2}{\partial x_3}\\
             \frac{\partial u_3}{\partial x_1} & \frac{\partial u_3}{\partial x_2} & \frac{\partial u_3}{\partial x_3}
         \end{bmatrix}.
-    \end{equation*}
-    The \textit{divergence} of $\vec u$ is denoted by $\dive \vec u$ or $\nabla\cdot \vec u$, and is defined as the scalar field
-    \begin{equation*}
-        \nabla\cdot\vec u = \frac{\partial u_j}{x_i}\vec e_j\cdot\vec e_i = \frac{\partial u_i}{\partial x_i} = \frac{\partial u_1}{\partial x_1} + \frac{\partial u_2}{\partial x_2} + \frac{\partial u_3}{\partial x_3}.
-    \end{equation*}
-    From the above definitions, we can easily check that $\tr\nabla\vec u = \nabla \vec u : \ten I = \nabla\cdot\vec u$.  The \textit{curl} of $\vec u$ is denoted by $\curl\vec u$ or $\nabla\times\vec u$, and is defined as the vector field
-    \begin{equation*}
+    \end{equation}
+    The \emph{divergence} of $\vec u$ is denoted by $\dive \vec u$ or $\nabla\cdot \vec u$, and is defined as the scalar field
+    \begin{equation}\label{eq:def-div-vector}
+        \nabla\cdot\vec u = \frac{\partial u_j}{\partial x_i}\vec e_j\cdot\vec e_i = \frac{\partial u_i}{\partial x_i} = \frac{\partial u_1}{\partial x_1} + \frac{\partial u_2}{\partial x_2} + \frac{\partial u_3}{\partial x_3}.
+    \end{equation}
+    From the above definitions, we can easily check that $\tr\nabla\vec u = \nabla \vec u : \ten I = \nabla\cdot\vec u$.  The \emph{curl} of $\vec u$ is denoted by $\curl\vec u$ or $\nabla\times\vec u$, and is defined as the vector field
+    \begin{equation}\label{eq:def-curl-vector}
         \nabla\times\vec u = \frac{\partial u_j}{\partial x_i}\vec e_i\times\vec e_j = \varepsilon_{ijk}\frac{\partial u_j}{\partial x_i}\vec e_k.
-    \end{equation*}
+    \end{equation}
 \end{definition}
-\begin{definition}[Divergence of a tensor field]
+\begin{definition}[Divergence of a tensor field]\label{def:div-tensor}
     The vector operator $\nabla$ dotted with any smooth, second-order tensor field $\ten A$ yields a vector field denoted by $\vec\dive \ten A$, where 
-    \begin{equation*}
-        \vec \dive \ten A = \frac{\partial A_{ij}}{x_j}\vec e_i,
-    \end{equation*}
+    \begin{equation}\label{eq:def-div-tensor}
+        \vec \dive \ten A = \frac{\partial A_{ij}}{\partial x_j}\vec e_i,
+    \end{equation}
     that is, the divergence operator acts row-wise. We highlight that there is a mild ambiguity when reviewing literature from the mathematical or mechanical communities, where some authors define a column-wise divergence, which we denote by $\nabla\cdot\ten A$, defined as 
-    \begin{equation*}
-        \nabla\cdot\ten A = \frac{\partial A_{ij}}{x_i}\vec e_j
-    \end{equation*}
+    \begin{equation}
+        \nabla\cdot\ten A = \frac{\partial A_{ij}}{\partial x_i}\vec e_j
+    \end{equation}
 \end{definition}
-
-\todo[inline]{NB: Esto va para continuum mechanics}
-Since material and spatial coordinates are related by a mapping without any constraints on its shape, we have to distinguish between differentiation in both frames. To this end, we use uppercase and lowercase notation for each case, and thus the gradient, divergence and curl operators in material coordinates are symbolized in nabla and text notation as 
-\begin{equation*}
-    \vX \equiv \Grad \qquad \vX\cdot \neq \Dive \qquad \vX \times \equiv \Curl,
-\end{equation*}
-and in spatial coordinates, we denote them as 
-\begin{equation*}
-    \vx \equiv \grad \qquad \vx\cdot \neq \dive \qquad \vx \times \equiv \curl.
-\end{equation*}
-
-

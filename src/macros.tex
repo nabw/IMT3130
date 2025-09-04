@@ -1,9 +1,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{thmtools}
 \usepackage{subcaption,graphicx}
 \usepackage{fullpage}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\usepackage{environ}
 %%%% Remove some annoying hyperref warnings. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % See https://tex.stackexchange.com/questions/10555/hyperref-warning-token-not-allowed-in-a-pdf-string
 \makeatletter
@@ -18,13 +20,8 @@
 \usepackage{cancel}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\newcommand{\RightComment}[1]{\hfill \(\triangleright\) \textit{#1}}
-\newcommand{\example}[1]{\todo[inline,color=orange!10!white]{\textbf{Example:} #1}}
-\newcommand{\nota}[1]{{\colorbox{red!30}{[#1]}}}
 
-\renewcommand{\vec}{\vectorsym}
-\newcommand{\mat}{\matrixsym}
-\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\spanned}{\text{span}}
 \DeclareMathOperator{\grad}{\nabla}
 \DeclareMathOperator{\Grad}{\text{Grad}}
 \DeclareMathOperator{\Cof}{\text{Cof}}
@@ -33,27 +30,74 @@
 \DeclareMathOperator{\curl}{\text{curl}}
 \DeclareMathOperator{\Curl}{\text{Curl}}
 \DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\inv}{\text{Inv}}
 \DeclareMathOperator{\dom}{\text{dom}}
-\newcommand{\parder}[2]{\frac{\partial #1}{\partial #2} }
+\DeclareMathOperator{\supp}{\text{supp}}
+\DeclareMathOperator{\diag}{\text{diag}}
+\DeclareMathOperator{\bolddiag}{\textbf{diag}}
+\DeclareMathOperator{\im}{\text{im}}
+\DeclareMathOperator{\dist}{\text{dist}}
+\DeclareMathOperator{\rank}{\text{rank}}
+\DeclareMathOperator{\interior}{\text{int}}
 
-\newtheorem{remark}{Remark}
-\newtheorem{definition}{Definition}
-\newtheorem{note}{Note}
+
+\declaretheoremstyle[
+  spaceabove=6pt, spacebelow=12pt,
+  headfont=\normalfont\bfseries,
+  notefont=\mdseries, notebraces={(}{)},
+  bodyfont=\normalfont,
+  postheadspace=1em,
+]{thmstyle}
+\declaretheoremstyle[
+  spaceabove=6pt, spacebelow=12pt,
+  headfont=\normalfont\bfseries,
+  notefont=\mdseries, notebraces={(}{)},
+  bodyfont=\normalfont,
+  postheadspace=1em,
+]{lemmastyle}
+\declaretheoremstyle[
+  spaceabove=6pt, spacebelow=12pt,
+  headfont=\normalfont\bfseries,
+  notefont=\mdseries, notebraces={(}{)},
+  bodyfont=\normalfont,
+  postheadspace= 0.5em,
+]{defstyle}
+\declaretheoremstyle[
+  spaceabove=6pt, spacebelow=12pt,
+  headfont=\normalfont\bfseries,
+  notefont=\mdseries, notebraces={(}{)},
+  bodyfont=\normalfont,
+  postheadspace=1em,
+]{smallstyle}
+
+\declaretheorem{theorem}[style=thmstyle, parent=chapter, name=Theorem]
+\declaretheorem{lemma}[style=thmstyle, sibling=theorem, name=Lemma]
+\declaretheorem{remark}[style=smallstyle, sibling=theorem, name=Remark]
+\declaretheorem{definition}[style=defstyle, sibling=theorem, name=Definition]
+\declaretheorem{corollary}[style=smallstyle, sibling=theorem, name=Corollary]
+\declaretheorem{note}[style=smallstyle, sibling=theorem, name=Note]
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
 \newcommand{\D}{\mathcal{D}}
 \newcommand{\T}{\mathcal{T}}
+\newcommand{\N}{\mathbb{N}}
 \newcommand{\tenF}{\ten{F}}
 \newcommand{\vX}{\nabla_X}
 \newcommand{\vx}{\nabla_x}
 \newcommand{\vvarphi}{\vec{\varphi}}
+\newcommand{\RightComment}[1]{\hfill \(\triangleright\) \textit{#1}}
+\newcommand{\example}[1]{\todo[inline,color=orange!10!white]{\textbf{Example:} #1}}
+\newcommand{\nota}[1]{{\colorbox{red!30}{[#1]}}}
+
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\newcommand{\parder}[2]{\frac{\partial #1}{\partial #2} }
+\newcommand{\tin}{\text{ in }}
+\newcommand{\ton}{\text{ on }}
+
 \renewcommand{\P}{\mathcal{P}}
-
-\newcommand{\tin}{\text{in }}
-\newcommand{\ton}{\text{on }}
-
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
+\renewcommand{\vec}{\vectorsym}
 
 \usepackage{listings}
 \usepackage{xcolor}
@@ -72,14 +116,33 @@
   captionpos=b,                    
   keepspaces=true,                 
   numbers=none,                    
-  numbersep=5pt,                  
+  numbersep=6pt,                  
   showspaces=false,                
   showstringspaces=false,
   showtabs=false,                  
   tabsize=2,
 %   frameround=tttn,
-  framerule=1.5pt,
+  framerule=1.6pt,
   rulecolor=\color{red!60!black}
 }
 \lstset{style=mystyle}
 
+\NewEnviron{tightalign*}{%
+  \setlength{\abovedisplayskip}{6pt}%
+  \setlength{\belowdisplayskip}{6pt}%
+  \setlength{\abovedisplayshortskip}{6pt}%
+  \setlength{\belowdisplayshortskip}{6pt}%
+  \begin{align*}
+    \BODY % \BODY is the content of the environment
+  \end{align*}
+}
+
+\NewEnviron{tightalign}{%
+  \setlength{\abovedisplayskip}{6pt}%
+  \setlength{\belowdisplayskip}{6pt}%
+  \setlength{\abovedisplayshortskip}{6pt}%
+  \setlength{\belowdisplayshortskip}{6pt}%
+  \begin{align}
+    \BODY % \BODY is the content of the environment
+  \end{align}
+}
