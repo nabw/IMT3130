@@ -6,6 +6,7 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{environ}
+\usepackage[most]{tcolorbox}
 %%%% Remove some annoying hyperref warnings. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % See https://tex.stackexchange.com/questions/10555/hyperref-warning-token-not-allowed-in-a-pdf-string
 \makeatletter
@@ -87,7 +88,7 @@
 \newcommand{\vx}{\nabla_x}
 \newcommand{\vvarphi}{\vec{\varphi}}
 \newcommand{\RightComment}[1]{\hfill \(\triangleright\) \textit{#1}}
-\newcommand{\example}[1]{\todo[inline,color=orange!10!white]{\textbf{Example:} #1}}
+\newcommand{\example}[1]{ \begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black!70!white,title=Example]#1 \end{tcolorbox}}
 \newcommand{\nota}[1]{{\colorbox{red!30}{[#1]}}}
 
 \newcommand{\mat}{\matrixsym}
