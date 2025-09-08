@@ -128,21 +128,25 @@
 }
 \lstset{style=mystyle}
 
+\def\tightTOP{6pt}
+\def\tightBOTTOM{6pt}
+\def\tightLEFT{6pt}
+\def\tightRIGHT{6pt}
 \NewEnviron{tightalign*}{%
-  \setlength{\abovedisplayskip}{6pt}%
-  \setlength{\belowdisplayskip}{6pt}%
-  \setlength{\abovedisplayshortskip}{6pt}%
-  \setlength{\belowdisplayshortskip}{6pt}%
+  \setlength{\abovedisplayskip}{\tightTOP}%
+  \setlength{\belowdisplayskip}{\tightBOTTOM}%
+  \setlength{\abovedisplayshortskip}{\tightLEFT}%
+  \setlength{\belowdisplayshortskip}{\tightRIGHT}%
   \begin{align*}
     \BODY % \BODY is the content of the environment
   \end{align*}
 }
 
 \NewEnviron{tightalign}{%
-  \setlength{\abovedisplayskip}{6pt}%
-  \setlength{\belowdisplayskip}{6pt}%
-  \setlength{\abovedisplayshortskip}{6pt}%
-  \setlength{\belowdisplayshortskip}{6pt}%
+  \setlength{\abovedisplayskip}{\tightTOP}%
+  \setlength{\belowdisplayskip}{\tightBOTTOM}%
+  \setlength{\abovedisplayshortskip}{\tightLEFT}%
+  \setlength{\belowdisplayshortskip}{\tightRIGHT}%
   \begin{align}
     \BODY % \BODY is the content of the environment
   \end{align}
