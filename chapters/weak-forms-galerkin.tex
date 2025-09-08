@@ -1,4 +1,4 @@
-As we reviewed in the last chapter, one can derive theoretical convergence and stability guarantees for the finite difference method, but its applicability is heavily restricted by the geometry discretization, which is often limited to regular grids in rectangular domains in $\R^n$. In this chapter, we seek to (i) formally define the conditions for well-posedness of abstract and elliptic problems, (ii) introduce Galerkin methods as the standard, finite-dimensional approximation methods, and (iii) introduce approximation of PDEs via weak (or variational) formulations that are suitable for Galerkin methods. This presentation partially follows~\cite{ern2004theory}.
+As we reviewed in Chapter~\ref{chapter:finite-differences}, one can derive theoretical convergence and stability guarantees for the finite difference method, but its applicability is heavily restricted by the geometry discretization, which is often limited to regular grids in rectangular domains in $\R^n$. In this chapter, we seek to (i) formally define the conditions for well-posedness of abstract and elliptic problems, (ii) introduce Galerkin methods as the standard, finite-dimensional approximation methods, and (iii) introduce approximation of PDEs via weak (or variational) formulations that are suitable for Galerkin methods. This presentation partially follows~\cite{ern2004theory}, and will be instrumental for the analysis of Finite Element Methods, which we present in Chapter~\ref{chapter:fem}.
 
 \section{Well-posedness of abstract problems}
 Let $W$ and $V$ be normed vector spaces with norms $\|\cdot\|_W$ and $\|\cdot\|_V$, respectively. It is sufficient for this analysis to assume that $V$ is a reflexive Banach space and $W$ is a Banach space, but in many applications they are Hilbert spaces. We define the following abstract and continuous problem: find $u\in W$ such that
@@ -73,7 +73,7 @@ for given functions $f$ in $V_0'$ and $g$ in $(\gamma_0 V_0)'$. Note the followi
     \item We note that the Laplacian is now being interpreted as a \emph{distribution}, and thus the strong problem (including the boundary conditions) yields the definition of the \emph{action} of the distribution. In particular, this means that the action of the distribution naturally changes with the boundary conditions. This observation is fundamental to understand Discontinuous Galerkin methods, or other formulations defined on broken spaces, i.e. spaces that allow for discontinuities. 
 \end{itemize}
 
-\section{Well-posedness of elliptic problems}
+\section{Elliptic problems and the Lax-Milgram lemma}
 A broad class of PDEs where we can prove existence and uniqueness of solutions are \emph{elliptic} problems, whose weak formulations involve elliptic forms. 
 \begin{definition}[Elliptic forms]\label{def:elliptic-form}
     A bilinear form $a(\cdot, \cdot)$ defined on a Hilbert space $X$ is said to be \emph{elliptic} if there exists a constant $\alpha>0$ such that

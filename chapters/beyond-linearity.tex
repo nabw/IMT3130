@@ -1,10 +1,10 @@
-The theory of well-posedness for linear problems, centered on the Lax-Milgram lemma~\ref{lemma:lax-milgram}, provides a robust framework for proving existence and uniqueness of solutions. Its power lies in its direct application to any problem whose weak formulation can be expressed through a continuous and elliptic bilinear form $a(u,v)$. Many physical models, however, are inherently nonlinear, leading to equations where this linear structure is lost. Consider, for instance, a semilinear problem of the form
-\begin{equation}\label{eq:semilinear-example}
+The theory of well-posedness for linear problems, centered on the Lax-Milgram lemma~\ref{lemma:lax-milgram} and then generalized to the inf-sup condition, provides a robust framework for proving existence and uniqueness of solutions. Many models, however, are inherently nonlinear. Consider, for instance, a semilinear problem of the form
+\begin{equation*}
     \begin{aligned}
         -\Delta u + F(u) &= f &&\tin \Omega,  \\
         u &= 0 && \ton \partial\Omega.
     \end{aligned}
-\end{equation}
+\end{equation*}
 Its weak formulation, $(\nabla u, \nabla v) + (F(u),v) = (f,v)$, results in a form $a(u;v)$ that depends nonlinearly on $u$, and consequently, the Lax-Milgram lemma is not applicable. Thus, we need a new set of tools to establish the well-posedness of such problems.
 
 This chapter introduces the foundational methods of nonlinear functional analysis. Unlike in the linear setting, there is no single, universally applicable theorem for existence and uniqueness. Instead, we will build a toolkit of three distinct and powerful approaches, each suited for a different class of nonlinear problems.
@@ -242,13 +242,11 @@ This functional is GÃ¢teaux-differentiable, and we explicitly compute its the GÃ
     &= \int_\Omega |\nabla u|^{p-2}(\nabla u\cdot\nabla v) dx\\
     &= \langle -\Delta_p u, v\rangle,
 \end{tightalign*}
-and thus $d\Psi = -\Delta_p$. This operator is hemicontinuous: take $t\in \R$ and $u,v,w\in W_0^{1,p}(\Omega)$, and define $\varphi(t) = \langle A(u+tv),w\rangle$. With this, we have
-\begin{tightalign*}
-    |\varphi(t)-&\varphi(0)| = \left|\int_\Omega \left(|\nabla (u+tv)|^{p-2}\nabla (u+tv) - |\nabla u|^{p-2}\nabla u\right)\cdot \nabla w dx \right|\\
-    &= \left|\int_\Omega \left((|\nabla u + t\nabla v|^{p-2} - |\nabla u|^{p-2})\nabla u \cdot \nabla w + t|\nabla u + t\nabla v|^{p-2} \nabla v\cdot \nabla w \right) dx\right|\\
-    &\leq \int_\Omega \left(|\nabla u + t\nabla v|^{p-2} - |\nabla u|^{p-2}\right)|\nabla u||\nabla w| dx + |t|\int_\Omega |\nabla u + t\nabla v|^{p-2}|\nabla v||\nabla w| dx,
-\end{tightalign*}
-and taking the limit $t\to 0$ we conclude that $-\Delta_p$ is hemicontinuous. Moreover, since $\Psi$ is strictly convex, we obtain that for all $u\neq v \in W_0^{1,p}(\Omega)$, it holds that
+and thus $d\Psi = -\Delta_p$. This operator is hemicontinuous: take $t\in \R$ and $u,v,w\in W_0^{1,p}(\Omega)$, and define $\varphi(t) = \langle A(u+tv),w\rangle$. With this, we first compute  
+$$ \varphi(t) - \varphi(0) = \int_\Omega \left(|\nabla (u+tv)|^{p-2}\nabla (u+tv) - |\nabla u|^{p-2}\nabla u\right)\cdot \nabla w dx \coloneqq \int_\Omega \Phi(t)\,dx, $$
+and note that from the definitions of $u,v,w$ that \texttr{rhs} is bounded. This allows us to conclude from the Dominated Convergence theorem that 
+    $$ \lim_{t\to 0}\varphi(t) - \varphi(0) = \int_\Omega \lim_{t\to 0} \Phi(t)\,dx. $$
+The limit within the integral is now trivial, from which we conclude the hemicontinuity of $-\Delta_p$.  Moreover, since $\Psi$ is strictly convex, we obtain that for all $u\neq v \in W_0^{1,p}(\Omega)$, it holds that
 \begin{equation*}
     \langle \Delta_p u - \Delta_p v, u-v\rangle < 0 \implies \langle -\Delta_p u - (-\Delta_p v), u-v\rangle > 0,
 \end{equation*}

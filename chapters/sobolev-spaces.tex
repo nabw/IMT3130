@@ -194,7 +194,7 @@ This trace is sometimes referred to as the \emph{Dirichlet} trace, as it is used
 
 In practice, we need $\gamma_0$ to be extended to a more general domain, which is justified via a trace theorem. The more general case of functions in $W^{m,p}$, i.e. with higher-order differentiability, is treated with Sobolev-Slobodeckij spaces, which is out of the scope of this course. Thus, we will restrict ourselves to the extension to $W^{1,p}$, which is studied in the trace theorem below.
 \begin{theorem}[Trace theorem]\label{thm:trace-theorem}
-    Let $\Omega$ be a bounded and Lipschitz domain. Then, considering $1/p < s \leq 1$, there exists a continuous extension of $\gamma_0$ given by $\gamma_0: W^{s,p}(\Omega) \to W^{s-1/p, p}(\partial\Omega)$. The image of the trace operator, $W^{s-1/p, p}(\partial\Omega)$, is called the \emph{trace space} associated to $W^{s,p}(\Omega)$.
+    Let $\Omega$ be a bounded and Lipschitz domain. Then, considering $1/p < s \leq 1$, there exists a continuous \emph{and surjective} extension of $\gamma_0$ given by $\gamma_0: W^{s,p}(\Omega) \to W^{s-1/p, p}(\partial\Omega)$. The image of the trace operator, $W^{s-1/p, p}(\partial\Omega)$, is called the \emph{trace space} associated to $W^{s,p}(\Omega)$.
     \begin{proof}
         We refer to~\cite{adams2003sobolev} for a complete proof. We will simply see how to extend $\gamma_0$ from smooth functions to a linear bounded operator from $H^1(\Omega)$ to $L^2(\partial\Omega)$. This result requires the density of $\mathcal D$ in $H^1$ and the trace inequality. Consider thus a Cauchy sequence $\{\varphi_i\}_i$ in $\mathcal D(\bar\Omega)$ converging to some $v$ in $H^1(\Omega)$. Using linearity and continuity, we get that for some pair of indexes $i,j$: 
         \begin{equation*}

@@ -1,4 +1,4 @@
-In this section we set most of the foundational mathematics required to understand these notes. In general, this consists in defining rigorously the abstract functional setting and preparing the student for what a colleague calls the \emph{tensor-fu}, i.e. the capability of deriving anything.
+In this section we set most of the foundational mathematics required to understand these notes. In general, this consists in defining rigorously the abstract functional setting and preparing the student for what a colleague calls the \emph{tensor-fu} (from kung-fu), i.e. the capability of deriving anything.
 
 \section{Elements of functional analysis and measure theory}\label{sec:elements-functional-analysis}
 In this section we recall some basic definitions and theorems of functional analysis and measure theory. The functional analysis presentation follows closely the presentation by Long Chen in~\cite{chen2024infSup} and the amazing book by H. Brezis~\cite{BrezisFA}, and the measure theory presentation is partially adapted from~\cite{Tao_2021,Rudin_2013}. We refrain from giving detailed explanations and proofs, which are covered in detail in the aforementioned references.
@@ -164,12 +164,25 @@ Completeness allows us to take limits in a safe and consistence manner, without 
     \end{equation}
 \end{definition}
 \begin{definition}[Duality pairing, transpose, bidual space, reflexive space]
-    Given $x\in X$, $f\in Y'$ and $T\in X'$, the action of $T$ on $x$ which is called the \emph{duality pairing} and is denoted by $\langle T, x\rangle_{X'\times X}$, or simply $T(x)$. The \emph{transpose} operator $T^*\in \mathcal{L}(Y',X')$ is defined by the equation 
+    Given $x\in X$, $f\in Y'$ and $T\in X'$, the action of $T$ on $x$ which is called the \emph{duality pairing} and is denoted by $\langle T, x\rangle_{X'\times X}$, $\langle T, x\rangle$ or simply $T(x)$ whenever ambiguity does not arise from context. The \emph{transpose} operator $T^*\in \mathcal{L}(Y',X')$ is defined by the equation 
     \begin{equation}
         \langle T^* f, x\rangle_{X',X} = \langle f, Tx\rangle_{Y',Y},
     \end{equation}
-    The \emph{bidual space} is the dual of the dual space, i.e. $X'' \coloneqq (X')'$. One can identify a part $X''$ through the evaluation operator $X''\ni T_f = X'\to \R$ defined as $T_f(L) \coloneqq L(f)$ for $L\in X'$. This immersion is always injective by the Hahn-Banach theorem~\ref{thm:hahn-banach}, but it is not necessarily surjective, and in the case that indeed $X''=X$ (i.e. $T_f$ is surjective), the space $X$ is said to be \emph{reflexive}. In reflexive spaces, bounded sequences always have weakly convergent subsequences. %! weak convergence
+    The \emph{bidual space} is the dual of the dual space, i.e. $X'' \coloneqq (X')'$. One can identify a part $X''$ through the evaluation operator $X''\ni T_f = X'\to \R$ defined as $T_f(L) \coloneqq L(f)$ for $L\in X'$. This immersion is always injective by the Hahn-Banach theorem~\ref{thm:hahn-banach}, but it is not necessarily surjective, and in the case that indeed $X''=X$ (i.e. $T_f$ is surjective), the space $X$ is said to be \emph{reflexive}. In reflexive spaces, bounded sequences always have weakly convergent subsequences. \end{definition}
+    For the sake of completeness, we report the definition of each notion of convergence in the way in which we will use them throughout this manuscript. In general, these convergences arise from specific topological construction, which we do not detail and keep only the way in which the convergences are shown. For more information on this topic, see~\cite{BrezisFA}. 
+\begin{definition}[Convergence modes] A sequence $(x_n)_n$ in a normed space is said to converge strongly (in norm) to $x$ if 
+        $$ \| x_n - x \|_n \to 0 \text{ as } n \to \infty. $$
+The same sequence is said to converge \emph{weakly} to $x$ if it holds that
+        $$ \langle T, x_n\rangle \to \langle T, x\rangle \qquad \forall T \in X',$$
+        commonly written as $x_n \rightharpoonup x$. One common example is the Fourier basis elements $\{\varphi_n\}_n$, which satisfy that $\varphi_n\rightharpoonup 0$. This happens because it can be shown that all functions in $L^2(\Omega)$ with $\Omega \subset \R^d$ compact can be written as
+    $$ f = \sum_i \langle f, \varphi_i\rangle \varphi_i, $$
+    which in particular means that $|\langle f, \varphi_i\rangle|\to 0$ for all $f$ (because the series converges), thus implying that $\varphi_i \rightharpoonup 0$. Finally, we say that a sequence $\{x_n^*\}_n$ in $X'$ is said to converge \emph{weakly-*} to its (weak-*) limit $x^*$ in $X'$ if
+    $$ \langle x^*_n, y\rangle \to \langle x^*, y\rangle \qquad\forall y \in X. $$
+This is commonly denoted as $x_n \rightharpoonup^* x$.
 \end{definition}
+
+We highlight that in a Hilbert space $H$, as the Riesz isometry yields a bijection between $H$ and $H'$, in particular this means that weak and weak-* convergences coincide. 
+
 \begin{definition}[Bounded operators and operator norm]\label{def:bounded-operator}
     An operator $T:X\to Y$ is \emph{bounded} if it maps bounded sets into bounded sets. When $X$ and $Y$ are normed spaces, (i) boundedness is equivalent to continuity, and thus $\mathcal{L}(X,Y)$ is the set of continuous, bounded linear operators, and (ii) for every bounded operator there exists a constant $M\geq 0$ such that $\|T(x)\|\leq M\|x\|$. The smallest constant $M$ is defined as the \emph{operator norm}
     \begin{equation}\label{eq:operator-norm}
