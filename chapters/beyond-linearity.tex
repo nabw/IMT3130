@@ -244,7 +244,7 @@ This functional is GÃ¢teaux-differentiable, and we explicitly compute its the GÃ
 \end{tightalign*}
 and thus $d\Psi = -\Delta_p$. This operator is hemicontinuous: take $t\in \R$ and $u,v,w\in W_0^{1,p}(\Omega)$, and define $\varphi(t) = \langle A(u+tv),w\rangle$. With this, we first compute  
 $$ \varphi(t) - \varphi(0) = \int_\Omega \left(|\nabla (u+tv)|^{p-2}\nabla (u+tv) - |\nabla u|^{p-2}\nabla u\right)\cdot \nabla w dx \coloneqq \int_\Omega \Phi(t)\,dx, $$
-and note that from the definitions of $u,v,w$ that \texttr{rhs} is bounded. This allows us to conclude from the Dominated Convergence theorem that 
+and note that from the definitions of $u,v,w$ that \texttt{rhs} is bounded. This allows us to conclude from the Dominated Convergence theorem that 
     $$ \lim_{t\to 0}\varphi(t) - \varphi(0) = \int_\Omega \lim_{t\to 0} \Phi(t)\,dx. $$
 The limit within the integral is now trivial, from which we conclude the hemicontinuity of $-\Delta_p$.  Moreover, since $\Psi$ is strictly convex, we obtain that for all $u\neq v \in W_0^{1,p}(\Omega)$, it holds that
 \begin{equation*}
