@@ -102,7 +102,7 @@ A broad class of norms are the $p$-norms, which will be useful when dealing with
 \end{definition}
 An important characterization of compact sets in $\R^n$ is through the \emph{Heine-Borel} theorem.
 \begin{definition}[Boundedness]
-    A subset $S\subset X$ of a metric space $(X,d)$ is \emph{bounded} if there exists $R>0$ such that for all $s,t\in S$, $d(s,t)<r$. If $X$ is bounded itself, then it is called a \emph{bounded metric space}.
+    A subset $S\subset X$ of a metric space $(X,d)$ is \emph{bounded} if there exists $R>0$ such that for all $s,t\in S$, $d(s,t)<R$. If $X$ is bounded itself, then it is called a \emph{bounded metric space}.
 \end{definition}
 \begin{theorem}[Heine-Borel]
     If $K\subset\R^n$, then $K$ is compact if and only if $K$ is closed and bounded.  
@@ -779,7 +779,7 @@ Now that we are equipped with tensor algebra and index notation, we need to adap
     which may be written back in tensor form. 
 \end{definition}
 \begin{definition}[Nabla operator]\label{def:nabla-operator}
-    In index notation, the \emph{nabla operator} $\nabla$ acting on a scalar, vector or tensor field $(\cdot)$ is defined ias 
+    In index notation, the \emph{nabla operator} $\nabla$ acting on a scalar, vector or tensor field $(\cdot)$ is defined as 
     \begin{equation*}
         \nabla(\cdot) \coloneqq \frac{\partial(\cdot)}{\partial x_i}\vec e_i.
     \end{equation*}
