@@ -1,4 +1,6 @@
-A common application of the numerical analysis of PDEs is \emph{continuum mechanics}, which consists of a framework of modeling mechanics through collections of deformable bodies. In this section, we set the background space $\mathcal{E} = \R^3$ as the standard Euclidean space equipped with a fixed orthonormal basis $\{\vec e_1, \vec e_2, \vec e_3\}$ where $\vec e_i\cdot\vec e_j = \delta_{ij}$ is the Kronecker delta.
+A common application of the numerical analysis of PDEs is \emph{continuum mechanics}, which consists of a framework of modeling mechanics through collections of deformable bodies. The derivation of the governing equations is done through rigorous formulations of mass and momentum conservation, and will require the extensive use of a generalization of the \emph{Reynolds Transport theorem}, a common result in fluid dynamics. The analytic form of some of the functions involved will be derived from the Thermodynamics of the system in the form of the celebrated \emph{Clausius-Duhem} inequality. 
+
+In this section, we set the background space $\mathcal{E} = \R^3$ as the standard Euclidean space equipped with a fixed orthonormal basis $\{\vec e_1, \vec e_2, \vec e_3\}$ where $\vec e_i\cdot\vec e_j = \delta_{ij}$ is the Kronecker delta.
 
 \section{Kinematics and strain}\label{sec:kinematics-strain}
 \begin{definition}[Configuration]\label{def:configuration}
@@ -388,8 +390,20 @@ The traction vector in the material frame can be subject to the same derivation,
 \section{Conservation laws}\label{sec:conservation-laws}
 With the above definitions and the precise technique to differentiate quantities defined as spatial integrals via the Reynolds transport theorem, we can now write down \emph{conservation laws}, which are relationships between the rates of change of quantities of interest (e.g. mass, momentum) and the factors that physically induce those rates of change. Conservation laws define the partial differential equations that will be at the core of our numerical analysis later on. These laws have spatial and material formulations, both of which can be written in integral or differential form. To pass from the integral to the differential form, we use the following theorem: 
 \begin{theorem}[Localization theorem]\label{thm:localization}
-    Let $\Omega\subset\R^n$ be a bounded, open and connected set. Given a scalar field $f:\Omega\to \R$, if for every subset $B\subset \Omega$ it holds that $\int_B fdV = 0$, then necessarily $f\equiv 0$ in $\Omega$. 
+    Let $\Omega\subset\R^n$ be a bounded, open and connected set. Given a scalar field $f:\Omega\to \R$ with $f\in L^{1}(\Omega)$, if for every measurable subset $B\subset \Omega$ it holds that $\int_B fdV = 0$, then necessarily $f\equiv 0$ in $\Omega$. 
 \end{theorem}
+    \begin{proof}
+       To show that $f=0$ a.e. in $\Omega$, as $f\in L^{1}(\Omega)$, it is enough to prove that
+       \begin{equation*}
+           \int_{\Omega}|f|\mathrm{d}V = 0
+       \end{equation*}
+       Define $B^{+}:=\{x\in\Omega|f(x)>0\}$ and $B^{-}:= \{x\in\Omega|f(x)<0\}$. So we split the integral as follows:
+       \begin{tightalign*}
+           \int_{\Omega}|f|\mathrm{d}V &= \int_{\Omega}f\chi_{B^{+}}\mathrm{d}V - \int_{\Omega}f\chi_{B^{-}}\mathrm{d}V \\
+           &= \int_{B^{+}}f\mathrm{d}V - \int_{B^{-}}f\mathrm{d}V
+       \end{tightalign*}
+       By hypothesis, as the integral of any measurable subset is zero, the entire right hand-side is zero. As the integral of $|f|$ over $\Omega$ is zero, this imples that $|f|=0$ a.e in $\Omega$. So $f=0$ a.e. in $\Omega$.
+    \end{proof}
 We now study the conservation laws for mass, linear momentum, angular momentum and energy. Let $\Omega_t\subset\R^3$ and let $B_t\subset\Omega_t$ be an arbitrary subset. 
 \paragraph{Conservation of mass} We can naturally write the mass $M(t)$ of $B_t$ at time $t$ as the integral of the density over the domain, that is, 
 \begin{equation}

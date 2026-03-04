@@ -1,12 +1,12 @@
 The Lax-Milgram lemma~\ref{lemma:lax-milgram}, which we studied in Chapter~\ref{chapter:weak-forms-galerkin}, provides a powerful and straightforward tool for proving the well-posedness of elliptic boundary-value problems. While this condition holds for many important physical models, it is also remarkably fragile. For example, the operator $-\Delta: H_0^1(\Omega)\to H^{-1}(\Omega)$ is elliptic, but if we remove the minus sign, it loses that property. As this case is linear, it is possible to remap the unknown with $u\mapsto -u$, but it still feels unsatisfactory that the property is so fragile. Also, the introduction of lower-order terms as in the Helmholtz equation $(-\Delta u - k^2 u = f)$, can break the ellipticity condition.
 
-This raises a crucial question: how can we analyze the well-posedness of the vast class of problems that are not elliptic? The central result that tackles this problem is the \emph{generalized Lax-Milgram lemma}, also known as the \emph{Banach-Ne\v{c}as-Babu\v{s}ka (BNB) theorem}, which characterizes the well-posedness of problems via the surjectivity and injectivity of the associated operator.
+This raises a crucial question: how can we analyze the well-posedness of the vast class of problems that are not elliptic? The central result that tackles this problem is the \emph{generalized Lax-Milgram lemma}, also known as the \emph{Banach-Ne\v{c}as-Babu\v{s}ka (BNB) theorem}, which yields a sharp characterization of the well-posedness of problems via the surjectivity and injectivity of the associated operator.
 
-We will first develop this theory for continuous problems, and then address the critical issue of discretization, where we will find that the discrete inf-sup condition is not automatically inherited from its continuous counterpart. Finally, we will study the related theory of \emph{Fredholm operators}, which provides an alternative path to well-posedness for problems that satisfy a \emph{Gårding inequality}---a condition weaker than ellipticity---and is particularly suited for analyzing problems such as wave propagation.
+We will first develop this theory for continuous problems, and then address the critical issue of discretization, where we will find that the discrete inf-sup condition is not automatically inherited from its continuous counterpart (in contrast to Lax-Milgram). Finally, we will study the related theory of \emph{Fredholm operators}, which provides an alternative path to well-posedness for problems that satisfy a \emph{Gårding inequality}---a condition weaker than ellipticity---and is particularly suited for analyzing problems such as wave propagation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The continuous inf-sup condition}\label{sec:inf-sup}
-We are interested in deriving a more general characterization of the well-posedness of the continuous, generic problem of finding $u\in W$ such that $a(u,v)=f(v)$ for all $v\in V$, where now $a$ is not necessarily elliptic. This result is known as the \emph{generalized Lax-Milgram lemma} or the \emph{Banach-Ne\v{c}as-Babu\v{s}ka theorem}, which gives necessary and sufficient conditions for the well-posedness. The first condition will be known as the \emph{inf-sup condition}. For detailed proofs and omitted details, see~\cite{ern2004theory, chen2024infSup, gatica2014simple}. 
+We are interested in deriving a more general characterization of the well-posedness of the continuous, generic problem of finding $u\in U$ such that $a(u,v)=f(v)$ for all $v\in V$, where now $a$ is not necessarily elliptic. This result is known as the \emph{generalized Lax-Milgram lemma} or the \emph{Banach-Ne\v{c}as-Babu\v{s}ka theorem}, which gives necessary and sufficient conditions for the well-posedness. The first condition will be known as the \emph{inf-sup condition}. For detailed proofs and omitted details, see~\cite{ern2004theory, chen2024infSup, gatica2014simple}. 
 
 First, we need to characterize the surjectivity and injectivity of bilinear operators in Banach spaces. An important step is to characterize operators with closed range. 
 \begin{lemma}[Injectivity and closed range $\iff$ bounded below]
@@ -41,7 +41,7 @@ To characterize the surjectivity of the operator, we use its topological dual.
         \end{equation}
         where $\ker(T')$ is the kernel of $T'$. Now, since $V = \im(T) = \ker(T')^\bot$, then, for each $v' \in \ker(T')$, it holds that $ \langle v', v\rangle = 0$ $\forall v \in V$, which means that $v' = 0$. Thus, $\ker(T') = \{0\}$, so $T'$ is injective.
 
-        For the proof in the other direction, we get from the closed range theorem~\ref{thm:closed-range-theorem} that also $\im(T)$ is closed. By contradiction, consider $v$in $V$ such that $v\not\in \im(T)$. By the Hahn-Banach extension corollary~\ref{cor:hahn-banach-extension} we get that there exists $f$ in $V'$ such that $f(\im(T)) = 0$ and $f(v)=1$\footnote{This is an improvement over Urysohn's Lemma, which yields only a possibly nonlinear function}. This implies that $\langle f, Tu\rangle_{V'\times V} = 0$ for all $u\in U$, and by taking transposes, we get 
+        For the proof in the other direction, we get from the closed range theorem~\ref{thm:closed-range-theorem} that also $\im(T)$ is closed. By contradiction, consider $v$ in $V$ such that $v\not\in \im(T)$. By the Hahn-Banach extension corollary~\ref{cor:hahn-banach-extension} we get that there exists $f$ in $V'$ such that $f(\im(T)) = 0$ and $f(v)=1$\footnote{This is an improvement over Urysohn's lemma, which yields only a possibly nonlinear function}. This implies that $\langle f, Tu\rangle_{V'\times V} = 0$ for all $u\in U$, and by taking transposes, we get 
         \begin{equation*}
             0 = \langle f, Tu\rangle_{V'\times V} = \langle T'f, u\rangle_{V'\times V} \qquad \forall u\in U.
         \end{equation*}
@@ -102,28 +102,28 @@ Now, we can characterize the injectivity of the operator.
     \end{proof}
 \end{lemma}
 
-Now that we have characterized injectivity and surjectivity of operators, we can now postulate a generalized version of the Lax-Milgram lemma. Our continuous problem is the same as in Section~\ref{sec:galerkin}, where we seek to find $u\in W$ such that $a(u,v)=f(v)$ for all $v\in V$. In a general setting, it is enough to consider $W$ a Banach space and $V$ a reflexive Banach space, but we state the theorem in the particular case where $W$ and $V$ are Hilbert spaces. 
+Now that we have characterized injectivity and surjectivity of operators, we can now postulate a generalized version of the Lax-Milgram lemma. Our continuous problem is the same as in Section~\ref{sec:galerkin}, where we seek to find $u\in U$ such that $a(u,v)=f(v)$ for all $v\in V$. In a general setting, it is enough to consider $U$ a Banach space and $V$ a reflexive Banach space, but we state the theorem in the particular case where $U$ and $V$ are Hilbert spaces. 
 
 \begin{theorem}(Generalized Lax-Milgram; Banach-Ne\v{c}as-Babu\v{s}ka)
 \label{theorem:generalized-lax-milgram}
-    Consider $H_1$, $H_2$ Hilbert spaces and a bounded bilinear form $a:H_1\times H_2 \to \mathbb{R}$. Then, there exists a unique $u\in H_1$ for each $F\in H_2'$ such that 
+    Consider $U$, $V$ Banach spaces with $V$ reflexive and a bounded bilinear form $a:U\times V \to \mathbb{R}$. Then, there exists a unique $u\in U$ for each $F\in V'$ such that 
     \begin{equation}
-        a(u,v) = f(v),\quad \forall v \in H_2
+        a(u,v) = f(v),\quad \forall v \in V
     \end{equation} 
     if and only if the two following conditions hold:
     \begin{enumerate}
         \item the \emph{inf-sup condition}, i.e. there exists $\alpha > 0$ such that 
         \begin{equation}\label{eq:inf-sup-condition}
-            \sup_{u\in H_1,u\neq 0} \frac{a(u,v)}{\| u \|_{H_1}} \ge \alpha \| v \|_{H_2} \quad \forall v\in H_2\quad \text{ (surjective) }
+            \sup_{u\in U,u\neq 0} \frac{a(u,v)}{\| u \|_{U}} \ge \alpha \| v \|_{V} \quad \forall v\in V\quad \text{ (surjective) }
         \end{equation}
         \item 
         \begin{equation}\label{eq:inf-sup-injectivity}
-            \sup_{v\in H_2} a(u,v) > 0 \quad \forall u\in H_1,\,\, u\neq 0 \quad \text{ (injective) }.
+            \sup_{v\in V} a(u,v) > 0 \quad \forall u\in U,\,\, u\neq 0 \quad \text{ (injective) }.
         \end{equation}
     \end{enumerate}
     Moreover, the following a priori estimate holds: 
     \begin{equation}
-        \|u\|_{H_1} \leq \frac{1}{\alpha}\|f\|_{H_2'}.
+        \|u\|_{U} \leq \frac{1}{\alpha}\|f\|_{V'}.
     \end{equation}
 \end{theorem}
 
@@ -131,12 +131,14 @@ In practice, the Lax-Milgram lemma and the generalized Lax-Milgram lemma provide
 
 The condition~\ref{eq:inf-sup-condition} is called \emph{inf-sup} because it is often stated and used in the alternative, equivalent way: there exists $\alpha>0$ such that 
 \begin{equation}
-    \inf_{v\in H_2}\sup_{u\in H_1,u\neq 0} \frac{a(u,v)}{\| u \|_{H_1}\|v\|_{H_2}} \ge \alpha.
+    \inf_{v\in V}\sup_{u\in U,u\neq 0} \frac{a(u,v)}{\| u \|_{U}\|v\|_{V}} \ge \alpha.
 \end{equation}
 
-We note that injectivity can be equivalently stated as an inf-sup condition simply by inverting the arguments in the surjectivity part of the proof. In fact, consider $U_N\subset U$ and $v'_N\in V'_N\subset V$ discrete spaces, then 
+We note that injectivity can be equivalently stated as an inf-sup condition simply by inverting the arguments in the surjectivity part of the proof. In fact, consider $U_N\subset U$ and $v'_N\in V'_N\subset V$ discrete spaces, and define as $A:U \to V'$ the linear operator induced by the bilinear form $a$:
+    $$ \langle Au, v\rangle_{V'\times V} \coloneqq a(u,v) \qquad \forall u\in U, v\in V. $$
+Then, we readily obtain that 
 \begin{equation*}
-    \|T'v_N'\|_{U'} = \sup_{u\in U}\frac{\langle u, T'v_N'\rangle}{\|u\|_U} \geq \sup_{u_N\in U_N}\frac{\langle u_N, T'v_N'\rangle}{\|u_N\|_U},
+    \|A'v_N'\|_{U'} = \sup_{u\in U}\frac{\langle u, A'v_N'\rangle}{\|u\|_U} \geq \sup_{u_N\in U_N}\frac{\langle u_N, A'v_N'\rangle}{\|u_N\|_U},
 \end{equation*}
 which establishes our claim. Despite this, one can still recover convergence as before. To see this, consider $u$ and $u_N$ the continuous and discrete solutions given by the following problems with $a:U\times V \to \R$:
 \begin{equation*}
@@ -145,7 +147,7 @@ which establishes our claim. Despite this, one can still recover convergence as 
         a(u_N, v_N) &= f(v_N) &&\forall v_N\in V_N.
     \end{aligned}
 \end{equation*}
-This bilinear forms make sense as operator equations as they induce an $A:U\to V'$. Both problems are well-posed are both operators are surjective, which implies that 
+These bilinear forms make sense when looking at the operator equation from $A$. Both problems are well-posed are both operators are surjective, which implies that 
 \begin{equation*}
     a(u-u_N, v) = 0  \qquad \forall v_N \in V_N.
 \end{equation*}
@@ -181,7 +183,7 @@ Also, we have
     \iff &(R^{-1}\circ A u_h,v_h)_H = (R^{-1}f,v_h)_H\quad\forall v_h\in H_h,\\
     \iff &\Pi_h\mathbb{A}u_h = \Pi_h\mathbb{F},
 \end{tightalign*}
-where $\mathbb{A} = R^-1\circ A$ and $\mathbb{F} = R^{-1}f$. The stability estimate gives, 
+where $\mathbb{A} = R^{-1}\circ A$ and $\mathbb{F} = R^{-1}f$. The stability estimate gives, 
 \begin{equation}
     \|u_h\| \leq\frac{1}{\alpha}\|\Pi_h\mathbb{F}\| = \frac{1}{\alpha}\|\Pi_h\mathbb{A} u_h\|
 \end{equation}
@@ -276,7 +278,7 @@ Using $H_0^1(\Omega)$ with the norm induced by the seminorm $|v|_1 = \|\nabla v\
 
 This is a very limited answer, so we will now study what happens for arbitrary $k\in\R$. To this end, we need to define \emph{compact} and \emph{Fredholm} operators, and the \emph{Fredholm alternative}.
 \begin{definition}[Compact operator]\label{def:compact-operator}
-    A linear operator $K:H_1 \to H_1$ is \emph{compact} if the image of a bounded sequence admits a converging subsequence.
+    A linear operator $K:V \to V$ is \emph{compact} if the image of a bounded sequence admits a converging subsequence.
 \end{definition}
 \begin{definition}[Fredholm operator]\label{def:fredholm-operator}
     A bounded linear operator is a \emph{Fredholm operator} if it is the sum of an invertible and a compact operator. 
@@ -320,7 +322,7 @@ Back in an infinite-dimensional setting, there is a simpler way of showing that 
     \end{proof}
 \end{corollary}
 
-We will require the following Lemma regarding discrete stability of Fredholm operators. Details are provided in~\cite{sayas2019variational}.
+We will require the following lemma regarding discrete stability of Fredholm operators. Details are provided in~\cite{sayas2019variational}.
 \begin{lemma}\label{lemma:stability-fredholm}
     Consider a bilinear form $a:H\times H\to \R$ associated to an injective Fredholm operator $A+K$. Then, there exists $C, h_0>0$ such that
     \begin{equation}

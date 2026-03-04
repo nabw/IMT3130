@@ -43,7 +43,7 @@ The fundamental difference between parabolic and hyperbolic systems is the behav
     We observe that energy decreases from the initial condition in a parabolic system. Thus, parabolic systems are called \emph{dissipative}.
     \item Hyperbolic systems: since we need a second-order time derivative, we note that $\partial_t(\dot{u}^2) = 2\dot{u}\ddot{u}$, and thus as before we can write
     \begin{equation}
-        \int_\Omega \ddot{u}v + \int_\Omega \mathcal{L}u\cdot v = 0 \qquad \forall v\in V.
+        \int_\Omega \ddot{u}v + \int_\Omega A u\cdot v = 0 \qquad \forall v\in V.
     \end{equation}
     Setting $v=\dot{u}$, we obtain
     \begin{equation}
@@ -404,7 +404,19 @@ Summing over $n\in\{1,\dots,M\}$, and telescoping on the left hand side, we get
     &\leq \|\eta_h^0\| + Ch\|\dot u\|_{L^1} + \Delta t \int_0^T \|\ddot{u}\| ds. %! \Delta t missing in first term?!
 \end{tightalign*}
 Thus, we got the final bound for the fully-discrete problem 
-\begin{equation}
+\begin{equation}\label{eq:spacetime-estimate}
     \|\eta_h^M\| \leq \|\eta_h^0\| + C\Delta t \|\ddot u\|_{L^1(L^2)} + Ch \|\dot u\|_{L^1(L^2)}.
 \end{equation}
 Here, we can often take $\Delta t = h$, which allows us to control both terms linearly in $h$ and ensure the consistency of the method. Finally, due to the convergence rate of the Ritz projector we can immediately bound the norm of $\xi_h^n$, and thus we can conclude the convergence $\|e_h\|$ by summing the errors over $n$.
+
+\example{
+    One common example is the heat equation, stated as follows: Find $u$ in $L^2(0,T; H_0^1(\Omega))$ such that 
+        $$\langle \dot u, v\rangle + a(u,v) = 0 \qquad\forall v \in H_0^1(\Omega),$$
+where $a(u,v)\coloneqq (\grad u, \grad v)$. The previous developments show that we can approximate this problem using the k--th order FE space
+    $$ V_h = \{ u_h \in C(\Omega): u_h|_T \in \mathbb{P}_k\}, $$
+    using a backward Euler discretization in time, which yields the discrete system of finding $u^n_h$ in $V_h$
+    $$ \frac{1}{\Delta t}(u_h^n, v_h) + a(u^n_h, v_h) = F(v_h)+ \frac{1}{\Delta t}(u_h^{n-1}, v_h) \qquad \forall v_h\in V_h,$$
+    for given $u_h^0$. In fact, we obtain from~\eqref{eq:spacetime-estimate} the following convergence estimate: 
+    $$ \|u_h^n - u(t^n) \|_0 \leq C(h^k + \Delta t) . $$
+A common choice that stems from this estimate is to use $\Delta t = O(h^k)$.
+}
