@@ -586,13 +586,12 @@ In order to show the equivalence between Fréchet and Gâteaux derivatives, we r
         \end{tightalign*}    
         Thus, by the mean value theorem, we get
         \begin{tightalign*}
-            \|R(h)\| &\leq \sup_{w\in [0,h]} \|d_G(R(w))\| \|h\|\\
-            &=    \sup_{t\in [0,1]} \|d_G R(th)\| \|h\|\\
-            &=    \sup_{w\in [0,h]} \|d_G F(u+h)[k] - d_G F(u)[k]\| \|h\|,
+            \|R(h)\| &\leq \sup_{w\in [0,h]} \|d_G R(w)\| \|h\|\\
+            &=    \sup_{w\in [0,h]} \|d_G F(u+w) - d_G F(u)\| \|h\|,
         \end{tightalign*}
         and thus dividing by $\|h\|$ and taking the limit $\|h\|\to 0$ yields
         \begin{equation*}
-            \lim_{\|h\|\to 0} \frac{\|R(h)\|}{\|h\|} \leq \lim_{\|h\|\to 0} \|d_G F(u+th) - d_G F(u)\| = 0,
+            \lim_{\|h\|\to 0} \frac{\|R(h)\|}{\|h\|} \leq \lim_{\|h\|\to 0} \sup_{w\in [0,h]} \|d_G F(u+w) - d_G F(u)\| = 0,
         \end{equation*}    
         because of the continuity of $d_G F$.
     \end{proof}
