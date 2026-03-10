@@ -494,17 +494,26 @@ We will now cover the notion of differentiability in Banach spaces. The presenta
 \end{definition}
 This construction yields two properties about Fréchet differentiability:
 \begin{enumerate}
-    \item For a given $F:U\to Y$, $dF(u)$ is unique. To prove this, assume $A\neq B$ are two Fréchet derivatives of $F$, that is, 
-    \begin{tightalign*}
-            F(x+h) &= F(x) + Ah + o(\|h\|), \\
-            F(x+h) &= F(x) + Bh + o(\|h\|).
-    \end{tightalign*}
-    Subtracting these equations, we have $Ah - Bh = o(\|h\|)$. Since $A\neq B$, there exists a direction $h^*$ such that $Ah^* \neq Bh^*$. Setting $h=th^*$, with $t\in \mathbb{R}$, we note that
-    \begin{equation*}
-        \frac{\|Ah-Bh\|}{\|h\|} = \frac{t\|Ah^*-Bh^*\|}{t\|h^*\|} = \text{const.} \nrightarrow 0,
-    \end{equation*}
-    since it does not depend on $\|h\|$, and thus $Ah - Bh \neq o(\|h\|)$, which is a contradiction. 
+    \item For a given $F:U\to Y$, $dF(u)$ is unique. 
+    \begin{proof}
+            To prove this, assume $A\neq B$ are two Fréchet derivatives of $F$, that is, 
+        \begin{tightalign*}
+                F(x+h) &= F(x) + Ah + o(\|h\|), \\
+                F(x+h) &= F(x) + Bh + o(\|h\|).
+        \end{tightalign*}
+        Subtracting these equations, we have $Ah - Bh = o(\|h\|)$. Since $A\neq B$, there exists a direction $h^*$ such that $Ah^* \neq Bh^*$. Setting $h=th^*$, with $t\in \mathbb{R}$, we note that
+        \begin{equation*}
+            \frac{\|Ah-Bh\|}{\|h\|} = \frac{t\|Ah^*-Bh^*\|}{t\|h^*\|} = \text{const.} \nrightarrow 0,
+        \end{equation*}
+        since it does not depend on $\|h\|$, and thus $Ah - Bh \neq o(\|h\|)$, which is a contradiction. 
+    \end{proof}
     \item If $F:U\to Y$ is Fréchet differentiable, then $F$ is continuous.
+        \begin{proof}
+            Simply computing the difference we observe that
+            $$\|F(x+h) - F(x)\| = \| dF(u)[h] + o(\|h\|)\| \leq \|dF(u)\| \| h\| + |o(\|h\|)|, $$
+            which goes to zero as $h\to 0$. Note that we used that $dF(u)$ is bounded.
+        \end{proof}
+
 \end{enumerate}
 
 Furthermore, we recover some classical properties of differentiation:
@@ -670,7 +679,7 @@ Here, the index $i$ is called a \emph{dummy index}, because its replacement with
 \begin{equation*}
     \vec e_i = \begin{bmatrix} 0 \\ \vdots \\ 0 \\ 1 \\ 0 \\ \vdots \\  0  \end{bmatrix}\to \text{i-th entry} .
 \end{equation*} 
-We now define the concept of a \emph{tensor} on the standard Euclidean space. 
+For context, we note that most generally a (real) $n$-tensor over $X$ is simply a multilinear form $a:\underbrace{X\times \dots \times X}_\text{$n$ times}\to \R$. If $\{x_i\}_i^N$ is a basis of $X$, then the components of $a$ in that basis would be $a_{i_1 i_2 \dots i_N} \coloneqq a[x_1,x_2, \dots, x_N]$. We will be concerned mostly by tensors in Euclidean space, so now we restrict the presentation to that setting.
 \begin{definition}[Tensor and tensor product]\label{def:tensor-tensor-product}
     A \emph{second-order tensor} $\ten T$ is defined as a linear operator $\ten T\in \mathcal{L}(\R^3, \R^3)$. We write its action on $\vec u\in\R^3$ as $\ten T(\vec u) \equiv \ten T \vec u$. The \emph{components} $T_{ij}\in\R$ of $\ten T$ are defined as the $i$-th component of $\ten T\vec e_j$, i.e. $T_{ij}\vec e_i \coloneqq \ten T\vec e_j$, or equivalently, $T_{ij} = \vec e_i\cdot\ten T\vec e_j$. Since $\mathcal{L}(\R^3,\R^3)$ and $\R^{3\times 3}$ are isomorphic, we can always uniquely identify a second-order tensor $\ten T$ via its coefficient matrix $[\ten T]\in\R^{3\times 3}$, and thus we just write $\ten T$ for ease of notation.
 
@@ -694,13 +703,15 @@ We now define the concept of a \emph{tensor} on the standard Euclidean space.
     From this definition, a $0$th-order tensor is identified as a \emph{scalar}, a first-order tensor is identified as a \emph{vector}, a second-order tensor is identified as a \emph{matrix} and higher-order tensor are identified as higher-dimensional matrices.
 \end{definition}
 \begin{definition}[Zero and identity tensor]\label{def:zero-identity-tensor}
-    The zero tensor $\ten 0$ is the tensor whose components are all zero. The second-order \emph{identity tensor} $\ten I$ is defined by components as $I_{ij} = \delta_{ij}$, i.e. $\ten I = \delta_{ij} \vec e_i\otimes\vec e_j = \vec e_j \otimes \vec e_j$. Note that the Kronecker delta allows us to change indices in another factor of a given term, that is, 
+    The zero tensor $\ten 0$ is the tensor whose components are all zero. The second-order \emph{identity tensor} $\ten I$ is defined by components as $I_{ij} = \delta_{ij}$, where the Kronecker delta is given by 
+    $$ \delta_{ij} = \begin{cases} 1 & i =j \\ 0 & i \neq j \end{cases}. $$
+    This can be written in terms of a canonical basis $\{b_i\}_{i=1}^3$ as $\ten I=\sum_{i=1}^3b_i \otimes b_i$. Note that the Kronecker delta allows us to change indices in another factor of a given term, that is, 
     \begin{equation*}
         A_{ij}\delta_{jk} = \begin{cases}
             A_{ij} &j=k\\
             0 &j\neq k
         \end{cases}
-        = A_{ik}.
+        \quad = A_{ik}.
     \end{equation*}
 \end{definition}
 \begin{definition}[Cross product and the Levi-Civita symbol]\label{def:levi-civita}
