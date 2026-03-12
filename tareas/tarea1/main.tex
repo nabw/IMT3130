@@ -62,18 +62,8 @@
                 \item\pts{1} Considere la función $f:\Omega \to \R$ dada por $f(x) = \sin (2\pi x)$. Para ella, considere un esquema de diferenciación numérica usando el método de diferencias finitas para aproximar su derivada $f'(x)$ en $\Omega$. En particular, calcule la tasa de convergencia teórica para los esquemas de diferencias hacia adelante, hacia atrás, y centradas en la norma $\|\cdot \|_{\infty,h}$. Para ello, considere $a=-1$, $b=1$, y una distancia entre puntos discretos dada por $h  \in \{2^{-n}\}_{n=4}^{20}$, calcule las tasas de convergencia empíricas e interprete los resultados obtenidos.
                 \item\pts{1} Repita el ejercicio anterior para la función $f(x) = 2$ e interprete los resultados obtenidos.
             \end{itemize}
-    \item Considere el dominio $\Omega=(0,1)$. En él, discretizar el operador diferencial $\mathcal L$ dado por
-            $$ \mathcal L u = - u'' + bu' + cu, $$
-            tal que $u(0) = 1$, $u(1) = 2$. 
-            Este problema se conoce como la ecuación de Advección-Difusión-Reacción (ADR).  Calcularemos la sensibilidad del problema a sus parámetros en términos del condicionamiento del sistema, que está intrínsicamente relacionado con la dificultad numérica del problema. Llamaremos a la matriz inducida $\mat L_h$. 
-            \begin{itemize}
-                \item\pts{1} Muestre la ecuación correspondiente al nodo $i$ de la malla para (i) diferencias hacia adelante para $u'$ y (ii) diferencias centradas para $u'$. 
-                \item\pts{2} En cada una de las dos discretizaciones del punto anterior, muestre que la discretización obtenida es consistente y calcule el orden de consistencia.
-                \item\pts{1} Grafique el condicionamiento de la matriz $\mat L_h$ con respecto a los siguientes valores: $h \in \{2^{-n}\}_{n=2}^8$, $b \in \{0.01,0.1,1,10,100\}$, y $c \in \{0.01,0.1,1,10,100\}$. Hágalo solo para el esquema donde $u'$ es tratada con diferencias centradas.
-                \item\pts{2} Demuestre teóricamente que la solución discreta obtenida con la matriz $\mat L_h$ converge a la solución continua si $b=0$. 
-                \item\pts{2} Usando el método de las soluciones manufacturadas, muestre que la tasa de convergencia numérica a una solución analítica es la esperada por la teoría. 
-            \end{itemize}
-
+        \item\pts{2} Implemente las derivadas discretas de primer orden $\ten D^+, \ten D^-, \ten D$ y construya un ejemplo para validar las tasas de convergencia vistas en clase. Calcule analíticamente la tasa de convergencia de las diferencias centradas para las derivadas de segundo orden $\ten D^-\ten D^+$, y programe un ejemplo para validar también su tasa de convergencia. Finalmente, analice el caso de la composición de diferencias centradas $\ten D\ten D$.
+        \item\pts{2} En el apunte se detalla cómo las diferencias centradas se pueden escribir como la composición de los operadores de diferencias hacia adelante y hacia atrás según $\ten D^+ \ten D^- = \ten D^-\ten D^+$. Demuestre teóricamente que en cambio $\ten D^+\ten D^+$ (o $\ten D^-\ten D^-$) no es buena aproximacion de la derivada de segundo orden.
 \end{enumerate}
 
 \todo[inline,color=white!90!black]{\textbf{Nota: } Abriremos un foro en Canvas para revisar cualquier typo y/o error que haya en el enunciado.}
