@@ -17,6 +17,7 @@
 \renewcommand{\vec}{\vectorsym}
 \newcommand{\mat}{\matrixsym}
 \newcommand{\ten}{\tensorsym}
+\newcommand{\der}[2]{\frac{d#1}{d#2}}
 \DeclareMathOperator{\grad}{\nabla}
 \DeclareMathOperator{\dive}{\text{div}}
 \DeclareMathOperator{\curl}{\text{curl}}
@@ -47,15 +48,32 @@
     \item\pts{2} El Teorema de Caley-Hamilton establece que toda matriz satisface su propia ecuación característica usando las invariantes: 
                 $$ \mat A^3 - I_1(\mat A) \mat A^2 + I_2(\mat A) \mat A - I_3(\mat A) \mat I = 0. $$
                 Derive esta ecuación con respecto a $\mat A$ y desarrolle la ecuación para demostrar que $\parder{\det \mat A}{\mat A} = \det (\mat A) \mat A^{-T}$.
-    \item  Use la pregunta anterior para demostrar que si $A:\R \to \R^{n\times n}$ es una función matricial, luego
-                $$ \dot{\det A}(t) = \det A(t) A^{-T}(t) : \dot A(t). $$
-            \item Si $\phi, \vec u, \ten A$ son un campo escalar, vectorial, y matricial respectivamente en $\R^3$, demuestre que si $\vec v$ es otro campo vectorial:
+    \item\pts{1}  Use la pregunta anterior para demostrar que si $A:\R \to \R^{n\times n}$ es una función matricial, luego
+            $$ \der{\det A}{t}(t) = \det A(t) A^{-T}(t) : \der A{t}(t). $$
+            \item Si $\phi, \vec u, \ten A$ son un campo escalar, vectorial, y matricial respectivamente en $\R^3$, demuestre usando notación indicial que si $\vec v$ es otro campo vectorial:
                     \begin{itemize}
                         \item\pts{0.5} $$\dive(\phi\vec  u) = \phi \dive \vec u + \vec u \cdot \grad \phi $$
                         \item\pts{0.5} $$\dive(\phi\ten  A) = \phi \dive \ten A + \ten A \grad \phi $$
                         \item\pts{0.5} $$\dive(\vec u \times \vec v) = \vec v\cdot \curl \vec u - \vec u \cdot \curl v $$
                         \item\pts{0.5} $$ \grad(\phi \vec u) = \vec u \otimes \grad \phi + \phi \grad \vec u$$
                     \end{itemize}
+    \item Considere el dominio $\Omega=(a,b)$ con $a<b$.
+            \begin{itemize}
+                \item\pts{1} Considere la función $f:\Omega \to \R$ dada por $f(x) = \sin (2\pi x)$. Para ella, considere un esquema de diferenciación numérica usando el método de diferencias finitas para aproximar su derivada $f'(x)$ en $\Omega$. En particular, calcule la tasa de convergencia teórica para los esquemas de diferencias hacia adelante, hacia atrás, y centradas en la norma $\|\cdot \|_{\infty,h}$. Para ello, considere $a=-1$, $b=1$, y una distancia entre puntos discretos dada por $h  \in \{2^{-n}\}_{n=4}^{20}$, calcule las tasas de convergencia empíricas e interprete los resultados obtenidos.
+                \item\pts{1} Repita el ejercicio anterior para la función $f(x) = 2$ e interprete los resultados obtenidos.
+            \end{itemize}
+    \item Considere el dominio $\Omega=(0,1)$. En él, discretizar el operador diferencial $\mathcal L$ dado por
+            $$ \mathcal L u = - u'' + bu' + cu, $$
+            tal que $u(0) = 1$, $u(1) = 2$. 
+            Este problema se conoce como la ecuación de Advección-Difusión-Reacción (ADR).  Calcularemos la sensibilidad del problema a sus parámetros en términos del condicionamiento del sistema, que está intrínsicamente relacionado con la dificultad numérica del problema. Llamaremos a la matriz inducida $\mat L_h$. 
+            \begin{itemize}
+                \item\pts{1} Muestre la ecuación correspondiente al nodo $i$ de la malla para (i) diferencias hacia adelante para $u'$ y (ii) diferencias centradas para $u'$. 
+                \item\pts{2} En cada una de las dos discretizaciones del punto anterior, muestre que la discretización obtenida es consistente y calcule el orden de consistencia.
+                \item\pts{1} Grafique el condicionamiento de la matriz $\mat L_h$ con respecto a los siguientes valores: $h \in \{2^{-n}\}_{n=2}^8$, $b \in \{0.01,0.1,1,10,100\}$, y $c \in \{0.01,0.1,1,10,100\}$. Hágalo solo para el esquema donde $u'$ es tratada con diferencias centradas.
+                \item\pts{2} Demuestre teóricamente que la solución discreta obtenida con la matriz $\mat L_h$ converge a la solución continua si $b=0$. 
+                \item\pts{2} Usando el método de las soluciones manufacturadas, muestre que la tasa de convergencia numérica a una solución analítica es la esperada por la teoría. 
+            \end{itemize}
+
 \end{enumerate}
 
 \todo[inline,color=white!90!black]{\textbf{Nota: } Abriremos un foro en Canvas para revisar cualquier typo y/o error que haya en el enunciado.}
