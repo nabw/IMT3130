@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+
+\title{Tarea 1}
+%\author{Nicol\'as A Barnafi\thanks{Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile, Chile}, Axel Osses\thanks{Departamento de Ingeniería Matemática, Universidad de Chile, Chile}}
+%\author{Nicol\'as A Barnafi}
+\date{}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\newcommand{\tin}{\text{in}}
+\newcommand{\ton}{\text{on}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\pts}[1]{[{\bf #1 puntos}]}
+
+\begin{document}
+
+\maketitle
+\hfill \textbf{Fecha de entrega: 23:59 del 11/04/2025}
+ 
+\todo[inline,color=white!90!black]{\textbf{Instrucciones: } La tarea debe ser entregada de manera individual en un informe en formato .pdf a través del buzón habilitado en la plataforma Canvas, donde deben mostrar también el código desarrollado. Para su conveniencia, pueden entregar las tareas en un Jupyter Notebook, de modo que sea más cómodo mostrar el código. La política de atrasos será: se calculará un factor lineal que vale 1 a la hora de entrega y 0 48 horas después. Esto multiplicará su puntaje obtenido. Pueden usar ChatGPT u otros modelos solo a conciencia. El uso de salidas de GPT sin su debida comprensión será severamente sancionado. }
+
+\begin{enumerate}
+    \item Considere el dominio $\Omega=(a,b)$ con $a<b$.
+            \begin{itemize}
+                \item\pts{1} Considere la función $f:\Omega \to \R$ dada por $f(x) = \sin (2\pi x)$. Para ella, considere un esquema de diferenciación numérica usando el método de diferencias finitas para aproximar su derivada $f'(x)$ en $\Omega$. En particular, calcule la tasa de convergencia teórica para los esquemas de diferencias hacia adelante, hacia atrás, y centradas en la norma $\|\cdot \|_{\infty,h}$. Para ello, considere $a=-1$, $b=1$, y una distancia entre puntos discretos dada por $h  \in \{2^{-n}\}_{n=4}^{20}$, calcule las tasas de convergencia empíricas e interprete los resultados obtenidos.
+                \item\pts{1} Repita el ejercicio anterior para la función $f(x) = 2$ e interprete los resultados obtenidos.
+            \end{itemize}
+    \item Considere el dominio $\Omega=(0,1)$. En él, discretizar el operador diferencial $\mathcal L$ dado por
+            $$ \mathcal L u = - u'' + bu' + cu, $$
+            tal que $u(0) = 1$, $u(1) = 2$. 
+            Este problema se conoce como la ecuación de Advección-Difusión-Reacción (ADR).  Calcularemos la sensibilidad del problema a sus parámetros en términos del condicionamiento del sistema, que está intrínsicamente relacionado con la dificultad numérica del problema. Llamaremos a la matriz inducida $\mat L_h$. 
+            \begin{itemize}
+                \item\pts{1} Muestre la ecuación correspondiente al nodo $i$ de la malla para (i) diferencias hacia adelante para $u'$ y (ii) diferencias centradas para $u'$. 
+                \item\pts{2} En cada una de las dos discretizaciones del punto anterior, muestre que la discretización obtenida es consistente y calcule el orden de consistencia.
+                \item\pts{1} Grafique el condicionamiento de la matriz $\mat L_h$ con respecto a los siguientes valores: $h \in \{2^{-n}\}_{n=2}^8$, $b \in \{0.01,0.1,1,10,100\}$, y $c \in \{0.01,0.1,1,10,100\}$. Hágalo solo para el esquema donde $u'$ es tratada con diferencias centradas.
+                \item\pts{2} Demuestre teóricamente que la solución discreta obtenida con la matriz $\mat L_h$ converge a la solución continua si $b=0$. 
+                \item\pts{2} Usando el método de las soluciones manufacturadas, muestre que la tasa de convergencia numérica a una solución analítica es la esperada por la teoría. 
+            \end{itemize}
+    \item Considere la ecuación del calor en $\Omega = (0,1)^2$ con condiciones de borde homogéneas ($u=0$ en todo instante) y una condición inicial $u(0)=u_0$:
+            $$ \dot u - \mu \Delta u = 0 , $$
+            donde $\mu$ es una constante real positiva.
+            \begin{itemize}
+                \item\pts{1} Considere una discretización temporal de paso $\tau$ y espacial de paso $h$. Muestre cómo se discretiza la ecuación del calor usando (i) un esquema explícito en tiempo y (ii) uno implícito en tiempo, ambos con diferencias finitas en espacio.
+                \item\pts{2} Verifique que ambas discretizaciones son consistentes. 
+                \item\pts{3} Implemente ambos esquemas y considere la condición inicial $u_0(x) = I_{|x| < 0.2}(x)$. Grafique la solución para $h=0.05$ y $\tau=0.01$ en el instante $t=0.5$. 
+                \item\pts{2} Usando el análisis de estabilidad de von Neumann, verifique la (in)estabilidad condicional (o no) de los esquemas explícito e implícito. Se puede restringir al caso 1D en espacio para esto. 
+                \item\pts{2} Verifique que el esquema explícito se vuelve instable si no se satisface la condición CFL relacionada comparando la solución del problema en el instante $t=1.0$ para distintas discretizaciones.
+            \end{itemize}
+\end{enumerate}
+
+\todo[inline,color=white!90!black]{\textbf{Nota: } Abriremos un foro en Canvas para revisar cualquier typo y/o error que haya en el enunciado.}
+\end{document}
+
