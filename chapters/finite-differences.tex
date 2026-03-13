@@ -173,7 +173,7 @@ which will allow us to define convergence.
                 which is simply the continuity of the inverse map $\mat A_h^{-1}$. Consider an arbitrary grid vector $\vec f_h$, and we denote the associated problem solution as $\vec u_h$, where $\mat A_h \vec u_h = \vec f_h$. Using this, we have that
                 \begin{tightalign*} 
                     \|\mat A_h^{-1}\vec f_h\|_{\infty,h} = \| \vec u_h \|_{\infty, h} &\leq \| \vec u_h - R_h u \|_{\infty, h} + \| R_h u \|_{\infty, h}    \tag{convergence}\\
-                    &\leq C h^k + \| R_h \mathcal A^{-1} f \|_{\infty, h}. \tag{stability}
+                    &\leq C h^k + \| R_h \mathcal A^{-1} f \|_{\infty, h}.
                 \end{tightalign*}
                 To bound this last term, we note that $R_h$ yields pointwise evaluations, so for any continuous function $\eta$ it will hold that
                 \begin{equation*}
@@ -181,7 +181,7 @@ which will allow us to define convergence.
                 \end{equation*}
                 where $\| \eta \|_0$ is the supremum norm. Finally, we use that $\mathcal A$ is a continuous bijection, and thus from the open mapping theorem it holds that $\|\mathcal A^{-1}\|$ is bounded by some constant $C_2$. Using this fact, the previous estimate becomes 
                 \begin{equation*}
-                    \| \mat A_h^{-1} \vec f_h \|_{\infty,h} \leq Ch^k + \| \mathcal A f \|_0 \leq C h^k + C_2 \| \vec f_h \|_0<\infty,
+                    \| \mat A_h^{-1} \vec f_h \|_{\infty,h} \leq Ch^k + \| \mathcal A^{-1} f \|_0 \leq C h^k + C_2 \| f \|_0<\infty,
                 \end{equation*}
                 which in particular shows that $ \| \mat A_h^{-1} \vec f_h \|$ is bounded for all $\vec f_h$. The uniform boundedness principle then yields that the operator $\mat A_h^{-1}$ is bounded, which concludes the proof.
         \end{itemize}
