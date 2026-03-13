@@ -12,7 +12,7 @@ Probably the simplest (and oldest) idea for approximating equations stems from t
         f(b) = \sum_{k=0}^{n-1}\frac{f^{(k)}(a)}{k!}(b-a)^k + \frac{f^{(n)}(\xi)}{n!}(b-a)^n.
     \end{equation}
 \end{theorem}
-Naturally, this arises from the mean value theorem when $n=1$. From now on we consider our setting to be in $\R$. For any continuous function $f:(a,b)\to \R$, we can define its associated \emph{grid function} given by its evaluation in a finite set of points. We sometimes refer to this as \emph{collocation}. Set $a<b$, and define the points $a=x_0<\hdots<x_N=b$ with $h_i=x_{i}-x_{i-1}$, such that we have $N$ points, and define the grid operator $R_h$ and the grid function $R_h f$ as
+Naturally, this arises from the mean value theorem when $n=1$. From now on we consider our setting to be in $\R$. For any continuous function $f:(a,b)\to \R$, we can define its associated \emph{grid function} given by its evaluation in a finite set of points. We sometimes refer to this as \emph{collocation}. Set $a<b$, and define the points $a=x_1<\hdots<x_N=b$ with $h_i=x_{i+1}-x_{i}$, such that we have $N$ points, and define the grid operator $R_h$ and the grid function $R_h f$ as
 \begin{equation}\label{eq:def-grid-function}
     \begin{aligned}
         R_h:C((a,b),\R)&\to [\R^N\to \R^N]\\
@@ -23,15 +23,15 @@ We can then define the following difference operators:
 \begin{itemize}
     \item Forward difference: 
     \begin{equation*}
-        D^+f(x_i) \coloneqq \frac{f_{i+1} - f_i}{h_{i+1}}
+        D^+f(x_i) \coloneqq \frac{f_{i+1} - f_i}{h_{i}}
     \end{equation*}
     \item Backward difference: 
     \begin{equation*}
-        D^-f(x_i) \coloneqq \frac{f_{i} - f_{i-1}}{h_{i}}
+        D^-f(x_i) \coloneqq \frac{f_{i} - f_{i-1}}{h_{i-1}}
     \end{equation*}
     \item Centered difference:
     \begin{equation*}
-        Df(x_i) \coloneqq \frac{f_{i+1} - f_{i-1}}{h_{i+1} + h_{i-1}}
+        Df(x_i) \coloneqq \frac{f_{i+1} - f_{i-1}}{h_{i} + h_{i-1}}
     \end{equation*}
 \end{itemize}
 A nice simple exercise is to extend these ideas to second order derivatives, which all stem from Taylor's formula. The application we will be interested is in that of approximating the action of a differential operator using these formulas. For this, we will focus on the forward difference formula. At each grid point we will have
