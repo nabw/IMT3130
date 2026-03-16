@@ -6,52 +6,87 @@ In this chapter, we will formally develop these concepts. We will define weak de
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Weak derivatives and Sobolev spaces}\label{sec:weak-derivatives-sobolev-spaces}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Distributions and derivatives} 
-{\color{blue}
-To formulate differential equations in Banach/Hilbert spaces, it will be important to be able to define derivatives in such spaces. This is done through the language of \emph{distributions}, invented (discovered) by L Schwartz. For this, we require the notion of `test functions', i.e. functions on which we can discharge derivatives of abstract objects through integration by parts.
-\begin{definition}[Distribution, action of a distribution]
-    Consider then a function $f$ in $C_0^\infty(\R^n)$. A \emph{distribution} is an element $T\in (C_0^\infty(\R^n))'$, whose action can be written as $\langle T, f\rangle_{(C_0^\infty)'\times C_0^\infty}$, or sometimes simply as $\langle T, f\rangle$, if it is clear by context. 
+
+\subsection{Distributions and weak derivatives}
+
+Classical derivatives require functions to be pointwise differentiable – a condition too restrictive for many problems in PDEs. The language of distributions, introduced by L. Schwartz, provides a rigorous framework in which every locally integrable function is infinitely differentiable in a generalised sense. The key idea is to interpret a function not by its pointwise values, but by its action on a space of very smooth ``test functions'' through integration. Differentiation is then transferred to the test function via integration by parts, giving a definition that makes sense for a much larger class of objects.
+
+\begin{definition}[Test functions]
+Let $\Omega\subset\mathbb R^n$ be open. The space of test functions is
+\[
+\mathcal D(\Omega):=C_c^\infty(\Omega)=\{\phi\in C^\infty(\Omega):\operatorname{supp}\phi\text{ is compact}\}.
+\]
+We say that a sequence $\{\phi_k\}_{k\in\mathbb N}\subset\mathcal D(\Omega)$ converges to $\phi\in\mathcal D(\Omega)$ in $\mathcal D(\Omega)$ if
+\begin{itemize}
+\item there exists a compact set $K\subset\Omega$ such that $\operatorname{supp}\phi_k\subset K$ for all $k$, and
+\item for every multi‑index $\alpha$, $\partial^\alpha\phi_k\to\partial^\alpha\phi$ uniformly on $K$.
+\end{itemize}
+This notion of convergence defines a topology on $\mathcal D(\Omega)$, but for our purposes it is enough to work with sequences and this characterisation of convergence.
 \end{definition}
 
-The topology we consider in each space is the usual one, meaning the ones induced by the norms. In $\mathcal D(\R^n)\coloneqq C_0^\infty(\R^n)$, the norm is the supremum over all derivatives:
-\begin{equation} %! verify
-    \| f \|_{\mathcal D(\R^n)} \coloneqq \sup_{k} \sup_{|\alpha|} \|D^\alpha f\|_\infty,
-\end{equation}
-where $\alpha=(\alpha_1, \hdots, \alpha_N)$ is called a \emph{multi-index}, with $|\alpha| = \sum_i \alpha_i$, and $D^\alpha$ is a differential operator given by 
-\begin{equation}
-    D^\alpha \coloneqq \frac{\partial^{|\alpha|}}{\partial^{\alpha_1}_{x_1}\hdots \partial^{\alpha_N}_{x_N}}.
-\end{equation}
-For example, when $k=2$, the possible multi-indices in $\R^2$ are $(2,0)$, $(1,1)$, and $(0,2)$, and thus the three possible operators are
-\begin{equation*}
-    \frac{\partial^2}{\partial x^2},\quad  \frac{\partial^2}{\partial x\partial y} = \frac{\partial^2}{\partial y\partial x},\quad \frac{\partial^2}{\partial y^2},
-\end{equation*}
-where the equality between both mixed partial derivatives is given by Schwartz's theorem, which always applies since distributions are $C^\infty$ by construction. 
-Using that, the norm of a distribution is simply given by the operator norm. }
+\begin{definition}[Distribution]
+A distribution is a continuous linear functional on $\mathcal D(\Omega)$. The space of all distributions is denoted by $\mathcal D'(\Omega)$. Continuity means that if $\phi_k\to\phi$ in $\mathcal D(\Omega)$ then $\langle T,\phi_k\rangle\to\langle T,\phi\rangle$ in $\mathbb R$ (or $\mathbb C$). We write the action of $T$ on a test function $\phi$ as $\langle T,\phi\rangle$.
+\end{definition}
 
-The idea now is to generalize the notion of action through integration, so that for sufficiently smooth functions $f$, their induced distribution is $Tf$ given by
-\begin{equation}\label{eq:action-distribution}
-    \langle Tf, g \rangle = \int_{\R^n} fg\,dx.
-\end{equation}
-\example{All classical (or strong) derivatives coincide with the weak derivatives, as seen from the integration by parts formulas. Also, consider the Dirac delta distribution given by
-\begin{equation*}
-    \langle \delta_x, f\rangle = f(x),
-\end{equation*}
-sometimes written as $\delta_x(f)$, or also simply as $\int_\Omega \delta_x f\,dx$ (with a \emph{not too mild} abuse of notation).
-Then, its derivative is given by 
-    \begin{equation*}
-\langle \delta', f \rangle = -\langle \delta_x, f'\rangle = - f'(x).
-\end{equation*}\vspace{-15pt}
+\example{
+Every locally integrable function $f\in L^1_{\text{loc}}(\Omega)$ defines a distribution $T_f$ by
+\[
+\langle T_f,\phi\rangle:=\int_\Omega f(x)\phi(x)\,dx\qquad\forall\phi\in\mathcal D(\Omega).
+\]
+Linearity is obvious, and continuity follows from the dominated convergence theorem because the supports of the test functions are contained in a fixed compact set. Such distributions are called \emph{regular}. Conversely, not every distribution arises from a function; those that do not are called \emph{singular}.
 }
 
-This integral approach, when thinking about integration by parts formulas, allows us to define distributional derivatives $\partial_{x_i} T$ as
-\begin{equation}\label{eq:distributional-ibp}
-    \langle \partial_{x_i} T, f\rangle \coloneqq -\langle T, \partial_{x_i} f\rangle,
-\end{equation}
-as given by integration by parts. This is known as a \emph{weak derivative}. Arbitrary order differential operators can be defined analogously, most importantly $\grad, \dive, \curl$, given by 
-\begin{tightalign}
-    \langle \dive T, f\rangle &\coloneqq -\langle T, \grad f\rangle, \\
-    \langle \curl T, f\rangle &\coloneqq \langle T, \curl f\rangle.
-\end{tightalign}
+\example{
+    Fix a point $x_0\in\Omega$. The \emph{Dirac delta distribution} $\delta_{x_0}$ is defined by
+\[
+\langle\delta_{x_0},\phi\rangle:=\phi(x_0)\qquad\forall\phi\in\mathcal D(\Omega).
+\]
+It is clearly linear and continuous (point evaluation is continuous in the topology of $\mathcal D$). It is singular because it cannot be represented by a locally integrable function.
+}
+
+\subsubsection{Distributional derivatives}
+The great power of distributions lies in the fact that every distribution is differentiable (infinitely many times) in a weak sense. The definition mimics integration by parts.
+
+\begin{definition}[Distributional derivative]
+Let $T\in\mathcal D'(\Omega)$ and let $\alpha$ be a multi‑index. The distributional derivative $\partial^\alpha T$ is the distribution defined by
+\[
+\langle\partial^\alpha T,\phi\rangle:=(-1)^{|\alpha|}\langle T,\partial^\alpha\phi\rangle\qquad\forall\phi\in\mathcal D(\Omega).
+\]
+The right‑hand side is well defined because $\partial^\alpha\phi\in\mathcal D(\Omega)$, and the map $\phi\mapsto\langle T,\partial^\alpha\phi\rangle$ is continuous; hence $\partial^\alpha T$ is indeed a distribution.
+\end{definition}
+
+\example{
+    \begin{itemize}
+        \item If $f$ is a continuously differentiable function, then the distributional derivative of $T_f$ coincides with the distribution generated by the classical derivative $\partial^\alpha f$, because integration by parts gives
+            \[
+            \langle T_{\partial^\alpha f},\phi\rangle=\int_\Omega (\partial^\alpha f)\phi =(-1)^{|\alpha|}\int_\Omega f\,\partial^\alpha\phi =(-1)^{|\alpha|}\langle T_f,\partial^\alpha\phi\rangle.
+            \]
+        \item The derivative of the Dirac delta is
+            \[
+            \langle\delta'_{x_0},\phi\rangle = -\langle\delta_{x_0},\phi'\rangle = -\phi'(x_0).
+            \]
+        \item The Heaviside function $H(x)=1$ for $x>0$, $H(x)=0$ for $x<0$ (defined on $\mathbb R$) has distributional derivative $H'=\delta_0$:
+            \[
+            \langle H',\phi\rangle = -\int_0^\infty \phi'(x)\,dx = \phi(0).
+            \]
+    \end{itemize}
+}
+
+\begin{remark}[Weak derivatives in Sobolev spaces]
+When a distribution $T$ can be identified with a function $u\in L^1_{\text{loc}}(\Omega)$ and its distributional derivative $\partial^\alpha T$ can also be identified with a function $v\in L^1_{\text{loc}}(\Omega)$, we say that $v$ is the \emph{weak derivative} of $u$ and write $\partial^\alpha u=v$. This is exactly the notion that will be used to define Sobolev spaces in the next section.
+\end{remark}
+
+For vector‑valued distributions $\mathbf T=(T_1,\dots,T_n)$, we define the distributional divergence and curl componentwise in the obvious way, e.g.
+\[
+\langle\operatorname{div}\mathbf T,\phi\rangle := -\langle\mathbf T,\nabla\phi\rangle = -\sum_{i=1}^n\langle T_i,\partial_i\phi\rangle\qquad(\phi\in\mathcal D(\Omega)),
+\]
+and for $\mathbf T$ in $\mathbb R^3$,
+\[
+\langle\operatorname{curl}\mathbf T,\boldsymbol\psi\rangle := \langle\mathbf T,\operatorname{curl}\boldsymbol\psi\rangle\qquad(\boldsymbol\psi\in\mathcal D(\Omega)^3).
+\]
+
+
+
 \paragraph{Sobolev spaces} The notion of weak derivatives allows us to define differentiable Banach spaces, which are known as \emph{Sobolev spaces}.
 \begin{definition}[Sobolev spaces]
     Let $\Omega\subset\R^n$ be an open set, and let $1\leq p\leq \infty$. The Sobolev space $W^{1,p}=W^{1,p}(\Omega)$ is defined as the subspace of scalar-valued functions in $L^p(\Omega)$ whose first (weak) derivative is also in $L^p(\Omega)$, i.e.
