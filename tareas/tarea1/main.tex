@@ -64,7 +64,9 @@
             \end{itemize}
         \item\pts{3} Implemente las derivadas discretas de primer orden $\ten D^+, \ten D^-, \ten D$ y construya un ejemplo para validar las tasas de convergencia vistas en clase. Calcule analíticamente la tasa de convergencia de las diferencias centradas para las derivadas de segundo orden $\ten D^-\ten D^+$, y programe un ejemplo para validar también su tasa de convergencia. Finalmente, analice el caso de la composición de diferencias centradas $\ten D\ten D$.
         \item\pts{2} En el apunte se detalla cómo las diferencias centradas se pueden escribir como la composición de los operadores de diferencias hacia adelante y hacia atrás según $\ten D^+ \ten D^- = \ten D^-\ten D^+$. Demuestre teóricamente que en cambio $\ten D^+\ten D^+$ (o $\ten D^-\ten D^-$) no es buena aproximacion de la derivada de segundo orden.
-    \item Considere el dominio $\Omega=(0,1)$. En él, discretizar el operador diferencial $\mathcal L$ dado por
+    \item Considere el dominio $\Omega=(0,1)$. En él, discretizar la ecuación 
+            $$ \mathcal L u = 1 $$ 
+            con el operador diferencial $\mathcal L$ dado por
             $$ \mathcal L u = - u'' + bu' + cu, $$
             tal que $u(0) = 1$, $u(1) = 2$. 
             Este problema se conoce como la ecuación de Advección-Difusión-Reacción (ADR).  Calcularemos la sensibilidad del problema a sus parámetros en términos del condicionamiento del sistema, que está intrínsicamente relacionado con la dificultad numérica del problema. Llamaremos a la matriz inducida $\mat L_h$. 
