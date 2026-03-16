@@ -68,13 +68,12 @@
             $$ \mathcal L u = 1 $$ 
             con el operador diferencial $\mathcal L$ dado por
             $$ \mathcal L u = - u'' + bu' + cu, $$
-            tal que $u(0) = 1$, $u(1) = 2$. 
-            Este problema se conoce como la ecuación de Advección-Difusión-Reacción (ADR).  Calcularemos la sensibilidad del problema a sus parámetros en términos del condicionamiento del sistema, que está intrínsicamente relacionado con la dificultad numérica del problema. Llamaremos a la matriz inducida $\mat L_h$. 
+            con condiciones de borde dadas por $u(0) = 1$, $u(1) = 2$. Este problema se conoce como la ecuación de Advección-Difusión-Reacción (ADR).  Calcularemos la sensibilidad del problema a sus parámetros en términos del condicionamiento del sistema, que está intrínsicamente relacionado con la dificultad numérica del problema. Llamaremos a la matriz inducida por la discretización $\mat L_h$. 
             \begin{itemize}
                 \item\pts{1} Muestre la ecuación correspondiente al nodo $i$ de la malla para (i) diferencias hacia adelante para $u'$ y (ii) diferencias centradas para $u'$. 
                 \item\pts{2} En cada una de las dos discretizaciones del punto anterior, muestre que la discretización obtenida es consistente y calcule el orden de consistencia.
-                \item\pts{1} Grafique el condicionamiento de la matriz $\mat L_h$ con respecto a los siguientes valores: $h \in \{2^{-n}\}_{n=2}^8$, $b \in \{0.01,0.1,1,10,100\}$, y $c \in \{0.01,0.1,1,10,100\}$. Hágalo solo para el esquema donde $u'$ es tratada con diferencias centradas.
-                \item\pts{2} Demuestre teóricamente que la solución discreta obtenida con la matriz $\mat L_h$ converge a la solución continua si $b=0$. 
+                \item\pts{1} Grafique en un gráfico log-log el condicionamiento de la matriz $\mat L_h$ con respecto a los siguientes valores: $h \in \{2^{-n}\}_{n=2}^8$, $b \in \{0.01,0.1,1,10,100\}$, y $c \in \{0.01,0.1,1,10,100\}$. Hágalo solo para el esquema donde $u'$ es aproximado con diferencias centradas.
+                \item\pts{2} Demuestre teóricamente usando el Teorema de Equivalencia de Lax que la solución discreta obtenida con la matriz $\mat L_h$ converge a la solución continua si $b=0$. Para ello, extienda la demostración del apunte para el Laplaciano.
                 \item\pts{2} Usando el método de las soluciones manufacturadas, muestre que la tasa de convergencia numérica a una solución analítica es la esperada por la teoría. 
             \end{itemize}
 
