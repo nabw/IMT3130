@@ -166,7 +166,7 @@ which will allow us to define convergence.
                 &=C \|R_h(\mathcal A u) - \mat A_hR_h u\|_{\infty,h} \\
                 &\leq Ch^k  \tag{consistency}.
             \end{tightalign*}
-            \item Convergence $\implies$ stability: by taking inverses, we can write stability as 
+            \item Convergence $\implies$ stability: For this proof we will require the solution $u$ to be continuous, that the discrete operator $\mat A_h$ is invertible, and that the inverse operator $\mathcal A$ is bijective and bounded, i.e. $\| \mathcal A \| \leq M$. By taking inverses, we can write stability as 
                 \begin{equation*}
                     \| \mat A_h^{-1}\vec f_h \|_{\infty, h} \leq C \|\vec f_h\|_{\infty, h},
                 \end{equation*}
