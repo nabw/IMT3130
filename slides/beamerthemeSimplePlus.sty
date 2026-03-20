@@ -1,0 +1,93 @@
+\mode<presentation>
+
+% Settings
+\setbeamercovered{transparent=5}
+\usetheme{Madrid}
+\useinnertheme{circles}
+\newcommand{\code}[1]{{\color{purple}\tt #1}}
+
+\usefonttheme{SimplePlus}
+\usecolortheme{SimplePlus}
+\useinnertheme{SimplePlus}
+
+%% Some custom commands
+\newcommand{\darkSlide}[1]{ 
+    { 
+    \setbeamercolor{background canvas}{bg=DarkBlue} 
+    \setbeamercolor{frametitle}{fg=InvisibleBlue} 
+    \setbeamercolor{section in toc}{fg=white} 
+    \setbeamercolor{subsection in toc}{fg=white} 
+    \setbeamercolor{section in toc shaded}{fg=black} 
+    \setbeamercolor{subsection in toc shaded}{fg=black} 
+    \setbeamertemplate{footline}{} 
+    \begin{frame} 
+        \vspace{4.5cm} 
+        \huge{\color{white} \hfill \textbf{#1}} 
+    \end{frame} 
+    } 
+} 
+\newcommand{\alertGreen}[1]{{\color{MediumGreen}#1}} 
+\newcommand{\alertBlue}[1]{{\color{MediumBlue}#1}} 
+\newcommand{\newref}[1]{{\footnotesize \color{green!50!white!60!black}\textleaf  $\,$#1}}
+\AtBeginSection[]
+{
+    {
+        \setbeamertemplate{footline}{}
+        \setbeamercolor{background canvas}{bg=DarkBlue}
+        \setbeamercolor{frametitle}{fg=InvisibleBlue}
+        \setbeamercolor{section in toc}{fg=white}
+        \setbeamercolor{subsection in toc}{fg=white}
+        \setbeamercolor{section in toc shaded}{fg=black}
+        \setbeamercolor{subsection in toc shaded}{fg=black}
+        \begin{frame}
+            \frametitle{Contents}
+            \tableofcontents[currentsection,currentsubsection]
+            
+            \vspace{2cm}
+            \begin{center}
+            \Huge{\bf\color{white} \secname}
+            \end{center}
+        \end{frame}
+    }
+}
+
+\AtBeginSubsection[]
+{
+    {
+        \setbeamertemplate{footline}{}
+        \setbeamercolor{background canvas}{bg=DarkBlue}
+        \setbeamercolor{frametitle}{fg=InvisibleBlue}
+        \setbeamercolor{section in toc}{fg=white}
+        \setbeamercolor{subsection in toc}{fg=white}
+        \setbeamercolor{section in toc shaded}{fg=black}
+        \setbeamercolor{subsection in toc shaded}{fg=black}
+        \begin{frame}
+            \frametitle{Contents}
+            \tableofcontents[currentsection,currentsubsection]
+            
+            \vspace{2cm}
+            \begin{center}
+            \Huge{\bf\color{white} \subsecname}
+            \end{center}
+        \end{frame}
+    }
+}
+
+
+
+% Small block for ideas
+\newlength{\myl}
+\newcommand{\idea}[1]{
+    \settowidth{\myl}{$\quad$ #1 $\quad$}
+    \begin{minipage}{\myl}
+        \begin{alertblock}{}
+            \begin{center}
+            {\bf\color{MediumBlue}#1}
+            \end{center}
+        \end{alertblock}
+    \end{minipage}
+}
+
+
+
+\mode<all>

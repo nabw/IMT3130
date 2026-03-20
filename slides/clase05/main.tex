@@ -1,15 +1,15 @@
 \documentclass[aspectratio=169]{beamer}
-\usetheme{Madrid}
+\usetheme{SimplePlus}
 \usecolortheme{default}
 
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{bm}
+%\usepackage{bm}
 
 \title[Finite Differences in 2D/3D \& Nonlinearities]{Finite Differences in 2D/3D and \\ Unavoidable Nonlinearities}
-\author{Nicol\'as A. Barnafi \and Federico Fuentes}
-\date{\today}
+\author{Nicol\'as A. Barnafi}
+\date{}
 
 \begin{document}
 
@@ -23,60 +23,82 @@
 
 \section{2D Domain Discretization}
 
-\begin{frame}{Collocation and the 2D Grid}
-    When moving from 1D to higher dimensions, the natural scenario is to discretize a domain using a tensor product of intervals. 
+\begin{frame}{Collocation and the discrete geometry}
+    Extension to higher dimensions $\to$ tensor products.
     
-    Consider $\Omega = (a_x, b_x) \times (a_y, b_y)$ and an equispaced discrete grid $\Omega_h$.
+    Set $\Omega = (a_x, b_x) \times (a_y, b_y)$ and an equispaced discrete grid $\Omega_h$:
     \begin{itemize}
-        \item Let $a_x = x_0, \dots, x_{N_x-1} = b_x$
-        \item Let $a_y = y_0, \dots, y_{N_y-1} = b_y$
+        \item $a_x = x_0, \dots, x_{N_x-1} = b_x$
+        \item $a_y = y_0, \dots, y_{N_y-1} = b_y$
     \end{itemize}
     \vspace{0.3cm}
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
     Each grid point is given by:
     \[
-        X_{i,j} := (x_i, y_j) \quad \forall i,j \in \{0, \dots, N_x-1\} \times \{0, \dots, N_y-1\}
+        X_{i,j} := (x_i, y_j) 
     \]
-    We define a (matrix) grid function associated to a continuous function $f: \Omega \to \mathbb{R}$ as $f_{i,j} := f(X_{i,j}) \in \mathbb{R}^{N_x \times N_y}$.
+    $\forall i,j \in \{0, \dots, N_x-1\} \times \{0, \dots, N_y-1\}$
+        \end{column}
+        \begin{column}{0.55\textwidth}
+
+            \begin{center}
+            \begin{tikzpicture}[scale=1.1]
+                % Grid
+                \draw[step=1cm,gray,very thin, dashed] (0,0) grid (4,3);
+                
+                % Axes
+                \draw[->, thick] (0,0) -- (4.5,0) node[anchor=north] {$x$};
+                \draw[->, thick] (0,0) -- (0,3.5) node[anchor=east] {$y$};
+                
+                % Ticks
+                \foreach \x in {0,1,2,3,4} \draw (\x, 1pt) -- (\x, -1pt) node[anchor=north] {\tiny $x_{\x}$};
+                \foreach \y in {0,1,2,3} \draw (1pt, \y) -- (-1pt, \y) node[anchor=east] {\tiny $y_{\y}$};
+                \foreach \y in {0,1,2,3} \draw (1pt, \y) -- (-1pt, \y) node[anchor=east] {\tiny $y_{\y}$};
+                
+                % Nodes & Stencil
+                \fill[blue] (2,1) circle (0.06) node[anchor=south west] {\tiny $X_{i,j}$};
+                \fill[red] (1,1) circle (0.06) node[anchor=north] {\tiny $X_{i-1,j}$};
+                \fill[red] (3,1) circle (0.06) node[anchor=north] {\tiny $X_{i+1,j}$};
+                \fill[red] (2,0.2) circle (0.00) node[anchor=west] {\tiny $X_{i,j-1}$};
+                \fill[red] (2,2.2) circle (0.00) node[anchor=west] {\tiny $X_{i,j+1}$};
+
+                \fill[red] (2,0) circle (0.06) node[anchor=west] {};
+                \fill[red] (2,2) circle (0.06) node[anchor=west] {};
+        
+                % Connections
+                \draw[thick, blue] (1,1) -- (3,1);
+                \draw[thick, blue] (2,0) -- (2,2);
+            \end{tikzpicture}
+            \end{center}
+        \end{column}
+    \end{columns}
+
 \end{frame}
 
-\begin{frame}{Visualizing the 2D Grid}
-    \begin{center}
-    \begin{tikzpicture}[scale=1.8]
-        % Grid
-        \draw[step=1cm,gray,very thin, dashed] (0,0) grid (4,3);
-        
-        % Axes
-        \draw[->, thick] (0,0) -- (4.5,0) node[anchor=north] {$x$};
-        \draw[->, thick] (0,0) -- (0,3.5) node[anchor=east] {$y$};
-        
-        % Ticks
-        \foreach \x in {0,1,2,3,4} \draw (\x, 1pt) -- (\x, -1pt) node[anchor=north] {\tiny $x_{\x}$};
-        \foreach \y in {0,1,2,3} \draw (1pt, \y) -- (-1pt, \y) node[anchor=east] {\tiny $y_{\y}$};
-        
-        % Nodes & Stencil
-        \fill[blue] (2,1) circle (0.06) node[anchor=south west] {\tiny $X_{i,j}$};
-        \fill[red] (1,1) circle (0.06) node[anchor=north] {\tiny $X_{i-1,j}$};
-        \fill[red] (3,1) circle (0.06) node[anchor=north] {\tiny $X_{i+1,j}$};
-        \fill[red] (2,0) circle (0.06) node[anchor=west] {\tiny $X_{i,j-1}$};
-        \fill[red] (2,2) circle (0.06) node[anchor=west] {\tiny $X_{i,j+1}$};
-        
-        % Connections
-        \draw[thick, blue] (1,1) -- (3,1);
-        \draw[thick, blue] (2,0) -- (2,2);
-    \end{tikzpicture}
-    \end{center}
+\begin{frame}{Discrete functions}
+    Given a discrete mesh: 
+    \begin{block}{Matrix grid function}
+    A matrix grid function of function $f: \Omega \to \mathbb{R}$ is
+        $$f_{i,j} := f(X_{i,j}) \in \mathbb{R}^{N_x \times N_y}$$
+    \end{block}
+
+    \alert{Note that it is a \emph{matrix}}
+
 \end{frame}
 
 \begin{frame}{The Index Map: Flattening the Grid}
-    To solve linear systems, we must flatten 2D matrices into 1D vectors. We define an index map $I: \{0, \dots, N_x-1\} \times \{0, \dots, N_y-1\} \to \{0, \dots, N_x N_y - 1\}$:
+    To solve linear systems, we must flatten 2D matrices into 1D vectors.
+
+    Define an index map $I: \{0, \dots, N_x-1\} \times \{0, \dots, N_y-1\} \to \{0, \dots, N_x N_y - 1\}$:
     \[
         I(i, j) = i + j N_x
     \]
-    This lexicographical map is easily invertible:
+    This lexicographical map is invertible:
     \[
         I \mapsto (i(I), j(I)) := (I \bmod N_x, \lfloor I / N_x \rfloor)
     \]
-    Thus, we can uniquely define the 1D vector $\mathbf{f}_I$ representing the grid points:
+    \pause Thus, we can uniquely define the 1D vector $\mathbf{f}_I$ representing the grid points:
     \[
         f_I := f_{i(I), j(I)} = f(X_{i(I), j(I)}) \in \mathbb{R}^{N_x N_y}
     \]
@@ -91,10 +113,13 @@
     
     where $A_h$ is the standard 1D discrete second derivative matrix. 
     
+    \pause
+    \begin{example}
     For the Poisson problem $-\Delta u = f$, the matrix equation before vectorization is:
     \[
-        -\Delta u(X_{i,j}) \approx A_h u(X_{i,j}) + u(X_{i,j}) A_h^\top = f(X_{i,j})
+        -\Delta u(X_{i,j}) \approx A_h U_h + U_h A_h^\top = F
     \]
+    \end{example}
 \end{frame}
 
 \section{Kronecker Products and Assembly}
@@ -113,10 +138,19 @@
     This operation is critical to rigorously define the sparse operator matrix for higher dimensions.
 \end{frame}
 
+\begin{frame}{Example}
+    \begin{example}
+        For $I=\left(\begin{smallmatrix}1&0 \\ 0&1 \end{smallmatrix}\right)$, $A = \left(\begin{smallmatrix}1&2\\3&4\end{smallmatrix}\right)$:
+        $$ I\otimes A = \begin{bmatrix} 1 A & 0 \\ 0 & 1 A \end{bmatrix} = \begin{bmatrix} 1 & 2 & 0 & 0 \\ 3 & 4 & 0 & 0 \\ 0 & 0 & 1 & 2 \\ 0 & 0 & 3 & 4
+        \end{bmatrix} $$
+    \end{example}
+
+\end{frame}
+
 \begin{frame}{Vectorization Lemma}
     \textbf{Lemma:} Let $A \in \mathbb{R}^{m \times n}$, $B \in \mathbb{R}^{p \times q}$ and $X \in \mathbb{R}^{q \times n}$. Denote the vector form of matrix $X$ as $X_I$. Then:
     \[
-        (B X A^\top)_I = (A \otimes B) X_I
+        (B \alert{X} A^\top)_I = (A \otimes B) \alert{X_I}
     \]
     
     \textit{Proof Sketch:} Expanding the right-hand side,
@@ -139,15 +173,16 @@
 \end{frame}
 
 \begin{frame}{Assembling the 2D Discrete Laplacian}
-    Applying the lemma to our discrete Laplace equation $A_h u(X) + u(X) A_h^\top = f(X)$, and recognizing that $A_h u(X) = I A_h u(X) I^\top$:
-    
+    We had
+    $$ A_h U_h + U_h A_h^\top = F_h $$
+    and the Vectorization Lemma: $(BXA^T)_I = (A\otimes B)X_I$ yield:
     \begin{align*}
-        f_I &= \left( A_h u(X_{i,j}) + u(X_{i,j}) A_h^\top \right)_I \\
-            &= \left( A_h u(X_{i,j}) I \right)_I + \left( I u(X_{i,j}) A_h^\top \right)_I \\
-            &= (I \otimes A_h) u_I + (A_h^\top \otimes I) u_I 
+        (A_h U_h + U_h A_h^\top)_I &= (F_h)_I \\ 
+        (A_h U_h I_h + I_h U_h A_h^\top)_I &= (F_h)_I \\ 
+        (I_h \otimes A_h) u_I + (A_h\otimes I_h) u_I &= f_I
     \end{align*}
-    
-    Since $A_h$ is symmetric, we obtain the final global linear system $D_h^2 u_I = f_I$, where:
+
+    Finally we get the matrix representation: 
     \[
         D_h^2 = A_h \otimes I + I \otimes A_h
     \]
@@ -156,19 +191,11 @@
 
 \section{Extension to 3D}
 
-\begin{frame}{3D Finite Differences}
+\begin{frame}{3D Finite Differences: Geometry}
     This systematic approach extends to 3D domains $\Omega = (a_x, b_x) \times (a_y, b_y) \times (a_z, b_z)$. The index map becomes:
     \[
         I(i,j,k) = i + j N_x + k N_x N_y
     \]
-    The discrete Laplacian $D_h^2$ operator is built via multiple Kronecker products:
-    \[
-        D_h^2 = A_h \otimes I \otimes I + I \otimes A_h \otimes I + I \otimes I \otimes A_h
-    \]
-    For a uniform grid $h = \Delta x = \Delta y = \Delta z$, this results in the standard \textbf{7-point stencil}.
-\end{frame}
-
-\begin{frame}{The 3D 7-Point Stencil}
     \begin{center}
     \begin{tikzpicture}[scale=2, z=-0.6cm]
         % Axes hints
@@ -195,6 +222,17 @@
         \fill[red] (0,0,1) circle (0.05) node[anchor=south west] {\tiny $X_{i,j,k+1}$};
     \end{tikzpicture}
     \end{center}
+
+
+\end{frame}
+
+\begin{frame}{The 3D 7-Point Stencil}
+    The discrete Laplacian $D_h^2$ operator is built via multiple Kronecker products:
+    \[
+        D_h^2 = A_h \otimes I \otimes I + I \otimes A_h \otimes I + I \otimes I \otimes A_h
+    \]
+    For a uniform grid $h = \Delta x = \Delta y = \Delta z$, this results in the standard \textbf{7-point stencil}.
+
 \end{frame}
 
 \section{Unavoidable Nonlinearities}
@@ -210,7 +248,7 @@
     \[
         -\frac{1}{h^2}(u_{i+1} - 2u_i + u_{i-1}) + \sin(u_i) = 0
     \]
-    This is a root-finding problem $\mathcal{F}(u_h) = 0$, defined compactly as:
+    with $u_0 = u_a$ and $u_N=u_b$. This is a root-finding problem $\mathcal{F}(u_h) = 0$, defined compactly as:
     \[
         \mathcal{F}(u_h) := A_h u_h + \sin(u_h) = 0
     \]
@@ -250,11 +288,11 @@
         u_h^{k+1} = u_h^k + \delta u_h^{k+1}
     \]
     \vspace{0.3cm}
-    \textbf{Note:} Newton-Raphson provides fast (quadratic) convergence, but the theory only guarantees \textbf{local convergence}. A sufficiently accurate initial guess $u_h^0$ is required.
+    \textbf{Note:} Newton-Raphson is fast (quadratic conv.), but theory only guarantees \textbf{local convergence}.
 \end{frame}
 
 \begin{frame}{Picard Iteration (Fixed Point)}
-    An alternative is to delay the evaluation of the nonlinearity. We isolate the linear differential operator and evaluate the nonlinear part at the previous step:
+    Alternative: "delay" the evaluation of the nonlinearity.     
     \[
         -\Delta u^{k+1} + \sin(u^k) = 0
     \]
@@ -263,7 +301,7 @@
         A_h u_h^{k+1} = - \sin(u_h^k)
     \]
     
-    This avoids assembling and inverting a new Jacobian at every step. But does it converge? We analyze this using the discrete stability properties.
+    At converges it yields previous $u$... But does it converge?
 \end{frame}
 
 \begin{frame}{Convergence Proof of the Picard Scheme}
@@ -282,14 +320,18 @@
 
 \begin{frame}{Summary}
     \begin{itemize}
-        \item \textbf{Higher Dimensions:} Systematic discretization is achieved by mapping tensor product grids to 1D vectors and constructing operators via Kronecker products.
-        \item \textbf{Matrix Assembly:} Proper node ordering is formalized by $D_h^2 = A_h \otimes I + I \otimes A_h$.
-        \item \textbf{Nonlinearities:} Can be solved via Newton-Raphson (fast but locally convergent, requires Jacobian assembly) or Picard Iteration (slower, fixed operator, converges if it forms a contraction mapping).
+        \item \textbf{Higher Dimensions:} Index remapping for flattening objects
+        \item \textbf{Matrix Assembly:} Vectorization Lemma
+        \item \textbf{Nonlinearities:} 
+            \begin{itemize}
+                \item Newton-Raphson (fast (quadratic) but local, requires Jacobian assembly) 
+                \item Picard Iteration (slower (linear), fixed operator, converges if it forms a contraction mapping).
+            \end{itemize}
     \end{itemize}
     \vspace{0.5cm}
-    \begin{center}
-        \Large \textbf{Questions?}
-    \end{center}
 \end{frame}
 
+\begin{frame}
+    \maketitle
+\end{frame}
 \end{document}
