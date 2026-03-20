@@ -1,0 +1,190 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{bm}
+
+\title[Finite Differences: Time Discretization]{Time Discretization and Stability}
+\author{Nicol\'as A. Barnafi}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+\section{Time Discretization as a Quadrature Rule}
+
+\begin{frame}{The Continuous and Semi-Discrete Problem}
+    Consider a differential operator $A$ and its associated discrete matrix $A_h$.
+    
+    The continuous differential equation for an initial condition $x(0) = x_0$ is:
+    \[
+        \dot{x} + Ax = f
+    \]
+    Discretizing only in space yields a system of ODEs:
+    \[
+        \dot{x}_h + A_h x_h = f_h
+    \]
+\end{frame}
+
+\begin{frame}{Time Discretization via Quadrature}
+    Integrate the semi-discrete equation over  $(t_n, t_{n+1})$.  Using $x(t_n) \approx x^n$, this yields an exact relation:
+    \[
+        x^{n+1} - x^n + \int_{t_n}^{t_{n+1}} A_h x_h(s) ds = \int_{t_n}^{t_{n+1}} f_h(s) ds
+    \]
+    The choice of time-stepping scheme is entirely determined by how we approximate 
+    $$\int_{t_n}^{t_{n+1}} A_h x_h(s) ds$$ 
+    Euler, Runge-Kutta, etc.
+\end{frame}
+
+\begin{frame}{Three Fundamental Schemes}
+    \begin{itemize}
+        \item \textbf{Left-sided rule (Explicit):} Evaluates the operator at the known time $t_n$.
+        \[
+            \int_{t_n}^{t_{n+1}} A_h x_h(s) ds \approx \Delta t A_h x_h^n
+        \]
+        \item \textbf{Right-sided rule (Implicit):} Evaluates the operator at the unknown time $t_{n+1}$.
+        \[
+            \int_{t_n}^{t_{n+1}} A_h x_h(s) ds \approx \Delta t A_h x_h^{n+1}
+        \]
+        \item \textbf{Trapezoidal rule (Mid-point / Crank-Nicolson):} Averages the endpoints for higher accuracy.
+        \[
+            \int_{t_n}^{t_{n+1}} A_h x_h(s) ds \approx \frac{\Delta t}{2} (A_h x_h^{n+1} + A_h x_h^n)
+        \]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{The $\theta$-Method Generalization}
+    A natural generalization of these three schemes is the $\theta$-method. For a fixed parameter $\theta \in [0, 1]$:
+    \[
+        \int A_h x_h(s) ds \approx \theta \Delta t A_h x_h^{n+1} + (1 - \theta) \Delta t A_h x_h^n 
+    \]
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item $\theta = 0$ corresponds to the explicit scheme.
+        \item $\theta = 1$ corresponds to the implicit scheme.
+        \item $\theta = 1/2$ corresponds to the mid-point (Crank-Nicolson) scheme.
+    \end{itemize}
+\end{frame}
+
+\section{Time Stability and the Lax Equivalence}
+
+\begin{frame}{Time Stability Definition}
+    We seek stability estimates in time. Consider a general forward scheme written as $u^{n+1} = g(u^n)$.
+    
+    A condition such as $\|u^{n+1}\| \le c\|u^n\|$ for $c \le 1$ implies recursively that:
+    \[
+        \|u_h^n\|_{\infty,h} \le \|u_h^0\|_{\infty,h} 
+    \]
+    This uniform boundedness over time is precisely a stability result as in the \textbf{Lax Equivalence Theorem}.
+\end{frame}
+
+\begin{frame}{Stability of the First-Order Model Equation}
+    Since our theory works for linear operators, we analyze stability using a simple scalar first-order equation (with $f \equiv 0$ for stability purposes):
+    \[
+        u' + cu = 0, \quad u(0) = u_0 
+    \]
+    \textbf{1. Explicit Scheme:}
+    \[
+        u^{n+1} = (1 - c\Delta t)u^n \implies |u^{n+1}| \le |1 - c\Delta t| |u^n| 
+    \]
+    The scheme is conditionally stable ($|1 - c\Delta t| < 1$) if $c > 0$ and $\Delta t < \frac{2}{c}$.
+    
+    \textbf{2. Implicit Scheme:}
+    \[
+        (1 + c\Delta t)u^{n+1} = u^n \implies |u^{n+1}| \le \left| \frac{1}{1 + c\Delta t} \right| |u^n| 
+    \]
+    If $c > 0$, then $1 + c\Delta t > 1$, meaning the method is unconditionally stable.
+\end{frame}
+
+\begin{frame}{Stability of the $\theta$-Method}
+    Applying the $\theta$-method to the model problem yields:
+    \[
+        (1 + \theta c \Delta t)u^{n+1} = (1 - (1-\theta)c\Delta t)u^n 
+    \]
+    This gives the amplification bound:
+    \[
+        |u^{n+1}| \le \left| \frac{1 - (1-\theta)c\Delta t}{1 + \theta c\Delta t} \right| |u^n| 
+    \]
+    \textbf{Conclusions:}
+    \begin{itemize}
+        \item If $\theta \ge 1/2$, the fraction is bounded by 1, making the method \textbf{unconditionally stable}.
+        \item If $\theta < 1/2$, stability requires a small $\Delta t$, meaning it is \textbf{conditionally stable}.
+    \end{itemize}
+\end{frame}
+
+\section{Von Neumann Stability Analysis}
+
+\begin{frame}{Moving to the Frequency Domain}
+    Energy methods for stability analysis can quickly become intractable. To obtain easier bounds, we analyze the scheme in the frequency domain using \textbf{Von Neumann stability analysis}.
+    
+    This relies on the Fourier transform, utilizing the property that translation-invariant finite difference operators have simple eigenfunctions. 
+    
+    We consider a basis function for a given wave number $\xi$ evaluated on the grid $x_j = jh$:
+    \[
+        W_j = e^{i\xi(jh)} 
+    \]
+    This ansatz decouples the degrees of freedom, allowing us to find an amplification factor $g(\xi)$ such that $\hat{u}^{n+1} = g(\xi)\hat{u}^n$.
+\end{frame}
+
+\begin{frame}{Application: 1D Heat Equation}
+    Consider the 1D heat equation $\dot{u} - u_{xx} = 0$ discretized with an explicit forward scheme in time and centered differences in space:
+    \[
+        \frac{u_j^{n+1} - u_j^n}{\Delta t} + \frac{1}{h^2}(-u_{j+1}^n + 2u_j^n - u_{j-1}^n) = 0 
+    \]
+    We introduce the ansatz $u_j^{n+1} = g(\xi) u_j^n = g(\xi) e^{i\xi(jh)}$. Substituting this into the scheme:
+    \[
+        g(\xi) e^{i\xi jh} = e^{i\xi jh} - \frac{\Delta t}{h^2} \left( -e^{i\xi(j-1)h} + 2e^{i\xi jh} - e^{i\xi(j+1)h} \right) 
+    \]
+\end{frame}
+
+\begin{frame}{Extracting the Amplification Factor}
+    Dividing the entire equation by $e^{i\xi j h}$, we isolate $g(\xi)$:
+    \begin{align*}
+        g(\xi) &= 1 + \frac{\Delta t}{h^2}(e^{-i\xi h} + e^{i\xi h} - 2)  \\
+               &= 1 + \frac{\Delta t}{h^2}(2\cos(\xi h) - 2) \quad \text{(using Euler's formula)}  \\
+               &= 1 - \frac{2\Delta t}{h^2}(1 - \cos(\xi h)) 
+    \end{align*}
+    For the scheme to be stable, we require $|g(\xi)| \le 1$ for all wave numbers $\xi$.
+\end{frame}
+
+\begin{frame}{Deriving the Stability Condition (CFL)}
+    Since $\cos(\xi h) \in [-1, 1]$, the term $(1 - \cos(\xi h))$ ranges from $0$ to $2$. This yields two bounds for $g(\xi)$:
+    
+    \vspace{0.3cm}
+    \textbf{Upper bound (always satisfied):}
+    \[
+        g(\xi) \le 1 - \frac{2\Delta t}{h^2}(0) = 1 
+    \]
+    
+    \textbf{Lower bound (imposes a restriction):}
+    \[
+        g(\xi) \ge 1 - \frac{2\Delta t}{h^2}(2) = 1 - \frac{4\Delta t}{h^2} 
+    \]
+    For stability, we must enforce $-1 \le g(\xi)$.
+\end{frame}
+
+\begin{frame}{Deriving the Stability Condition (CFL)}
+    Solving the inequality for the lower bound:
+    \begin{align*}
+        1 - \frac{4\Delta t}{h^2} &\ge -1  \\
+        2 &\ge \frac{4\Delta t}{h^2}  \\
+        \Delta t &\le \frac{h^2}{2} 
+    \end{align*}
+    This final inequality is the stability threshold for the explicit finite difference scheme of the heat equation. If the time step exceeds this upper bound, the amplification factor grows beyond $1$, and the numerical solution becomes unconditionally unstable.
+\end{frame}
+
+\end{document}
+
+\begin{frame}
+    \maketitle
+\end{frame}
+\end{document}
