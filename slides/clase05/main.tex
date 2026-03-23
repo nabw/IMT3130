@@ -5,7 +5,10 @@
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{isomath}
 %\usepackage{bm}
+
+\renewcommand{\vec}{\vectorsym}
 
 \title[Finite Differences in 2D/3D \& Nonlinearities]{Finite Differences in 2D/3D and \\ Unavoidable Nonlinearities}
 \author{Nicol\'as A. Barnafi}
@@ -15,6 +18,14 @@
 
 \begin{frame}
     \titlepage
+\end{frame}
+
+\begin{frame}{Last class}
+    $$\mathcal A u = f \qquad \text{discretize:}\qquad \mathbb A_h \vec u_h = \vec f_h $$
+    \begin{block}{Lax Equivalence Theorem}
+        If $\mathbb A_h$ is consistent of order $k$, then
+        $$ \text{Convergence $O(h^k)$} \quad \Leftrightarrow \quad \text{Stability} $$
+    \end{block}
 \end{frame}
 
 \begin{frame}{Outline}
@@ -94,13 +105,13 @@
     \[
         I(i, j) = i + j N_x
     \]
-    This lexicographical map is invertible:
+    \pause This lexicographical map is invertible:
     \[
         I \mapsto (i(I), j(I)) := (I \bmod N_x, \lfloor I / N_x \rfloor)
     \]
-    \pause Thus, we can uniquely define the 1D vector $\mathbf{f}_I$ representing the grid points:
+    \pause Thus, we can uniquely define the 1D vector $\vec{f}_I$ representing the grid points:
     \[
-        f_I := f_{i(I), j(I)} = f(X_{i(I), j(I)}) \in \mathbb{R}^{N_x N_y}
+        \vec f_I := f_{i(I), j(I)} = f(X_{i(I), j(I)}) \in \mathbb{R}^{N_x N_y}
     \]
 \end{frame}
 
@@ -318,14 +329,18 @@
     By the Banach fixed point theorem, if $C < 1$, the map is a contraction, and the Picard scheme is theoretically guaranteed to converge.
 \end{frame}
 
+\begin{frame}{Note on ordering}
+    Should we discretize the algorithm or the equation?
+\end{frame}
+
 \begin{frame}{Summary}
     \begin{itemize}
         \item \textbf{Higher Dimensions:} Index remapping for flattening objects
         \item \textbf{Matrix Assembly:} Vectorization Lemma
         \item \textbf{Nonlinearities:} 
             \begin{itemize}
-                \item Newton-Raphson (fast (quadratic) but local, requires Jacobian assembly) 
-                \item Picard Iteration (slower (linear), fixed operator, converges if it forms a contraction mapping).
+                \item Newton-Raphson (fast [quadratic] but local, requires Jacobian assembly) 
+                \item Picard Iteration (slower [linear], fixed operator, convergent if contraction).
             \end{itemize}
     \end{itemize}
     \vspace{0.5cm}
