@@ -302,6 +302,9 @@ where $V_i$ are the extension functions such that $\gamma_0 V_i = v_i$. Finally,
 \begin{equation}\label{eq:def-H01-closure}
     H_0^1(\Omega) \coloneqq \overline{C_0^\infty(\Omega)}^{\|\cdot \|_{1,\Omega}}.
 \end{equation}
+More generally, this type of definition was originally used Sobolev spaces, and their distinction was not clear. On one hand, one defines the Sobolev space $W^{m,p}(\Omega)$ as the space of $L^p(\Omega)$ functions whose weak derivatives up to order $m$ are in $L^p(\Omega)$ as well. On the other hand, one can also define the space $H^{m,p}(\Omega)$ as
+$$ H^{m,p}(\Omega) \coloneqq \overline{C^\infty(\Omega)\cap W^{m,p}(\Omega)}^{\|\cdot \|_{W^{m,p}(\Omega)}}, $$
+    i.e. the closure of $C^\infty(\Omega)\cap W^{m,p}(\Omega)$ in the $W^{m,p}(\Omega)$ norm. It has been shown that both definitions coincide, in a result known as the Meyers-Serrin Theorem \cite{adams2003sobolev}\footnote{The original work is very short and a nice read. It is also notably unciteable. Here is the DOI: https://doi.org/10.1073/pnas.51.6.1055}.
 
 \paragraph{Normal and tangential traces}
 In a similar fashion to the Dirichlet trace, we need to define normal and tangential traces to extend the above notions to Neumann boundary conditions and to the $H(\dive)$ and $H(\curl)$ spaces, and to perform integration by parts in our future weak formulations.

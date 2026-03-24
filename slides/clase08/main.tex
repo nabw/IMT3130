@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
+\DeclareMathOperator{\grad}{\nabla}
 
 \title[Traces and Poincar\'e]{Applications of Functional Analysis and PDEs: \\ Traces and Poincar\'e Inequalities}
 \author{Nicol\'as A. Barnafi}
@@ -23,62 +24,92 @@
 \section{Traces}
 
 \begin{frame}{The Boundary Value Problem}
-    To rigorously define boundary conditions for PDEs, we must restrict functions in $\mathbb{R}^n$ to the boundary $\partial\Omega \subset \mathbb{R}^{n-1}$[cite: 662].
+    $$ -\Delta u = f\quad\text{in $\Omega$}, \qquad \alert{u=0\quad\text{on $\partial\Omega$}}$$
+    \pause
 
     \vspace{0.2cm}
     \textbf{The Challenge:}
-    The boundary $\partial\Omega$ has Lebesgue measure $0$ in $\mathbb{R}^n$[cite: 664]. Functions in Sobolev spaces are equivalence classes defined \textit{almost everywhere}. Pointwise evaluation on a set of measure zero is meaningless.
+    $|\partial\Omega|=0$ and in Sobolev spaces are defined \textit{almost everywhere}. 
+    Pointwise evaluation on a set of measure zero is meaningless.
 
     \vspace{0.2cm}
     \textbf{The Solution:}
-    We need trace operators that require a certain level of regularity to guarantee the restriction makes sense[cite: 664].
+    \emph{Trace operators} that require additional regularity.
 \end{frame}
 
 \begin{frame}{The Dirichlet Trace}
-    Let $\Omega \subset \mathbb{R}^n$ be a bounded, Lipschitz domain[cite: 676].
+    Let $\Omega \subset \mathbb{R}^n$ be bounded Lipschitz.
 
-    We start by defining the \textbf{trace operator} $\gamma_0$ for smooth functions[cite: 676]:
+    We start by defining the \textbf{trace operator} $\gamma_0$ for smooth functions:
     \[
         \gamma_0 : \mathcal{D}(\bar{\Omega}) \to C^\infty(\partial\Omega), \quad \gamma_0 u := u|_{\partial\Omega} \text{}
     \]
 
-    \textbf{Trace Inequality:} There exists $C > 0$ such that[cite: 679, 680]:
-    \[
-        \|\gamma_0 f\|_{0,\partial\Omega} \le C\|f\|_{1,\Omega} \quad \forall f \in \mathcal{D}(\bar{\Omega}) \text{}
-    \]
+    \begin{block}{}
+        \textbf{Trace Inequality:} There exists $C > 0$ such that:
+        \[
+            \|\gamma_0 f\|_{0,\partial\Omega} \le C\|f\|_{1,\Omega} \quad \forall f \in \mathcal{D}(\bar{\Omega}) \text{}
+        \]
+    \end{block}
 
-    \textbf{Trace Theorem:} By density, $\gamma_0$ extends to a continuous and surjective operator[cite: 685, 700]:
+    \textbf{Trace Theorem:} By density, $\gamma_0$ extends to a continuous and surjective operator:
     \[
-        \gamma_0 : H^1(\Omega) \to H^{1/2}(\partial\Omega) \text{}
+        \gamma_0 : H^1(\Omega) \to H^{1/2}(\partial\Omega) (\alert{\subseteq L^2(\partial\Omega)})
     \]
 \end{frame}
 
+\begin{frame}{Limited Proof of Trace Theorem (Density Argument)}
+    \textbf{Theorem:} The trace operator $\gamma_0$ extends uniquely to a continuous linear operator 
+    $$\gamma_0: H^1(\Omega) \to L^2(\partial\Omega)$$
+
+    \vspace{0.2cm}
+    \textbf{Proof Steps:}
+    \begin{enumerate}
+        \item<1-> \textbf{Density:} Let $v \in H^1(\Omega)$. Since $D(\bar{\Omega})$ is dense in $H^1(\Omega)$, there exists a Cauchy sequence $\{\phi_i\}_{i} \in D(\bar{\Omega})$ such that $\phi_i \to v$ in $H^1(\Omega)$.
+        \item<2-> \textbf{Trace Inequality:} For any $i, j$, the trace inequality $\|\gamma_0 f\|_{0,\partial\Omega} \le C\|f\|_{1,\Omega}$  implies:
+        \[ \|\gamma_0\phi_i - \gamma_0\phi_j\|_{0,\partial\Omega} = \|\gamma_0(\phi_i - \phi_j)\|_{0,\partial\Omega} \le C\|\phi_i - \phi_j\|_{1,\Omega} \]
+        \item<3-> \textbf{Convergence:} Thus, $\{\gamma_0\phi_i\}_{i}$ is a Cauchy sequence in $L^2(\partial\Omega)$, which converges to some limit $\xi \in L^2(\partial\Omega)$.
+        \item<4-> \textbf{Well-Definedness:} If $\{\tilde{\phi}_i\}_{i}$ is another sequence converging to $v$, then:
+        \[ \|\gamma_0\tilde{\phi}_i - \xi\| \le \|\gamma_0(\tilde{\phi}_i - \phi_i)\| + \|\gamma_0\phi_i - \xi\| \le C\|\tilde{\phi}_i - \phi_i\|_{1,\Omega} + \|\gamma_0\phi_i - \xi\| \to 0 \]
+        The limit $\xi$ is independent of the choice of sequence.
+    \end{enumerate}
+\end{frame}
+
 \begin{frame}{Spaces with Boundary Conditions}
-    We can now formally define Sobolev spaces with zero boundary conditions via the kernel of the trace operator[cite: 696, 697]:
+    We can now formally define Sobolev spaces with zero boundary conditions via the kernel of the trace operator:
     \[
         H^1_0(\Omega) := \ker \gamma_0 = \{ u \in H^1(\Omega) : \gamma_0 u = 0 \} \text{}
     \]
     \begin{itemize}
-        \item The dual space of $H^1_0(\Omega)$ is denoted $H^{-1}(\Omega)$[cite: 699].
-        \item The dual space of the trace space $H^{1/2}(\partial\Omega)$ is $H^{-1/2}(\partial\Omega)$[cite: 702].
+        \item The dual space of $H^1_0(\Omega)$ is denoted $H^{-1}(\Omega)$.
+        \item The dual space of the trace space $H^{1/2}(\partial\Omega)$ is $H^{-1/2}(\partial\Omega)$.
     \end{itemize}
 
     \vspace{0.3cm}
-    \textit{Formal Interpretation:} The Dirichlet condition $u = g$ on $\partial\Omega$ for the Poisson problem makes sense if and only if $g \in H^{1/2}(\partial\Omega)$, due to the surjectivity of the trace operator[cite: 706].
 \end{frame}
 
+\begin{frame}{Trace space}
+    We call     
+        $$ H^{1/2}(\partial\Omega) = \gamma_0 H^1(\Omega) $$
+        a \emph{trace space}, with norm
+        $$ \| u \|_{1/2,\partial\Omega} = \inf\{\|U\|_{1,\Omega}: u = \gamma_0 U, U \in H^1(\Omega)\} $$
+
+        Note that this induces an inner-product, thus $H^{1/2}(\partial\Omega)$ is Hilbert.
+\end{frame}
+
+
 \begin{frame}{Normal and Tangential Traces}
-    To handle Neumann conditions, we extend traces to $H(\text{div})$ and $H(\text{curl})$ using integration by parts (Divergence Theorem)[cite: 714, 715].
+    To handle Neumann conditions, we extend traces to $H(\text{div})$ and $H(\text{curl})$ using integration by parts (Divergence Theorem).
 
     \vspace{0.2cm}
-    \textbf{Normal Trace Theorem ($H(\text{div})$)}[cite: 731, 732, 733]:
+    \textbf{Normal Trace Theorem ($H(\text{div})$)}:
     The mapping $\gamma_N v = v|_{\partial\Omega} \cdot n$ extends to a continuous linear map $\gamma_N : H(\text{div}; \Omega) \to H^{-1/2}(\partial\Omega)$.
     \[
         \langle \gamma_N v, \phi \rangle_{-1/2, 1/2} = (v, \nabla \phi) + (\text{div } v, \phi) \quad \forall v \in H(\text{div}; \Omega), \phi \in H^1(\Omega) \text{}
     \]
 
     \vspace{0.2cm}
-    \textbf{Tangential Trace Theorem ($H(\text{curl})$)}[cite: 752, 753]:
+    \textbf{Tangential Trace Theorem ($H(\text{curl})$)}:
     The extension $\gamma_t v = n \times v$ maps continuously: $\gamma_t : H(\text{curl}; \Omega) \to H^{-1/2}(\partial\Omega)$.
     \[
         (\text{curl } v, \phi) - (v, \text{curl } \phi) = \langle \gamma_t v, \phi \rangle \quad \forall v \in H(\text{curl}; \Omega), \phi \in H^1(\Omega) \text{}
@@ -88,22 +119,23 @@
 \section{Poincar\'e Inequalities}
 
 \begin{frame}{The Poincar\'e Inequality}
-    \textbf{Lemma (Poincar\'e inequality):} Let $\Omega \subset \mathbb{R}^n$ be a bounded Lipschitz domain. There exists $C > 0$ such that[cite: 762, 763, 764]:
+    \textbf{Lemma (Poincar\'e inequality):} Let $\Omega \subset \mathbb{R}^n$ be a bounded Lipschitz domain. There exists $C > 0$ such that:
     \[
         \|u\|_{0,\Omega} \le C\|\nabla u\|_{0,\Omega} \quad \forall u \in H^1_0(\Omega) \text{}
     \]
 
-    \vspace{0.3cm}
-    \textit{Consequence:} The seminorm $|x|_{H^1} := \|\nabla x\|_{0,\Omega}$ is equivalent to the full $H^1$ norm for functions with homogeneous Dirichlet conditions[cite: 780, 781].
 
     \vspace{0.3cm}
-    We will prove this using a powerful contradiction argument relying on \textbf{Compact Embeddings}.
+    This is shown using a standard contradiction with \textbf{Compact Embeddings}.
 \end{frame}
 
-\begin{frame}{Proof via Compactness (Step 1: Setup Contradiction)}
+\begin{frame}{Step 1: Setup Contradiction}
     Assume the inequality is false.
+    \[
+        \|u\|_{0,\Omega} \le C\|\nabla u\|_{0,\Omega} \quad \forall u \in H^1_0(\Omega) \text{}
+    \]
 
-    There exists a sequence $(v_n)_n \subset C^\infty_0(\Omega) \subset H^1_0(\Omega)$ such that[cite: 765, 766]:
+    There exists a sequence $(v_n)_n \subset C^\infty_0(\Omega) \subset H^1_0(\Omega)$ such that:
     \[
         \|v_n\|_{0,\Omega} = 1 \quad \text{and} \quad \|\nabla v_n\|_{0,\Omega} < \frac{1}{n} \quad \forall n \in \mathbb{N} \text{}
     \]
@@ -111,42 +143,45 @@
     \textbf{Analysis of the sequence:}
     \begin{itemize}
         \item The full $H^1$ norm is $\|v_n\|_{1,\Omega} = \|v_n\|_{0,\Omega} + \|\nabla v_n\|_{0,\Omega} < 1 + \frac{1}{n}$.
-        \item Therefore, $(v_n)_n$ is bounded in $H^1(\Omega)$[cite: 766].
+        \item Therefore, $(v_n)_n$ is bounded in $H^1(\Omega)$.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Proof via Compactness (Step 2: Apply Embeddings)}
-    Since $H^1(\Omega)$ is a reflexive space, the bounded sequence $(v_n)_n$ must have a \textbf{weakly convergent subsequence} $(v_{n_k})_k \rightharpoonup v \in H^1(\Omega)$[cite: 766].
+\begin{frame}{Step 2: Apply Embeddings}
+    Since $H^1(\Omega)$ is reflexive, the bounded sequence $(v_n)_n$ has a \textbf{weakly convergent subsequence} $v_{n_k} \rightharpoonup v \in H^1(\Omega)$ as $k\to\infty$.
 
     \vspace{0.3cm}
-    \textbf{The Compactness Argument:}
-    By the \textit{Rellich-Kondrachov Theorem}, the embedding $H^1(\Omega) \hookrightarrow \hookrightarrow L^2(\Omega)$ is compact[cite: 654, 766].
+    By the \textit{Rellich-Kondrachov Theorem}, the embedding $i:H^1(\Omega) \to L^2(\Omega)$ is compact.
     \begin{itemize}
-        \item Weak convergence in $H^1$ implies \textbf{strong convergence} in $L^2(\Omega)$[cite: 766].
+        \item Weak convergence in $H^1$ implies \textbf{strong convergence} in $i(H^1(\Omega) = L^2(\Omega)$.
         \item Therefore, $v_{n_k} \to v$ strongly in $L^2(\Omega)$.
-        \item This preserves the norm exactly: $\|v\|_{0,\Omega} = \lim_{k\to\infty} \|v_{n_k}\|_{0,\Omega} = 1$[cite: 766].
+        \item This preserves the norm exactly: $\|v\|_{0,\Omega} = \lim_{k\to\infty} \|v_{n_k}\|_{0,\Omega} = 1$.
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Proof via Compactness (Step 3: The Contradiction)}
-    Now consider the gradients. For any test vector field $\phi \in [C^\infty_0(\Omega)]^d$, weak convergence in $H^1$ gives[cite: 769, 770]:
+\begin{frame}{Step 3: The Contradiction}
+    For any test vector field $\phi \in [C^\infty_0(\Omega)]^d$, weak convergence in $H^1$ gives:
     \[
         (\nabla v, \phi) = -(v, \nabla \cdot \phi) = -\lim_{k\to\infty} (v_{n_k}, \nabla \cdot \phi) = \lim_{k\to\infty} (\nabla v_{n_k}, \phi) \text{}
     \]
-    But we assumed $\|\nabla v_{n_k}\|_0 < \frac{1}{n_k} \to 0$. Therefore, $(\nabla v, \phi) = 0$, meaning $\nabla v = 0$[cite: 770].
+    But we assumed $\|\nabla v_{n_k}\|_0 < \frac{1}{n_k} \to 0$. Therefore, $(\nabla v, \phi) = 0$, meaning $\nabla v = 0$.
 
     \vspace{0.3cm}
     \begin{itemize}
-        \item Since $\Omega$ is connected, $\nabla v = 0 \implies v = c$ (a constant) almost everywhere[cite: 770].
-        \item Since $v_{n_k} \in H^1_0(\Omega)$, the trace evaluates to 0. Thus, $v|_{\partial\Omega} = c = 0$[cite: 771].
-        \item This implies $v \equiv 0$, which contradicts our earlier finding that $\|v\|_{0,\Omega} = 1$[cite: 771].
+        \item Since $\Omega$ is connected, $\nabla v = 0 \implies v = c$ (a constant) almost everywhere.
+        \item Since $v_{n_k} \in H^1_0(\Omega)$, the trace evaluates to 0. Thus, $v|_{\partial\Omega} = c = 0$.
+        \item This implies $v \equiv 0$, which contradicts our earlier finding that $\|v\|_{0,\Omega} = 1$.
     \end{itemize}
     \qed
 \end{frame}
 
-\begin{frame}{Poincaré Inequality}
-    STATE THAT NORMS ARE EQUIV IN H01
-    MENTION EQUIV IN NULL AVG
+\begin{frame}{Main consequence}
+    In $H_0^1(\Omega)$, 
+    $$ \| v\| + \|\grad v\|$$
+    and 
+    $$ \|\grad v \| $$
+    are equivalent norms.
+
 \end{frame}
 
 \begin{frame}
