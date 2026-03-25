@@ -78,13 +78,13 @@
 \section{Time Stability and the Lax Equivalence}
 
 \begin{frame}{Time Stability Definition}
-    We seek stability estimates in time. Consider a general forward scheme written as $u^{n+1} = g(u^n)$.
+    Consider a general forward scheme written as $u^{n+1} = g(u^n)$.
     
     A condition such as $\|u^{n+1}\| \le c\|u^n\|$ for $c \le 1$ implies recursively that:
     \[
-        \|u_h^n\|_{\infty,h} \le \|u_h^0\|_{\infty,h} 
+        \|u_h^n\| \le \|u_h^0\|
     \]
-    This uniform boundedness over time is precisely a stability result as in the \textbf{Lax Equivalence Theorem}.
+    This is precisely a stability result as in the \textbf{Lax Equivalence Theorem}.
 \end{frame}
 
 \begin{frame}{Stability of the First-Order Model Equation}
