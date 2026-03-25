@@ -47,11 +47,11 @@
 
 \begin{frame}{Three Fundamental Schemes}
     \begin{itemize}
-        \item \textbf{Left-sided rule (Explicit):} Evaluates the operator at the known time $t_n$.
+        \item \textbf{Left-sided rule (Explicit):} Evaluates the operator at the \textbf{known} time $t_n$.
         \[
             \int_{t_n}^{t_{n+1}} A_h x_h(s) ds \approx \Delta t A_h x_h^n
         \]
-        \item \textbf{Right-sided rule (Implicit):} Evaluates the operator at the unknown time $t_{n+1}$.
+        \item \textbf{Right-sided rule (Implicit):} Evaluates the operator at the \alert{unknown} time $t_{n+1}$.
         \[
             \int_{t_n}^{t_{n+1}} A_h x_h(s) ds \approx \Delta t A_h x_h^{n+1}
         \]
@@ -124,15 +124,18 @@
 \section{Von Neumann Stability Analysis}
 
 \begin{frame}{Moving to the Frequency Domain}
-    Energy methods for stability analysis can quickly become intractable. To obtain easier bounds, we analyze the scheme in the frequency domain using \textbf{Von Neumann stability analysis}.
+    Energy methods for stability analysis can become intractable $\to$  \textbf{Von Neumann stability analysis}
     
-    This relies on the Fourier transform, utilizing the property that translation-invariant finite difference operators have simple eigenfunctions. 
+    Relies on Fourier transform + translation-invariant finite differences.
     
     We consider a basis function for a given wave number $\xi$ evaluated on the grid $x_j = jh$:
     \[
-        W_j = e^{i\xi(jh)} 
+        W_j = e^{i\xi(jh)} (\approx e^{i\xi x})
     \]
-    This ansatz decouples the degrees of freedom, allowing us to find an amplification factor $g(\xi)$ such that $\hat{u}^{n+1} = g(\xi)\hat{u}^n$.
+    This ansatz decouples degrees of freedom:
+        
+    \vspace{1cm}
+      Find an amplification factor $g(\xi)$ such that $\hat{u}^{n+1} = g(\xi)\hat{u}^n$.
 \end{frame}
 
 \begin{frame}{Application: 1D Heat Equation}
@@ -150,7 +153,7 @@
     Dividing the entire equation by $e^{i\xi j h}$, we isolate $g(\xi)$:
     \begin{align*}
         g(\xi) &= 1 + \frac{\Delta t}{h^2}(e^{-i\xi h} + e^{i\xi h} - 2)  \\
-               &= 1 + \frac{\Delta t}{h^2}(2\cos(\xi h) - 2) \quad \text{(using Euler's formula)}  \\
+               &= 1 + \frac{\Delta t}{h^2}(2\cos(\xi h) - 2) \quad \text{( Euler's formula)}  \\
                &= 1 - \frac{2\Delta t}{h^2}(1 - \cos(\xi h)) 
     \end{align*}
     For the scheme to be stable, we require $|g(\xi)| \le 1$ for all wave numbers $\xi$.
