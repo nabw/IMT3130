@@ -25,7 +25,7 @@ This notion of convergence defines a topology on $\mathcal D(\Omega)$, but for o
 \end{definition}
 
 \begin{definition}[Distribution]
-A distribution is a continuous linear functional on $\mathcal D(\Omega)$. The space of all distributions is denoted by $\mathcal D'(\Omega)$. Continuity means that if $\phi_k\to\phi$ in $\mathcal D(\Omega)$ then $\langle T,\phi_k\rangle\to\langle T,\phi\rangle$ in $\mathbb R$ (or $\mathbb C$). We write the action of $T$ on a test function $\phi$ as $\langle T,\phi\rangle$.
+A distribution is a continuous linear functional on $\mathcal D(\Omega)$. The space of all distributions is denoted by $\mathcal D'(\Omega)$, thus implying that it is simply the topological dual.
 \end{definition}
 
 \example{
@@ -43,6 +43,12 @@ Linearity is obvious, and continuity follows from the dominated convergence theo
 \]
 It is clearly linear and continuous (point evaluation is continuous in the topology of $\mathcal D$). It is singular because it cannot be represented by a locally integrable function.
 }
+
+\subsubsection{Topology of $\mathcal D'$}
+Defining the topology of the space of distributions is not a trivial affair. In fact, one could be tempted to use the topology induced by the dual norm 
+$$ \| T \|_{\mathcal D'} = \sup_{x \in \mathcal D} \frac{|\langle T, x\rangle |}{\|x\|_{\mathcal{D}}} , $$
+but the issue is that the space $\mathcal D$ is \emph{not metrizable} and thus the term $\|x\|_{\mathcal D}$ is not well-defined. You may find a proof of this in \cite{MR1157815}. For this reason, the correct topology is simply the weak$^*$ topology, meaning that a sequence $(T_n)_n$ in $\mathcal D'$ converges to $T$ in $\mathcal D'$ if $\langle T_n, \varphi\rangle \to \langle T, \varphi\rangle$ for all $\varphi$ in $\mathcal D$. 
+
 
 \subsubsection{Distributional derivatives}
 The great power of distributions lies in the fact that every distribution is differentiable (infinitely many times) in a weak sense. The definition mimics integration by parts.
