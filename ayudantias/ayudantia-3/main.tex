@@ -1,0 +1,254 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{color}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{commath}
+\usepackage{relsize}
+\usepackage{centernot}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{gensymb}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{fancyhdr}
+\usepackage{floatrow}
+\usepackage{wrapfig}
+\usepackage[labelfont=bf]{caption}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{multicol}
+\usepackage[misc]{ifsym}
+\usepackage{tabularx}
+\usepackage{empheq}
+\usepackage{tkz-tab}
+\usepackage{xpatch}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tabularray}
+\usepackage{esint}
+\usepackage{amsthm}
+\usepackage{thmtools}
+\RequirePackage[most]{tcolorbox}
+
+\swapnumbers
+
+\makeatletter
+\declaretheoremstyle[
+  headfont= \sffamily\bfseries\color{cyan!50!black},
+  headpunct={\sffamily\bfseries.},
+  postheadspace=0.5em,
+  notefont=\sffamily\bfseries,
+  headformat=\NAME\NUMBER\let\thmt@space\@empty\NOTE,
+  bodyfont=\mdseries\slshape,
+  spaceabove=12pt,spacebelow=12pt,
+]{thmstyle}
+\makeatother
+
+\theoremstyle{thmstyle}
+\declaretheorem[name=Definición]{theorem}
+\newtheorem{definition}[theorem]{Definición}
+
+\definecolor{lightcyan}{rgb}{0.88, 1.0, 1.0}
+\colorlet{mythmback}{lightcyan!40!white}
+
+\tcolorboxenvironment{theorem}{
+  colback=mythmback,coltitle=blue,colframe=mythmback,
+  left=0pt,right=0pt,
+  top=0pt,bottom=0pt,
+  before skip=10pt, after skip=10pt,
+}
+
+\xpatchcmd{\tkzTabLine}{$0$}{$\bullet$}{}{}
+\tikzset{t style/.style={style=solid}}
+\pgfplotsset{compat=newest}
+
+\newtheorem{manualtheoreminner}{}
+\newenvironment{manualtheorem}[1]{%
+  \renewcommand\themanualtheoreminner{#1}%
+  \manualtheoreminner
+}{\endmanualtheoreminner}
+
+\renewcommand{\pd}[2]{\frac{\partial #1}{ \partial #2}}
+\newcommand{\td}[2]{\frac{\mathrm{d} #1}{ \mathrm{d} #2}}
+\newcommand{\pdd}[2]{\frac{\partial^2 #1}{ \partial #2 ^2}}
+\newcommand{\pddc}[3]{\frac{\partial^2 #1}{ \partial #2 \partial #3}}
+\newcommand{\solution}[0]{\large{\textbf{Solución}}\normalsize}
+
+\def\sca   #1{\mbox{\rm{#1}}{}}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\ten   #1{\mbox{\boldmath $#1$}{}}
+\def\ltr   #1{\mbox{\sf{#1}}}
+\def\bltr  #1{\mbox{\sffamily{\bfseries{{#1}}}}}
+
+\DeclareMathOperator{\dive}{div}
+\DeclareMathOperator{\trace}{trace}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\symm}{symm}
+\DeclareMathOperator{\sk}{skew}
+\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\Grad}{Grad}
+\DeclareMathOperator{\curl}{curl}
+\DeclareMathOperator{\Curl}{Curl}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\ds{\mbox{\(\,\mathrm{d}s\)}}
+\def\dS{\mbox{\(\,\mathrm{d}S\)}}
+\def\dV{\mbox{\(\,\mathrm{d}V\)}}
+\def\dv{\mbox{\(\,\mathrm{d}v\)}}
+\def\R{\mathbb R}
+\def\C{\mathbb C}
+\def\N{\mathbb N}
+\def\Q{\mathbb Q}
+\def\Z{\mathbb Z}
+
+\usepackage{mdframed}
+\mdfdefinestyle{MyFrame}{%
+    linecolor=black,
+    linewidth=1pt,
+    outerlinewidth=1pt,
+    roundcorner=20pt,
+    innertopmargin=\baselineskip,
+    innerbottommargin=\baselineskip,
+    innerrightmargin=20pt,
+    innerleftmargin=20pt,
+    splittopskip=2\baselineskip,
+    backgroundcolor=gray!50!white}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\pagestyle{fancy}
+\newcommand*{\vertbar}{\rule[-1ex]{0.5pt}{2.5ex}}
+\setlength{\headheight}{13.59999pt}
+
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\renewcommand{\figurename}{Figura}
+\renewcommand\refname{Referencias}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\thesection\arabic{subsection}.}
+\renewcommand{\labelitemi}{{\raisebox{.3\height}{\scalebox{0.6}{$\blacklozenge$}}}}
+\renewcommand*\contentsname{\'Indice}
+
+\newcommand{\p}{\vspace{10pt}}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+\textheight=665pt
+
+\lhead{\scshape Pontificia Universidad Cat\'olica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\usepackage{footnote}
+\usepackage{etoolbox}
+\newtoggle{indefintion}
+\togglefalse{indefintion}
+\pretocmd{\footnote}{\iftoggle{indefintion}{\stepcounter{footnote}}{\relax}}{}{}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{27/03/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Ayudant\'ia 3}\\
+        \vspace{3pt}
+        \normalsize\textbf{Diferencias finitas en 2D, stepping temporal y estabilidad}\\
+        \normalsize Ayudante: Basti\'an Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section{Problemas}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item Considere el problema de Poisson
+    \[
+    \begin{aligned}
+        -\Delta u &= f && \text{en } \Omega=(0,1)^2, \\
+        u &= 0 && \text{en } \partial\Omega.
+    \end{aligned}
+    \]
+    Sobre la malla uniforme $x_i=ih$, $y_j=jh$, con $h=1/N$, sea $u_{ij}\approx u(x_i,y_j)$ en nodos interiores.
+    \begin{enumerate}[label=(\alph*)]
+        \item Escriba el esquema de 5 puntos y el stencil asociado.
+        \item Usando la soluci\'on manufacturada $u(x,y)=\sin(\pi x)\sin(\pi y)$, determine $f$ y el orden esperado del m\'etodo.
+        \item Implemente el esquema para $h=1/8,1/16,1/32,1/64$, reporte el error máximo en la malla $E_h=\max_{i,j}\abs{u(x_i,y_j)-u_{ij}}$, y estime la tasa emp\'irica de convergencia.
+    \end{enumerate}
+
+    % \item Considere la ecuaci\'on del calor unidimensional
+    % \[
+    % \pd{u}{t}-\pdd{u}{x}=0, \qquad (x,t)\in(0,1)\times(0,T],
+    % \]
+    % con condiciones de borde homog\'eneas y condici\'on inicial $u_0$. Sea $x_j=jh$, $t^n=n\Delta t$ y $U_j^n\approx u(x_j,t^n)$. Considere el esquema $\theta$
+    % \[
+    % \frac{U_j^{n+1}-U_j^n}{\Delta t}
+    % =
+    % \theta \frac{U_{j+1}^{n+1}-2U_j^{n+1}+U_{j-1}^{n+1}}{h^2}
+    % +(1-\theta)\frac{U_{j+1}^{n}-2U_j^{n}+U_{j-1}^{n}}{h^2}.
+    % \]
+    % \begin{enumerate}[label=(\alph*)]
+    %     \item Identifique los casos $\theta=0$, $\theta=1$ y $\theta=1/2$.
+    %     \item Muestre que el error de truncamiento local satisface
+    %     \[
+    %     \tau_j^n=O(h^2+\Delta t)
+    %     \quad \text{si } \theta\neq \frac12,
+    %     \qquad
+    %     \tau_j^n=O(h^2+\Delta t^2)
+    %     \quad \text{si } \theta=\frac12.
+    %     \]
+    %     \item Según estos resultados, explique la ventaja pr\'actica de Crank-Nicolson frente a Euler expl\'icito e impl\'icito.
+    % \end{enumerate}
+
+    \item Considere la ecuaci\'on de advecci\'on peri\'odica
+    \[
+    \pd{u}{t}+\pd{u}{x}=0, \qquad x\in[0,1], \quad t>0,
+    \]
+    con condici\'on peri\'odica y un dato inicial suave. Estudiamos el esquema
+    \[
+    \frac{U_j^{n+1}-U_j^n}{\Delta t} + \frac{U_{j+1}^{n}-U_{j-1}^{n}}{2h}=0.
+    \]
+    \begin{enumerate}[label=(\alph*)]
+        \item Determine su orden de consistencia.
+        \item Realice un an\'alisis de von Neumann y obtenga el factor de amplificaci\'on $g(\xi)$.
+        \item Pruebe que el esquema es inestable para todo $\lambda=\Delta t/h>0$ y explique por qu\'e este ejemplo muestra que consistencia no implica convergencia.
+    \end{enumerate}
+
+    \item Considere nuevamente la ecuaci\'on de advecci\'on peri\'odica
+    \[
+    \pd{u}{t}+a\pd{u}{x}=0, \qquad a\in\R..
+    \]
+    \begin{enumerate}[label=(\alph*)]
+        \item Sea $\nu=a\Delta t/h$. Derive el esquema de Lax-Wendroff
+        \[
+        U_j^{n+1}
+        =
+        U_j^n
+        -\frac{a\Delta t}{2h}(U_{j+1}^n-U_{j-1}^n)
+        +\frac{a^2\Delta t^2}{2h^2}(U_{j+1}^n-2U_j^n+U_{j-1}^n)
+        \]
+        usando la ecuación y las expansiones de Taylor en tiempo y espacio. 
+        \item Muestre que el error local de truncamiento es de orden $2$ y que su t\'ermino principal est\'a dado por una tercera derivada espacial, es decir,
+        \[
+        \tau_j^n = \frac{a h^2}{6}(1-\nu^2)\,u_{xxx}(x_j,t^n) + O(h^3),
+        \]
+        asumiendo $\nu$ fijo.
+        \item Realice un an\'alisis de von Neumann y pruebe que el esquema es estable si y solo si $\abs{\nu}\le 1$.
+        \item Usando el teorema de equivalencia de Lax, explique qu\'e se concluye sobre la convergencia del esquema cuando $\abs{\nu}\le 1$.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

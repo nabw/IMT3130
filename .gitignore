@@ -197,6 +197,10 @@ _minted*
 # svg
 svg-inkscape/
 
+# local teaching material
+**/pauta/
+**/pauta-old/
+
 # sympy
 *.sout
 *.sympy
