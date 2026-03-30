@@ -30,7 +30,6 @@
     \textbf{Test Functions}
     \begin{itemize}
         \item $\mathcal{D}(\Omega) := C^\infty_c(\Omega) = \{ \phi \in C^\infty(\Omega) : \text{supp } \phi \text{ is compact} \}$.
-        \item Convergence $\phi_k \to \phi$ in $\mathcal{D}(\Omega)$: requires a shared compact support $K \subset \Omega$ and uniform convergence of all derivatives $\partial^\alpha \phi_k \to \partial^\alpha \phi$ on $K$.
     \end{itemize}
 
     \vspace{0.3cm}
@@ -39,6 +38,19 @@
         \item A distribution $T \in \mathcal{D}'(\Omega)$ is a continuous linear functional on $\mathcal{D}(\Omega)$.
         \item Action on a test function is denoted $\langle T, \phi \rangle$ (\emph{duality pairing}).
     \end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Topology of distributions}
+    How can we define convergence in $\mathcal D'$, i.e.
+        $$ T_n \to T  $$
+    \begin{itemize}
+        \item Naively: 
+    $$ \| T \|_{\mathcal D'} = \sup_{x \in \mathcal D} \frac{|\langle T, x\rangle|}{\| x \|_{\mathcal D}} $$    
+            \pause \hfill \alert{$\mathcal D$ is not metrizable}
+        \pause \item Only option: weak-$^*$
+            $$ \langle T_n, x \rangle \to \langle T, x\rangle \qquad \forall x\in \mathcal D$$
+    \end{itemize}
+
 \end{frame}
 
 \begin{frame}{Examples of Distributions}
@@ -196,11 +208,28 @@
 
 \section{Sobolev Embeddings}
 
+\begin{frame}{Example: 1D Embedding into Continuous Functions}
+    Consider $I = (a, b)$ and $f \in H^1(I)$. Why does $f \in C^0(I)$?  \pause
+    
+    By the Fundamental Theorem of Calculus:
+    \[
+        f(x+h) = f(x) + \int_x^{x+h} f'(s) \, ds \text{ }.
+    \]
+    Applying Cauchy-Schwarz:
+    \begin{align*}
+        |f(x+h) - f(x)| &\le \int_x^{x+h} |f'(s)| \, ds \text{ } \\
+        &\le \|f'\|_{L^2((x, x+h))} h^{1/2} \text{ } \\
+        &\le \|f'\|_{L^2(I)} h^{1/2} \quad \forall x \in I \text{ }.
+    \end{align*}
+    This shows $f$ is uniformly continuous, directly proving the injection $H^1(I) \hookrightarrow C^0(I)$.
+\end{frame}
+
+
 \begin{frame}{Sobolev Embeddings (Continuous)}
     Let $\Omega \subset \mathbb{R}^d$ be a bounded Lipschitz domain, $m, j \ge 0$ integers, $p \in [1, \infty]$.
     
     \begin{itemize}
-        \item \textbf{Case $mp < d$:} For $p \le q \le \frac{dp}{d-mp}$,
+        \item \textbf{Case $mp < d$:} For $p \le q \le \alert{\frac{dp}{d-mp}} \text{ (Sobolev critical exponent)} $,
         \[
             W^{j+m,p}(\Omega) \hookrightarrow W^{j,q}(\Omega) \text{ }.
         \]
@@ -233,21 +262,6 @@
     \textit{Crucial Consequence:} $H^1(\Omega)$ is compactly embedded in $L^2(\Omega)$ (Rellich-Kondrachov).
 \end{frame}
 
-\begin{frame}{Example: 1D Embedding into Continuous Functions}
-    Consider $I = (a, b)$ and $f \in H^1(I)$. Why does $f \in C^0(I)$? 
-    
-    By the Fundamental Theorem of Calculus:
-    \[
-        f(x+h) = f(x) + \int_x^{x+h} f'(s) \, ds \text{ }.
-    \]
-    Applying Cauchy-Schwarz:
-    \begin{align*}
-        |f(x+h) - f(x)| &\le \int_x^{x+h} |f'(s)| \, ds \text{ } \\
-        &\le \|f'\|_{L^2((x, x+h))} h^{1/2} \text{ } \\
-        &\le \|f'\|_{L^2(I)} h^{1/2} \quad \forall x \in I \text{ }.
-    \end{align*}
-    This shows $f$ is uniformly continuous, directly proving the injection $H^1(I) \hookrightarrow C^0(I)$.
-\end{frame}
 
 \begin{frame}
     \maketitle
