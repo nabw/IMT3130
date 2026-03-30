@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+
+\title{Tarea 2}
+%\author{Nicol\'as A Barnafi\thanks{Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile, Chile}, Axel Osses\thanks{Departamento de Ingeniería Matemática, Universidad de Chile, Chile}}
+%\author{Nicol\'as A Barnafi}
+\date{}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\newcommand{\tin}{\text{in}}
+\newcommand{\ton}{\text{on}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\pts}[1]{[{\bf #1 puntos}] }
+
+\begin{document}
+
+\maketitle
+ 
+\todo[inline,color=white!90!black]{\textbf{Instrucciones: } La tarea debe ser entregada de manera individual (aunque se puede desarrollar en grupos de 1 o 2 personas) en un informe en formato .pdf a través del buzón habilitado en la plataforma Canvas, donde deben mostrar también el código desarrollado. Para su conveniencia, pueden entregar las tareas en un Jupyter Notebook, de modo que sea más cómodo mostrar el código. La política de atrasos será: se calculará un factor lineal que vale 1 a la hora de entrega y 0 48 horas después. Esto multiplicará su puntaje obtenido. Pueden usar ChatGPT u otros modelos solo a conciencia. El uso de salidas de GPT sin su debida comprensión será severamente sancionado. }
+
+\begin{enumerate}
+    \item Considere el problema biestable con difusión en el tiempo y espacio $\Omega_T = (0,T)\times (0,1)$:
+            $$ \dot u - \mu \partial_{xx} u - u(1-u^2) = f. $$
+            Como datos y condiciones de borde, considere:
+            \begin{itemize}
+                \item $f(t,x) = I_{x\in (0.4,0.6)}I_{t<1}$, donde $I$ es una función indicatriz.
+                \item Una condición inicial dada por $u(0,x) = 0$ para todo $x$ in $(0,1)$. 
+                \item Condiciones de Neumann homogéneas en el borde para todo $t>0$. 
+            \end{itemize}
+            Para este modelo:
+            \begin{enumerate}
+                \item\pts{1} Proponga tres formulaciones de discretización en tiempo: (i) explícita, (ii) implícita, y (iii) semi-implícita. 
+                \item\pts{1} Proponga un esquema de discretización en espacio y tiempo, y demuestre que es consistente.
+                \item\pts{1} Formule un método iterativo (Newton o punto fijo) para resolver la formulación implícita y comente sobre las propiedades de convergencia que tiene el método propuesto. 
+                \item\pts{1} El método propuesto en la pregunta anterior require resolver un sistema lineal en cada iteración. Usando el análisis de von Neumann, proponga hipótesis de la solución discreta y los parámetros de discretización que permitan obtener una aproximación estable en cada iteración.
+                \item\pts{2} Implemente el método semi-implícito propuesto y grafique la evolución de la solución para $\mu=0.1$ en un horizonte temporal de $T=5$. Comente sus resultados.
+                \item\pts{3} Implemente el método implícito propuesto y grafique la evolución de la solución para $\mu=0.1$. Comente sus resultados y compárelos con los obtenidos en el punto anterior.
+            \end{enumerate}
+
+    \item En esta pregunta, jugaremos con la definición de las distribuciones. Usaremos la notación $\mathcal D(\R) = C_0^\infty(\R)$, espacio de funciones suaves con soporte compacto en $\R$.
+        \begin{enumerate}
+            \item\pts{1} Definimos la inyección de funciones integrables a distribuciones $T:L^1(\R) \to \left(\mathcal D(\R)\right)'$ según la acción
+                $$ (Tf)(\varphi)  = \left\langle f, \varphi\right\rangle_{\mathcal D'\times \mathcal D}.$$
+                Demuestre que dicha inyección es continua. 
+            \item\pts{1} Demuestre que, dado $x_0\in \R$,  la sucesión inducida por la función $I_n(x) = nI_{(x_0-1/2n, x_0+1/2n)}$, i.e. $\{I_n\}_n$, converge como distribución a la delta de Dirac $\delta_{x_0}$. 
+            \item\pts{1}Demuestre que no existe ninguna función $f$ en $L^1$ tal que $T_f = \delta_0$. 
+            \item\pts{2} Sabemos que dada una función vectorial $\vec F:\Omega \to \R^d$, su divergencia está dada por $\dive{\vec F}=F_{i,i}$. Para extender esta noción a distribuciones, demuestre dado un dominio $\Omega$ los espacios $(\mathcal D(\Omega, \R^d))'$ y $[(\mathcal D(\Omega))']^d$ son homeomorfos\footnote{$X^3 = X\times X\times X$} y con ello construya una definición de divergencia en $(\mathcal D(\Omega, \R^d))'$. Hint: $\int_\Omega (\dive F)\varphi = \int_{\partial\Omega} \varphi F\cdot \vec n - \int_\Omega F\cdot \grad \varphi$. 
+            \item\pts{1} Extienda la construcción de la pregunta anterior para definir un $\curl$ distribucional en el caso $d=3$. 
+            \item\pts{2} Considere la función $\Phi:\R^3\to \mathbb C$ dada por
+                    $$ \Phi(x) = \frac{1}{4\pi|x|} e^{-ik |x|}. $$
+                Muestre que se tiene la siguiente igualdad en $\mathcal D'(\R^3)$:
+                        $$ -\Delta \Phi - k^2 \Phi = \delta_0, $$
+                i.e. en el sentido de las distribuciones, donde $\delta_0$ es la delta de Dirac en $x=0$. 
+        \end{enumerate}
+\end{enumerate}
+
+\todo[inline,color=white!90!black]{\textbf{Nota: } Abriremos un foro en Canvas para revisar cualquier typo y/o error que haya en el enunciado.}
+\end{document}
+
