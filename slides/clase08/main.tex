@@ -58,14 +58,14 @@
     \]
 \end{frame}
 
-\begin{frame}{Limited Proof of Trace Theorem (Density Argument)}
+\begin{frame}{Proof of Trace Theorem (Density Argument)}
     \textbf{Theorem:} The trace operator $\gamma_0$ extends uniquely to a continuous linear operator 
     $$\gamma_0: H^1(\Omega) \to L^2(\partial\Omega)$$
 
     \vspace{0.2cm}
     \textbf{Proof Steps:}
     \begin{enumerate}
-        \item<1-> \textbf{Density:} Let $v \in H^1(\Omega)$. Since $D(\bar{\Omega})$ is dense in $H^1(\Omega)$, there exists a Cauchy sequence $\{\phi_i\}_{i} \in D(\bar{\Omega})$ such that $\phi_i \to v$ in $H^1(\Omega)$.
+        \item<1-> \textbf{Density:} Let $v \in H^1(\Omega)$. Since $\mathcal D(\bar{\Omega})$ is dense in $H^1(\Omega)$ (Meyers-Serrin Thm), there exists a Cauchy sequence $\{\phi_i\}_{i} \in \mathcal D(\bar{\Omega})$ such that $\phi_i \to v$ in $H^1(\Omega)$.
         \item<2-> \textbf{Trace Inequality:} For any $i, j$, the trace inequality $\|\gamma_0 f\|_{0,\partial\Omega} \le C\|f\|_{1,\Omega}$  implies:
         \[ \|\gamma_0\phi_i - \gamma_0\phi_j\|_{0,\partial\Omega} = \|\gamma_0(\phi_i - \phi_j)\|_{0,\partial\Omega} \le C\|\phi_i - \phi_j\|_{1,\Omega} \]
         \item<3-> \textbf{Convergence:} Thus, $\{\gamma_0\phi_i\}_{i}$ is a Cauchy sequence in $L^2(\partial\Omega)$, which converges to some limit $\xi \in L^2(\partial\Omega)$.
@@ -95,6 +95,10 @@
         $$ \| u \|_{1/2,\partial\Omega} = \inf\{\|U\|_{1,\Omega}: u = \gamma_0 U, U \in H^1(\Omega)\} $$
 
         Note that this induces an inner-product, thus $H^{1/2}(\partial\Omega)$ is Hilbert.
+
+        \begin{flushright}
+            \idea{Note: Infimum is attained at $-\Delta U = 0$ with $U=u$ on $\partial\Omega$}
+        \end{flushright}
 \end{frame}
 
 
