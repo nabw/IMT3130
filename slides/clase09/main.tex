@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
+\usepackage{mathtools}
 \DeclareMathOperator{\grad}{\nabla}
 
 
@@ -147,7 +148,16 @@ $$ \langle \gamma_N \nabla u, \gamma_D v \rangle \quad\to\quad \langle h, \gamma
 
 
 \begin{frame}{Application to Poisson problem}
-    [TODO]
+    \begin{itemize}
+        \item $H\coloneqq (H_0^1(\Omega), (\nabla \cdot, \nabla \cdot))$ is a Hilbert space.
+        \item The linear operator $f$ is bounded: 
+            $$ f(v) = \langle f, v\rangle \leq \| f \|_{H^{-1}(\Omega)} \| v \|_H $$
+        \item The bilinear form $a$ is bounded:
+            $$ a(u,v) = (\nabla u, \nabla v) \leq \| \nabla u \| \| \nabla v \| $$
+        \item The bilinear form $a$ is elliptic:
+            $$ a(v,v) = (\nabla v, \nabla v) = \| v \|_H $$
+    \end{itemize}
+    Note that $H$ is Hilbert because of Poincaré, and we can repeat proof using $(H_0^1(\Omega), (\cdot, \cdot) + (\nabla \cdot, \nabla \cdot)) $. 
 \end{frame}
 
 \section{Proof of the Lax-Milgram Lemma}
@@ -156,20 +166,23 @@ $$ \langle \gamma_N \nabla u, \gamma_D v \rangle \quad\to\quad \langle h, \gamma
     Every continuous bilinear form $a: H \times H \to \mathbb{R}$ induces a bounded linear operator $A: H \to H'$ defined by:
     $$ \langle Au, v \rangle_{H', H} = a(u, v) \quad \forall v \in H $$
 
-    By the Riesz Representation Theorem, there exists an isometric isomorphism (the Riesz map) $R: H \to H'$.
+    By the Riesz Representation Theorem, there exists the Riesz map $R: H \to H'$.
 
     \vspace{0.3cm}
     We can pull the operator back into $H$ by defining $R^{-1} \circ A : H \to H$. The abstract problem $a(u,v) = f(v)$ is thus equivalent to the operator equation:
-    $$ Au = f \text{ in } H' \iff (R^{-1} \circ A)u = R^{-1}f \text{ in } H $$
+    $$ Au = f \text{ in } H' \iff (R^{-1} \circ A)u \coloneqq \mathbb A u = R^{-1}f \coloneqq F \text{ in } H $$
 \end{frame}
 
 \begin{frame}{Step 2: Fixed Point Formulation}
+        $$ \mathbb A u = F $$
     To prove existence and uniqueness, we construct a fixed-point mapping.
 
-    Let $F = R^{-1}f \in H$. For a parameter $\rho > 0$, define the map $T: H \to H$ as:
-    $$ T(u) = u - \rho R^{-1} \circ (Au - f) = u - \rho(R^{-1}Au - F) $$
+    For a parameter $\rho > 0$, define the map $T: H \to H$ as:
+    $$ T(u) = u - \rho (\mathbb Au - F) $$
 
-    Clearly, $u$ is a fixed point of $T$ (i.e., $T(u) = u$) if and only if $Au = f$. We seek to find a $\rho$ such that $T$ is a strict contraction on $H$.
+    Clearly, $u$ is a fixed point of $T$ iff $Au = f$. 
+
+    \idea{We impose contraction through $\rho$}
 \end{frame}
 
 \begin{frame}{Step 3: Contraction Mapping Argument}
@@ -189,15 +202,15 @@ $$ \langle \gamma_N \nabla u, \gamma_D v \rangle \quad\to\quad \langle h, \gamma
 \end{frame}
 
 \begin{frame}{Step 4: Stability Estimate}
-    Finally, we derive the \textit{a priori} estimate directly from the properties of the bilinear form.
+    Finally, we derive the \textit{a priori}.
 
     By ellipticity, we have:
     $$ \alpha\|u\|_H^2 \le a(u, u) $$
 
-    Since $u$ is the solution, $a(u,u) = f(u)$. By the definition of the dual norm:
+    Since $u$ is the solution, $a(u,u) = f(u)$:
     $$ f(u) = \langle f, u \rangle \le \|f\|_{H'}\|u\|_H $$
 
-    Combining these inequalities yields:
+    Then:
     $$ \alpha\|u\|_H^2 \le \|f\|_{H'}\|u\|_H $$
 
     Dividing by $\alpha\|u\|_H$ (assuming $u \neq 0$) gives the required stability bound:
