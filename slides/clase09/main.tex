@@ -1,0 +1,211 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\DeclareMathOperator{\grad}{\nabla}
+
+
+\title[Weak Formulations \& Lax-Milgram]{Weak Formulations and the Lax-Milgram Lemma}
+\author{Nicol\'as A. Barnafi}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+
+\section{Weak Formulation of the Laplace Operator}
+
+\begin{frame}{The Strong Form and Integration by Parts}
+    For a bounded Lipschitz domain $\Omega$, \emph{in the sense of distributions}:
+    $$ -\Delta u = f \quad \text{in } H^{-1}(\Omega) $$
+
+    \vspace{0.2cm}
+    \textbf{Weak formulation:} Test the equation against an arbitrary smooth test function $v$:
+    $$ -\langle\Delta u, v \rangle = \langle f, v\rangle  $$
+
+    \vspace{0.2cm}
+    Distributional defition (i.e. integration by parts) yields:
+    $$ -\langle \gamma_N \nabla u,\gamma_0 v\rangle + (\nabla u, \nabla v) = \langle f, v \rangle $$
+    where $\gamma_0(u) = u|_{\partial\Omega}$ is the Dirichlet trace and $\gamma_N(\vec v)=(\vec v\cdot \vec n)|_{\partial\Omega}$ is the normal trace.
+\end{frame}
+
+\begin{frame}{Natural vs. Essential Boundary Conditions}
+    The boundary integral reveals the natural decomposition of boundary conditions:
+    $$ \int_{\partial\Omega} (\gamma_0 v) (\gamma_N \nabla u) \, ds = \int_{\Gamma_D} (\gamma_0 v) (\gamma_N \nabla u) \, ds + \int_{\Gamma_N} (\gamma_0 v) (\gamma_N \nabla u) \, ds $$
+
+    \begin{itemize}
+        \item \textbf{Essential (Dirichlet) Conditions:} Imposed directly on the solution space. 
+
+            We define the test space such that $\gamma_0 v = 0$ on $\Gamma_D$. 
+        \item \textbf{Natural (Neumann) Conditions:} Imposed via the formulation itself.
+
+            If $\nabla u \cdot n = h$ on $\Gamma_N$, we substitute this directly into the boundary integral.
+    \end{itemize}
+
+$$ \langle \gamma_N \nabla u, \gamma_D v \rangle \quad\to\quad \langle h, \gamma_D v \rangle_{H^{-1/2}(\Gamma_N),H^{1/2}(\Gamma_N)} $$
+\end{frame}
+
+\begin{frame}{The Weak Formulation}
+    Let $\Gamma_D = \partial\Omega$ (pure homogeneous Dirichlet problem for simplicity). We define our solution and test space as $V_0 = H^1_0(\Omega)$.
+
+    \vspace{0.3cm}
+    \textbf{The Weak Problem:}
+    Find $u \in V_0$ such that
+    $$ (\nabla u, \nabla v)_{0,\Omega} = \langle f, v \rangle \quad \forall v \in V_0 $$
+
+    \vspace{0.3cm}
+    \textbf{Observations:}
+    \begin{itemize}
+        \item The Laplacian is now interpreted distributionally.
+        \item The solution and test spaces are identical ($W = V = H^1_0(\Omega)$).
+        \item The Dirichlet boundary condition does not appear in the integral equation.
+    \end{itemize}
+\end{frame}
+
+\section{Abstract Problems and Well-Posedness}
+
+\begin{frame}{The Abstract Variational Problem}
+    Let $(W,\|\cdot\|_W)$, $(V, \|\cdot \|_V)$ normed vector spaces. Generally, $V$ is reflexive Banach space and $W$ is Banach.
+
+    \vspace{0.3cm}
+    \textbf{The Continuous Problem:}
+    Find $u \in W$ such that
+    $$ a(u, v) = f(v) \quad \forall v \in V $$
+
+    \vspace{0.3cm}
+    \textbf{Components:}
+    \begin{itemize}
+        \item $a(\cdot, \cdot)$: Continuous bilinear form on $W \times V$, i.e. $a \in \mathcal{L}(W \times V; \mathbb{R})$.
+        \item $f(\cdot)$: Continuous linear form on $V$, i.e. $f \in V'$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Hadamard Well-Posedness}
+    To consider solving a boundary value problem, we must \emph{good} problems.
+
+    \vspace{0.3cm}
+    \textbf{Definition (Well-posedness in the sense of Hadamard):}
+    The abstract problem is well-posed if it satisfies two conditions:
+    \begin{enumerate}
+        \item It admits a unique solution $u \in W$.
+        \item It satisfies the following \textit{a priori} or \emph{stability} estimate:
+        $$ \exists c > 0, \forall f \in V', \quad \|u\|_W \le c\|f\|_{V'} $$
+    \end{enumerate}
+
+    \vspace{0.3cm}
+    \idea{ The solution exists, is unique, and depends continuously on the given data $f$.}
+\end{frame}
+
+
+\section{The Lax-Milgram Lemma}
+
+\begin{frame}{Abstract Framework and Ellipticity}
+    We can frame the Poisson weak formulation as an abstract problem $a(u,v) = f(v)$ by defining the bilinear form $a(u,v) := (\nabla u, \nabla v)_{0,\Omega}$.
+
+    \vspace{0.2cm}
+    \textbf{Definition (Boundedness):}
+    A bilinear form $a(\cdot, \cdot)$ on $H \times H$ is bounded (continuous) if:
+
+    There exists $C > 0$ such that:
+    $$ |a(u, v)| \le C \|u\|_H \|v\|_H \quad \forall u, v \in H $$
+
+    \vspace{0.2cm}
+    \textbf{Definition (Ellipticity):}
+    A bilinear form $a(\cdot, \cdot)$ defined on a Hilbert space $H$ is elliptic if: 
+
+    There exists a constant $\alpha > 0$ such that:
+    $$ a(x, x) \ge \alpha \|x\|^2_H \quad \forall x \in H $$
+
+\end{frame}
+
+\begin{frame}{The Lax-Milgram Lemma}
+    \begin{block}{Lemma (Lax-Milgram)}
+    Consider: 
+    \begin{itemize}
+        \item $H$ a Hilbert space. 
+        \item A bounded, elliptic bilinear form $a : H \times H \to \mathbb{R}$ with constants $C$ and $\alpha$. 
+        \item A linear functional $f \in H'$.
+    \end{itemize}
+
+        Then, the abstract problem is well-posed: There exists a unique solution $u \in H$ such that
+        $$ a(u, v) = f(v) \quad \forall v \in H, $$
+
+        And the inverse is stable:
+        $$ \|u\|_H \le \frac{1}{\alpha}\|f\|_{H'} $$
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Application to Poisson problem}
+    [TODO]
+\end{frame}
+
+\section{Proof of the Lax-Milgram Lemma}
+
+\begin{frame}{Step 1: Induced Operators and the Riesz Map}
+    Every continuous bilinear form $a: H \times H \to \mathbb{R}$ induces a bounded linear operator $A: H \to H'$ defined by:
+    $$ \langle Au, v \rangle_{H', H} = a(u, v) \quad \forall v \in H $$
+
+    By the Riesz Representation Theorem, there exists an isometric isomorphism (the Riesz map) $R: H \to H'$.
+
+    \vspace{0.3cm}
+    We can pull the operator back into $H$ by defining $R^{-1} \circ A : H \to H$. The abstract problem $a(u,v) = f(v)$ is thus equivalent to the operator equation:
+    $$ Au = f \text{ in } H' \iff (R^{-1} \circ A)u = R^{-1}f \text{ in } H $$
+\end{frame}
+
+\begin{frame}{Step 2: Fixed Point Formulation}
+    To prove existence and uniqueness, we construct a fixed-point mapping.
+
+    Let $F = R^{-1}f \in H$. For a parameter $\rho > 0$, define the map $T: H \to H$ as:
+    $$ T(u) = u - \rho R^{-1} \circ (Au - f) = u - \rho(R^{-1}Au - F) $$
+
+    Clearly, $u$ is a fixed point of $T$ (i.e., $T(u) = u$) if and only if $Au = f$. We seek to find a $\rho$ such that $T$ is a strict contraction on $H$.
+\end{frame}
+
+\begin{frame}{Step 3: Contraction Mapping Argument}
+    For $u, v \in H$, analyze the distance between their images:
+    \begin{align*}
+        \|T(u) - T(v)\|_H^2 &= \|u - v - \rho R^{-1}A(u - v)\|_H^2 \\
+        &= \|u - v\|_H^2 - 2\rho(u - v, R^{-1}A(u - v))_H + \rho^2\|R^{-1}A(u - v)\|_H^2
+    \end{align*}
+
+    Using the Riesz map properties, $(x, R^{-1}y)_H = \langle y, x \rangle_{H',H}$:
+    $$ \|T(u) - T(v)\|_H^2 = \|u - v\|_H^2 - 2\rho\langle A(u - v), u - v \rangle_{H',H} + \rho^2\|A(u - v)\|_{H'}^2 $$
+
+    Applying ellipticity ($\langle Au, u \rangle \ge \alpha\|u\|^2$) and boundedness ($\|Au\|_{H'} \le C\|u\|$):
+    $$ \|T(u) - T(v)\|_H^2 \le (1 - 2\rho\alpha + \rho^2 C^2)\|u - v\|_H^2 $$
+
+    $T$ is a contraction if $1 - 2\rho\alpha + \rho^2 C^2 < 1$, which holds for $\rho \in (0, 2\alpha/C^2)$. Banach's Fixed Point Theorem guarantees a unique solution.
+\end{frame}
+
+\begin{frame}{Step 4: Stability Estimate}
+    Finally, we derive the \textit{a priori} estimate directly from the properties of the bilinear form.
+
+    By ellipticity, we have:
+    $$ \alpha\|u\|_H^2 \le a(u, u) $$
+
+    Since $u$ is the solution, $a(u,u) = f(u)$. By the definition of the dual norm:
+    $$ f(u) = \langle f, u \rangle \le \|f\|_{H'}\|u\|_H $$
+
+    Combining these inequalities yields:
+    $$ \alpha\|u\|_H^2 \le \|f\|_{H'}\|u\|_H $$
+
+    Dividing by $\alpha\|u\|_H$ (assuming $u \neq 0$) gives the required stability bound:
+    $$ \|u\|_H \le \frac{1}{\alpha}\|f\|_{H'} $$
+    \qed
+\end{frame}
+
+\begin{frame}
+    \maketitle
+\end{frame}
+\end{document}
