@@ -103,12 +103,12 @@
 
     We must separate the solution space from the test space.
     \begin{itemize}
-        \item \textbf{Solution Space:} $V_g = \{ v \in H^1(\Omega) : \gamma_0 v = g \text{ on } \Gamma_D \}$
+        \item \textbf{Solution Space:} $V_{u_D} = \{ v \in H^1(\Omega) : \gamma_0 v = u_D \text{ on } \Gamma_D \}$
         \item \textbf{Test Space:} $V_0 = \{ v \in H^1(\Omega) : \gamma_0 v = 0 \text{ on } \Gamma_D \}$
     \end{itemize}
 
     \vspace{0.3cm}
-    \textbf{The Weak Problem:} Find $u \in \alert{V_g}$ such that
+    \textbf{The Weak Problem:} Find $u \in \alert{V_{u_D}}$ such that
     $$ (\nabla u, \nabla v) = \langle f, v\rangle_{V_0', V_0} + \langle h, \gamma_0 v\rangle_{H^{-1/2}(\Gamma_N), H^{1/2}(\Gamma_N)}  \quad \forall v \in \alert{V_0} $$
 
     \vspace{0.2cm}
@@ -123,11 +123,11 @@
 
     \vspace{0.2cm}
     \textbf{Decomposition:} Decompose $u = u_0 + u_L$, where $u_0 \in V_0$. Substituting this into the weak formulation yields:
-    $$ (\nabla(u_0 + u_g), \nabla v) = (f, v) \quad \forall v \in V_0 $$
+    $$ (\nabla(u_0 + u_L), \nabla v) = (f, v) \quad \forall v \in V_0 $$
 
     \vspace{0.2cm}
     \textbf{The Modified Problem:} Find $u_0 \in V_0$ such that
-    $$ (\nabla u_0, \nabla v) = (f, v) - (\nabla u_g, \nabla v) \quad \forall v \in V_0 $$
+    $$ (\nabla u_0, \nabla v) = (f, v) - (\nabla u_L, \nabla v) \quad \forall v \in V_0 $$
 
     \vspace{0.2cm}
     This is now a standard abstract problem $a(u_0, v) = \tilde{f}(v)$ defined on the Hilbert space $V_0$. Lax-Milgram now perfectly applies for $u_0$.
