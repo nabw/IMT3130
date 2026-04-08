@@ -5,11 +5,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
-\usepackage{mathtools}
 \DeclareMathOperator{\grad}{\nabla}
 
-
-\title[Weak Formulations \& Lax-Milgram]{Weak Formulations and Galerkin Schemes}
+\title[Traces and Poincar\'e]{Applications of Functional Analysis and PDEs: \\ Traces and Poincar\'e Inequalities}
 \author{Nicol\'as A. Barnafi}
 \date{}
 
@@ -23,210 +21,174 @@
     \tableofcontents
 \end{frame}
 
-\section{Review and Boundary Conditions}
+\section{Traces}
 
-\begin{frame}{Review: The Weak Poisson Problem}
-    Recall Poisson problem with homogeneous Dirichlet boundary condition:
-    \begin{align*}
-        -\Delta u &= f \quad \text{in } \Omega, \\
-        \gamma_0 u &= 0 \quad \text{on } \partial\Omega.
-    \end{align*}
-    
-    The weak formulation reads: Find $u \in H^1_0(\Omega)$ such that
-    $$ \int_\Omega \nabla u \cdot \nabla v \, dx = \int_\Omega f v \, dx \quad \forall v \in H^1_0(\Omega) $$
-    
-    This is compactly written as $a(u,v) = \langle f, v \rangle$ $\Rightarrow$ Lax-Milgram Lemma.
+\begin{frame}{The Boundary Value Problem}
+    $$ -\Delta u = f\quad\text{in $\Omega$}, \qquad \alert{u=0\quad\text{on $\partial\Omega$}}$$
+    \pause
+
+    \vspace{0.2cm}
+    \textbf{The Challenge:}
+    $|\partial\Omega|=0$ and in Sobolev spaces are defined \textit{almost everywhere}. 
+    Pointwise evaluation on a set of measure zero is meaningless.
+
+    \vspace{0.2cm}
+    \textbf{The Solution:}
+    \emph{Trace operators} that require additional regularity.
 \end{frame}
 
-\begin{frame}{Density and Partial Boundary Conditions}
-    We construct spaces with boundary conditions using distribution theory and test functions. 
-    
-    \vspace{0.2cm}
-    We can \textbf{define} $H^1_0(\Omega)$ as:
-    $$ H^1_0(\Omega) := \overline{C_0^\infty(\Omega)}^{\|\cdot\|_{1,\Omega}} $$
+\begin{frame}{The Dirichlet Trace}
+    Let $\Omega \subset \mathbb{R}^n$ be bounded Lipschitz.
 
-    This definition is rigorously equivalent to defining the space via the kernel of the trace operator: $H^1_0(\Omega) = \{v \in H^1(\Omega) : \gamma_0 v = 0 \text{ on } \partial\Omega\}$.
+    We start by defining the \textbf{trace operator} $\gamma_0$ for smooth functions:
+    \[
+        \gamma_0 : \mathcal{D}(\bar{\Omega}) \to C^\infty(\partial\Omega), \quad \gamma_0 u := u|_{\partial\Omega} \text{}
+    \]
 
-
-    \vspace{0.3cm}
-    \textbf{Question:} How can one define the following space?
-    $$ V_0 = \{ v \in H^1(\Omega) : \gamma_0 v = 0 \text{ on } \Gamma_D \} $$
-\end{frame}
-
-
-\begin{frame}{Mixed Boundary Conditions via Density}
-    \begin{columns}
-        \begin{column}{0.6\textwidth}
-            To handle mixed boundary conditions, we define $V_0$ as the closure of smooth functions that vanish \textit{only} in a neighborhood of $\Gamma_D$.
-
-            \vspace{0.2cm}
-            Let 
-            $$C^\infty_D(\bar{\Omega}) = \{ \phi \in C^\infty(\bar{\Omega}) : \text{supp}(\phi) \cap \Gamma_D = \emptyset \}.$$
-
-            We define $\gamma_D: H^1(\Omega)\to H^{1/2}(\Gamma_D)$ with 
-            $$ V_0 := \overline{C^\infty_D(\bar{\Omega})}^{\|\cdot\|_{1,\Omega}} = \ker \{\gamma_D\} = \{v \in H^1(\Omega): \gamma_D v = 0 \}. $$
-
-            \vspace{0.2cm}
-        \end{column}
-        \begin{column}{0.4\textwidth}
-            \begin{center}
-            \begin{tikzpicture}[scale=1.2]
-                % Domain
-                \draw[thick, fill=blue!10] (0,0) to[out=90,in=180] (1.5,1.5) to[out=0,in=90] (3,0) to[out=270,in=0] (1.5,-1.5) to[out=180,in=270] (0,0);
-
-                % Dirichlet Boundary
-                \draw[very thick, red] (0,0) to[out=90,in=180] (1.5,1.5);
-                \node[red, left] at (0.5, 1.2) {$\Gamma_D$ ($v=0$)};
-
-                % Neumann Boundary
-                \draw[very thick, green!60!black] (1.5,1.5) to[out=0,in=90] (3,0) to[out=270,in=0] (1.5,-1.5) to[out=180,in=270] (0,0);
-                \node[green!60!black, right] at (2.3, -0.5) {$\Gamma_N$};
-
-                \node at (1.5, 0) {$\Omega$};
-            \end{tikzpicture}
-            \end{center}
-        \end{column}
-    \end{columns}
-
-    \vspace{1cm}
-        Then
-            $$ -\langle \Delta u, v\rangle_{V_0', V_0} = \langle \gamma_N \nabla u, \gamma_D v\rangle_{H^{-1/2}(\Gamma_N), H^{1/2}(\Gamma_N)} + (\nabla u, \nabla v) $$ 
-\end{frame}
-
-\begin{frame}{Non-Homogeneous Boundary Conditions}
-    Consider the Poisson problem where the Dirichlet condition is not zero:
-    \begin{align*}
-        -\Delta u &= f \quad \text{in } \Omega, \\
-        \gamma_0 u &= u_D \quad \text{on } \Gamma_D \\
-        \gamma_N \nabla u &= h \quad \text{on } \Gamma_N.
-    \end{align*}
-
-    We must separate the solution space from the test space.
-    \begin{itemize}
-        \item \textbf{Solution Space:} $V_g = \{ v \in H^1(\Omega) : \gamma_0 v = g \text{ on } \Gamma_D \}$
-        \item \textbf{Test Space:} $V_0 = \{ v \in H^1(\Omega) : \gamma_0 v = 0 \text{ on } \Gamma_D \}$
-    \end{itemize}
-
-    \vspace{0.3cm}
-    \textbf{The Weak Problem:} Find $u \in \alert{V_g}$ such that
-    $$ (\nabla u, \nabla v) = \langle f, v\rangle_{V_0', V_0} + \langle h, \gamma_0 v\rangle_{H^{-1/2}(\Gamma_N), H^{1/2}(\Gamma_N)}  \quad \forall v \in \alert{V_0} $$
-
-    \vspace{0.2cm}
-    \textit{The Challenge:} $V_g$ is an affine space, not a vector space $\Rightarrow$ Cannot apply Lax-Milgram.
-\end{frame}
-
-\begin{frame}{The Lifting Operator and Existence Analysis}
-    To apply Lax-Milgram, we shift back to $V_0$ via a \textbf{lifting function}.
-
-    \vspace{0.2cm}
-    The trace operator is surjective onto $H^{1/2}(\Gamma_D)$, if $u_D \in H^{1/2}(\Gamma_D)$, there exists a \emph{lifting} $u_L \in H^1(\Omega)$ such that $\gamma_0 u_L = u_D$.
-
-    \vspace{0.2cm}
-    \textbf{Decomposition:} Decompose $u = u_0 + u_L$, where $u_0 \in V_0$. Substituting this into the weak formulation yields:
-    $$ (\nabla(u_0 + u_g), \nabla v) = (f, v) \quad \forall v \in V_0 $$
-
-    \vspace{0.2cm}
-    \textbf{The Modified Problem:} Find $u_0 \in V_0$ such that
-    $$ (\nabla u_0, \nabla v) = (f, v) - (\nabla u_g, \nabla v) \quad \forall v \in V_0 $$
-
-    \vspace{0.2cm}
-    This is now a standard abstract problem $a(u_0, v) = \tilde{f}(v)$ defined on the Hilbert space $V_0$. Lax-Milgram now perfectly applies for $u_0$.
-\end{frame}
-
-\section{From Weak to Strong Formulation}
-
-\begin{frame}{The Fundamental Lemma of Calculus of Variations}
-    To recover the strong PDE from the integral equation, we rely on a fundamental density result.
-    
-    \vspace{0.3cm}
-    \begin{block}{Lemma (Fundamental Lemma of Calculus of Variations)}
-        Let $\Omega \subset \mathbb{R}^d$ be bounded and $f \in L^1(\Omega)$. If
-        $$ \int_\Omega f \phi \, dx = 0 \quad \forall \phi \in C_0^\infty(\Omega) $$
-        then $f = 0$ almost everywhere.
+    \begin{block}{}
+        \textbf{Trace Inequality:} There exists $C > 0$ such that:
+        \[
+            \|\gamma_0 f\|_{0,\partial\Omega} \le C\|f\|_{1,\Omega} \quad \forall f \in \mathcal{D}(\bar{\Omega}) \text{}
+        \]
     \end{block}
+
+    \textbf{Trace Theorem:} By density, $\gamma_0$ extends to a continuous and surjective operator:
+    \[
+        \gamma_0 : H^1(\Omega) \to H^{1/2}(\partial\Omega) (\alert{\subseteq L^2(\partial\Omega)})
+    \]
 \end{frame}
 
-\begin{frame}{Recovering the Strong Form: The Interior}
-    Consider the weak mixed problem: Find $u \in V_0$ such that
-    $$ (\nabla u, \nabla v) = (f, v) + \langle h, v \rangle_{\Gamma_N} \quad \forall v \in V_0 $$
+\begin{frame}{Proof of Trace Theorem (Density Argument)}
+    \textbf{Theorem:} The trace operator $\gamma_0$ extends uniquely to a continuous linear operator 
+    $$\gamma_0: H^1(\Omega) \to L^2(\partial\Omega)$$
 
-    \textbf{Hypothesis:} Assume the weak solution possesses sufficient regularity, e.g., $u \in H^2(\Omega)$ or at least $\Delta u \in L^1(\Omega)$.
-    
-    \textbf{Step 1: Test in the interior.} 
-    Choose $v \in C_0^\infty(\Omega) \subset V_0$. Since $v=0$ on $\partial\Omega$, the boundary term $\langle h, v \rangle_{\Gamma_N}$ vanishes.
-    
-    Integrating by parts yields:
-    $$ (-\Delta u - f, v) = 0 \quad \forall v \in C_0^\infty(\Omega) $$
-    
-    By the Fundamental Lemma, assuming $\Delta u \in L^1(\Omega)$ (or understanding it distributionally), we recover the PDE:
-    $$ -\Delta u = f \quad \text{a.e. in } \Omega $$
-\end{frame}
-
-\begin{frame}{Recovering the Strong Form: The Boundary}
-    \textbf{Step 2: Test on the boundary.}
-    We know $-\Delta u = f$. Multiply by an arbitrary $v \in V_0$ and integrate by parts:
-    $$ (\nabla u, \nabla v) - \langle \nabla u \cdot n, v \rangle_{\Gamma_N} = (f, v) $$
-    
-    Subtract this from the original weak formulation:
-    $$ \langle \nabla u \cdot n - h, v \rangle_{\Gamma_N} = 0 \quad \forall v \in V_0 $$
-    
-    Since the trace of $V_0$ is dense in an appropriate boundary space on $\Gamma_N$, we conclude:
-    $$ \nabla u \cdot n = h \quad \text{on } \Gamma_N $$
-    We have successfully recovered the full boundary value problem.
-\end{frame}
-
-\section{Galerkin Schemes}
-
-\begin{frame}{The Galerkin Method and Orthogonality}
-    Consider a finite-dimensional subspace $V_h \subset V$.
-    
     \vspace{0.2cm}
-    \textbf{The Discrete Problem:} Find $u_h \in V_h$ such that
-    $$ a(u_h, v_h) = f(v_h) \quad \forall v_h \in V_h $$
-    
-    \vspace{0.2cm}
-    Since $V_h \subset V$ (conformity) and the true solution satisfies $a(u, v_h) = f(v_h)$, subtracting the two equations yields \textbf{Galerkin Orthogonality}:
-    $$ a(u - u_h, v_h) = 0 \quad \forall v_h \in V_h $$
-    The error $e_h = u - u_h$ is "orthogonal" to the discrete space with respect to the bilinear form $a(\cdot, \cdot)$.
+    \textbf{Proof Steps:}
+    \begin{enumerate}
+        \item<1-> \textbf{Density:} Let $v \in H^1(\Omega)$. Since $\mathcal D(\bar{\Omega})$ is dense in $H^1(\Omega)$ (Meyers-Serrin Thm), there exists a Cauchy sequence $\{\phi_i\}_{i} \in \mathcal D(\bar{\Omega})$ such that $\phi_i \to v$ in $H^1(\Omega)$.
+        \item<2-> \textbf{Trace Inequality:} For any $i, j$, the trace inequality $\|\gamma_0 f\|_{0,\partial\Omega} \le C\|f\|_{1,\Omega}$  implies:
+        \[ \|\gamma_0\phi_i - \gamma_0\phi_j\|_{0,\partial\Omega} = \|\gamma_0(\phi_i - \phi_j)\|_{0,\partial\Omega} \le C\|\phi_i - \phi_j\|_{1,\Omega} \]
+        \item<3-> \textbf{Convergence:} Thus, $\{\gamma_0\phi_i\}_{i}$ is a Cauchy sequence in $L^2(\partial\Omega)$, which converges to some limit $\xi \in L^2(\partial\Omega)$.
+        \item<4-> \textbf{Well-Definedness:} If $\{\tilde{\phi}_i\}_{i}$ is another sequence converging to $v$, then:
+        \[ \|\gamma_0\tilde{\phi}_i - \xi\| \le \|\gamma_0(\tilde{\phi}_i - \phi_i)\| + \|\gamma_0\phi_i - \xi\| \le C\|\tilde{\phi}_i - \phi_i\|_{1,\Omega} + \|\gamma_0\phi_i - \xi\| \to 0 \]
+        The limit $\xi$ is independent of the choice of sequence.
+    \end{enumerate}
 \end{frame}
 
-\begin{frame}{Well-Posedness of the Discrete Problem}
-    Does the discrete problem have a unique solution? Lax-Milgram lemma.
-    
-    \vspace{0.2cm}
-    Because $V_h \subset V$, continuous properties are trivially inherited:
+\begin{frame}{Spaces with Boundary Conditions}
+    We can now formally define Sobolev spaces with zero boundary conditions via the kernel of the trace operator:
+    \[
+        H^1_0(\Omega) := \ker \gamma_0 = \{ u \in H^1(\Omega) : \gamma_0 u = 0 \} \text{}
+    \]
     \begin{itemize}
-        \item \textbf{Discrete Boundedness:} 
-        $$ |a(u_h, v_h)| \le C \|u_h\|_V \|v_h\|_V \quad \forall u_h, v_h \in V_h $$
-        \item \textbf{Discrete Ellipticity:} 
-        $$ a(v_h, v_h) \ge \alpha \|v_h\|^2_V \quad \forall v_h \in V_h $$
+        \item The dual space of $H^1_0(\Omega)$ is denoted $H^{-1}(\Omega)$.
+        \item The dual space of the trace space $H^{1/2}(\partial\Omega)$ is $H^{-1/2}(\partial\Omega)$.
     \end{itemize}
-    
+
+    \vspace{0.3cm}
+\end{frame}
+
+\begin{frame}{Trace space}
+    We call     
+        $$ H^{1/2}(\partial\Omega) = \gamma_0 H^1(\Omega) $$
+        a \emph{trace space}, with norm
+        $$ \| u \|_{1/2,\partial\Omega} = \inf\{\|U\|_{1,\Omega}: u = \gamma_0 U, U \in H^1(\Omega)\} $$
+
+        Note that this induces an inner-product, thus $H^{1/2}(\partial\Omega)$ is Hilbert.
+
+        \begin{flushright}
+            \idea{Note: Infimum is attained at $-\Delta U = 0$ with $U=u$ on $\partial\Omega$}
+        \end{flushright}
+\end{frame}
+
+
+\begin{frame}{Normal and Tangential Traces}
+    To handle Neumann conditions, we extend traces to $H(\text{div})$ and $H(\text{curl})$ using integration by parts (Divergence Theorem).
+
     \vspace{0.2cm}
-    Lax-Milgram Lemma implies well-posedness and discrete stability.
+    \textbf{Normal Trace Theorem ($H(\text{div})$)}:
+    The mapping $\gamma_N v = v|_{\partial\Omega} \cdot n$ extends to a continuous linear map $\gamma_N : H(\text{div}; \Omega) \to H^{-1/2}(\partial\Omega)$.
+    \[
+        \langle \gamma_N v, \phi \rangle_{-1/2, 1/2} = (v, \nabla \phi) + (\text{div } v, \phi) \quad \forall v \in H(\text{div}; \Omega), \phi \in H^1(\Omega) \text{}
+    \]
+
+    \vspace{0.2cm}
+    \textbf{Tangential Trace Theorem ($H(\text{curl})$)}:
+    The extension $\gamma_t v = n \times v$ maps continuously: $\gamma_t : H(\text{curl}; \Omega) \to H^{-1/2}(\partial\Omega)$.
+    \[
+        (\text{curl } v, \phi) - (v, \text{curl } \phi) = \langle \gamma_t v, \phi \rangle \quad \forall v \in H(\text{curl}; \Omega), \phi \in H^1(\Omega) \text{}
+    \]
 \end{frame}
 
-\begin{frame}{C\'ea's Estimate}
-    \textbf{Lemma (C\'ea's Estimate):} For a conformal, consistent Galerkin scheme with an elliptic and continuous bilinear form, the error satisfies:
-    $$ \|u - u_h\|_V \le \frac{C}{\alpha} \inf_{v_h \in V_h} \|u - v_h\|_V $$
-    
-    \textbf{Proof:} Let $z_h \in V_h$ be arbitrary.
-    \begin{align*}
-        \alpha \|u - u_h\|_V^2 &\le a(u - u_h, u - u_h) \quad \text{(Ellipticity)} \\
-        &= a(u - u_h, u - z_h) + a(u - u_h, z_h - u_h) \\
-        &= a(u - u_h, u - z_h) \quad \text{(Galerkin Orthogonality)} \\
-        &\le C \|u - u_h\|_V \|u - z_h\|_V \quad \text{(Continuity)}
-    \end{align*}
-    Dividing by $\|u - u_h\|_V$ and taking the infimum yields the result. \qed
+\section{Poincar\'e Inequalities}
+
+\begin{frame}{The Poincar\'e Inequality}
+    \textbf{Lemma (Poincar\'e inequality):} Let $\Omega \subset \mathbb{R}^n$ be a bounded Lipschitz domain. There exists $C > 0$ such that:
+    \[
+        \|u\|_{0,\Omega} \le C\|\nabla u\|_{0,\Omega} \quad \forall u \in H^1_0(\Omega) \text{}
+    \]
+
+
+    \vspace{0.3cm}
+    This is shown using a standard contradiction with \textbf{Compact Embeddings}.
 \end{frame}
 
+\begin{frame}{Step 1: Setup Contradiction}
+    Assume the inequality is false.
+    \[
+        \|u\|_{0,\Omega} \le C\|\nabla u\|_{0,\Omega} \quad \forall u \in H^1_0(\Omega) \text{}
+    \]
 
-\begin{frame}{Outline}
-    \tableofcontents
+    There exists a sequence $(v_n)_n \subset C^\infty_0(\Omega) \subset H^1_0(\Omega)$ such that:
+    \[
+        \|v_n\|_{0,\Omega} = 1 \quad \text{and} \quad \|\nabla v_n\|_{0,\Omega} < \frac{1}{n} \quad \forall n \in \mathbb{N} \text{}
+    \]
+
+    \textbf{Analysis of the sequence:}
+    \begin{itemize}
+        \item The full $H^1$ norm is $\|v_n\|_{1,\Omega} = \|v_n\|_{0,\Omega} + \|\nabla v_n\|_{0,\Omega} < 1 + \frac{1}{n}$.
+        \item Therefore, $(v_n)_n$ is bounded in $H^1(\Omega)$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Step 2: Apply Embeddings}
+    Since $H^1(\Omega)$ is reflexive, the bounded sequence $(v_n)_n$ has a \textbf{weakly convergent subsequence} $v_{n_k} \rightharpoonup v \in H^1(\Omega)$ as $k\to\infty$.
+
+    \vspace{0.3cm}
+    By the \textit{Rellich-Kondrachov Theorem}, the embedding $i:H^1(\Omega) \to L^2(\Omega)$ is compact.
+    \begin{itemize}
+        \item Weak convergence in $H^1$ implies \textbf{strong convergence} in $i(H^1(\Omega) = L^2(\Omega)$.
+        \item Therefore, $v_{n_k} \to v$ strongly in $L^2(\Omega)$.
+        \item This preserves the norm exactly: $\|v\|_{0,\Omega} = \lim_{k\to\infty} \|v_{n_k}\|_{0,\Omega} = 1$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Step 3: The Contradiction}
+    For any test vector field $\phi \in [C^\infty_0(\Omega)]^d$, weak convergence in $H^1$ gives:
+    \[
+        (\nabla v, \phi) = -(v, \nabla \cdot \phi) = -\lim_{k\to\infty} (v_{n_k}, \nabla \cdot \phi) = \lim_{k\to\infty} (\nabla v_{n_k}, \phi) \text{}
+    \]
+    But we assumed $\|\nabla v_{n_k}\|_0 < \frac{1}{n_k} \to 0$. Therefore, $(\nabla v, \phi) = 0$, meaning $\nabla v = 0$.
+
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item Since $\Omega$ is connected, $\nabla v = 0 \implies v = c$ (a constant) almost everywhere.
+        \item Since $v_{n_k} \in H^1_0(\Omega)$, the trace evaluates to 0. Thus, $v|_{\partial\Omega} = c = 0$.
+        \item This implies $v \equiv 0$, which contradicts our earlier finding that $\|v\|_{0,\Omega} = 1$.
+    \end{itemize}
+    \qed
+\end{frame}
+
+\begin{frame}{Main consequence}
+    In $H_0^1(\Omega)$, 
+    $$ \| v\| + \|\grad v\|$$
+    and 
+    $$ \|\grad v \| $$
+    are equivalent norms.
+
 \end{frame}
 
 \begin{frame}
     \maketitle
 \end{frame}
-
 \end{document}
