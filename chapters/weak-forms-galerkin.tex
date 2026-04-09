@@ -138,8 +138,66 @@ In the case that $a$ is symmetric and non-negative, problem~\ref{eq:well-posedne
     \min_{u\in V} J(u) \coloneqq \min_{u\in V} \left\{\frac{1}{2}a(u,u) - f(u)\right\},
 \end{equation*}
 and the Lax-Milgram lemma implies that there exists a unique minimizer. In this sense, the ellipticity of $a$ translates to the strong convexity of $J$, which represents an \emph{energy functional}. 
-
 The generalization of the Lax-Milgram lemma for the setting where $W$ is a Banach space and $V$ is a reflexive Banach space is covered in Chapter~\ref{chapter:nonlinear}, where we state the \emph{generalized Lax-Milgram lemma} and the \emph{inf-sup condition}. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Well-posedness of non-trivial boundary conditions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In the previous sections, we mostly considered homogeneous Dirichlet boundary conditions defined over the entire boundary $\partial\Omega$. In practice, physical models often require imposing different types of conditions on distinct portions of the boundary, or non-homogeneous data. To rigorously handle these cases, we must extend our functional framework in order to verify their well-posedness. As we will see, the tools we have developed so far are mostly sufficient.
+
+We consider a partition of the boundary $\overline{\partial\Omega} = \overline{\Gamma_D} \cup \overline{\Gamma_N}$, where $\Gamma_D$ and $\Gamma_N$ are disjoint, open surface segments, and we assume that the measure of the Dirichlet boundary is strictly positive, i.e., $|\Gamma_D| > 0$:
+
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+    % Domain
+    \draw[thick, fill=blue!5] (0,0) to[out=90,in=180] (1.5,1.5) to[out=0,in=90] (3,0) to[out=270,in=0] (1.5,-1.5) to[out=180,in=270] (0,0);
+    % Dirichlet Boundary
+    \draw[very thick, red] (0,0) to[out=90,in=180] (1.5,1.5);
+    \node[red, left] at (0.4, 1.1) {$\Gamma_D$};
+    % Neumann Boundary
+    \draw[very thick, green!60!black] (1.5,1.5) to[out=0,in=90] (3,0) to[out=270,in=0] (1.5,-1.5) to[out=180,in=270] (0,0);
+    \node[green!60!black, right] at (2.9, -0.6) {$\Gamma_N$};
+    % Label
+    \node at (1.5, 0) {$\Omega$};
+\end{tikzpicture}
+\end{center}
+
+
+To formalize the space of functions that vanish only on $\Gamma_D$, we return to the density arguments used to construct $H^1_0(\Omega)$. Let us define the space of smooth functions that vanish in a neighborhood of $\Gamma_D$:
+$$ C^\infty_{\Gamma_D}(\bar{\Omega}) := \{ \phi \in C^\infty(\bar{\Omega}) : \text{supp}(\phi) \cap \Gamma_D = \emptyset \}. $$
+We define the space $V_0$ (also denoted $H^1_{\Gamma_D}(\Omega)$) as the closure of this set with respect to the $H^1(\Omega)$ norm:
+$$ V_0 := \overline{C^\infty_D(\bar{\Omega})}^{\|\cdot\|_{1,\Omega}}. $$
+This construction identifies the subspace of functions $v \in H^1(\Omega)$ such that their trace satisfies $\gamma_0 v = 0$ almost everywhere on $\Gamma_D$. Here the trace $\gamma_0: H^1(\Omega) \to H^{1/2}(\Gamma_D)$ is understood as $\gamma_0 v = v|_{\Gamma_D}$, i.e. the restriction only to the corresponding boundary part. For the remaining boundary $\Gamma_N$, the trace operator restricts to a fractional Sobolev space $H^{1/2}(\Gamma_N)$, whose topological dual is $H^{-1/2}(\Gamma_N)$.
+
+\begin{remark}
+As long as $|\Gamma_D| > 0$, the generalized Poincar\'e inequality still holds for functions in $V_0$. Consequently, the $H^1$ semi-norm $|\cdot|_{1,\Omega}$ remains a valid and equivalent norm on $V_0$. This, coupled with the trace inequality extended to $\Gamma_N$, ensures that weak formulations with non-homogeneous Neumann boundary conditions on $\Gamma_N$ are well-posed by a direct application of the Lax-Milgram lemma.
+\end{remark}
+
+We now turn our attention to non-homogeneous Dirichlet boundary conditions. Consider the Poisson problem:
+\begin{align*}
+    -\Delta u &= f \quad \text{in } \Omega, \\
+    u &= g \quad \text{on } \Gamma_D, \\
+    \nabla u \cdot n &= h \quad \text{on } \Gamma_N.
+\end{align*}
+For this problem, the functions satisfying the essential boundary condition belong to the set:
+$$ V_g := \{ v \in H^1(\Omega) : \gamma_0 v = g \text{ on } \Gamma_D \}. $$
+Testing the strong form against a function $v \in V_0$ and integrating by parts yields the weak formulation: Find $u \in V_g$ such that
+$$ \int_\Omega \nabla u \cdot \nabla v \, dx = \langle f,  v \rangle_{H^1_{\Gamma_D}(\Omega), [H^1_{\Gamma_D}(\Omega)]'} + \langle h,  v \rangle_{H^{-1/2}(\Gamma_N), H^{1/2}(\Gamma_N)} \quad \forall v \in V_0. $$
+This problem cannot be analyzed directly with the Lax-Milgram lemma because $V_g$ is an affine space, not a vector space (it does not contain the zero element if $g \neq 0$, and is not closed under addition).
+
+To circumvent this, we use a lifting operator. Because the trace operator $\gamma_0 : H^1(\Omega) \to H^{1/2}(\Gamma_D)$ is surjective, there exists a lifting function $u_g \in H^1(\Omega)$ such that $\gamma_0 u_g = g$ on $\Gamma_D$.
+
+We can then decompose our unknown continuous solution as $u = u_0 + u_g$, where $u_0 \in V_0$ is now an unknown function with strictly homogeneous Dirichlet boundary conditions. Substituting this decomposition into the weak formulation yields:
+$$ \int_\Omega \nabla(u_0 + u_g) \cdot \nabla v \, dx = \langle f,  v \rangle_{H^1_{\Gamma_D}(\Omega), [H^1_{\Gamma_D}(\Omega)]'} + \langle h,  v \rangle_{H^{-1/2}(\Gamma_N), H^{1/2}(\Gamma_N)} \quad \forall v \in V_0. $$
+By the linearity of the integral, we rearrange the terms to keep all unknowns on the left-hand side:
+$$ \int_\Omega \nabla u_0 \cdot \nabla v \, dx = \langle f,  v \rangle_{H^1_{\Gamma_D}(\Omega), [H^1_{\Gamma_D}(\Omega)]'} + \langle h,  v \rangle_{H^{-1/2}(\Gamma_N), H^{1/2}(\Gamma_N)} - \int_\Omega \nabla u_g \cdot \nabla v \, dx \quad \forall v \in V_0. $$
+This allows us to frame the problem as finding $u_0 \in V_0$ such that
+$$ a(u_0, v) = \tilde{\ell}(v) \quad \forall v \in V_0, $$
+where $a(u_0, v) := (\nabla u_0, \nabla v)_{0,\Omega}$ and the modified linear functional is
+$$ \tilde{\ell}(v) := \langle f,  v \rangle_{H^1_{\Gamma_D}(\Omega), [H^1_{\Gamma_D}(\Omega)]'} + \langle h,  v \rangle_{H^{-1/2}(\Gamma_N), H^{1/2}(\Gamma_N)} - \int_\Omega \nabla u_g \cdot \nabla v \, dx \quad. $$
+
+We can now apply the Lax-Milgram lemma. The space $V_0$ is a Hilbert space. The bilinear form $a(\cdot, \cdot)$ is continuous, and it is elliptic over $V_0 \times V_0$ due to the Poincar\'e inequality. The functional $\tilde{\ell}(\cdot)$ is bounded on $V_0$ by applying the Cauchy-Schwarz inequality, the trace inequality for the $\Gamma_N$ term, and the continuity of the gradient for the lifting term. Therefore, there exists a unique $u_0 \in V_0$ solving the modified problem, which consequently guarantees the existence and uniqueness of the full solution $u = u_0 + u_g \in V_g$.
 
 \section{Galerkin methods}\label{sec:galerkin}
 Instead of discretizing the differential operator, as one would do in the case of finite differences to obtain discrete derivatives, one can consider discrete functional spaces, with the idea that the discrete space somehow converges to the continuous space. This is known as a \emph{Galerkin scheme} or \emph{Galerkin method}.
