@@ -1,0 +1,113 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+
+\title{Tarea 3}
+%\author{Nicol\'as A Barnafi\thanks{Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile, Chile}, Axel Osses\thanks{Departamento de Ingeniería Matemática, Universidad de Chile, Chile}}
+%\author{Nicol\'as A Barnafi}
+\date{}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\newcommand{\tin}{\text{in}}
+\newcommand{\ton}{\text{on}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\pts}[1]{[{\bf #1 puntos}] }
+
+\begin{document}
+
+\maketitle
+ 
+\todo[inline,color=white!90!black]{\textbf{Instrucciones: } La tarea debe ser desarrollada por una o dos personas en un informe en formato .pdf a través del buzón habilitado en la plataforma Canvas, donde deben mostrar también el código desarrollado si es que corresponde. Para su conveniencia, pueden entregar las tareas en un Jupyter Notebook, de modo que sea más cómodo mostrar el código. En cualquier caso, se debe entregar un único archivo como respuesta a la tarea. La política de atrasos será: se calculará un factor lineal que vale 1 a la hora de entrega y 0 48 horas después. Esto multiplicará su puntaje obtenido. Pueden usar ChatGPT u otros modelos solo a conciencia. El uso de salidas de GPT sin su debida comprensión será severamente sancionado. }
+
+\begin{enumerate}
+
+    \item\pts{4}  Considere $\Omega\subset \R^d$ Lipschitz y acotado, una función $\ten K:\Omega \to \R^{d\times d}$ en $L^\infty(\Omega,\R^{d\times d})$ tal que es simétrica, continua y definida positiva en casi todo punto ($\exists c, C>0: c|\vec x|^2 \leq \vec x^T\ten K\vec x \leq C|\vec x|^2$ c.t.p), una función $\vec b$ en $L^\infty(\Omega)$ tal que $\dive {\vec b}=0$, $\vec b\cdot \vec n\geq 0$ en $\Gamma_N$ y $\vec b\in H(\dive; \Omega)$, una función escalar positiva $a>0$ en $L^\infty(\Omega)$, y un elemento $f$ de $[H^1(\Omega)]'$. En este contexto, considere el problema de Advección-Difusión-Reacción (ADR)
+            $$ 
+            \begin{aligned}
+                -\dive \ten K\grad u + \vec b\cdot \grad u + a u &= f &&\text{ en $\Omega$}, \\
+                u &= u_D &&\text{en $\Gamma_D$}, \\
+                \ten K\grad u\cdot \vec n &= t &&\text{en $\Gamma_N$},
+            \end{aligned}
+            $$
+            donde $\partial \Omega=\overline\Gamma_D \cup \overline \Gamma_N$, $u_D$ está en $H^{1/2}(\Gamma_D)$, y $t$ en $H^{-1/2}(\Gamma_N)$. 
+            \begin{enumerate}
+                \item\pts{2} Encuentre una formulación débil de este problema, definiendo claramente el espacio de soluciones, el espacio de las funciones test y las formas lineales/bilineales involucradas. Para ello, solo debe integrar por partes el operador diferencial de segundo orden. Notar que integrar el término de primer orden generaría nuevos términos de frontera que serían difíciles de analizar.
+                \item\pts{2} Demuestre que la formulación débil encontrada tiene una solución única usando el Lema de Lax-Milgram. Le será útil demostrar la siguiente identidad:
+                   $$ \int_{\partial\Omega} u^2 (\vec b\cdot n)\,dS = \int_\Omega \dive (u\vec b) u\,dx + \int_\Omega (u\vec b)\cdot \grad u\,dx = \int_\Omega (\vec b\cdot \grad u + u \dive \vec b) u\,dx + \int_\Omega u\vec b\cdot \grad u\,dx $$
+                   Indique claramente dónde se usan las hipótesis sobre los parámetros.
+            \end{enumerate}
+
+        \item\pts{6} Considere $\Omega\subset \R^d$ Lipschitz acotado, y el siguiente problema: Hallar $u_1, u_2:\Omega \to \R$  tales que
+            $$ 
+            \begin{aligned}
+                -\Delta u_1 + u_2 &= f_1  && \text{en $\Omega$} \\
+                -\Delta u_2 - u_1 &= f_2  && \text{en $\Omega$},
+            \end{aligned}
+            $$
+            dadas dos funciones $f_1,f_2$. 
+            \begin{enumerate}
+                \item\pts{2} Muestre, a través de integración por partes de cada ecuación por separado, cuales son las condiciones de borde adecuadas para este problema (Dirichlet, Neumann o una mezcla de ellas). 
+                \item\pts{2} Considere condiciones de borde homogéneas para ambas variables: 
+                        $$ u_1 = u_2 = 0 \quad\text{en $\partial\Omega$}. $$
+                       Escriba la formulación débil del problema, escribiendo claramente cuales son los espacios involucrados, y la regularidad requerida para las funciones $f_1, f_2$. Para esto, le servirá notar que el espacio de soluciones de su problema puede estar dado por $V_0 = H_0^1(\Omega)\times H_0^1(\Omega)$, y por lo tanto $\vec u \in V_0$ si y solo si $\vec u = (u_1, u_2)$, para $u_1, u_2$ en $H_0^1(\Omega)$. 
+                   \item\pts{2} Demuestre que el problema tiene una única solución y escriba la cota a-priori de estabilidad que muestra la continuidad de la inversa. 
+            \end{enumerate}
+
+        \item\pts{10} Considere $\mu,\lambda>0$ (parámetros de Lamé), $\Omega\subset\R^2$ Lipschitz acotado. Dado un campo vectorial $\vec u:\Omega\to \R^2$, que llamaremos desplazamiento, definimos su gradiente simétrico como
+            $$ \ten \varepsilon (\vec u) \coloneqq \frac 1 2\left(\grad \vec u + [\grad \vec u]^T\right), $$
+            donde la matriz $\grad \vec u$ está dada puntualmente por $[\grad \vec u]_{ij} = \frac{\partial u_i}{\partial x^j}$. Se define además el tensor de Hooke como el siguiente operador: 
+            $$ \ten \sigma (\vec u) \coloneqq 2 \mu \ten \varepsilon(\vec u) + \lambda \dive (\vec u) \ten I. $$
+            Dadas estas definiciones, una fuerza de volumen $\vec f:\Omega\to \R$, y una condición de borde $\vec u_D$, se define el problema de \emph{elasticidad lineal} como
+                $$ \begin{aligned}
+                    -\dive \ten \sigma (\vec u) &= \vec f &&\text{ en $\Omega$},  \\
+                    \vec u &= \vec u_d &&\text{en $\Gamma_D$},  \\
+                    \ten \sigma \vec n &= \vec t &&\text{en $\Gamma_N$}. 
+                \end{aligned} $$
+                \begin{enumerate}
+                    \item\pts{1} Demuestre que dada una matriz $A$ simétrica y una matriz $B$ antisimétrica, se tiene que 
+                            $$ A : B = 0, $$
+                            donde $:$ es la contracción de matrices o producto de Frobenius, dado por $X:Y=\sum_{i,j} X_{ij}Y_{ij}$. 
+                        \item\pts{1} Demuestre que la fórmula de integración por partes en forma matricial está dada por
+                        $$ \int_{\partial\Omega} \vec v\cdot (\ten \tau \vec n)\,dS = \int_\Omega \dive\ten \tau \cdot \vec v\,dx + \int_\Omega \ten\tau : \grad \vec v\,dx, $$
+                        donde $\ten \tau:\Omega \to \R^{d\times d}$ pertenece a $\ten H(\dive; \Omega)\coloneqq[H(\dive;\Omega)]^d$, y $\vec v:\Omega \to \R^d$ pertenece a $\vec H^1(\Omega)\coloneqq [H^1(\Omega)]^d$. Notar que el operador $\dive$ aplicado a una función matricial $\ten \tau$ se aplica por filas, es decir que resulta el siguiente vector: 
+                        $$ \dive \ten \tau = \begin{bmatrix} \dive \ten \tau_{1,\bullet} \\ \dive \ten \tau_{2,\bullet} \\ \vdots \\ \dive \ten \tau_{d, \bullet} \end{bmatrix} $$ 
+                    \item\pts{2} Use los dos resultados anteriores para mostrar que la formulación débil del problema de elasticidad está dada por: Encontrar $\vec u$ en $\vec V_{u_D}$ tal que 
+                        $$ \int_\Omega \ten \sigma(\vec u):\ten\varepsilon(\vec v)\,dx = \langle \vec f, \vec v\rangle_{V_0', V_0} + \langle \vec t, \vec v\rangle_{[H^{1/2}(\Gamma_N)]', H^{1/2}(\Gamma_N)} \qquad \forall \vec v \in \vec V_0,$$
+                        donde 
+                        $$ \vec V_{u_D} = \{ \vec v \in \vec H^1(\Omega): \vec v = \vec u_D \text{ en $\Gamma_D$}\} $$
+                        y
+                        $$ \vec V_0 = \{ \vec v \in \vec H^1(\Omega): \vec v = \vec 0 \text{ en $\Gamma_D$}\}, $$
+                        con las igualdades en dichas definiciones entendidas en el sentido de las trazas. 
+                    \item\pts{1} Muestre que el gradiente simétrico $\varepsilon(\vec u)$ es tal que 
+                        $$ \| \ten \varepsilon(\vec u) \|_{0,\Omega} \leq C \| \grad \vec u \|_{0,\Omega} . $$
+                    \item\pts{3} Demuestre la desigualdad de Körn, dada por
+                        $$ \| \vec u \|_{1,\Omega} \leq C \|\ten \varepsilon(\vec u) \|_{0,\Omega} \qquad \forall \vec u \in [H_0^1(\Omega)]^d. $$
+                            \emph{Hint: Extienda la demostración de Poincaré para este caso. Notar que la condición $\ten \varepsilon(\vec u) = 0$ implica que $\vec u$ es un movimiento rígido, i.e. una función de la forma $\vec u = \left(\begin{smallmatrix} \alpha x_2 + \beta \\ -\alpha x_1 + \gamma \end{smallmatrix}\right)$, para $\alpha, \beta, \gamma$ constantes arbitrarias. Esto vale solo en 2D, así que puede reducir la demostración al caso $\Omega\subset \mathbb R^2$.}
+                    \item\pts{2} Usando los resultados anteriores, muestre que el problema de elasticidad lineal tiene una única solución y muestre la cota de estabilidad.
+                \end{enumerate}
+\end{enumerate}
+
+\todo[inline,color=white!90!black]{\textbf{Nota: } Abriremos un foro en Canvas para revisar cualquier typo y/o error que haya en el enunciado.}
+\end{document}
+
