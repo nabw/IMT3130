@@ -42,7 +42,7 @@
 
 \begin{enumerate}
 
-    \item\pts{4}  Considere $\Omega\subset \R^d$ Lipschitz y acotado, una función $\ten K:\Omega \to \R^{d\times d}$ en $L^\infty(\Omega,\R^{d\times d})$ tal que es simétrica, continua y definida positiva en casi todo punto ($\exists c, C>0: c|\vec x|^2 \leq \vec x^T\ten K\vec x \leq C|\vec x|^2$ c.t.p), una función $\vec b$ en $L^\infty(\Omega)$ tal que $\dive {\vec b}=0$, $\vec b\cdot \vec n\geq 0$ en $\Gamma_N$ y $\vec b\in H(\dive; \Omega)$, una función escalar positiva $a>0$ en $L^\infty(\Omega)$, y un elemento $f$ de $[H^1(\Omega)]'$. En este contexto, considere el problema de Advección-Difusión-Reacción (ADR)
+    \item\pts{4}  Considere $\Omega\subset \R^d$ Lipschitz y acotado, una función $\ten K:\Omega \to \R^{d\times d}$ en $L^\infty(\Omega,\R^{d\times d})$ tal que es simétrica, continua y definida positiva en casi todo punto ($\exists c, C>0: c|\vec x|^2 \leq \vec x^T\ten K\vec x \leq C|\vec x|^2$ c.t.p), una función $\vec b$ en $L^\infty(\Omega, \R^d)$ tal que $\dive {\vec b}=0$, $\vec b\cdot \vec n\geq 0$ en $\Gamma_N$ y $\vec b\in \vec H(\dive; \Omega)$, una función escalar positiva $a>0$ en $L^\infty(\Omega)$, y un elemento $f$ de $[H^1(\Omega)]'$. En este contexto, considere el problema de Advección-Difusión-Reacción (ADR)
             $$ 
             \begin{aligned}
                 -\dive \ten K\grad u + \vec b\cdot \grad u + a u &= f &&\text{ en $\Omega$}, \\
@@ -78,10 +78,10 @@
             $$ \ten \varepsilon (\vec u) \coloneqq \frac 1 2\left(\grad \vec u + [\grad \vec u]^T\right), $$
             donde la matriz $\grad \vec u$ está dada puntualmente por $[\grad \vec u]_{ij} = \frac{\partial u_i}{\partial x^j}$. Se define además el tensor de Hooke como el siguiente operador: 
             $$ \ten \sigma (\vec u) \coloneqq 2 \mu \ten \varepsilon(\vec u) + \lambda \dive (\vec u) \ten I. $$
-            Dadas estas definiciones, una fuerza de volumen $\vec f:\Omega\to \R$, y una condición de borde $\vec u_D$, se define el problema de \emph{elasticidad lineal} como
+            Dadas estas definiciones, una fuerza de volumen $\vec f:\Omega\to \R^d$, y una condición de borde $\vec u_D$, se define el problema de \emph{elasticidad lineal} como
                 $$ \begin{aligned}
                     -\dive \ten \sigma (\vec u) &= \vec f &&\text{ en $\Omega$},  \\
-                    \vec u &= \vec u_d &&\text{en $\Gamma_D$},  \\
+                    \vec u &= \vec u_D &&\text{en $\Gamma_D$},  \\
                     \ten \sigma \vec n &= \vec t &&\text{en $\Gamma_N$}. 
                 \end{aligned} $$
                 \begin{enumerate}
@@ -104,7 +104,7 @@
                     \item\pts{3} Demuestre la desigualdad de Körn, dada por
                         $$ \| \vec u \|_{1,\Omega} \leq C \|\ten \varepsilon(\vec u) \|_{0,\Omega} \qquad \forall \vec u \in [H_0^1(\Omega)]^d. $$
                             \emph{Hint: Extienda la demostración de Poincaré para este caso. Notar que la condición $\ten \varepsilon(\vec u) = 0$ implica que $\vec u$ es un movimiento rígido, i.e. una función de la forma $\vec u = \left(\begin{smallmatrix} \alpha x_2 + \beta \\ -\alpha x_1 + \gamma \end{smallmatrix}\right)$, para $\alpha, \beta, \gamma$ constantes arbitrarias. Esto vale solo en 2D, así que puede reducir la demostración al caso $\Omega\subset \mathbb R^2$.}
-                    \item\pts{2} Usando los resultados anteriores, muestre que el problema de elasticidad lineal tiene una única solución y muestre la cota de estabilidad.
+                    \item\pts{2} Usando los resultados anteriores, muestre que el problema de elasticidad lineal tiene una única solución si $|\Gamma_D|>0$  y muestre la cota de estabilidad.
                 \end{enumerate}
 \end{enumerate}
 
