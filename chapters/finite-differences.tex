@@ -320,7 +320,7 @@ Let us analyze both methods for solving this problem.
     \end{tightalign*}
     which subtracted give the equation
     \begin{equation*}
-        \mat A_h(\vec u_h^{k+1} - \vec u_h^{k}) = -(\sin(\vec u_h^k) + \sin(\vec u_h^{k-1})).
+        \mat A_h(\vec u_h^{k+1} - \vec u_h^{k}) = -\sin(\vec u_h^k) + \sin(\vec u_h^{k-1}).
     \end{equation*}
     We typically call this equation an \emph{error equation}. Finally, we can use the fact that $\mat A_h$ is stable, so we can bound the error norm as
     \begin{tightalign*}
