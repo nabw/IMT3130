@@ -320,12 +320,12 @@ Let us analyze both methods for solving this problem.
     \end{tightalign*}
     which subtracted give the equation
     \begin{equation*}
-        \mat A_h(\vec u_h^{k+1} - \vec u_h^{k}) = -(\sin(\vec u_h^k) - \sin(\vec u_h^{k-1})).
+        \mat A_h(\vec u_h^{k+1} - \vec u_h^{k}) = -(\sin(\vec u_h^k) + \sin(\vec u_h^{k-1})).
     \end{equation*}
     We typically call this equation an \emph{error equation}. Finally, we can use the fact that $\mat A_h$ is stable, so we can bound the error norm as
     \begin{tightalign*}
         \|\vec u_h^{k+1} - \vec u_h^{k}\|_{\infty, h} &\leq C\|\mat A_h (\vec u_h^{k+1} - \vec u_h^{k})\|_{\infty, h} \tag{Stability}\\
-        &= C\|-(\sin(\vec u_h^k) - \sin(\vec u_h^{k-1}))\|_{\infty, h}\tag{Error equation}\\
+        &= C\|-(\sin(\vec u_h^k) + \sin(\vec u_h^{k-1}))\|_{\infty, h}\tag{Error equation}\\
         &\leq C\|\vec u_h^{k} - \vec u_h^{k-1}\|_{\infty, h}.\tag{$\sin$ is $1$-Lipschitz}
     \end{tightalign*}
     Thus, as justified by the Banach fixed point theorem, which we will study in more detail in Section~\ref{sec:fixed-point-theorems}, the scheme is convergent if $C<1$, i.e. the iterative map is a \emph{contraction}. Otherwise, the scheme \emph{can converge}, but we have no theoretical guarantee from this analysis. Still, each fixed point iteration
