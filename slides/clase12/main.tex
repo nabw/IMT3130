@@ -6,6 +6,7 @@
 \usepackage{amssymb}
 \usepackage{bm}
 \usepackage{mathtools}
+\usepackage{verbatim}
 \DeclareMathOperator{\grad}{\nabla}
 \renewcommand{\P}{\mathbb{P}}
 \newcommand{\R}{\mathbb{R}}
@@ -215,8 +216,20 @@ For any continuous function $u \in C(\bar{\Omega})$, we define the Lagrange inte
     \end{itemize}
 \end{frame}
 
-\begin{frame}\frametitle{ADR: Code}
+\begin{frame}[fragile]\frametitle{ADR: Code}
     \idea{Console}
+
+
+    Main tool to preserve sparsity: \code{scipy.sparse.diags}
+
+    \begin{verbatim}
+ diag = np.ones(N)
+ off  = np.ones(N - 1)
+
+ # Diffusion Matrix: (nu/h) * [-1, 2, -1]
+ K_diff = (nu / h) * diags([-off, 2*main, -off], [-1, 0, 1])
+    \end{verbatim}
+
 \end{frame}
 
 \begin{frame}

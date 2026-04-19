@@ -24,11 +24,11 @@ def solve_adr_1d(L, N, nu, c, sigma, f_val):
     off_diag  = np.ones(N - 1)
 
     # Diffusion Matrix: (nu/h) * [-1, 2, -1]
-    K_diff = (nu / h) * diags([-off_diag, 2 * main_diag, -off_diag], [-1, 0, 1]).toarray()
+    K_diff = (nu / h) * diags([-off_diag, 2 * main_diag, -off_diag], [-1, 0, 1])
     # Advection Matrix: (c/2) * [-1, 0, 1]
-    K_adv = (c / 2.0) * diags([-off_diag, 0 * main_diag, off_diag], [-1, 0, 1]).toarray()
+    K_adv = (c / 2.0) * diags([-off_diag, 0 * main_diag, off_diag], [-1, 0, 1])
     # Reaction Matrix: (sigma*h/6) * [1, 4, 1]
-    K_react = (sigma * h / 6.0) * diags([off_diag, 4 * main_diag, off_diag], [-1, 0, 1]).toarray()
+    K_react = (sigma * h / 6.0) * diags([off_diag, 4 * main_diag, off_diag], [-1, 0, 1])
     A = K_diff + K_adv + K_react
 
     # 2. Right-Hand Side (Load Vector): f_i = integral(f * phi_i)
@@ -43,6 +43,7 @@ def solve_adr_1d(L, N, nu, c, sigma, f_val):
     A[-1, :] = 0; A[-1, -1] = 1; F[-1] = 0
 
     # 4. Solve
+    A = A.tocsc()
     u = spsolve(A, F)
     return x, u
 
