@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 # Parameters
 L = 1.0      # Domain length
-N = 10       # Number of nodes
-nu = 0.1    # Diffusion coefficient
+N = 10000       # Number of nodes
+nu = 1e-4    # Diffusion coefficient
 c = 0.5      # Advection speed
 sigma = 1.0  # Reaction rate
 f = 1.0      # Source term

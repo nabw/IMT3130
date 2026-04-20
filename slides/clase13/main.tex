@@ -70,8 +70,8 @@
     For a 2D simplex, $\hat{K}$ is the unit triangle. Local shape functions:
     
     $$ \hat{\phi}_0(\xi_1, \xi_2) = 1 - \xi_1 - \xi_2, \quad \hat{\phi}_1(\xi_1, \xi_2) = \xi_1, \quad \hat{\phi}_2(\xi_1, \xi_2) = \xi_2 $$
-   .
-    
+
+
     \begin{center}
     \begin{tikzpicture}[scale=2]
         \draw[->, thick] (-0.2,0) -- (1.5,0) node[right] {$\xi_1$};
@@ -89,14 +89,14 @@
     The physical coordinates $x \in K_e$ are obtained via the mapping $x:\hat K \to K_e$:
     $$ x(\bm{\xi}) = \sum_{a=1}^{N_{nodes}} x_a^e \hat{\phi}_a(\bm{\xi})\in \R^2 \quad\Rightarrow\quad \frac{\partial \bm{x}}{\partial \bm{\xi}} = [(x_1^e - x_3^e) \, (x_2^3 - x_3^e)] \in \R^{2\times 2}$$
     
-    Let $J = \frac{\partial x}{\partial \xi}$ be the Jacobian of the transformation. To compute integrals in FE:
-    \begin{enumerate}
+    Let $J = \frac{\partial x}{\partial \xi}$ be the Jacobian of the transformation. To compute integrals in FE: \pause
+    \begin{enumerate}[<+->]
         \item  $$ \int_{K_e} \psi(x) \, dx = \int_{\hat{K}} \psi(x(\bm{\xi})) |\det J (\bm{\xi})| \, d\hat{\Omega} $$
     
         \item Gradients are transformed using the inverse transpose Jacobian:
-    $$ \nabla_x \phi_a^e = \frac{\partial \phi_a^e}{x_i} = \frac{\partial \phi_a^e}{\partial \xi_j}\frac{\partial \xi_j}{\partial x_i} =  J^{-T}(\bm{\xi}) \nabla_\xi \hat{\phi}_a(\bm{\xi}) $$
+    $$ \nabla_x \phi_a^e = \frac{\partial \phi_a^e}{\partial x_i} = \frac{\partial \phi_a^e}{\partial \xi_j}\frac{\partial \xi_j}{\partial x_i} =  J^{-T}(\bm{\xi}) \nabla_\xi \hat{\phi}_a(\bm{\xi}) $$
         \item The  integrals $\int_{\hat{K}} (\dots) d\hat{\Omega}$ are evaluated using numerical quadrature  on $\hat{K}$.
-            $$ \int_{\hat{K}} \psi(x(\xi)) | \det J | d\hat{\Omega} \approx \sum_q \psi(x(\xi_q)) | \det J(\xi_q) | w_q $$
+            $$ \int_{\hat{K}} \psi(x(\xi)) | \det J(\xi) | d\hat{\Omega} \approx \sum_q \psi(x(\xi_q)) | \det J(\xi_q) | w_q $$
     \end{enumerate}
 \end{frame}
 
@@ -133,7 +133,7 @@
         \end{column}
         \begin{column}{0.4\textwidth}
             \begin{itemize}
-                \item Element \phantom{II}I: $1\quad 4\quad 5$
+                \item Element \phantom{II}I: $1\quad 5\quad 4$
                 \item Element \phantom{I}II: $4\quad 5 \quad 3$
                 \item Element III: $5\quad 2 \quad 3$
                 \item Element IV: $1\quad 2 \quad 5$
@@ -146,21 +146,25 @@
 \end{frame}
 
 \begin{frame}{Connectivity and Equation Numbering}
-    Assembly maps local element contributions $k^e_{ab}$ and $f^e_a$ to the global matrices $K_{ij}$ and $F_i$.
+    \begin{footnotesize}
+    Assembly maps local element contributions $k^e_{ab}$ and $f^e_a$ to the global matrices $K_{ij}$ and $F_i$. \pause
     
     \vspace{0.3cm}
-    \textbf{1. The Element Node Matrix (IEN):}
+    \pause\textbf{0. The geometry (nodes):} A matrix $x_i$ with the coordinates of the global node $i$.
+    
+    \pause\textbf{1. The Element Node Matrix (IEN):}
     $$ \text{IEN}[e, a] \in \mathbb{N} $$
     Maps local node $a \in \{1, \dots, n_{dof}\}$ of element $e \in \{1, \dots, N_{el}\}$ to its \textbf{global node index}.
     
     \vspace{0.3cm}
-    \textbf{2. The Destination Array (ID):}
+    \pause\textbf{2. The Destination Array (ID):}
     $$ \text{ID}[i] \in \mathbb{Z} $$
-    Maps global node index $i$ to its \textbf{global DoF}\footnote{DoF: Degree of Freedom. Dirichlet nodes are set to -1}. 
+    Maps global node index $i$ to its \textbf{global DoF}\footnote{Dirichlet nodes are set to -1}. 
 
-    \textbf{3. The Location Matrix (LM):}
-    $$ \text{LM}[e, a] \coloneqq ID[IEN[e,a] $$
+    \pause\textbf{3. The Location Matrix (LM):}
+    $$ \text{LM}[e, a] \coloneqq ID[IEN[e,a]] $$
     Maps local node $a$ in element $e$ to its global DoF.
+    \end{footnotesize}
 
 \end{frame}
 
@@ -191,10 +195,10 @@
                 \draw[thick] (0,0) rectangle (1,1);
                 \draw[thick] (0,0) -- (1,1);
                 
-                \fill (0,0) circle (1pt) node[below left] {1};
+                \fill[color=red] (0,0) circle (1pt) node[below left] {1};
                 \fill (1,0) circle (1pt) node[below right] {2};
                 \fill (1,1) circle (1pt) node[above right] {3};
-                \fill (0,1) circle (1pt) node[above left] {4};
+                \fill[color=red] (0,1) circle (1pt) node[above left] {4};
                 
                 \node at (0.7, 0.3) {1};
                 \node at (0.3, 0.7) {2};
@@ -262,10 +266,8 @@
                 \State $F_i \leftarrow F_i + f^e_a$
                 \For{$b = 1 \dots 3$}
                     \State $j = \text{LM}[e, b]$
-                    \If{$j > 0$} \Comment{Free node interaction}
+                    \If{$j > 0$} \Comment{Free node}
                         \State $K_{ij} \leftarrow K_{ij} + k^e_{ab}$
-                    \Else \Comment{Dirichlet boundary interaction}
-                        \State $F_i \leftarrow F_i - k^e_{ab} \, g_D(\text{node } \text{IEN}[e,b])$
                     \EndIf
                 \EndFor
             \EndIf
@@ -273,6 +275,10 @@
     \EndFor
     \end{algorithmic}
     \end{footnotesize}
+\end{frame}
+
+\begin{frame}
+    \titlepage
 \end{frame}
 
 \end{document}

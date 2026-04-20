@@ -3,16 +3,16 @@ from scipy.sparse import coo_matrix
 import matplotlib.pyplot as plt
 
 # 1. Problem Parameters
-L, n_el = 1.0, 20
+L, n_el = 1.0, 50
 n_nodes = n_el + 1
 x_nodes = np.linspace(0, L, n_nodes)
-#x_nodes = x_nodes**(4.5)  # non-uniform meshes!
+#x_nodes = x_nodes**(0.2)  # non-uniform meshes!
 h = L / n_el
 # Now we can use functions!
-nu_func = lambda x: 0.01 + 0.1 * x**2
-b_func  = lambda x: 1.0 + np.sin(np.pi * x)
-c_func  = lambda x: 0.5 * np.ones_like(x)
-f_func  = lambda x: 10 * np.exp(-(x-0.5)**2 / 0.02)
+nu_func = lambda x: 0.01 * x #+ 0.1 * x**2
+b_func  = lambda x: 1.0 * x #+ np.sin(np.pi * x)
+c_func  = lambda x: 0.5 *x # * np.ones_like(x)
+f_func  = lambda x: 1 * x# * np.exp(-(x-0.5)**2 / 0.02)
 
 # Local functions and their derivatives
 N = lambda xi: np.array([0.5 * (1 - xi), 0.5 * (1 + xi)])
@@ -81,7 +81,6 @@ for e in range(n_el):
     # Global Scatter
     for a in range(2):
         i = ID[IEN[e,a]]
-        print(i)
         if i != -1:
             F[i] += f_e[a]
             for b in range(2):
