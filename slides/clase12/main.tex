@@ -32,7 +32,7 @@
     
     We introduce the space of continuous, piecewise linear functions:
     $$ \mathcal{P}^1_h \coloneqq \{ v_h\in C(\Omega): v_h|_{I_i} \in \P_1 \} \subset H^1(\Omega)$$
-   \pause The canonical basis for this space consists of "hat functions" $\phi_i$:
+   \pause The canonical basis for this space consists of \emph{hat functions} $\phi_i$:
     
     \begin{columns}
         \begin{column}{0.45\textwidth}
@@ -46,10 +46,11 @@
             $$
 
         \end{column}
-        \begin{column}[b]{0.5\textwidth}
+        \begin{column}{0.5\textwidth}
             \begin{itemize}
                 \item $\phi_i(x_j) = \delta_{ij}$
                 \item $\sum_i \phi_i(x) = 1$
+                \item $\phi_i'(x) = 1/h 1_{I_{i-1}} - 1/h 1_{I_i}$
             \end{itemize}
         \end{column}
     \end{columns}
@@ -123,7 +124,7 @@
 $$ u_h(x_j) = \sum_i u_i \phi(x_j) = u_j \quad\Rightarrow\quad \text{Nodal values} $$
     
     \vspace{0.3cm}
-    \textbf{2. The Interpolation Operator:}
+    \pause \textbf{2. The Interpolation Operator:}
 For any continuous function $u \in C(\bar{\Omega})$, we define the Lagrange interpolant $\mathcal{I}_h: C(\bar{\Omega}) \to V_h$  as:
     $$ \mathcal{I}_h u(x) = \sum_{i=1}^N u(x_i) \phi_i(x) $$
     This guarantees that $\mathcal{I}_h u(x_j) = u(x_j)$ at all nodes.
@@ -134,15 +135,15 @@ For any continuous function $u \in C(\bar{\Omega})$, we define the Lagrange inte
 \begin{frame}{From Weak Form to Algebraic Equations}
     Consider the abstract discrete Galerkin problem: Find $u_h \in V_h$ such that
     $$ a(u_h, v_h) = \ell(v_h) \quad \forall v_h \in V_h $$
-   .
-    
+
+
     \vspace{0.3cm}
-    \textbf{Step 1: Test against basis functions.}
+    \pause\textbf{Step 1: Test against basis functions.}
     Since the equation holds for all $v_h \in V_h$, then $\forall v_h \in V_h \Leftrightarrow \forall \phi_i, i\in \{1,\dots, N\}$:
     $$ a(u_h, \phi_i) = \ell(\phi_i) \quad \forall i \in \{1, \dots, N\} $$
-    
+
     \vspace{0.3cm}
-    \textbf{Step 2: Expand the trial function.}
+    \pause\textbf{Step 2: Expand the trial function.}
     We substitute the expansion $u_h = \sum_{j=1}^N u_j \phi_j$ into the bilinear form:
     $$ a\left(\sum_{j=1}^N u_j \phi_j, \phi_i\right) = \ell(\phi_i) \quad \forall i \in \{1, \dots, N\} $$
 \end{frame}
@@ -154,12 +155,15 @@ For any continuous function $u \in C(\bar{\Omega})$, we define the Lagrange inte
     
     This is a matrix-vector system $K U = F$:
     \begin{itemize}
-        \item $U = (U_1, \dots, U_N) \in \R^N$ unknown nodal values.
+        \item $U = (U_1, \dots, U_N) \in \R^N$ unknown nodal values or \textbf{DoFs} (Degrees of Freedom).
         \item $K_{ij} = a(\phi_j, \phi_i) \in \R^{N\times N}$ is the \textbf{Stiffness Matrix} (or system matrix).
         \item $F_i = \ell(\phi_i) \in \R^N$ is the \textbf{Load Vector} (or right-hand side).
     \end{itemize}
     
-    \textit{Sparsity:} $\phi_j$ and $\phi_i$ have compact support, so $a(\phi_j, \phi_i) = 0$ unless nodes $i$ and $j$ share an element.
+    \vspace{0.5cm}
+    \begin{footnotesize}
+        \textit{***Sparsity:} $\phi_j$ and $\phi_i$ have compact support, so $a(\phi_j, \phi_i) = 0$ unless nodes $i$ and $j$ share an element.
+    \end{footnotesize}
 \end{frame}
 
 \section{Example: The 1D ADR Problem}
@@ -176,7 +180,7 @@ For any continuous function $u \in C(\bar{\Omega})$, we define the Lagrange inte
     Here, our bilinear and linear forms are:
     \begin{align*}
         a(u, v) &= \nu(u', v') + c(u', v) + \sigma(u, v) \\
-        \ell(v) &= (f, v)
+        \ell(v) &= (1, v)
     \end{align*}
 \end{frame}
 
@@ -195,33 +199,35 @@ For any continuous function $u \in C(\bar{\Omega})$, we define the Lagrange inte
 \end{frame}
 
 \begin{frame}{ADR cont'd}
-    \textbf{1. Diffusion Term (Stiffness):}
+    \textbf{1. Diffusion Term:}
     \begin{itemize}
         \item $K_{ii} = \nu \int \phi_i' \phi_i' dx = \nu \left( \int_{x_{i-1}}^{x_i} \frac{1}{h^2} dx + \int_{x_i}^{x_{i+1}} \frac{1}{h^2} dx \right) = \nu \left( \frac{h}{h^2} + \frac{h}{h^2} \right) = \frac{2\nu}{h}$.
         \item $K_{i, i-1} = \nu \int_{x_{i-1}}^{x_i} \phi_{i-1}' \phi_i' dx = \nu \int_{x_{i-1}}^{x_i} (-\frac{1}{h})(\frac{1}{h}) dx = -\frac{\nu}{h}$.
     \end{itemize}
 
     \vspace{0.2cm}
-    \textbf{2. Advection Term (Skew-Symmetric):}
+    \textbf{2. Advection Term:}
     \begin{itemize}
         \item $K_{ii} = c \int \phi_i' \phi_i dx = c \left( \left[\frac{1}{2}\phi_i^2\right]_{x_{i-1}}^{x_i} + \left[\frac{1}{2}\phi_i^2\right]_{x_i}^{x_{i+1}} \right) = c(\frac{1}{2} - 0 + 0 - \frac{1}{2}) = 0$.
-        \item $K_{i, i+1} = c \int_{x_i}^{x_{i+1}} \phi_{i+1}' \phi_i dx = c \int_{x_i}^{x_{i+1}} (\frac{1}{h})(\frac{x_{i+1}-x}{h}) dx = \frac{c}{h^2} \left[x_{i+1}x - \frac{x^2}{2}\right]_{x_i}^{x_{i+1}} = \frac{c}{2}$.
+        \item $K_{i, i\pm 1} = c \int_{x_i}^{x_{i+1}} \phi_{i+1}' \phi_i dx = c \int_{x_i}^{x_{i+1}} (\frac{\pm 1}{h})(\frac{x_{i+1}-x}{h}) dx = \frac{\pm c}{h^2} \left[x_{i+1}x - \frac{x^2}{2}\right]_{x_i}^{x_{i+1}} = \frac{c}{2}$.
     \end{itemize}
 
     \vspace{0.2cm}
-    \textbf{3. Reaction Term (Mass):}
+    \textbf{3. Reaction Term:}
     \begin{itemize}
         \item $K_{ii} = \sigma \int \phi_i^2 dx = \sigma \cdot 2 \int_0^h (\frac{x}{h})^2 dx = \frac{2\sigma}{h^2} \frac{h^3}{3} = \frac{2\sigma h}{3}$.
-        \item $K_{i, i-1} = \sigma \int_{x_{i-1}}^{x_i} \phi_{i-1} \phi_i dx = \sigma \int_0^h (1-\frac{x}{h})(\frac{x}{h}) dx = \frac{\sigma}{h} [ \frac{x^2}{2} - \frac{x^3}{3h} ]_0^h = \frac{\sigma h}{6}$.
+        \item $K_{i, i-1} = \sigma \int_{x_{i-1}}^{x_i} \phi_{i-1} \phi_i dx = \sigma \int_0^h (1-\frac{x}{h})(\frac{x}{h}) dx = \frac{\sigma}{h} [ \frac{x^2}{2} - \frac{x^3}{3h} ]|_0^h = \frac{\sigma h}{6}$.
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]\frametitle{ADR: Code}
     \idea{Console}
 
-
+    \vspace{0.5cm}
     Main tool to preserve sparsity: \code{scipy.sparse.diags}
+    \vspace{0.5cm}
 
+    \hrulefill
     \begin{verbatim}
  diag = np.ones(N)
  off  = np.ones(N - 1)
@@ -229,6 +235,7 @@ For any continuous function $u \in C(\bar{\Omega})$, we define the Lagrange inte
  # Diffusion Matrix: (nu/h) * [-1, 2, -1]
  K_diff = (nu / h) * diags([-off, 2*main, -off], [-1, 0, 1])
     \end{verbatim}
+    \hrulefill
 
 \end{frame}
 
