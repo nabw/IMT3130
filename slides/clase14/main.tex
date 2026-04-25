@@ -120,23 +120,35 @@
 
     We now study the local interpolation error $e = u - \Pi_h u$ on a single element $I_j$.
 \end{frame}
-\begin{frame}{Continuity of the Interpolator in $H^1(\Omega)$}
-    \textbf{Theorem:} In 1D, the interpolation operator $\Pi_h : H^1(\Omega) \to V_h \subset H^1(\Omega)$ is a bounded (continuous) linear operator. That is, $\exists C > 0$ such that $\|\Pi_h u\|_{H^1(\Omega)} \leq C \|u\|_{H^1(\Omega)}$.
+\begin{frame}[t]{Continuity of the Interpolator in $H^1(\Omega)$}
+    \textbf{Theorem:} $\exists C > 0$ such that $\|\Pi_h u\|_{H^1(\Omega)} \leq C \|u\|_{H^1(\Omega)}$.
     
-    \textbf{Proof:} First, in 1D, $H^1(\Omega) \hookrightarrow C^0(\bar{\Omega})$. Thus, nodal values are well-defined and $\|u\|_{L^\infty(\Omega)} \leq C_{emb} \|u\|_{H^1(\Omega)}$ \tag{Sobolev Embedding}.
+    \textbf{Proof:} 
+        \begin{itemize}
+            \item<1-> $\| \Pi_h u \|_{L^2(\Omega)} \leq C \| u\|_1$
+                   \only<1>{ 
+                       \begin{enumerate}
+                            \item In 1D  $\|u\|_{L^2(\Omega)} \leq |\Omega|\|u\|_{L^\infty(\Omega)} \leq |\Omega| C_{emb} \|u\|_{H^1(\Omega)}$ (Sobolev Embedding).
+
+                            \item $$ \|\Pi_h u\|_{L^2(\Omega)}^2 \leq |\Omega| \|\Pi_h u\|_{L^\infty(\Omega)}^2 \leq |\Omega| \|u\|_{L^\infty(\Omega)}^2 \leq |\Omega| C_{emb} \|u\|_{H^1(\Omega)}^2 $$
+                        \end{enumerate}
+                    }
+                \item<2-> $ \| (\Pi_h u)' \|_{I_j} \leq C \|u \|_{H^1(I_j)} $ 
+                    \only<2>{
+                        \begin{enumerate}
+                            \item On $I_j$, $(\Pi_h u)' = \frac{u(x_j) - u(x_{j-1})}{h_j}$.
+                            \item We bound extremal differences:
+                                \begin{align*}
+                                    |u(x_j) - u(x_{j-1})|^2 &= \left| \int_{I_j} u'(x) dx \right|^2 \tag{Fund. Thm. of Calculus} \\
+                                    &\leq \left( \int_{I_j} 1^2 dx \right) \left( \int_{I_j} |u'(x)|^2 dx \right) = h_j \|u'\|^2_{L^2(I_j)} \tag{Cauchy-Schwarz}
+                                \end{align*}
+                            \item We bound the $H^1$ semi-norm:
+                                $$ |\Pi_h u|_{H^1(I_j)}^2 = \int_{I_j} \left| \frac{u(x_j) - u(x_{j-1})}{h_j} \right|^2 dx = \frac{|u(x_j) - u(x_{j-1})|^2}{h_j} \leq \|u'\|^2_{L^2(I_j)}  $$
+                        \end{enumerate}
+                    }
     
-    On an element $I_j$, the interpolant's derivative is constant: $(\Pi_h u)' = \frac{u(x_j) - u(x_{j-1})}{h_j}$.
-    \begin{align*}
-        |u(x_j) - u(x_{j-1})|^2 &= \left| \int_{I_j} u'(x) dx \right|^2 \tag{Fund. Thm. of Calculus} \\
-        &\leq \left( \int_{I_j} 1^2 dx \right) \left( \int_{I_j} |u'(x)|^2 dx \right) = h_j \|u'\|^2_{L^2(I_j)} \tag{Cauchy-Schwarz}
-    \end{align*}
-    We bound the $H^1$ semi-norm:
-    $$ |\Pi_h u|_{H^1(I_j)}^2 = \int_{I_j} \left| \frac{u(x_j) - u(x_{j-1})}{h_j} \right|^2 dx = \frac{|u(x_j) - u(x_{j-1})|^2}{h_j} \leq \|u'\|^2_{L^2(I_j)} \tag{Local bound} $$
-    
-    For the $L^2$ norm, we bound via the maximum norm on $\Omega$:
-    $$ \|\Pi_h u\|_{L^2(\Omega)}^2 \leq |\Omega| \|\Pi_h u\|_{L^\infty(\Omega)}^2 \leq |\Omega| \|u\|_{L^\infty(\Omega)}^2 \leq \tilde{C} \|u\|_{H^1(\Omega)}^2 \tag{Global bound} $$
-    
-    Summing the semi-norm over all $I_j$ and combining with the $L^2$ bound yields the result. \qed
+                \item<3-> Sum over all $I_j$. \qed
+        \end{itemize}
 \end{frame}
 \begin{frame}{Interpolation: $H_0^1$ convergence rate}
     \textbf{Theorem:} Let $u \in H^2(I_j)$. Then $|u - \Pi_h u|_{H^1(I_j)} \leq h_j \|u''\|_{L^2(I_j)}$. \pause
@@ -170,18 +182,19 @@
 \begin{frame}{The Finite Element Definition (Ciarlet)}
     \textbf{Definition:} A Finite Element is a triple $(K, \mathcal{P}, \Sigma)$ where:
     \begin{enumerate}
-        \item $K \subset \mathbb{R}^d$ is a closed, bounded subset with non-empty interior (the geometric element).
-        \item $\mathcal{P}$ is a finite-dimensional vector space of functions on $K$ (the shape functions).
-        \item $\Sigma$ is a set of linearly independent linear functionals on $\mathcal{P}$ (the degrees of freedom), which are unisolvent.
+        \item $K \subset \mathbb{R}^d$ is a closed, bounded subset with non-empty interior (geometric element).
+        \item $\mathcal{P}$ is a finite-dimensional vector space of functions on $K$ (shape functions).
+        \item $\Sigma$ is a set of unisolvent linear functionals on $\mathcal{P}$ (the degrees of freedom).
     \end{enumerate}
 
-    \textbf{Proposition:} The 1D linear element is a finite element via mapping.
+    \pause \textbf{Proposition:} The 1D linear element is a finite element.
+
     \textbf{Proof:} Let $\hat{K} = [-1, 1]$. We define the reference triple $(\hat{K}, \hat{\mathcal{P}}, \hat{\Sigma})$:
     \begin{align*}
-        \hat{\mathcal{P}} &= \mathcal{P}^1(\hat{K}) = \text{span}\{1, \hat{x}\} \\
+        \hat{\mathcal{P}} &= \mathcal{P}^1(\hat{K}) = \text{span}\{1-\hat{x}, \hat{x}\} \\
         \hat{\Sigma} &= \{ \hat{\sigma}_1(\hat{v}) = \hat{v}(-1), \hat{\sigma}_2(\hat{v}) = \hat{v}(1) \} \tag{Clearly unisolvent}
     \end{align*}
-    Any arbitrary element $I_j = [x_{j-1}, x_j]$ is generated via the affine bijection $F_j : \hat{K} \to I_j$, $x = F_j(\hat{x}) = \frac{x_{j-1}+x_j}{2} + \hat{x}\frac{h_j}{2}$. \qed
+    Any arbitrary element $I_j = [x_{j-1}, x_j]$ is generated via the affine map $F_j : \hat{K} \to I_j$, $x = F_j(\hat{x}) = \frac{x_{j-1}+x_j}{2} + \hat{x}\frac{h_j}{2}$. \qed
 \end{frame}
 
 \begin{frame}[fragile]{Higher-Order Lagrange Elements}
@@ -227,6 +240,10 @@
     \vspace{0.3cm}
     Applying Céa's Lemma (5.2), the Galerkin approximation inherits these optimal rates in the energy norm:
     $$ \|u - u_h\|_{H^1(\Omega)} \leq C h^k |u|_{H^{k+1}(\Omega)} $$
+\end{frame}
+
+\begin{frame}
+    \titlepage
 \end{frame}
 
 \end{document}
