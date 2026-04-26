@@ -177,36 +177,69 @@
     $$ \|e\|_{L^2(I_j)}^2 \leq h_j^4 \|u''\|_{L^2(I_j)}^2 \implies \|e\|_{L^2(I_j)} \leq h_j^2 \|u''\|_{L^2(I_j)} $$ \qed
 \end{frame}
 
-\begin{frame}{Results obtained}
-    \begin{itemize}
-        \item Hat functions span $V_h$
-        \item The Lagrange interpolator $\Pi_h u = \sum_i u(x_i) \varphi_i$ satisfies:
-                \begin{itemize}
-                    \item It is bounded, $\| \Pi_h \| \leq C$
-                    \item It is convergent in $H^1$, $\| u - \Pi_h u \|_1 \leq C_1 h \| u \|_2$
-                    \item It is convergent in $L^2$, $\| u - \Pi_h u \|_0 \leq C_0 h^2 \| u \|_2$
-                \end{itemize}
-    \end{itemize}
-    In particular: 
-    $$ \| u - u_h \|_1 \leq \frac{C}{\alpha} \inf_{z_h\in V_h}\|u - z_h\| \leq \frac{C C_1}{\alpha} h \| u \|_2 $$
+\section{The Finite Element Formalism}
 
+\begin{frame}{The Finite Element Definition (Ciarlet)}
+    \textbf{Definition:} A Finite Element is a triple $(K, \mathcal{P}, \Sigma)$ where:
+    \begin{enumerate}
+        \item $K \subset \mathbb{R}^d$ is a closed, bounded subset with non-empty interior (geometric element).
+        \item $\mathcal{P}$ is a finite-dimensional vector space of functions on $K$ (shape functions).
+        \item $\Sigma$ is a set of unisolvent linear functionals on $\mathcal{P}$ (the degrees of freedom).
+    \end{enumerate}
+
+    \pause \textbf{Proposition:} The 1D linear element is a finite element.
+
+    \textbf{Proof:} Let $\hat{K} = [-1, 1]$. We define the reference triple $(\hat{K}, \hat{\mathcal{P}}, \hat{\Sigma})$:
+    \begin{align*}
+        \hat{\mathcal{P}} &= \mathcal{P}^1(\hat{K}) = \text{span}\{1-\hat{x}, \hat{x}\} \\
+        \hat{\Sigma} &= \{ \hat{\sigma}_1(\hat{v}) = \hat{v}(-1), \hat{\sigma}_2(\hat{v}) = \hat{v}(1) \} \tag{Clearly unisolvent}
+    \end{align*}
+    Any arbitrary element $I_j = [x_{j-1}, x_j]$ is generated via the affine map $F_j : \hat{K} \to I_j$, $x = F_j(\hat{x}) = \frac{x_{j-1}+x_j}{2} + \hat{x}\frac{h_j}{2}$. \qed
 \end{frame}
 
-\begin{frame}{Aubin-Nitsche Lemma}
-    Consider $V=H_0^1(\Omega)$, $\Omega=(a,b)$, $u$ and $u_h$ solutions of
-    $$ (\nabla u, \nabla v) = \langle f, v\rangle \quad\forall v\in V \qquad\qquad (\nabla u_h, \nabla v_h) = \langle f, v_h\rangle \quad\forall v_h \in V_h$$
-    Define the error $e_h = u-u_h$, and the solution $z$ of dual problem
-    $$ (\nabla z, \nabla v) = (e_h, v) \quad \forall v \in V $$
-    Then, elliptic regularity yields $\|z\|_2 \leq C \| e_h \|_0$, so
-    \begin{align*}
-        \| e_h \|_0^2 &= (e_h, e_h) \\
-                      &= (\nabla z, \nabla e_h) \tag{(Def of dual problem)}\\
-                      &= (\nabla e_h, \nabla z - \Pi_h z) \tag{(Galerkin Orth.)} \\
-                      &\leq C h\|z\|_2 \|e_h \|_1  \tag{(Conv. of $z$)}\\
-                      &\leq C h^2 \| u \|_2 \|e_h \|_0 \tag{((Elliptic reg.)}
-    \end{align*}
-    Thus, 
-        $$ \| u - u_h \|_0 \leq C h^2 \| u \|_2 $$
+\begin{frame}[fragile]{Higher-Order Lagrange Elements}
+    We can construct higher-order elements by choosing $\mathcal{P} = \mathcal{P}^k(K)$ for $k \geq 2$. The DOFs $\Sigma$ evaluate the function at $k+1$ equidistant nodes in $K$.
+
+    \begin{center}
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=8cm, height=4.5cm,
+            domain=-1:1, samples=100,
+            axis lines=middle,
+            ymin=-0.3, ymax=1.2,
+            xtick={-1, 0, 1},
+            xticklabels={$-1$, $0$, $1$},
+            ytick={1},
+            title={$\mathcal{P}^2$ (Quadratic) Basis Functions on $[-1,1]$},
+            legend pos=outer north east
+        ]
+        \addplot[thick, blue] {0.5*x*(x-1)}; \addlegendentry{$N_1 = \frac{1}{2}x(x-1)$}
+        \addplot[thick, red] {1-x^2}; \addlegendentry{$N_2 = 1-x^2$}
+        \addplot[thick, green!60!black] {0.5*x*(x+1)}; \addlegendentry{$N_3 = \frac{1}{2}x(x+1)$}
+
+        \fill[black] (axis cs:-1,0) circle (2pt);
+        \fill[black] (axis cs:0,0) circle (2pt);
+        \fill[black] (axis cs:1,0) circle (2pt);
+        \end{axis}
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Convergence Rates for Higher-Order Elements}
+    By extending the Taylor expansion and scaling arguments to polynomial spaces of degree $k$, one obtains the generalized interpolation estimates.
+
+    For $u \in H^{k+1}(\Omega)$ and a mesh with size $h$:
+
+    \vspace{0.3cm}
+    \textbf{1. $L^2$ Error Estimate:}
+    $$ \|u - \Pi_h u\|_{L^2(\Omega)} \leq C h^{k+1} |u|_{H^{k+1}(\Omega)} $$
+
+    \textbf{2. $H^1$ Semi-norm Error Estimate:}
+    $$ |u - \Pi_h u|_{H^1(\Omega)} \leq C h^k |u|_{H^{k+1}(\Omega)} $$
+
+    \vspace{0.3cm}
+    Applying Céa's Lemma (5.2), the Galerkin approximation inherits these optimal rates in the energy norm:
+    $$ \|u - u_h\|_{H^1(\Omega)} \leq C h^k |u|_{H^{k+1}(\Omega)} $$
 \end{frame}
 
 \begin{frame}
