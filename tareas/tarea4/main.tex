@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+\input{../macros.tex}
+
+\title{Tarea 4}
+\author{}
+\date{IMT3130}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\begin{document}
+
+\maketitle
+
+\instruccion
+
+\begin{enumerate}
+    \item Considere $\Omega = (0,1)$. Implemente un código de elementos finitos que aproxime el problema ADR con condición de Dirichlet en el lado izquierdo y Neumann en el derecho, i.e.
+        $$ \mathcal L u \coloneqq -\mu u'' + b u' + c u = f \quad \text{en $\Omega$}.$$
+
+        Considere una discretización equiespaciada parametrizada en el número de intervalos y que $\mu, b, c$ son constantes positivas. El método de soluciones manufacturadas en elementos finitos se puede implementar de dos maneras. Dada una solución analítica $u_{ex}$, se puede generar el lado derecho que da esa solución: 
+            $$ f_{ex} \coloneqq -\mu u_{ex}'' + b u_{ex}' + c u_{ex} $$
+            y luego resolver el problema ADR con $f = f_{ex}$ con condición de Dirichlet $u(0)=u_{ex}(0)$ y Neumann $u'(1) = u_{ex}'(1)$. Este es el método que usamos para estudiar la convergencia de esquemas de diferencias finitas. Ahora también podemos aplicar esto directamente en la formulación débil, resolviendo 
+                $$ a(u,v) = a(u_ex, v) \quad \forall v \in V,$$
+                lo que permite compensar el lado derecho evaluando directamente la forma bilineal, sin tener que generar términos de carga de volumen y superficie que compensen. Naturalmente, para soluciones analíticas ambos esqueman coinciden.
+
+        \begin{itemize}
+            \item\pts{1} Usando la teoría de convergencia de los elementos finitos, muestre cuál es la tasa esperada de convergencia para este problema usando elementos de primer orden (lineales) y bajo qué hipótesis este resultado es válido.
+            \item\pts{2} Considere una función manufacturada suave y demuestre que ambos esquemas de soluciones manufacturadas entregan tasas correctas de convergencia. 
+            \item\pts{2} Considere una función manufacturada no diferenciable (por ejemplo, $f(x) = (x-0.5)^2 - |x-0.5|$) y muestre las tasas de convergencia entregadas por cada enfoque. 
+        \end{itemize}
+
+    \item Considere $\Omega = (0,1)^2$. Implemente un código de elementos finitos que aproxime el problema ADR con condición de Dirichlet $u=1$ en el lado derecho y Neumann homogéneo en el resto, puede elegir si aproximar con triángulos o con cuadrados. Para ello: 
+            \begin{itemize}
+                \item\pts{1} Dado un número de intervalos por lado, implemente las matrices \texttt{IEN} y \texttt{coords}. Muestre su resultado para un cuadrado con dos elementos por lado, y grafique la geometría discretizada con los elementos enumerados para validar el resultado.
+                \item Considere el elemento de referencia y un elemento global igual al de referencia por simplicidad ($K = \hat K$). Calcule con una regla de cuadratura adecuada la matriz local asociada a cada uno de los operadores del problema y valide los valores numéricos obtenidos con las expresiones analíticas de las integrales asociadas a los siguientes términos: 
+                    \begin{itemize}
+                        \item\pts{1} $-\Delta u$
+                        \item\pts{1} $\vec b \cdot \grad u$
+                        \item\pts{1} $u$
+                        \item\pts{1} $f(x)\coloneqq 1$
+                    \end{itemize}
+
+                \item\pts{3} A partir de las rutinas anteriores, genere una función \texttt{getProblem(mu,b,c,f)} donde $\mu,b,c$ son escalares y $f:\R\to\R$ una función, que entregue la matriz $\mat A_h$ que define el problema y el lado derecho $\vec F_h$ sin considerar aún condiciones de Dirichlet.
+                \item\pts{2} Explique cómo implementar las condiciones de borde mediante un operador de Lifting y genere una función (en código) que modifique el problema $(\mat A_h, \vec F_h)$ para imponer la condición de Dirichlet dada ($u=1$ en el lado derecho).
+                \item\pts{3} Usando el método de soluciones manufacturadas, muestre que la solución discreta converge a la continua con las tasas esperadas en $L^2$ y $H^1$. \emph{Hint: Para calcular el error de aproximación $e_h = u - u_h$, use que la norma se puede dividir por elementos $\|e_h\|_0^2 = \int_\Omega e_h^2\,dx = \sum_e \int_e e_h^2\,dx$ y la integral en cada elemento se puede calcular con cuadratura en el elemento de referencia.}
+            \end{itemize}
+
+    \item Considere el setting del problema de la pregunta anterior, en esta pregunta discretizaremos el sistema
+                \begin{equation}\label{eq}
+                    \dot u + \mathcal L u = 0.
+                \end{equation}
+            \begin{itemize}
+                \item\pts{3} Aplique formalmente el método $\theta$ de discretización en tiempo para un intervalo temporal $(0,T)$ equiespaciado al problema \eqref{eq}. Luego, muestre la formulación débil asociada a cada uno de los problemas semi-discretos obtenidos\footnote{Semi-discretos ya que solo han sido discretizados en tiempo, no en espacio}.
+                \item\pts{2} Estudie para qué valores de $\theta$ es posible establecer que el sistema semi-discreto es invertible usando el Lema de Lax-Milgram.
+                \item Considere $\Omega = (0,1)^2$ y como condición inicial $u(0) = I_{B_r(x_0)}$ con $B_r(x_0)$  una bola centrada en $x_0=(0.5,0.5)$ y de radio $r=1/3$. Para la simulación, le servirá el código desarrollado en la pregunta 2 de esta tarea.
+                    \begin{itemize}
+                        \item\pts{2} Considere los parámetros $\mu=1$, $b=c=0$ y un paso temporal $\Delta T=0.01$. Grafique la evolución de la solución en algunos instantes e interprete por qué al operador $-\Delta (\cdot)$ se le llama \emph{difusión}. 
+                        \item\pts{2} Considere los parámetros $\mu=0.01$\footnote{Se agrega un poco de difusión para estabilizar la aproximación. Tiene holgura para probar distintos niveles de refinamiento de malla que también ayuda a estabilizar la aproximación. Este comentario vale también para el problema siguiente.}, $b=1$, $c=0$ y un paso temporal $\Delta T=0.01$. Grafique la evolución de la solución en algunos instantes e interprete por qué al operador $\vec b \cdot\nabla(\cdot)$ se le llama \emph{advección}.
+                        \item\pts{2} Considere los parámetros $\mu=0.01$, $b=0$, $c=1$ y un paso temporal $\Delta T=0.01$. Grafique la evolución de la solución en algunos instantes e interprete por qué al operador $c (\cdot)$ se le llama \emph{reacción}.
+                    \end{itemize}
+            \end{itemize}
+\end{enumerate} % preguntas
+
+\end{document}
+

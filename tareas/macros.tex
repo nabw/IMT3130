@@ -1,0 +1,22 @@
+\usepackage{tcolorbox}
+\usepackage{totcount,xfp}
+\newtotcounter{totalpts}
+%\setcounter{totalpts}{0} % Contador de puntos en tarea
+
+\newcommand{\getTotal}{\number\totvalue{totalpts} }
+\newcommand{\instruccion}{\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black!70!white,title=Instrucciones]
+La tarea debe ser desarrollada por una o dos personas en un informe en formato .pdf a través del buzón habilitado en la plataforma Canvas, donde deben mostrar también el código desarrollado si es que corresponde. Para su conveniencia, pueden entregar las tareas en un Jupyter Notebook, de modo que sea más cómodo mostrar el código. En cualquier caso, se debe entregar un único archivo como respuesta a la tarea. La política de atrasos será: se calculará un factor lineal que vale 1 a la hora de entrega y 0 48 horas después. Esto multiplicará su puntaje obtenido.
+
+
+La tarea tiene \getTotal puntos. En cada pregunta, el puntaje dado será: el total si está bien, la mitad si tiene un desarrollo concluyente pero tiene errores, y 0.0 puntos si tiene poco o nada de desarrollo.
+
+Está permitido el uso de modelos de lenguaje (tipo chatGPT) para apoyar el desarrollo de la tarea, aunque sugerimos intentar un poco cada pregunta primero para generar dudas. Si bien no podemos controlar que le pidan directamente la respuesta al modelo, creemos es mejor para su proceso de aprendizaje que pidan sugerencias más que soluciones. Por esta razón, si deciden usarlo, debe adjuntar a su tarea otro pdf donde  muestren los prompts usados. Sugerimos usar prompts de este estilo: "Estoy desarrollando el siguiente ejercicio para una tarea en un curso introductorio de programación: [Copiar ejercicio]
+  Y hemos visto hasta ahora los contenidos en las diapositivas adjuntas [adjunten los pdfs con las clases]. Dado este contenido, quería pedirte una sugerencia para resolver [explicar dificultad], ya que me confunde [escribir duda]. Como respuesta, no quiero que me des la solución, si no que una guía para ayudarme a iniciar el desarrollo de mi respuesta."
+
+  Si tienen dudas y/o observaciones, por favor contáctenos por correo o Canvas. Es posible que el enunciado tenga errores.
+\end{tcolorbox}}
+
+
+\newcommand{\code}[1]{\texttt{#1}}
+% Logic: To create a counter with the points in each question and accumulate that in a total variable. Now I simply set the full threshold at the beginning to 75% and it gives the computed value automatically.
+\newcommand{\pts}[1]{\if#11\textbf{[#1 punto]}\else\textbf{[#1 puntos]}\fi\addtocounter{totalpts}{#1}}
