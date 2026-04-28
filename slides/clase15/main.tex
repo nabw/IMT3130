@@ -3,19 +3,17 @@
 
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{bm}
+\pgfplotsset{compat=1.17}
 \usepackage{mathtools}
-\usepackage{algpseudocode}
+\usepackage{amsmath, amssymb, amsthm, bm}
 \DeclareMathOperator{\grad}{\nabla}
 \renewcommand{\P}{\mathbb{P}}
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\ttag}[1]{(#1)}
 
 \title[Finite Elements I]{Finite Elements Theory}
 \author{Nicol\'as A. Barnafi}
-\date{\today}
-
+\date{}
 
 \begin{document}
 
@@ -23,228 +21,287 @@
     \titlepage
 \end{frame}
 
-\section{Motivation}
+\section{The Formalism}
 
-\begin{frame}{Motivation: Céa's Lemma and Interpolation}
-    Let $V$ be Hilbert, $a(\cdot,\cdot)$ a elliptic/continuous bilinear form, and $V_h \subset V$ discrete space. We obtained previously:
-
-    $$ \|u - u_h\|_V \leq \frac{M}{\alpha} \inf_{v_h \in V_h} \|u - v_h\|_V$$
-
-    \vspace{0.3cm}
-    \pause Assume we have an \textbf{interpolation} $\Pi_h : V \to V_h$ with 
-
-        $$ \| u - \Pi_h u \| \leq C h^\ell, \quad\text{then}$$ \pause
-
-        $$ \|u - u_h\|_V \leq \frac{M}{\alpha} \inf_{v_h \in V_h} \|u - v_h\|_V \alert{\leq \frac{M}{\alpha} \|u - \Pi_h u\|_V \leq \frac{MC}{\alpha} h^\ell }$$
-
-        This is usually \emph{optimal}.
-\end{frame}
-
-\section{Geometric Setup}
-
-\begin{frame}{Geometric Setup: Domain and Mesh Size}
-    Consider a 1D domain $\Omega = (a, b)$. We define a partition (mesh) $\mathcal{T}_h$:
-
-    $$ a = x_0 < x_1 < \dots < x_{N-1} < x_N = b $$
-
+\begin{frame}{The Finite Element Triple}
+    \textbf{Definition (Ciarlet):} A Finite Element is a triple $(K, \mathcal{P}, \Sigma)$ where:
     \begin{itemize}
-        \item \textbf{Elements:} $I_j = (x_{j-1}, x_j)$ for $j = 1, \dots, N$.
-        \item \textbf{Nodes:} The set of points $\{x_j\}_{j=0}^N$.
-        \item \textbf{Local Element Size:} $h_j = x_j - x_{j-1}$.
-        \item \textbf{Global Mesh Size:} The fundamental parameter for asymptotic analysis:
-        $$ h = \max_{1 \leq j \leq N} h_j $$
+        \item $K \subset \mathbb{R}^d$ is the geometric domain (element).
+        \item $\mathcal{P}$ is a finite-dimensional space of functions on $K$.
+        \item $\Sigma = \{ \ell_1, \ell_2, \dots, \ell_n \}$ is a basis for $\mathcal{P}'$ (Degrees of Freedom).
     \end{itemize}
+
+    \vspace{0.2cm}
+    \begin{block}{Theorem}
+        \textbf{Linear 1D FE is a Finite Element.}
+
+        Let $K = [0, 1]$, $\mathcal{P} = \mathbb{P}_1(K)$, and $\Sigma = \{ \ell_1(v)=v(0), \ell_2(v)=v(1) \}$. \qed
+    \end{block}
 \end{frame}
 
-\section{Linear FE Properties}
+\section{1D Higher Order}
 
-\begin{frame}{Linear Finite Elements: Space and Basis}
-    We define the space of continuous, piecewise linear functions:
-    $$ V_h = \{ v_h \in C^0(\bar{\Omega}) : v_h|_{I_j} \in \mathcal{P}^1(I_j) \quad \forall j=1,\dots,N \} $$
-
-    \textbf{Proposition:} $V_h = \text{span}_{i=0}^N\{\varphi_i\}$, with $\varphi_i$ hat functions.
-
-    \textbf{Proof:}\pause
-    \begin{itemize}[<+->]
-        \item By construction, if $v_h\in V_h$: 
-            $$ v_h = \sum_i v_h(x_i) \varphi_i. $$
-        \item Set $v_h = \sum_i v^i \varphi_i = 0$, then
-                $$ v_h(x_j) = v^i \varphi_i(x_j) = v^i \delta_{ij} = v^j = 0, $$
-                and thus they are linearly independent.
-    \end{itemize}
-    \qed
+\begin{frame}{Quadratic Elements ($\mathbb{P}_2$ in 1D)}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \textbf{Triple:}
+            \begin{itemize}
+                \item $K = [-1,1]$, with midpoint $0$.
+                \item $\mathcal{P} = \mathbb{P}_2(K) = \text{span}\{\frac 1 2\xi(\xi-1),1-\xi^2, \frac 1 2 \xi(\xi+1)\}$.
+                \item $\Sigma = \{ v(x_0), v(x_1), v(x_2) \}$.
+            \end{itemize}
+            \textbf{Unisolvence:} A polynomial of degree 2 with 3 roots is identically zero.
+            
+            \vspace{0.3cm}
+            \textbf{Properties:}
+            \begin{itemize}
+                \item Interpolant $\Pi_h u$ is $C^0$-conforming.
+                \item Convergence in $L^2$: $O(h^3)$.
+                \item Convergence in $H^1$: $O(h^2)$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.39\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=0.8]
+                \begin{axis}[axis lines=middle, ymin=-0.2, ymax=1.2, xtick={-1,0,1}, xticklabels={$x_0$,$x_1$,$x_2$}, ytick={1}]
+                    \addplot[blue, thick, domain=-1:1] {0.5*x*(x-1)} node[blue, pos=0.7, anchor=south, font=\small] {$\varphi_1(\xi)$};
+                    \addplot[red, thick, domain=-1:1] {1-x^2}node[red, pos=0.5, anchor=south, font=\small] {$\varphi_2(\xi)$};
+                    \addplot[green!60!black, thick, domain=-1:1] {0.5*x*(x+1)}node[green!60!black, pos=0.3, anchor=south, font=\small] {$\varphi_3(\xi)$};
+                    \addplot[black, thick, domain=-1:1] {1};
+                \end{axis}
+            \end{tikzpicture}
+            \end{center}
+        \end{column}
+    \end{columns}
 \end{frame}
 
-\begin{frame}{$H^1$ Conformity}
-    \textbf{Proposition:} The space $V_h$ is conforming in $H^1(\Omega)$, i.e., $V_h \subset H^1(\Omega)$.
+\section{2D Elements}
 
-    \textbf{Proof:}
-    Let $v_h \in V_h$. We must show that $v_h \in L^2(\Omega)$ and possesses a weak derivative $v_h' \in L^2(\Omega)$.
+\begin{frame}{2D Lagrange Elements: The Simplicial Triangle ($P_1$)}
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+            \textbf{Triple $(K, \mathcal{P}, \Sigma)$:}
+            \begin{itemize}
+                \item $K$: Unit triangle $(0,0), (1,0), (0,1)$.
+                \item $\mathcal{P} = \text{span}\{1, x, y\}$.
+                \item $\Sigma = \{ v(x_i) \}_{i=1}^3$ (Nodal values).
+            \end{itemize}
+            \textbf{Basis Functions:}
+            \begin{align*}
+                \phi_1 &= 1 - x - y \\
+                \phi_2 &= x \\
+                \phi_3 &= y
+            \end{align*}
+        \end{column}
+        \begin{column}{0.55\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=2]
+                \draw[thick, fill=blue!5] (0,0) -- (1,0) -- (0,1) -- cycle;
+                \fill[blue] (0,0) circle (2pt) node[below left] {$\phi_1$};
+                \fill[blue] (1,0) circle (2pt) node[below right] {$\phi_2$};
+                \fill[blue] (0,1) circle (2pt) node[above left] {$\phi_3$};
+                \node at (0.33, 0.33) {$K$};
+            \end{tikzpicture}
+            \end{center}
+            \textbf{Conformity:} $V_h \subset H^1(\Omega)$ \\
+            (Continuous across element interfaces).
+            \textbf{Convergence Rates:}
+            \begin{itemize}
+                \item $L^2$ error: $O(h^2)$
+                \item $H^1$ error: $O(h)$
+            \end{itemize}
+
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{2D Lagrange Elements: The Quadrilateral Square ($Q_1$)}
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+            \textbf{Triple $(K, \mathcal{P}, \Sigma)$:}
+            \begin{itemize}
+                \item $K$: Unit square $[0, 1]^2$.
+                \item $\mathcal{P} = \text{span}\{1, x, y, xy\}$.
+                \item $\Sigma = \{ v(x_i) \}_{i=1}^4$ (Nodal values).
+            \end{itemize}
+            \textbf{Basis Functions:}
+            \begin{align*}
+                \phi_1 &= (1-x)(1-y) \\
+                \phi_2 &= x(1-y) \\
+                \phi_3 &= xy \\
+                \phi_4 &= (1-x)y
+            \end{align*}
+        \end{column}
+        \begin{column}{0.55\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=2]
+                \draw[thick, fill=red!5] (0,0) rectangle (1,1);
+                \fill[red] (0,0) circle (2pt) node[below left] {$\phi_1$};
+                \fill[red] (1,0) circle (2pt) node[below right] {$\phi_2$};
+                \fill[red] (1,1) circle (2pt) node[above right] {$\phi_3$};
+                \fill[red] (0,1) circle (2pt) node[above left] {$\phi_4$};
+                \node at (0.5, 0.5) {$K$};
+            \end{tikzpicture}
+            \end{center}
+            \textbf{Conformity:} $V_h \subset H^1(\Omega)$ \\
+            (Bilinear interpolation ensures $C^0$).
+            \textbf{Convergence Rates:}
+            \begin{itemize}
+                \item $L^2$ error: $O(h^2)$
+                \item $H^1$ error: $O(h)$
+            \end{itemize}
+
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Vector-Valued Elements}
+
+\begin{frame}{Raviart-Thomas ($RT_0$) for $H(\text{div})$}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Canonical Problem:} Mixed Poisson, Darcy flow.
+            \begin{itemize}
+                \item $\mathcal{P} = (P_0)^2 \oplus \bm{x} P_0$.
+                \item $\Sigma = \{ \int_{e_i} \bm{v} \cdot \bm{n} \, ds \}_{i=1}^3$.
+            \end{itemize}
+            
+            \vspace{0.2cm}
+            \textbf{Unisolvence:} $\text{div} \bm{v} \in P_0$ and $\int \text{div} \bm{v} = \sum \int \bm{v} \cdot \bm{n}$.
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=2]
+                \draw[thick] (0,0) -- (1,0) -- (0.5,0.86) -- cycle;
+                \draw[->, ultra thick, blue] (0.5,0) -- (0.5,-0.3);
+                \draw[->, ultra thick, blue] (0.75,0.43) -- (1.0,0.58);
+                \draw[->, ultra thick, blue] (0.25,0.43) -- (0.0,0.58);
+                \node at (0.5, -0.5) {DOFs: Normal flux};
+            \end{tikzpicture}
+            \end{center}
+            \textbf{Conformity:} $H(\text{div}; \Omega)$.
+
+            \textbf{Convergence Rate:} $H(\text{div};\Omega)$ error: $O(h)$
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Why Normal Fluxes? Motivation for $RT_0$}
+    \textbf{Problems:} For Darcy flow or conservation laws, we need $\bm{u} \in H(\text{div}; \Omega)$.
+
+    \vspace{0.2cm}
+
+    \vspace{0.2cm}
+    \textbf{The Duality:}
     \begin{itemize}
-        \item They belong to $L^2$ because $v_h\in C^0\subset L^2$.
-        \item We now compute gradient: 
-        \begin{align*}
-            \langle v_h', \varphi\rangle &= \sum_{j=1}^N \int_{I_j} v_h \varphi' dx = \sum_{j=1}^N \left( \underbrace{[v_h \varphi]_{x_{j-1}}^{x_j}}_\text{telescopic} - \int_{I_j} \underbrace{\partial_x v_h}_{d^j \coloneqq} \varphi dx \right) \tag{Integration by parts on $I_j$} \\
-            &= \int_\Omega \sum_j I_j d^j \varphi dx
-        \end{align*}
-        Thus, $v_h' = \sum_j I_j d^j\in L^\infty(\Omega)\subset L^2(\Omega)$. \qed
+        \item By the Divergence Theorem: $\int_K \text{div} \bm{v} \, dx = \int_{\partial K} \bm{v} \cdot \bm{n} \, ds$.
+        \item To control the divergence inside $K$, we must control the flux on the boundary.
     \end{itemize}
-\end{frame}
-
-
-\begin{frame}{Degrees of Freedom via the Dual Space}
-    Consider $V_h^*$ the dual of $V_h$. We define the \textbf{global degrees of freedom (DOFs)} as linear functionals $\Sigma_h = \{\sigma_0, \dots, \sigma_N\} \subset V_h^*$ defined by:
-    $$ \sigma_i(v_h) = v_h(x_i) \quad \forall i=0,\dots,N $$
-
-    \textbf{Proposition (Unisolvence):} $\Sigma_h$ forms a basis for $V_h^*$ that is dual to $\{\varphi_i\}$.
-
-    \textbf{Proof:} \pause
-    \begin{itemize}[<+->]
-        \item They are linearly independent: 
-            $$ 0 = \sum_i c^i\sigma_i(\varphi_j) = \sum_i c^i \delta_{ij} = c^j $$
-        \item They span space: Consider $v_h$ in $V_h$ and we look for coefficients $c^i$ such that
-            $$ \sigma_h(v_h) = \sum_i c^i \sigma_i(v_h) = \sum_{i,j} c^i v^j \delta_{ij} = \sum_{i} c^i v^i $$
-            and setting $v^\ell = 1$ only for $\ell=i$ yields $c^i = \sigma_h(\varphi_i)$.  \qed
-    \end{itemize}
-\end{frame}
-
-
-\begin{frame}{The Interpolator Operator}
-    \textbf{Definition:} The global interpolation operator $\Pi_h : C^0(\bar{\Omega}) \to V_h$ is defined by:
-    $$ \Pi_h u(x) = \sum_{i=0}^N \sigma_i (u) \phi_i(x) = \sum_{i=0}^N u(x_i) \phi_i(x) $$
-
-    Equivalently, using the DoFs:
-    $$ \sigma_i(\Pi_h u) = \sigma_i(u) \quad \forall i=0,\dots,N $$
-
-    Note: $\Pi_h$ is a projection, meaning $\Pi_h(\Pi_h u) = \Pi_h u$.
-
-    We now study the local interpolation error $e = u - \Pi_h u$ on a single element $I_j$.
-\end{frame}
-\begin{frame}[t]{Continuity of the Interpolator in $H^1(\Omega)$}
-    \textbf{Theorem:} $\exists C > 0$ such that $\|\Pi_h u\|_{H^1(\Omega)} \leq C \|u\|_{H^1(\Omega)}$.
-    
-    \textbf{Proof:} 
-        \begin{itemize}
-            \item<1-> $\| \Pi_h u \|_{L^2(\Omega)} \leq C \| u\|_1$
-                   \only<1>{ 
-                       \begin{enumerate}
-                            \item In 1D  $\|u\|_{L^2(\Omega)} \leq |\Omega|\|u\|_{L^\infty(\Omega)} \leq |\Omega| C_{emb} \|u\|_{H^1(\Omega)}$ (Sobolev Embedding).
-
-                            \item $$ \|\Pi_h u\|_{L^2(\Omega)}^2 \leq |\Omega| \|\Pi_h u\|_{L^\infty(\Omega)}^2 \leq |\Omega| \|u\|_{L^\infty(\Omega)}^2 \leq |\Omega| C_{emb} \|u\|_{H^1(\Omega)}^2 $$
-                        \end{enumerate}
-                    }
-                \item<2-> $ \| (\Pi_h u)' \|_{I_j} \leq C \|u \|_{H^1(I_j)} $ 
-                    \only<2>{
-                        \begin{enumerate}
-                            \item On $I_j$, $(\Pi_h u)' = \frac{u(x_j) - u(x_{j-1})}{h_j}$.
-                            \item We bound extremal differences:
-                                \begin{align*}
-                                    |u(x_j) - u(x_{j-1})|^2 &= \left| \int_{I_j} u'(x) dx \right|^2 \tag{Fund. Thm. of Calculus} \\
-                                    &\leq \left( \int_{I_j} 1^2 dx \right) \left( \int_{I_j} |u'(x)|^2 dx \right) = h_j \|u'\|^2_{L^2(I_j)} \tag{Cauchy-Schwarz}
-                                \end{align*}
-                            \item We bound the $H^1$ semi-norm:
-                                $$ |\Pi_h u|_{H^1(I_j)}^2 = \int_{I_j} \left| \frac{u(x_j) - u(x_{j-1})}{h_j} \right|^2 dx = \frac{|u(x_j) - u(x_{j-1})|^2}{h_j} \leq \|u'\|^2_{L^2(I_j)}  $$
-                        \end{enumerate}
-                    }
-    
-                \item<3-> Sum over all $I_j$. \qed
-        \end{itemize}
-\end{frame}
-\begin{frame}{Interpolation: $H_0^1$ convergence rate}
-    \textbf{Theorem:} Let $u \in H^2(I_j)$. Then $|u - \Pi_h u|_{H^1(I_j)} \leq h_j \|u''\|_{L^2(I_j)}$. \pause
-
-    \textbf{Proof:} Let $e = u - \Pi_h u$. Since $e(x_{j-1}) = e(x_j) = 0$, by Rolle's Theorem, $\exists \xi \in I_j$ such that $e'(\xi) = 0$. For any $x \in I_j$:
-    \begin{align*}
-        e'(x) &= \int_\xi^x e''(t) dt \tag{Fund. Thm. of Calculus} \\
-        |e'(x)| &\leq \left( \int_\xi^x 1^2 dt \right)^{1/2} \left( \int_\xi^x |e''(t)|^2 dt \right)^{1/2} \tag{Cauchy-Schwarz} \\
-        |e'(x)|^2 &\leq h_j \int_{I_j} |e''(t)|^2 dt = h_j \|e''\|_{L^2(I_j)}^2 \tag{Bounding integral domain} \\
-        \int_{I_j} |e'(x)|^2 dx &\leq \int_{I_j} h_j \|e''\|_{L^2(I_j)}^2 dx = h_j^2 \|e''\|_{L^2(I_j)}^2 \tag{Integrate over $I_j$}
-    \end{align*}
-    Taking the square root, and noting $e'' = u'' - (\Pi_h u)'' = u''$ (since $\Pi_h u \in \mathcal{P}^1$), we get $|e|_{H^1(I_j)} \leq h_j \|u''\|_{L^2(I_j)}$. \qed
-\end{frame}
-
-\begin{frame}{Interpolation Error: $L^2$ Norm Rate}
-    \textbf{Theorem:} Let $u \in H^2(I_j)$. Then $\|u - \Pi_h u\|_{L^2(I_j)} \leq h_j^2 \|u''\|_{L^2(I_j)}$.
-
-    \textbf{Proof:} Let $e = u - \Pi_h u$. Since $e(x_{j-1}) = 0$, for any $x \in I_j$:
-    \begin{align*}
-        e(x) &= \int_{x_{j-1}}^x e'(t) dt \tag{Fund. Thm. of Calculus} \\
-        |e(x)| &\leq \left( \int_{x_{j-1}}^x 1^2 dt \right)^{1/2} \left( \int_{x_{j-1}}^x |e'(t)|^2 dt \right)^{1/2} \tag{Cauchy-Schwarz} \\
-        |e(x)|^2 &\leq h_j \|e'\|_{L^2(I_j)}^2 \tag{Bounding integral domain} \\
-        \int_{I_j} |e(x)|^2 dx &\leq \int_{I_j} h_j \|e'\|_{L^2(I_j)}^2 dx = h_j^2 \|e'\|_{L^2(I_j)}^2 \tag{Integrate over $I_j$}
-    \end{align*}
-    From the previous theorem, $\|e'\|_{L^2(I_j)}^2 \leq h_j^2 \|u''\|_{L^2(I_j)}^2$. Substitution yields:
-    $$ \|e\|_{L^2(I_j)}^2 \leq h_j^4 \|u''\|_{L^2(I_j)}^2 \implies \|e\|_{L^2(I_j)} \leq h_j^2 \|u''\|_{L^2(I_j)} $$ \qed
-\end{frame}
-
-\section{The Finite Element Formalism}
-
-\begin{frame}{The Finite Element Definition (Ciarlet)}
-    \textbf{Definition:} A Finite Element is a triple $(K, \mathcal{P}, \Sigma)$ where:
-    \begin{enumerate}
-        \item $K \subset \mathbb{R}^d$ is a closed, bounded subset with non-empty interior (geometric element).
-        \item $\mathcal{P}$ is a finite-dimensional vector space of functions on $K$ (shape functions).
-        \item $\Sigma$ is a set of unisolvent linear functionals on $\mathcal{P}$ (the degrees of freedom).
-    \end{enumerate}
-
-    \pause \textbf{Proposition:} The 1D linear element is a finite element.
-
-    \textbf{Proof:} Let $\hat{K} = [-1, 1]$. We define the reference triple $(\hat{K}, \hat{\mathcal{P}}, \hat{\Sigma})$:
-    \begin{align*}
-        \hat{\mathcal{P}} &= \mathcal{P}^1(\hat{K}) = \text{span}\{1-\hat{x}, \hat{x}\} \\
-        \hat{\Sigma} &= \{ \hat{\sigma}_1(\hat{v}) = \hat{v}(-1), \hat{\sigma}_2(\hat{v}) = \hat{v}(1) \} \tag{Clearly unisolvent}
-    \end{align*}
-    Any arbitrary element $I_j = [x_{j-1}, x_j]$ is generated via the affine map $F_j : \hat{K} \to I_j$, $x = F_j(\hat{x}) = \frac{x_{j-1}+x_j}{2} + \hat{x}\frac{h_j}{2}$. \qed
-\end{frame}
-
-\begin{frame}[fragile]{Higher-Order Lagrange Elements}
-    We can construct higher-order elements by choosing $\mathcal{P} = \mathcal{P}^k(K)$ for $k \geq 2$. The DOFs $\Sigma$ evaluate the function at $k+1$ equidistant nodes in $K$.
 
     \begin{center}
-    \begin{tikzpicture}
-        \begin{axis}[
-            width=8cm, height=4.5cm,
-            domain=-1:1, samples=100,
-            axis lines=middle,
-            ymin=-0.3, ymax=1.2,
-            xtick={-1, 0, 1},
-            xticklabels={$-1$, $0$, $1$},
-            ytick={1},
-            title={$\mathcal{P}^2$ (Quadratic) Basis Functions on $[-1,1]$},
-            legend pos=outer north east
-        ]
-        \addplot[thick, blue] {0.5*x*(x-1)}; \addlegendentry{$N_1 = \frac{1}{2}x(x-1)$}
-        \addplot[thick, red] {1-x^2}; \addlegendentry{$N_2 = 1-x^2$}
-        \addplot[thick, green!60!black] {0.5*x*(x+1)}; \addlegendentry{$N_3 = \frac{1}{2}x(x+1)$}
-
-        \fill[black] (axis cs:-1,0) circle (2pt);
-        \fill[black] (axis cs:0,0) circle (2pt);
-        \fill[black] (axis cs:1,0) circle (2pt);
-        \end{axis}
+    \begin{tikzpicture}[scale=2.0]
+        \draw[thick, fill=blue!5] (0,0) -- (1,0) -- (1,1) -- cycle;
+        \draw[thick, fill=blue!5] (1,0) -- (1,1) -- (2,0) -- cycle;
+        \draw[ultra thick, red, ->] (0.9,0.5) -- (1.1,0.5) node[right] {Continuous $\bm{u} \cdot \bm{n}$};
+        \node at (0.6, 0.3) {$K_1$}; \node at (1.4, 0.3) {$K_2$};
     \end{tikzpicture}
     \end{center}
+    Nodal values are useless for $H(\text{div})$. We must define DoFs as \textbf{integral fluxes}.
 \end{frame}
 
-\begin{frame}{Convergence Rates for Higher-Order Elements}
-    By extending the Taylor expansion and scaling arguments to polynomial spaces of degree $k$, one obtains the generalized interpolation estimates.
+\begin{frame}{N\'ed\'elec ($N_0$) for $H(\text{curl})$}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Canonical Problem:} Maxwell equations.
+            \begin{itemize}
+                \item $\mathcal{P} = (P_0)^2 \oplus \begin{pmatrix} -y \\ x \end{pmatrix} P_0$.
+                \item $\Sigma = \{ \int_{e_i} \bm{v} \cdot \bm{t} \, ds \}_{i=1}^3$.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=2]
+                \draw[thick] (0,0) -- (1,0) -- (0.5,0.86) -- cycle;
+                \draw[->, ultra thick, red] (0.2,0) -- (0.8,0);
+                \draw[->, ultra thick, red] (0.9,0.17) -- (0.6,0.69);
+                \draw[->, ultra thick, red] (0.4,0.69) -- (0.1,0.17);
+                \node at (0.5, -0.5) {DOFs: Tangential circulation};
+            \end{tikzpicture}
+            \end{center}
 
-    For $u \in H^{k+1}(\Omega)$ and a mesh with size $h$:
+            \textbf{Conformity:} $H(\text{curl}; \Omega)$.
 
-    \vspace{0.3cm}
-    \textbf{1. $L^2$ Error Estimate:}
-    $$ \|u - \Pi_h u\|_{L^2(\Omega)} \leq C h^{k+1} |u|_{H^{k+1}(\Omega)} $$
-
-    \textbf{2. $H^1$ Semi-norm Error Estimate:}
-    $$ |u - \Pi_h u|_{H^1(\Omega)} \leq C h^k |u|_{H^{k+1}(\Omega)} $$
-
-    \vspace{0.3cm}
-    Applying Céa's Lemma (5.2), the Galerkin approximation inherits these optimal rates in the energy norm:
-    $$ \|u - u_h\|_{H^1(\Omega)} \leq C h^k |u|_{H^{k+1}(\Omega)} $$
+            \textbf{Convergence Rate:} $H(\text{curl};\Omega)$ error: $O(h)$
+        \end{column}
+    \end{columns}
 \end{frame}
 
-\begin{frame}
-    \titlepage
+\begin{frame}{Why Tangential Circulation? Motivation for $N_0$}
+    \textbf{Problems:} For Electromagnetics (Maxwell), we need $\bm{E} \in H(\text{curl}, \Omega)$.
+
+    \vspace{0.2cm}
+    \textbf{The Duality:}
+    \begin{itemize}
+        \item By Stokes' Theorem: $\int_S (\text{curl} \bm{v}) \cdot \bm{n} \, dS = \oint_{\partial S} \bm{v} \cdot \bm{\tau} \, dl$.
+        \item To control the curl, we must control the circulation along edges.
+    \end{itemize}
+
+    \begin{center}
+    \begin{tikzpicture}[scale=1.5]
+        \draw[thick, fill=red!5] (0,0) -- (1,0) -- (0.5,0.86) -- cycle;
+        \draw[thick, fill=red!5] (0.5,0.86) -- (1,0) -- (1.5,0.86) -- cycle;
+        \draw[ultra thick, blue, ->] (0.875, 0.215) -- (0.625, 0.645) node[midway, left] {$\bm{u} \cdot \bm{\tau}$};
+        \node at (0.4, 0.3) {$K_1$}; \node at (1.1, 0.6) {$K_2$};
+    \end{tikzpicture}
+    \end{center}
+    \textbf{Conclusion:} We assign DOFs to the \textbf{edge moments} of the mesh.
+\end{frame}
+
+\section{The Big Picture}
+
+\begin{frame}{The Discrete De Rham Complex and Commutativity}
+    These families ($\mathbb{P}, \mathbb{ND}, \mathbb{RT}$) is that they form a discrete complex that mimics the continuous one. The interpolation operators connect both worlds.
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=3cm, auto]
+        % Continuous Spaces (Top Row)
+        \node (H1) {$H^1(\Omega)$};
+        \node (Hcurl) [right of=H1] {$\bm{H}(\text{curl}, \Omega)$};
+        \node (Hdiv) [right of=Hcurl] {$\bm{H}(\text{div}, \Omega)$};
+        \node (L2) [right of=Hdiv] {$L^2(\Omega)$};
+
+        % Discrete Spaces (Bottom Row)
+        \node (V1) [below of=H1, node distance=2.2cm] {$\mathcal{P}_k$};
+        \node (V2) [below of=Hcurl, node distance=2.2cm] {$\mathcal{N}_{k-1}$};
+        \node (V3) [below of=Hdiv, node distance=2.2cm] {$\mathcal{RT}_{k-1}$};
+        \node (V4) [below of=L2, node distance=2.2cm] {$\mathcal{P}_{k-1}^{disc}$};
+
+        % Continuous Operators
+        \draw[->, thick] (H1) -- node {$\nabla$} (Hcurl);
+        \draw[->, thick] (Hcurl) -- node {$\text{curl}$} (Hdiv);
+        \draw[->, thick] (Hdiv) -- node {$\text{div}$} (L2);
+
+        % Discrete Operators
+        \draw[->, thick] (V1) -- node[below] {$\nabla$} (V2);
+        \draw[->, thick] (V2) -- node[below] {$\text{curl}$} (V3);
+        \draw[->, thick] (V3) -- node[below] {$\text{div}$} (V4);
+
+        % Interpolation Operators (Vertical)
+        \draw[->, thick, blue] (H1) -- node[left] {$\Pi^{\text{grad}}$} (V1);
+        \draw[->, thick, blue] (Hcurl) -- node[left] {$\Pi^{\text{curl}}$} (V2);
+        \draw[->, thick, blue] (Hdiv) -- node[left] {$\Pi^{\text{div}}$} (V3);
+        \draw[->, thick, blue] (L2) -- node[left] {$\Pi^{L^2}$} (V4);
+
+        % Commuting Symbols
+        \node[blue] at (1.5, -1.1) {$\circlearrowright$};
+        \node[blue] at (4.5, -1.1) {$\circlearrowright$};
+        \node[blue] at (7.5, -1.1) {$\circlearrowright$};
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{The Commuting Diagram Property:}
+    $$ \text{curl}(\Pi^{\text{curl}} \bm{v}) = \Pi^{\text{div}}(\text{curl} \bm{v}) \quad \forall \bm{v} \in \bm{H}(\text{curl}, \Omega) $$
+    This guarantees that the discrete operators preserve the exact kernels.
 \end{frame}
 
 \end{document}
-
