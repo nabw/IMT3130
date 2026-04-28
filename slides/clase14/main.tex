@@ -14,7 +14,7 @@
 
 \title[Finite Elements I]{Finite Elements Theory}
 \author{Nicol\'as A. Barnafi}
-\date{\today}
+\date{}
 
 
 \begin{document}
@@ -111,7 +111,7 @@
 
 \begin{frame}{The Interpolator Operator}
     \textbf{Definition:} The global interpolation operator $\Pi_h : C^0(\bar{\Omega}) \to V_h$ is defined by:
-    $$ \Pi_h u(x) = \sum_{i=0}^N \sigma_i (u) \phi_i(x) = \sum_{i=0}^N u(x_i) \phi_i(x) $$
+    $$ \Pi_h u(x) = \sum_{i=0}^N \sigma_i (u) \varphi(x) = \sum_{i=0}^N u(x_i) \varphi(x) $$
 
     Equivalently, using the DoFs:
     $$ \sigma_i(\Pi_h u) = \sigma_i(u) \quad \forall i=0,\dots,N $$
@@ -200,10 +200,10 @@
     Then, elliptic regularity yields $\|z\|_2 \leq C \| e_h \|_0$, so
     \begin{align*}
         \| e_h \|_0^2 &= (e_h, e_h) \\
-                      &= (\nabla z, \nabla e_h) \tag{(Def of dual problem)}\\
-                      &= (\nabla e_h, \nabla z - \Pi_h z) \tag{(Galerkin Orth.)} \\
-                      &\leq C h\|z\|_2 \|e_h \|_1  \tag{(Conv. of $z$)}\\
-                      &\leq C h^2 \| u \|_2 \|e_h \|_0 \tag{((Elliptic reg.)}
+                      &= (\nabla z, \nabla e_h) \tag{Def of dual problem}\\
+                      &= (\nabla e_h, \nabla z - \Pi_h z) \tag{Galerkin Orth.} \\
+                      &\leq C h\|z\|_2 \|e_h \|_1  \tag{Conv. of $z$}\\
+                      &\leq C h^2 \| u \|_2 \|e_h \|_0 \tag{Elliptic reg.}
     \end{align*}
     Thus, 
         $$ \| u - u_h \|_0 \leq C h^2 \| u \|_2 $$
