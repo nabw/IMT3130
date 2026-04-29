@@ -38,19 +38,19 @@
         Considere una discretización equiespaciada parametrizada en el número de intervalos y que $\mu, b, c$ son constantes positivas. El método de soluciones manufacturadas en elementos finitos se puede implementar de dos maneras. Dada una solución analítica $u_{ex}$, se puede generar el lado derecho que da esa solución: 
             $$ f_{ex} \coloneqq -\mu u_{ex}'' + b u_{ex}' + c u_{ex} $$
             y luego resolver el problema ADR con $f = f_{ex}$ con condición de Dirichlet $u(0)=u_{ex}(0)$ y Neumann $u'(1) = u_{ex}'(1)$. Este es el método que usamos para estudiar la convergencia de esquemas de diferencias finitas. Ahora también podemos aplicar esto directamente en la formulación débil, resolviendo 
-                $$ a(u,v) = a(u_ex, v) \quad \forall v \in V,$$
-                lo que permite compensar el lado derecho evaluando directamente la forma bilineal, sin tener que generar términos de carga de volumen y superficie que compensen. Naturalmente, para soluciones analíticas ambos esqueman coinciden.
+            $$ a(u,v) = a(u_{ex}, v) \quad \forall v \in V,$$
+                lo que permite compensar el lado derecho evaluando directamente la forma bilineal, sin tener que generar términos de carga de volumen y superficie que compensen. Naturalmente, para soluciones analíticas ambos esquemas coinciden.
 
         \begin{itemize}
             \item\pts{1} Usando la teoría de convergencia de los elementos finitos, muestre cuál es la tasa esperada de convergencia para este problema usando elementos de primer orden (lineales) y bajo qué hipótesis este resultado es válido.
             \item\pts{2} Considere una función manufacturada suave y demuestre que ambos esquemas de soluciones manufacturadas entregan tasas correctas de convergencia. 
-            \item\pts{2} Considere una función manufacturada no diferenciable (por ejemplo, $f(x) = (x-0.5)^2 - |x-0.5|$) y muestre las tasas de convergencia entregadas por cada enfoque. 
+            \item\pts{2} Considere una función manufacturada no diferenciable (por ejemplo, $u_{ex}(x) = (x-0.5)^2 - |x-0.5|$) y muestre las tasas de convergencia entregadas por cada enfoque. 
         \end{itemize}
 
     \item Considere $\Omega = (0,1)^2$. Implemente un código de elementos finitos que aproxime el problema ADR con condición de Dirichlet $u=1$ en el lado derecho y Neumann homogéneo en el resto, puede elegir si aproximar con triángulos o con cuadrados. Para ello: 
             \begin{itemize}
                 \item\pts{1} Dado un número de intervalos por lado, implemente las matrices \texttt{IEN} y \texttt{coords}. Muestre su resultado para un cuadrado con dos elementos por lado, y grafique la geometría discretizada con los elementos enumerados para validar el resultado.
-                \item Considere el elemento de referencia y un elemento global igual al de referencia por simplicidad ($K = \hat K$). Calcule con una regla de cuadratura adecuada la matriz local asociada a cada uno de los operadores del problema y valide los valores numéricos obtenidos con las expresiones analíticas de las integrales asociadas a los siguientes términos: 
+                \item Considere el elemento de referencia (triangular) y un elemento global igual al de referencia por simplicidad ($K = \hat K$). Calcule con una regla de cuadratura adecuada la matriz local asociada a cada uno de los operadores del problema y valide los valores numéricos obtenidos con las expresiones analíticas de las integrales asociadas a los siguientes términos: 
                     \begin{itemize}
                         \item\pts{1} $-\Delta u$
                         \item\pts{1} $\vec b \cdot \grad u$
@@ -58,12 +58,12 @@
                         \item\pts{1} $f(x)\coloneqq 1$
                     \end{itemize}
 
-                \item\pts{3} A partir de las rutinas anteriores, genere una función \texttt{getProblem(mu,b,c,f)} donde $\mu,b,c$ son escalares y $f:\R\to\R$ una función, que entregue la matriz $\mat A_h$ que define el problema y el lado derecho $\vec F_h$ sin considerar aún condiciones de Dirichlet.
+                \item\pts{3} A partir de las rutinas anteriores, genere una función \texttt{getProblem(mu,b,c,f)} donde $\mu,c$ son escalares, $\vec b$ un vector y $f:\R\to\R$ una función, que entregue la matriz $\mat A_h$ que define el problema y el lado derecho $\vec F_h$ sin considerar aún condiciones de Dirichlet.
                 \item\pts{2} Explique cómo implementar las condiciones de borde mediante un operador de Lifting y genere una función (en código) que modifique el problema $(\mat A_h, \vec F_h)$ para imponer la condición de Dirichlet dada ($u=1$ en el lado derecho).
                 \item\pts{3} Usando el método de soluciones manufacturadas, muestre que la solución discreta converge a la continua con las tasas esperadas en $L^2$ y $H^1$. \emph{Hint: Para calcular el error de aproximación $e_h = u - u_h$, use que la norma se puede dividir por elementos $\|e_h\|_0^2 = \int_\Omega e_h^2\,dx = \sum_e \int_e e_h^2\,dx$ y la integral en cada elemento se puede calcular con cuadratura en el elemento de referencia.}
             \end{itemize}
 
-    \item Considere el setting del problema de la pregunta anterior, en esta pregunta discretizaremos el sistema
+    \item Considere el setting del problema de la pregunta anterior pero con condición de borde $u=0$, en esta pregunta discretizaremos el sistema
                 \begin{equation}\label{eq}
                     \dot u + \mathcal L u = 0.
                 \end{equation}
