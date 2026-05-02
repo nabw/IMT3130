@@ -1,0 +1,251 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{mathtools}
+\usepackage{centernot}
+\usepackage{amsmath, amssymb, amsthm, bm}
+\DeclareMathOperator{\grad}{\nabla}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ttag}[1]{(#1)}
+
+\title[Finite Elements I]{Beyond Ellipticity: \\ Characterizing surjectivity}
+\author{Nicol\'as A. Barnafi}
+\date{}
+
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\section{Motivation}
+
+\begin{frame}{Motivation: Beyond Lax-Milgram}
+    The Lax-Milgram lemma relies  on \textbf{ellipticity}. While powerful, this immediately excludes many models.
+    
+    \begin{itemize}
+        \item \textbf{Mixed Formulations:} e.g., multiphysics problems.
+        \item \textbf{Indefinite Problems:} e.g., eigenvalue problems.
+        \item \textbf{First-Order PDEs:} e.g., transport equations.
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    \idea{ Characterizing continuous bijection with a continuous inverse. }
+\end{frame}
+
+\section{Proof Plan}
+
+\begin{frame}{Characterizing Surjectivity: Plan of the Proof}
+    To prove that an operator $A: U \to V'$ is an isomorphism, we will break down the  analysis into four  steps:
+    
+    \vspace{0.3cm}
+    \begin{enumerate}
+        \item \textbf{Bounded Below = Injective + Closed Range:} We establish that an operator is bounded below if and only if it is injective and its image is closed.
+        \item \textbf{Injectivity and the Adjoint:} We connect the injectivity of an operator to the density of the range of its adjoint $A^*$.
+        \item \textbf{Characterizing Surjectivity:} We prove that $A$ is surjective if and only if its adjoint $A^*$ is bounded below.
+    \end{enumerate}
+\end{frame}
+
+\subsection{Step 1: Bounded Below}
+
+\begin{frame}{Step 1: Bdd Below $\iff$ Injective + Closed Range}
+    \begin{block}{Lemma 1}
+        Let $A \in \mathcal{L}(U, W)$.  
+
+        $\exists \alpha > 0$ such that $\|A u\|_W \ge \alpha \|u\|_U \;\forall u \in U$ $\iff$ $A$ is injective and $R(A)$ is closed in $W$.
+    \end{block}
+    
+    \vspace{0.2cm}
+    \textbf{Proof:} \\
+    \only<2>{
+        ($\Rightarrow$) Assume bounded below. If $Au = 0$, then $0 \ge \alpha \|u\| \implies u=0$ (Injective). 
+
+        Let $w_n = Au_n \in R(A)$ such that $w_n \to w \in W$. 
+
+        Since $(w_n)$ is Cauchy, $\|w_n - w_m\| = \|A(u_n - u_m)\| \ge \alpha \|u_n - u_m\|$. 
+
+        Thus $(u_n)$ is Cauchy in $U$. Let $u_n \to u$. 
+
+        By continuity, $Au_n \to Au \implies w = Au \in R(A)$ (Closed range). 
+    }
+    
+    \only<3>{
+        ($\Leftarrow$) Assume injective and $R(A)$ closed. 
+
+        $A: U \to R(A)$ is a bijective continuous linear operator between Banach spaces. 
+
+        By the Open Mapping Theorem, its inverse $A^{-1}: R(A) \to U$ is bounded. 
+
+        Thus $\exists C > 0$ such that $\|A^{-1} w\|_U \le C \|w\|_W$. Letting $w = Au$ and $\alpha = 1/C$ yields the result. \qed
+    }
+\end{frame}
+
+\subsection{Step 2: Adjoints}
+
+\begin{frame}[t]{Step 2: Surjectivity and the Transpose Operator}
+    \begin{block}{Lemma}
+        Let $U,V$ be Banach spaces and  $T:U\to V$ be a linear continuous operator. $T$ is surjective iff $T'$ is injective with closed range, where $T'$ is the dual  operator of $T$.
+    \end{block}
+
+    \vspace{0.2cm}
+    \textbf{Proof:} \\
+    \only<2>{
+        ($\Rightarrow$) If $T$ is surjective, then $\text{im}(T) = V$ is closed. 
+
+        By the closed range theorem, $\text{im}(T)^\perp = \ker(T')$ is also closed and 
+            $$\text{im}(T) = \ker(T')^\perp = \{v \in V : \langle v', v \rangle = 0, \forall v' \in \ker(T')\}.$$
+
+        Since $V = \text{im}(T) = \ker(T')^\perp$, for each $v' \in \ker(T')$ we have $\langle v', v \rangle = 0 \;\forall v \in V$.
+
+        Thus, $\ker(T') = \{0\}$, so $T'$ is injective.
+
+    }
+    \only<3>{
+        ($\Leftarrow$) From the closed range theorem, $\text{im}(T)$ is closed. 
+
+        By contradiction, assume $v \in V$ such that $v \notin \text{im}(T)$. 
+
+        The Hahn-Banach  corollary ensures $\exists f \in V'$ such that $f(\text{im}(T)) = 0$ and $f(v) = 1$. 
+
+        This implies $\langle f, Tu \rangle_{V' \times V} = 0$ for all $u \in U$. 
+
+        Taking transposes yields $0 = \langle T'f, u \rangle_{U' \times U} \;\forall u \in U$, implying $T'f = 0$. 
+
+        Since $T'$ is injective, $f = 0$, which contradicts $f(v) = 1$. \qed
+    }
+\end{frame}
+
+\subsection{Step 3: Surjectivity}
+
+\begin{frame}[t]{Step 3: Characterizing Injectivity}
+    \begin{block}{Lemma}
+        Let $U,V$ be Banach and $T: U \to V$  linear continuous. Then, $T$ is injective if and only if:
+        $$ \sup_{v' \in V'} \langle Tu, v' \rangle_{V \times V'} > 0 \quad \forall u \in U, \; u \neq 0 $$
+    \end{block}
+
+    \vspace{0.2cm}
+    \textbf{Proof:} \\
+    \only<2>{
+        ($\Rightarrow$) Suppose that $T$ is injective. 
+
+        If $u \neq 0$, then $Tu \neq 0$. 
+
+        Therefore, for some $v' \in V'$, we have that $\langle Tu, v' \rangle_{V \times V'} \neq 0$. 
+
+        This implies the supremum on the left side is strictly greater than zero.
+    }
+
+    \only<3>{
+        ($\Leftarrow$) Assume the right side of the equivalence.  We proceed by contradiction. 
+
+        If $T$ is not injective, there exists $u \in U$ with $u \neq 0$ such that $Tu = 0$. 
+
+        This yields $\sup_{v' \in V'} \langle Tu, v' \rangle = 0$, which contradicts being strictly positive. \qed
+    }
+\end{frame}
+
+\begin{frame}{Deriving the Inf-Sup Condition in Hilbert}
+    Let $U, V$ be Hilbert spaces. Using Riesz maps $\mathcal{R}_U: U \to U'$ and $\mathcal{R}_V: V \to V'$, we define the adjoint $T^* : V \to U$ as $T^* = \mathcal{R}_U^{-1} \circ T' \circ \mathcal{R}_V$, satisfying $\|T^*\|_{V \to U} = \|T'\|_{V' \to U'}$.
+
+    \vspace{0.2cm}
+    \begin{align*}
+        T \text{ surjective} &\iff \|T' v'\|_{U'} \ge c \|v'\|_{V'} \quad \forall v' \in V'  \\
+        &\iff \|(T' \circ \mathcal{R}_V)(v)\|_{U'} \ge c \|v\|_V \quad \forall v \in V  \\
+        &\iff \|(\mathcal{R}_U \circ T^*)(v)\|_{U'} \ge c \|v\|_V \quad \forall v \in V  \\
+        &\iff \|T^* v\|_U \ge c \|v\|_V \quad \forall v \in V  \\
+        &\iff \alertGreen{c \|v\|_V \le \sup_{u \in U} \frac{(Tu, v)}{\|u\|_U} \quad \forall v \in V}  \\
+        &\iff 0 < c \le \inf_{v \in V} \sup_{u \in U} \frac{(Tu, v)}{\|u\|_U \|v\|_V}
+    \end{align*}
+\end{frame}
+
+\section{Generalized Lax-Milgram}
+
+\begin{frame}{Generalized Lax-Milgram (BNB Theorem)}
+    
+    \begin{block}{Ne\v{c}as-Babu\v{s}ka-Brezzi}
+        Let $U, V$ be Hilbert spaces and $a: U \times V \to \mathbb{R}$ a bounded bilinear form. The variational problem is uniquely solvable for any $f \in V'$ if and only if:
+    
+        \vspace{0.2cm}
+        1. \textbf{The Inf-Sup Condition:}
+        $$ \exists \alpha > 0 \text{ such that } \sup_{v \in V \setminus \{0\}} \frac{a(u,v)}{\|v\|_V} \ge \alpha \|u \| \quad \forall u \in U $$
+    
+        2. \textbf{Weak Injectivity of Adjoint:}
+        $$ \forall u \in U \setminus \{0\}, \quad \sup_{v \in V \setminus \{0\}} a(u,v) > 0 $$
+    \end{block}
+\end{frame}
+
+\section{Example}
+
+\begin{frame}{Example: The Transport Equation}
+    Consider a purely advective PDE (no diffusion $\implies$ no coercivity):
+    $$ u' + u = f \quad \text{in } (0,1), \quad u(0) = 0 $$
+    
+    \textbf{Spaces:} $U = \{u \in H^1(0,1) : u(0)=0\}$ and $V = L^2(0,1)$. \\
+    \textbf{Bilinear form:} $a(u,v) = \int_0^1 (u' + u)v \, dx$.
+    
+    Notice $a(u,u) = \int_0^1 u'u + u^2 = \frac{1}{2}u(1)^2 + \|u\|^2_{L^2} \centernot\ge \alpha \|u\|^2_{H^1}$. Coercivity fails!
+    
+    \textbf{Applying Inf-Sup:} Let $u \in U$. Choose the specific test function $v = u' + u \in V$.
+    \begin{align*}
+        a(u,v) &= \int_0^1 (u'+u)^2 \, dx = \|u'+u\|_{L^2}^2 \\
+        &\ge \alpha^2 \|u\|_{H^1}^2 \tag{ODE Stability / Poincare-type bound}
+    \end{align*}
+    Thus $\sup_{v} a(u,v)/\|v\|_{L^2} \ge a(u, u'+u)/\|u'+u\|_{L^2} \ge \alpha \|u\|_{H^1}$. Well-posed!
+\end{frame}
+
+\section{Galerkin Analysis}
+
+\begin{frame}{Galerkin Schemes}
+    Let $U_h \subset U$ and $V_h \subset V$. The discrete problem is to find $u_h \in U_h$ such that 
+        $$a(u_h, v_h) = f(v_h) \qquad \forall v_h \in V_h.$$
+    
+        \begin{itemize}
+            \item For Lax-Milgram, ellipticity is \textbf{inherited}: 
+                $$a(u,u) \ge \alpha\|u\|^2 \, \forall u \in U \implies a(u_h, u_h) \ge \alpha\|u_h\|^2 \, \forall u_h \in U_h.$$
+    
+             \item Inf-Sup Difficulty: The discrete inf-sup condition requires:
+                $$ \inf_{u_h \in U_h} \sup_{v_h \in V_h} \frac{a(u_h, v_h)}{\|u_h\| \|v_h\|} \ge \alpha_h > 0 $$
+
+                One gets that
+                $$ \alpha \| u \|_U \leq \sup_{v \in V} \frac{a(u, v)}{\| v\|} \geq \sup_{v_h \in V_h} \frac{a(u_h, v_h)}{\| v_h\|} $$
+
+                Thus the discrete inf-sup is \emph{not} inherited from continuous one. 
+    
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Céa's Estimate via Discrete Inf-Sup}
+    \begin{block}{Theorem}
+        Assuming the discrete inf-sup condition holds with constant $\alpha_h > 0$, the Galerkin error is quasi-optimal: $\|u - u_h\|_U \le \frac{M}{\alpha_h} \inf_{w_h \in U_h} \|u - w_h\|_U$.
+    \end{block}
+    
+    \textbf{Proof:} Let $w_h \in U_h$ be arbitrary.
+    \begin{align*}
+        \|u_h - u_h\|_U &\le \frac{1}{\alpha_h} \sup_{v_h \in V_h} \frac{a(u_h - u_h, v_h)}{\|v_h\|_V} \tag{Discrete Inf-Sup} \\
+        &= \frac{1}{\alpha_h} \sup_{v_h \in V_h} \frac{a(u - w_h, v_h)}{\|v_h\|_V} \tag{Galerkin Orthog. $a(u-u_h, v_h)=0$} \\
+        &\le \frac{M}{\alpha_h} \|u - w_h\|_U \tag{Continuity of $a(\cdot,\cdot)$}
+    \end{align*}
+    \qed
+\end{frame}
+
+\begin{frame}{Wrap-up}
+    \begin{itemize}
+        \item Surjectivity characterized as having a bounded by below adjoint, iff the \textbf{inf-sup}.
+                $$ \sup_{v\in V} \frac{a(u,v)}{\|v\|} \geq \alpha \| u \| \quad \forall u \in U .$$
+        \item Injectivity as a weaker sup inequality 
+                $$ \sup_{v\in V\setminus\{0\}}a(u,v) > 0 \quad\forall u \in U. $$
+        \item Discrete inf-sup is \emph{not inherited from continuous one}
+        \item We still recover convergence.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\end{document}

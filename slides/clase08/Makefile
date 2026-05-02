@@ -1,3 +1,1 @@
-all: 
-	pdflatex main.tex
-
+../Makefile
