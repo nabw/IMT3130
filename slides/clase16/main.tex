@@ -226,9 +226,9 @@
     
     \textbf{Proof:} Let $w_h \in U_h$ be arbitrary.
     \begin{align*}
-        \|u_h - u_h\|_U &\le \frac{1}{\alpha_h} \sup_{v_h \in V_h} \frac{a(u_h - u_h, v_h)}{\|v_h\|_V} \tag{Discrete Inf-Sup} \\
-        &= \frac{1}{\alpha_h} \sup_{v_h \in V_h} \frac{a(u - w_h, v_h)}{\|v_h\|_V} \tag{Galerkin Orthog. $a(u-u_h, v_h)=0$} \\
-        &\le \frac{M}{\alpha_h} \|u - w_h\|_U \tag{Continuity of $a(\cdot,\cdot)$}
+        \|u - u_h\|_U &\le \frac{1}{\alpha} \sup_{v_h \in V_h} \frac{a(u - u_h, v_h)}{\|v_h\|_V} \tag{Discrete Inf-Sup} \\
+        &= \frac{1}{\alpha} \sup_{v_h \in V_h} \frac{a(u - w_h, v_h)}{\|v_h\|_V} \tag{Galerkin Orthog. $a(u-u_h, v_h)=0$} \\
+        &\le \frac{M}{\alpha} \|u - w_h\|_U \tag{Continuity of $a(\cdot,\cdot)$}
     \end{align*}
     \qed
 \end{frame}
