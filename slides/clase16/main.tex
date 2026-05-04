@@ -53,7 +53,7 @@
 
 \subsection{Step 1: Bounded Below}
 
-\begin{frame}{Step 1: Bdd Below $\iff$ Injective + Closed Range}
+\begin{frame}[t]{Step 1: Bdd Below $\iff$ Injective + Closed Range}
     \begin{block}{Lemma 1}
         Let $A \in \mathcal{L}(U, W)$.  
 
@@ -122,7 +122,7 @@
 
 \subsection{Step 3: Surjectivity}
 
-\begin{frame}[t]{Step 3: Characterizing Injectivity}
+[t]\begin{frame}[t]{Step 3: Characterizing Injectivity}
     \begin{block}{Lemma}
         Let $U,V$ be Banach and $T: U \to V$  linear continuous. Then, $T$ is injective if and only if:
         $$ \sup_{v' \in V'} \langle Tu, v' \rangle_{V \times V'} > 0 \quad \forall u \in U, \; u \neq 0 $$
@@ -171,10 +171,10 @@
         Let $U, V$ be Hilbert spaces and $a: U \times V \to \mathbb{R}$ a bounded bilinear form. The variational problem is uniquely solvable for any $f \in V'$ if and only if:
     
         \vspace{0.2cm}
-        1. \textbf{The Inf-Sup Condition:}
+        1. \textbf{The Inf-Sup Condition: (surjectivity)}
         $$ \exists \alpha > 0 \text{ such that } \sup_{v \in V \setminus \{0\}} \frac{a(u,v)}{\|v\|_V} \ge \alpha \|u \| \quad \forall u \in U $$
     
-        2. \textbf{Weak Injectivity of Adjoint:}
+        2. \textbf{Injectivity:}
         $$ \forall u \in U \setminus \{0\}, \quad \sup_{v \in V \setminus \{0\}} a(u,v) > 0 $$
     \end{block}
 \end{frame}
@@ -195,7 +195,7 @@
         a(u,v) &= \int_0^1 (u'+u)^2 \, dx = \|u'+u\|_{L^2}^2 \\
         &\ge \alpha^2 \|u\|_{H^1}^2 \tag{ODE Stability / Poincare-type bound}
     \end{align*}
-    Thus $\sup_{v} a(u,v)/\|v\|_{L^2} \ge a(u, u'+u)/\|u'+u\|_{L^2} \ge \alpha \|u\|_{H^1}$. Well-posed!
+    Thus $\sup_{v} a(u,v)/\|v\|_{L^2} \ge a(u, u'+u)/\alert{\|u'+u\|_{L^2}} \ge \alpha \|u\|_{H^1}$. Well-posed!
 \end{frame}
 
 \section{Galerkin Analysis}
