@@ -430,7 +430,7 @@ To grasp the relevance of this formulations, let's first see some examples:
     \end{equation}
 \end{itemize}
 
-Now that we know some examples of saddle points problems, a natural question is to ask for conditions for the existence and uniqueness of solutions. Fortunately, this has already been done and it's known as the \emph{Ladyzhenskaya-Babu\v{s}hka-Brezzi Theory}, typically denoted as LBB theory.
+Now that we know some examples of saddle points problems, a natural question is to ask for conditions for the existence and uniqueness of solutions. Fortunately, this has already been done and it's known as the \emph{Ladyzhenskaya-Babu\v{s}ka-Brezzi Theory}, typically denoted as LBB theory.
 \begin{theorem}\label{thm:mixed}
     Consider the problem
     \begin{equation*}
@@ -510,7 +510,7 @@ where $\ten K$ is symmetric and positive definite ($ k_1|\vec x|^2 \leq \vec x\c
     \begin{equation}
         \sup_{\vec v\in \vec H}\frac{b(\vec v, q)}{\|\vec v\|} \geq \frac{(\dive \tilde{\vec u}, q)}{\|\tilde{\vec u}\|_{\dive}}\geq \frac{\|q\|_0^2}{(C+1)\|q\|} = \tilde\beta \|q\|
     \end{equation}
-    where $\tilde \beta = 1/(C+1)$. This concludes the proof. We note that it was actually sufficient to show that for each $q$ there existed an element $\tilde{\vec u}$ in the desired space, as it proved the survectivity of the operator $B$, but showing the complete inf-sup estimate was more instructive. 
+    where $\tilde \beta = 1/(C+1)$. This concludes the proof. We note that it was actually sufficient to show that for each $q$ there existed an element $\tilde{\vec u}$ in the desired space, as it proved the surjectivity of the operator $B$, but showing the complete inf-sup estimate was more instructive. 
 \end{itemize}
 Given that we have shown the required properties for $a$ and $b$, then there exists a unique and stable solution $(u,p)$ of Darcy's problem.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

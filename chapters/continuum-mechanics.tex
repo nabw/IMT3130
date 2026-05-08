@@ -402,7 +402,7 @@ With the above definitions and the precise technique to differentiate quantities
            \int_{\Omega}|f|\mathrm{d}V &= \int_{\Omega}f\chi_{B^{+}}\mathrm{d}V - \int_{\Omega}f\chi_{B^{-}}\mathrm{d}V \\
            &= \int_{B^{+}}f\mathrm{d}V - \int_{B^{-}}f\mathrm{d}V
        \end{tightalign*}
-       By hypothesis, as the integral of any measurable subset is zero, the entire right hand-side is zero. As the integral of $|f|$ over $\Omega$ is zero, this imples that $|f|=0$ a.e in $\Omega$. So $f=0$ a.e. in $\Omega$.
+       By hypothesis, as the integral of any measurable subset is zero, the entire right hand-side is zero. As the integral of $|f|$ over $\Omega$ is zero, this implies that $|f|=0$ a.e in $\Omega$. So $f=0$ a.e. in $\Omega$.
     \end{proof}
 We now study the conservation laws for mass, linear momentum, angular momentum and energy. Let $\Omega_t\subset\R^3$ and let $B_t\subset\Omega_t$ be an arbitrary subset. 
 \paragraph{Conservation of mass} We can naturally write the mass $M(t)$ of $B_t$ at time $t$ as the integral of the density over the domain, that is, 
@@ -671,7 +671,7 @@ In general, there exist constitutive models for the stress, the heat flow, the i
 These hypotheses are extended with additional conditions when required. When choosing a constitutive model, it is natural to choose a model that fits the particular behavior of a material. In some cases, like wood with parallel grain or laminated materials, the strength of the material is different in one direction to the other ones. We call this an \emph{anisotropic} material, whereas materials that exhibit the same response in all directions are called \emph{isotropic}. Apart from anisotropy, we distinguish between \emph{homogeneous} materials, whose properties are the same at every point of the material, and \emph{heterogeneous} materials, whose properties change in space. From these features, it is possible to find general functional forms for these models. 
 
 We now study some explicit cases.
-\paragraph{Constitutive modeling of solids} Assuming that $\ten S$ deppends only on the deformation $\vvarphi$, we first obtain that $\ten S$ depends on $\tenF$ due to the locality principlpe, and from the observer independence, we conclude that $\ten S$ is a function of $\ten C=\tenF^\top \tenF$ or $\ten E = \frac{1}{2}(\ten C - \ten I)$. Some examples are the linear elastic model $\ten S(\ten E) = \lambda\tr(\ten E)\ten I + 2\mu\ten E$, and the neohookean model $\ten S(\ten C) = \frac{\lambda}{2}(J^2-1)\ten C^{-1} + \mu (\ten I - \ten C^{-1})$, where $\lambda,\mu$ are called the Lamé parameters. These parameters are obtained from experiments, and are related to the Young modulus $E$ and the Poisson ratio $\nu$. Since $\tenF=\ten I + \vX \vec u$, $\ten C$ and $\ten E$ are also functions of $\vec u$, and thus $\ten S(\ten E)$ also is a function of $\vec u$, thus allowing us to rewrite the conservation of linear momentum as
+\paragraph{Constitutive modeling of solids} Assuming that $\ten S$ depends only on the deformation $\vvarphi$, we first obtain that $\ten S$ depends on $\tenF$ due to the locality principle, and from the observer independence, we conclude that $\ten S$ is a function of $\ten C=\tenF^\top \tenF$ or $\ten E = \frac{1}{2}(\ten C - \ten I)$. Some examples are the linear elastic model $\ten S(\ten E) = \lambda\tr(\ten E)\ten I + 2\mu\ten E$, and the neohookean model $\ten S(\ten C) = \frac{\lambda}{2}(J^2-1)\ten C^{-1} + \mu (\ten I - \ten C^{-1})$, where $\lambda,\mu$ are called the Lamé parameters. These parameters are obtained from experiments, and are related to the Young modulus $E$ and the Poisson ratio $\nu$. Since $\tenF=\ten I + \vX \vec u$, $\ten C$ and $\ten E$ are also functions of $\vec u$, and thus $\ten S(\ten E)$ also is a function of $\vec u$, thus allowing us to rewrite the conservation of linear momentum as
 \begin{equation}
     \rho_0\ddot{\vec u} = \vec f_0 + \dive(\tenF(\vec u) \ten S(\ten E(\vec u))),
 \end{equation}
@@ -814,7 +814,7 @@ resulting in the bound $|b(\vec u, \vec u)|\geq \rho_0/C_K^2\|\vec u\|_{H^1(\Ome
 \begin{equation}
     \|\vec u\|_{H^1(\Omega)} \leq \frac{C_K^2}{\rho_0}\|\ell\|_{((H^1(\Omega))^k)^*}.
 \end{equation}
-\paragraph{Time-independent Navier-Stokes equations} Recall that the Navier-Stokes equations model the flow of an incompresible viscous fluid filling a domain $\Omega\subset\R^3$, where the velocity $\vec v$ and the pressure $p$ satisfy
+\paragraph{Time-independent Navier-Stokes equations} Recall that the Navier-Stokes equations model the flow of an incompressible viscous fluid filling a domain $\Omega\subset\R^3$, where the velocity $\vec v$ and the pressure $p$ satisfy
 \begin{tightalign*}
     \rho\left(\frac{\partial \vec v}{\partial t} + (\vx\vec v)\vec v\right) &= -\vx p + \mu\vx^2 \vec v + \vec f\\
     \vx\cdot\vec v &= 0.

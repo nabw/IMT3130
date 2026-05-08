@@ -271,7 +271,7 @@ We write $g(\vec u_h) = \{g(u^i)\}$ for the vector of evaluations of $g$ at the 
 \end{equation}
 Let us analyze both methods for solving this problem.
 \begin{enumerate}
-    \item \emph{Newton-Raphson}: we look for solutions of a linearized problems and iterate. Abstractly, we solve the equation $F(\vec x)=0$ by considering an initial point $\vec x^0$ and then using Taylor's theorem for linearizing $F(\vec x^{k+1})$ (unknown) around the previous iteration result $\vec x^k$ (known):
+    \item \emph{Newton-Raphson}: we look for solutions of a linearized problem and iterate. Abstractly, we solve the equation $F(\vec x)=0$ by considering an initial point $\vec x^0$ and then using Taylor's theorem for linearizing $F(\vec x^{k+1})$ (unknown) around the previous iteration result $\vec x^k$ (known):
     \begin{equation*}
         F(\vec x^{k+1}) \approx F(\vec x^k) + \nabla F(\vec x^k)\cdot \underbrace{\vec{\delta x}^{k+1}}_{\vec x^{k+1} - \vec{x}^k}.
     \end{equation*}
