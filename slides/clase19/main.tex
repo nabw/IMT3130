@@ -1,0 +1,176 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{mathtools}
+\usepackage{isomath}
+\usepackage{centernot}
+\usepackage{amsmath, amssymb, amsthm, bm}
+\DeclareMathOperator{\grad}{\nabla}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ttag}[1]{(#1)}
+
+\newcommand{\ten}{\tensorsym}
+\renewcommand{\vec}{\vectorsym}
+
+\title[Conservation Principles]{Conservation Principles in Continuum Mechanics}
+\author{Nicol\'as A. Barnafi}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\section{Core Theorems}
+
+\begin{frame}{The Localization Theorem}
+    \begin{block}{Localization theorem}
+    Let $f: \Omega \to \mathbb{R}$ be an $L^1(\Omega)$ function. If for every measurable set $\omega$ we have
+    $$ \int_{\omega} f(\bm{x}) \, dx = 0 $$
+    then $f(\bm{x}) = 0$ for all $\bm{x} \in \Omega$.
+\end{block}
+
+    \textbf{Proof:}
+    $$ \int_\Omega |f|(\vec x)\,dx = \int_{\{f>0\}} f(\vec x)\,dx + \int_{\{f<0\}}f(\vec x)\,dx, $$
+    where $\{f<0\}$ and $\{f>0\}$ are measurable.  \qed
+\end{frame}
+
+\begin{frame}{Reynolds Transport Theorem (RTT)}
+    
+    \vspace{0.2cm}
+    \begin{block}{Reynolds Transport Theorem}
+        For a smooth spatial field $\psi(\bm{x}, t)$:
+        $$ \frac{d}{dt} \int_{\omega_t} \psi \, dv = \int_{\omega_t} \left( \frac{\partial \psi}{\partial t} + \vec v\cdot \nabla \psi + \psi \text{div}_{\bm{x}} \bm{v} \right) dv $$
+    \end{block}
+    
+    \pause \textbf{Proof:}
+    Let $\Psi(\bm{X}, t) = \psi(\bm{\varphi}(\bm{X}, t), t)$. Using $dv = J dV$:
+    \begin{align*}
+        \frac{d}{dt} \int_{\omega_t} \psi \, dv &= \frac{d}{dt} \int_{\omega_0} \Psi J \, dV = \int_{\omega_0} \left( \dot{\Psi} J + \Psi \dot{J} \right) dV \tag{Pull-back} \\
+        &= \int_{\omega_0} \left( \dot{\Psi} J + \Psi J \text{div}_{\bm{x}} \bm{v} \right) dV \tag{Euler's Expansion: $\dot{J} = J \text{div}_{\bm{x}} \bm{v}$} \\
+        &= \int_{\omega_t} \left( \frac{D\psi}{Dt} + \psi \text{div}_{\bm{x}} \bm{v} \right) dv \tag{Push-forward to spatial}
+    \end{align*} \qed
+\end{frame}
+
+\section{Conservation of Mass}
+
+\begin{frame}{Conservation of Mass: Eulerian Formulation}
+    \textbf{Physical Postulate:} The mass of any material volume $\omega_t$ remains constant in time.
+    $$ \frac{d}{dt} \int_{\omega_t} \rho(\bm{x}, t) \, dv = 0 $$
+    
+    \textbf{Derivation:}
+    We apply the Reynolds Transport Theorem with $\psi = \rho$:
+    \begin{align*}
+        0 &= \int_{\omega_t} \left( \frac{\partial \rho}{\partial t} + \nabla_{\bm{x}} \rho \cdot \bm{v} + \rho \text{div}_{\bm{x}} \bm{v} \right) dv \tag{RTT} \\
+        0 &= \int_{\omega_t} \left( \frac{\partial \rho}{\partial t} + \text{div}_{\bm{x}} (\rho \bm{v}) \right) dv \tag{Product Rule}
+    \end{align*}
+    By the Localization Thm, we obtain the strong \textbf{Eulerian Continuity Equation}:
+    $$ \frac{\partial \rho}{\partial t} + \text{div}_{\bm{x}} (\rho \bm{v}) = 0 $$
+\end{frame}
+
+\begin{frame}{Conservation of Mass: Lagrangian Formulation}
+    \textbf{Physical Postulate:} The mass computed in the reference configuration $\omega_0$ must equal the mass in the current configuration $\omega_t$.
+    $$ \int_{\omega_0} \rho_0(\bm{X}) \, dV = \int_{\omega_t} \rho(\bm{x}, t) \, dv $$
+    
+    \textbf{Derivation:} We map the spatial integral back:
+    \begin{align*}
+        \int_{\omega_0} \rho_0(\bm{X}) \, dV &= \int_{\omega_0} \rho(\bm{\varphi}(\bm{X},t), t) J(\bm{X},t) \, dV \tag{Change of variables} \\
+        \int_{\omega_0} \left( \rho_0 - \rho J \right) dV &= 0 \tag{Rearrange}
+    \end{align*}
+    By the Localization Thm, we obtain the \textbf{Lagrangian Continuity Equation}:
+    $$ \rho_0(\bm{X}) = J(\bm{X},t) \rho(\bm{x},t) $$
+\end{frame}
+
+\section{Conservation of Linear Momentum}
+
+\begin{frame}{Preliminary: Transport of Density-Weighted Quantities}
+    Before deriving momentum conservation, it is computationally useful to establish how integrals weighted by density evolve.
+    
+    \vspace{0.2cm}
+    \textbf{Lemma:} For any spatial field $\psi$: $\frac{d}{dt} \int_{\omega_t} \rho \psi \, dv = \int_{\omega_t} \rho \frac{D\psi}{Dt} \, dv$.
+    
+    \vspace{0.2cm}
+    \textbf{Proof:} Apply RTT to the product $(\rho \psi)$:
+    \begin{align*}
+        \frac{d}{dt} \int_{\omega_t} \rho \psi \, dv &= \int_{\omega_t} \left( \frac{D(\rho\psi)}{Dt} + \rho\psi \text{div}_{\bm{x}} \bm{v} \right) dv \tag{RTT} \\
+        &= \int_{\omega_t} \left( \dot{\rho}\psi + \rho\dot{\psi} + \rho\psi \text{div}_{\bm{x}} \bm{v} \right) dv \tag{Product Rule} \\
+        &= \int_{\omega_t} \left[ \psi \underbrace{\left( \dot{\rho} + \rho \text{div}_{\bm{x}} \bm{v} \right)}_{=0 \text{ (Mass Cons.)}} + \rho \dot{\psi} \right] dv \tag{Group terms} \\
+        &= \int_{\omega_t} \rho \frac{D\psi}{Dt} \, dv \tag{Simplify}
+    \end{align*} \qed
+\end{frame}
+
+\begin{frame}{Conservation of Linear Momentum: Eulerian Formulation}
+    \textbf{Physical Postulate (Newton's 2nd Law):} Rate of change of momentum equals the sum of body forces ($\bm{b}$) and surface tractions ($\bm{t} = \bm{\sigma}\bm{n}$, via Cauchy's stress theorem).
+    $$ \frac{d}{dt} \int_{\omega_t} \rho \bm{v} \, dv = \int_{\omega_t} \rho \bm{b} \, dv + \int_{\partial \omega_t} \bm{\sigma} \bm{n} \, da $$
+    
+    \textbf{Derivation:}
+    \begin{align*}
+        \int_{\omega_t} \rho \frac{D\bm{v}}{Dt} \, dv &= \int_{\omega_t} \rho \bm{b} \, dv + \int_{\partial \omega_t} \bm{\sigma} \bm{n} \, da \tag{Apply Density Lemma} \\
+        \int_{\omega_t} \rho \frac{D\bm{v}}{Dt} \, dv &= \int_{\omega_t} \rho \bm{b} \, dv + \int_{\omega_t} \text{div}_{\bm{x}} \bm{\sigma} \, dv \tag{Divergence Theorem} \\
+        \int_{\omega_t} \left( \rho \frac{D\bm{v}}{Dt} - \text{div}_{\bm{x}} \bm{\sigma} - \rho \bm{b} \right) dv &= 0 \tag{Rearrange}
+    \end{align*}
+    By Localization, we obtain the strong Eulerian form:
+    $$ \rho \frac{D\bm{v}}{Dt} = \text{div}_{\bm{x}} \bm{\sigma} + \rho \bm{b} $$
+\end{frame}
+
+\begin{frame}{Conservation of Linear Momentum: Lagrangian Formulation}
+    To pull back to $\omega_0$, we map the surface traction using Nanson's Formula ($\bm{n} da = J F^{-T} \bm{N} dA$). We define the \textbf{First Piola-Kirchhoff Stress Tensor} as $P = J \bm{\sigma} F^{-T}$.
+    
+    \vspace{0.2cm}
+    \textbf{Derivation:}
+    Starting from the global balance law, we express all integrals over $\omega_0$:
+    \begin{align*}
+        \frac{d}{dt} \int_{\omega_0} \rho_0 \bm{V} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\partial \omega_0} \bm{\sigma} (J F^{-T} \bm{N}) \, dA \tag{Change variables} \\
+        \int_{\omega_0} \rho_0 \dot{\bm{V}} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\partial \omega_0} P \bm{N} \, dA \tag{Since $\dot{\rho}_0 = 0$, define $P$} \\
+        \int_{\omega_0} \rho_0 \dot{\bm{V}} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\omega_0} \text{Div}_{\bm{X}} P \, dV \tag{Divergence Theorem}
+    \end{align*}
+    By Localization, we obtain the strong Lagrangian form:
+    $$ \rho_0 \frac{\partial \bm{V}}{\partial t} = \text{Div}_{\bm{X}} P + \rho_0 \bm{b}_0 $$
+\end{frame}
+
+\section{Simplifications and Limits}
+
+\begin{frame}{Mathematical Consequences: Simplifying Mass Conservation}
+    Under specific physical hypotheses, the general continuity equation $\frac{\partial \rho}{\partial t} + \text{div}_{\bm{x}} (\rho \bm{v}) = 0$ collapses into familiar PDEs studied earlier in the course.
+    
+    \vspace{0.3cm}
+    \textbf{1. Steady-State Flow:}
+    If the density field is independent of time ($\partial \rho / \partial t = 0$), the equation becomes:
+    $$ \text{div}_{\bm{x}} (\rho \bm{v}) = 0 $$
+    This is the classic advection constraint.
+    
+    \vspace{0.3cm}
+    \textbf{2. Incompressible Flow:}
+    If the material is strictly incompressible, the density of a material particle cannot change, meaning $\frac{D\rho}{Dt} = 0$. 
+    Because $\frac{D\rho}{Dt} + \rho \text{div}_{\bm{x}} \bm{v} = 0$, this immediately yields:
+    $$ \text{div}_{\bm{x}} \bm{v} = 0 $$
+    This is the fundamental constraint giving rise to the saddle-point structure of the Stokes and Navier-Stokes equations.
+\end{frame}
+
+\begin{frame}{Mathematical Consequences: Small Deformations}
+    What happens to the complex Piola-Kirchhoff stress tensor $P$ if we assume deformations are infinitesimal (Linear Elasticity)?
+    
+    \vspace{0.2cm}
+    \textbf{Hypothesis:} 
+    Let the displacement gradient be negligible: $\|\nabla_{\bm{X}} \bm{u}\| \ll 1$.
+    
+    \vspace{0.2cm}
+    \textbf{Derivation:}
+    \begin{align*}
+        F &= I + \nabla_{\bm{X}} \bm{u} \approx I \tag{Gradient limit} \\
+        J &= \det(I + \nabla_{\bm{X}} \bm{u}) \approx 1 + \text{div}_{\bm{X}} \bm{u} \approx 1 \tag{Trace approximation} \\
+        F^{-T} &= (I + \nabla_{\bm{X}} \bm{u})^{-T} \approx I - (\nabla_{\bm{X}} \bm{u})^T \approx I \tag{Neumann series}
+    \end{align*}
+    
+    Applying these to the definition of the First Piola-Kirchhoff tensor:
+    $$ P = J \bm{\sigma} F^{-T} \approx (1) \bm{\sigma} (I) = \bm{\sigma} $$
+    
+    \textbf{Conclusion:} Under small deformations, the distinction between reference and current configurations vanishes mathematically. The Piola-Kirchhoff and Cauchy stress tensors become indistinguishable, allowing us to formulate linear elasticity on the fixed domain $\Omega$.
+\end{frame}
+
+\end{document}
