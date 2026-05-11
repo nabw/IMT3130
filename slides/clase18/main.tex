@@ -135,7 +135,7 @@
 \begin{frame}{Algebra of Differentials: Nanson's Formula}
     \begin{itemize}
         \item Before we saw mapping of linear elements $d\vec x= \ten F d\vec X$. 
-        \item Jacobian $J = \det F$ dictates the transformation of volume elements: $dv = J dV$.
+        \item Jacobian $J = \det \ten F$ dictates the transformation of volume elements: $dv = J dV$.
         \item Area $d\vec a$ from $d\vec A$...? \textbf{Nanson's Formula}.
     \end{itemize}
 
@@ -152,14 +152,14 @@
 
 \begin{frame}{Velocities and the Material Derivative}
     \begin{itemize}
-        \item \textbf{Material quantities}: $\eta(\vec X, t)$
-        \item \textbf{Spatial quantities}: $\eta(\vec x, t)$
+        \item \textbf{Material/Lagrangian/Reference quantities}: $\eta(\vec X, t)$
+        \item \textbf{Spatial/Eulerian/Deformed quantities}: $\eta(\vec x, t)$
     \end{itemize}
 
     \pause Velocities:
     \begin{itemize}
         \item \textbf{Material Velocity:} $\bm{V}(\bm{X}, t) = \frac{\partial \bm{\varphi}(\bm{X}, t)}{\partial t}$.
-        \item \textbf{Spatial Velocity:} $\bm{v}(\bm{x}, t) = \bm{V}(\bm{\varphi}_t^{-1}(\bm{x}))$.
+        \item \textbf{Spatial Velocity:} $\bm{v}(\bm{x}, t) = \bm{V}(\bm{\varphi}_t^{-1}(\bm{x}),t)$.
     \end{itemize}
 
     For a spatial scalar field $\psi(\bm{x}, t)$, the total time derivative experienced by a moving particle is given by the \textbf{Material Derivative}:
@@ -169,7 +169,7 @@
 \end{frame}
 
 \begin{frame}{Tensor Derivative Identities}
-    To perform rigorous analysis and derive conservation laws, several core identities regarding the tensor calculus of kinematics are required. Let $L = \nabla_{\bm{x}} \bm{v}$ be the spatial velocity gradient.
+    Let $L = \nabla_{\bm{x}} \bm{v}$ be the spatial velocity gradient.
 
     \vspace{0.3cm}
     \textbf{1. Time derivative of the deformation gradient:}
