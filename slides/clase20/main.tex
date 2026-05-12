@@ -1,0 +1,330 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{mathtools}
+\usepackage{isomath}
+\usepackage{centernot}
+\usepackage{amsmath, amssymb, amsthm, bm}
+\DeclareMathOperator{\grad}{\nabla}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ttag}[1]{(#1)}
+
+\newcommand{\ten}{\tensorsym}
+\renewcommand{\vec}{\vectorsym}
+
+\title[Thermodynamics]{Conservation of Energy and Thermodynamics}
+\author{Nicol\'as A. Barnafi}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\section{First Law of Thermodynamics}
+
+\begin{frame}{Definitions and Mechanical Power}
+    Let $B_t$ be the current configuration, $\rho$ the spatial density, and $\bm{v}$ the spatial velocity.
+    
+    \textbf{Kinematics:} We define the \textbf{rate of deformation tensor} $D$ as the symmetric part of the velocity gradient:
+    $$ D = \frac{1}{2}(\nabla_{\bm{x}} \bm{v} + (\nabla_{\bm{x}} \bm{v})^T) $$
+    
+    The total power exerted on $B_t$ by body forces $\bm{f}$ and surface tractions $\bm{t} = \bm{\sigma}\bm{n}$ is:
+    $$ \mathcal{P}(t) = \int_{B_t} \rho \bm{f} \cdot \bm{v} \, dv + \int_{\partial B_t} \bm{t} \cdot \bm{v} \, ds $$
+    
+    Applying the divergence theorem and Cauchy Stress Theorem to the boundary integral:
+    $$\int_{\partial B_t} \vec t \cdot \vec v\,ds =  \int_{\partial B_t} (\bm{\sigma}\bm{n}) \cdot \bm{v} \, ds = \int_{B_t} \text{div}_{\bm{x}}(\bm{\sigma} \bm{v}) \, dv = \int_{B_t} (\text{div}_{\bm{x}} \bm{\sigma} \cdot \bm{v} + \bm{\sigma} : \nabla_{\bm{x}} \bm{v}) \, dv $$
+    Since the Cauchy stress $\bm{\sigma}$ is symmetric (Cons. Angular Momentum), $\bm{\sigma} : \nabla_{\bm{x}} \bm{v} = \bm{\sigma} : D$.
+\end{frame}
+
+\begin{frame}{The Kinetic Energy Theorem}
+    To derive the energy equation, we first isolate the kinetic energy $K(t) = \int_{B_t} \frac{1}{2} \rho \|\bm{v}\|^2 \, dv$.
+    
+    \vspace{0.2cm}
+    \textbf{Step 1: Momentum Equation.} Start with the strong form of linear momentum:
+    $$ \rho \dot{\bm{v}} = \text{div}_{\bm{x}} \bm{\sigma} + \rho \bm{f} $$
+    
+    \textbf{Step 2: Inner Product.} Take the dot product with $\bm{v}$ and integrate over $B_t$:
+    $$ \int_{B_t} \rho \dot{\bm{v}} \cdot \bm{v} \, dv = \int_{B_t} \text{div}_{\bm{x}} \bm{\sigma} \cdot \bm{v} \, dv + \int_{B_t} \rho \bm{f} \cdot \bm{v} \, dv $$
+    
+    \textbf{Step 3: Transport and Substitution.} 
+    Notice that $\rho \dot{\bm{v}} \cdot \bm{v} = \rho \frac{D}{Dt}(\frac{1}{2}\|\bm{v}\|^2)$. Using the divergence expansion from the previous slide, we rearrange to find:
+    $$ \frac{D K(t)}{Dt} = \underbrace{\int_{B_t} \rho \bm{f} \cdot \bm{v} \, dv + \int_{\partial B_t} \bm{t} \cdot \bm{v} \, ds}_{\mathcal{P}(t)} - \int_{B_t} \bm{\sigma} : D \, dv = \mathcal P(t) - \int_{B_t}\ten\sigma : \ten D. $$
+    
+    $\Rightarrow$ The rate of kinetic energy is mechanical power \textit{minus} the internal stress power.
+\end{frame}
+
+\begin{frame}{First Law: Eulerian Derivation}
+    \textbf{Physical Law:} The rate of total energy equals the mechanical power plus the thermal power $\dot{Q}(t)$:
+    $$ \frac{D}{Dt}(K(t) + U(t)) = \mathcal{P}(t) + \dot{Q}(t) $$
+    where internal energy $U$ and thermal power $\dot{Q}$ are defined by:
+    \begin{itemize}
+        \item $U(t) = \int_{B_t} \rho e \, dv \quad$ ($e$: specific internal energy)
+        \item $\dot{Q}(t) = \int_{B_t} r \, dv - \int_{\partial B_t} \bm{q} \cdot \bm{n} \, ds \quad$ ($r$: volumetric heat source, $\bm{q}$: heat flux vector)
+    \end{itemize}
+    
+    Substitute the Kinetic Energy Theorem ($\frac{DK}{Dt} = \mathcal{P} - \int \bm{\sigma}:D$) into the First Law: 
+    $$ \frac{D U(t)}{Dt} = \int_{B_t} \bm{\sigma} : D \, dv + \dot{Q}(t) $$
+    
+    Apply Reynolds transport to $U(t)$ and the divergence theorem to $\dot{Q}(t)$, then localize:
+    $$ \rho \dot{e} = \bm{\sigma} : D - \text{div}_{\bm{x}} \bm{q} + r \qquad\text{in $\Omega_t$}.$$
+\end{frame}
+
+\begin{frame}{First Law: Lagrangian Formulation}
+    In the reference configuration $B_0$, we define material quantities:
+    \begin{itemize}
+        \item Internal energy: $e_m(\bm{X}, t) = e(\bm{\varphi}(\bm{X}, t), t)$
+        \item Heat flux: $\bm{q}_0 = J F^{-1} \bm{q}$ (via Nanson's formula)
+        \item Heat source: $r_0(\bm{X}, t) = J(\vec X)\, r(\bm{\varphi}(\bm{X}, t), t)$
+    \end{itemize}
+    
+    \textbf{Stress Power Pull-back:} The spatial stress power $J \bm{\sigma} : D$ is equivalent to the material stress power $\bm{S} : \dot{\ten E}$, where:
+    \begin{itemize}
+        \item $\bm{S} = J F^{-1} \bm{\sigma} F^{-T}$ is the Second Piola-Kirchhoff stress tensor.
+        \item $\ten E = \frac{1}{2}(F^T F - I)$ is the Green-Lagrange strain tensor.
+    \end{itemize}
+    
+    ($\dots$) Using the identity $J \text{div}_{\bm{x}} \bm{q} = \text{Div}_{\bm{X}} \bm{q}_0$, the localized Lagrangian First Law is:
+    $$ \rho_0 \dot{e}_m = \bm{S} : \dot{E} - \text{Div}_{\bm{X}} \bm{q}_0 + r_0 \qquad\text{in $\Omega_0$}.$$
+\end{frame}
+
+\section{Second Law of Thermodynamics}
+
+\begin{frame}{The Clausius-Duhem Inequality}
+    \textbf{Physical Postulate:} For any \emph{closed system}, the rate of change of entropy must exceed the entropy supplied by heat sources and fluxes.
+    $$ \frac{D}{Dt} \int_{B_t} \rho \eta \, dv \ge \int_{B_t} \frac{r}{\theta} \, dv - \int_{\partial B_t} \frac{1}{\theta} \bm{q} \cdot \bm{n} \, ds $$
+    \begin{itemize}
+        \item $\eta(\bm{x}, t)$: Entropy per unit mass.
+        \item $\theta(\bm{x}, t) > 0$: Absolute temperature.
+    \end{itemize}
+    
+    Applying the divergence theorem to the boundary flux and localizing, we obtain the \textbf{Eulerian Clausius-Duhem inequality}:
+    $$ \rho \dot{\eta} \ge \frac{r}{\theta} - \text{div}_{\bm{x}} \left( \frac{\bm{q}}{\theta} \right) $$
+    
+    Pulling back to the reference configuration yields the \textbf{Lagrangian form}:
+    $$ \rho_0 \dot{\eta}_m \ge \frac{r_0}{\theta_m} - \text{Div}_{\bm{X}} \left( \frac{\bm{q}_0}{\theta_m} \right) $$
+\end{frame}
+
+\begin{frame}{The Dissipation Inequality}
+    We couple the First and Second Laws to eliminate the external heat source $r_0$. 
+    From the Lagrangian First Law: $r_0 = \rho_0 \dot{e}_m - \bm{S} : \dot{E} + \text{Div}_{\bm{X}} \bm{q}_0$.
+    
+    Substitute this into the expanded Lagrangian Clausius-Duhem inequality:
+    $$ \rho_0 \dot{\eta}_m \ge \frac{1}{\theta_m} \left( \rho_0 \dot{e}_m - \bm{S} : \dot{E} + \text{Div}_{\bm{X}} \bm{q}_0 \right) - \frac{1}{\theta_m} \text{Div}_{\bm{X}} \bm{q}_0 + \frac{1}{\theta_m^2} \bm{q}_0 \cdot \nabla_{\bm{X}} \theta_m $$
+    
+    Rearranging and multiplying by $\theta_m > 0$:
+    $$ \bm{S} : \dot{E} - \rho_0 (\dot{e}_m - \theta_m \dot{\eta}_m) - \frac{1}{\theta_m} \bm{q}_0 \cdot \nabla_{\bm{X}} \theta_m \ge 0 $$
+    
+    \textbf{Helmholtz Free Energy:} Define $\psi_m = e_m - \theta_m \eta_m$, which implies $\dot{\psi}_m = \dot{e}_m - \dot{\theta}_m \eta_m - \theta_m \dot{\eta}_m$. Substituting this yields the \textbf{Clausius-Planck Dissipation Inequality}:
+    $$ \bm{S} : \dot{E} - \rho_0 (\dot{\psi}_m + \eta_m \dot{\theta}_m) - \frac{1}{\theta_m} \bm{q}_0 \cdot \nabla_{\bm{X}} \theta_m \ge 0 $$
+\end{frame}
+
+\section{Constitutive Modeling} 
+
+\subsection{The Coleman-Noll Procedure}
+
+\begin{frame}{The Coleman-Noll Procedure: Formulation}
+    To derive a thermodynamically consistent constitutive model, we assume a \textbf{hyperelastic} material where the free energy depends only on the current strain $(\ten E)$ and temperature $(\theta_m)$:
+    $$ \psi_m = \hat{\psi}(E, \theta_m) $$
+    
+    By the chain rule:
+    $$ \dot{\psi}_m = \frac{\partial \hat{\psi}}{\partial E} : \dot{E} + \frac{\partial \hat{\psi}}{\partial \theta_m} \dot{\theta}_m $$
+    
+    Substitute this expansion back into the Dissipation Inequality:
+    $$ \left( \bm{S} - \rho_0 \frac{\partial \hat{\psi}}{\partial E} \right) : \dot{E} - \rho_0 \left( \eta_m + \frac{\partial \hat{\psi}}{\partial \theta_m} \right) \dot{\theta}_m - \frac{1}{\theta_m} \bm{q}_0 \cdot \nabla_{\bm{X}} \theta_m \ge 0 $$
+\end{frame}
+
+\begin{frame}{The Coleman-Noll Procedure: Conclusion}
+    $$ \left( \bm{S} - \rho_0 \frac{\partial \hat{\psi}}{\partial E} \right) : \dot{E} - \rho_0 \left( \eta_m + \frac{\partial \hat{\psi}}{\partial \theta_m} \right) \dot{\theta}_m - \frac{1}{\theta_m} \bm{q}_0 \cdot \nabla_{\bm{X}} \theta_m \ge 0 $$
+    
+    \textbf{The Arbitrary Process Argument:} At any given state $(E, \theta_m)$, the rates $\dot{E}$ and $\dot{\theta}_m$ can be chosen arbitrarily (positive or negative). 
+    
+    If the terms in parentheses were non-zero, one could choose rates that violate the inequality. Therefore, the coefficients must identically vanish.
+    
+    \textbf{Hyperelastic Constitutive Laws:}
+    \begin{align*}
+        1. \quad \bm{S} &= \rho_0 \frac{\partial \hat{\psi}}{\partial E} \tag{Second Piola-Kirchhoff Stress} \\
+        2. \quad \eta_m &= - \frac{\partial \hat{\psi}}{\partial \theta_m} \tag{Entropy}
+    \end{align*}
+    Leaving only the residual thermal inequality: $-\bm{q}_0 \cdot \nabla_{\bm{X}} \theta_m \ge 0$.
+\end{frame}
+
+\subsection{Constitutive Extensions}
+
+\begin{frame}{The First Piola-Kirchhoff Constitutive Law}
+    We derived the Second Piola-Kirchhoff stress from the Coleman-Noll procedure: $\bm{S} = \rho_0 \frac{\partial \hat \psi}{\partial \ten E}$.
+
+    \vspace{0.2cm}
+    For mathematical analysis and variational formulations, it is often more direct to formulate the constitutive law in terms of the First Piola-Kirchhoff stress $P$ and the deformation gradient $F$.
+
+    \vspace{0.2cm}
+    Let $\Psi(F, \theta_m) = \rho_0 \hat \psi(\ten E(\ten F), \theta_m)$ be the \textbf{strain energy density} per unit reference volume. By the chain rule and $\ten E = \frac 1 2 (\ten F^T\ten F - \ten I)$:
+    $$ \frac{\partial \Psi}{\partial F} = \rho_0 \frac{\partial \psi_m}{\partial E} : \frac{\partial E}{\partial F} = \ten F \ten S = \ten P $$
+
+    \vspace{0.2cm}
+    since $\ten P = F \bm{S}$ by definition. We thus obtained: 
+    $$ \ten P = \frac{\partial \Psi}{\partial F} $$
+\end{frame}
+
+\begin{frame}{Fourier's Law from the Thermal Inequality}
+    The Coleman-Noll procedure leaves us with the residual dissipation inequality:
+    $$ - \bm{q}_0 \cdot \nabla_{\bm{X}} \theta_m \ge 0 $$
+
+    \textbf{Physical Meaning:} Heat flux flows from hot to cold.
+
+    \vspace{0.2cm}
+    To guarantee this inequality is satisfied strictly, we require a constitutive model for the heat flux. The simplest is \textbf{Fourier's Law}:
+    $$ \bm{q}_0 = - \bm{\kappa} \nabla_{\bm{X}} \theta_m $$
+    where $\bm{\kappa}$ is the thermal conductivity tensor.
+
+    \vspace{0.2cm}
+    Indeed, substituting Fourier's Law into the inequality yields:
+    $$ \nabla_{\bm{X}} \theta_m \cdot \bm{\kappa} \nabla_{\bm{X}} \theta_m \ge 0 $$
+    This is unconditionally satisfied provided $\bm{\kappa}$ is \textbf{positive semi-definite}.
+\end{frame}
+
+\begin{frame}{Closure of the Thermomechanical System}
+    Let variables be the displacement $\bm{u}(\bm{X}, t)$ (3 comp) and temperature $\theta_m(\bm{X},t)$ (1 comp).
+
+    \vspace{0.2cm}
+    \textbf{Governing PDEs (4 Equations):}
+    \begin{align*}
+        \rho_0 \ddot{\bm{u}} - \text{Div}_{\bm{X}} \ten P(\nabla_{\bm{X}} \bm{u}, \theta_m) &= \rho_0 \bm{b}_0 \tag{Linear Momentum (3)} \\
+        \rho_0 \dot{e}_m(\nabla_{\bm{X}} \bm{u}, \theta_m) + \text{Div}_{\bm{X}} \bm{q}_0(\theta_m) - \ten P : \dot{\ten F} &= \rho_0 r_0 \tag{Energy (1)}
+    \end{align*}
+
+    \textbf{Constitutive Closure:}
+    The system is closed by substituting the models derived from the Helmholtz potential $\Psi(F, \theta_m)$:
+    \begin{itemize}
+        \item Stress: $\ten P = \frac{\partial \Psi}{\partial \ten F}$
+        \item Entropy: $\eta_m = - \frac{1}{\rho_0} \frac{\partial \Psi}{\partial \theta_m} \implies$ Internal Energy: $e_m = \frac{1}{\rho_0} \Psi + \theta_m \eta_m$
+        \item Heat Flux: $\bm{q}_0 = - \bm{\kappa} \nabla_{\bm{X}} \theta_m$
+    \end{itemize}
+    \textit{Note:} Mass conservation is explicitly satisfied with $\rho = \rho_0 / J$. 
+\end{frame}
+
+\subsection{Variational Principles}
+
+\begin{frame}{Variational Principles and Energy Minimization}
+    For purely mechanical, isothermal hyperelasticity, the system reduces to minimizing:
+    $$ \Pi(\bm{u}) = \int_{\Omega_0} \Psi(\nabla_{\bm{X}} \bm{u}) \, dV - \int_{\Omega_0} \rho_0 \bm{b}_0 \cdot \bm{u} \, dV - \int_{\partial \Omega_N} \bm{t}_0 \cdot \bm{u} \, dA $$
+    The Euler-Lagrange equations of $\delta \Pi(\bm{u}) = 0$ yield the strong form of linear momentum.
+
+    \vspace{0.3cm}
+    \textbf{The Polyconvexity Condition (Ball, 1977)}
+    Standard convexity of $\Psi(F)$ contradicts physics (uniqueness not good!)
+
+    To guarantee the existence of minimizers (via the Direct Method of Calculus of Variations), we require \textbf{Polyconvexity}:
+    $$ \Psi(\ten F) = W(\ten F, \text{Cof} \ten F, \det \ten F) $$
+    where $W$ is a convex function. 
+\end{frame}
+
+\section{Classical Models}
+
+\begin{frame}{Model 1: Linear Elastodynamics}
+    \textbf{Original Equations (Lagrangian Momentum \& Hyperelasticity):}
+    $$ \rho_0 \ddot{\bm{u}} = \text{Div}_{\bm{X}} \ten P + \rho_0 \bm{b}_0 \quad \text{and} \quad \ten P = \frac{\partial \Psi}{\partial \ten F} $$
+
+    \textbf{Hypotheses:}
+    \begin{itemize}
+        \item \textbf{Infinitesimal Displacements:} $\bm{u} = \bm{\varphi} - \bm{X}$ where $\|\nabla_{\bm{X}} \bm{u}\| \ll 1$.
+        \item \textbf{Geometric Linearization:} $\ten F \approx I$, $\ten P \approx \bm{\sigma}$, and reference/current configurations coincide.
+        \item \textbf{Material Linearization:} Strain energy $\Psi$ is purely quadratic with respect to the linearized strain $\bm{\varepsilon} = \frac{1}{2}(\nabla \bm{u} + \nabla \bm{u}^T)$, yielding Hooke's Law: $\bm{\sigma} = \mathbb{C} : \bm{\varepsilon}$.
+    \end{itemize}
+
+    \textbf{Resulting Model:}
+    $$ \rho \ddot{\bm{u}} - \text{div} (\mathbb{C} \bm{\varepsilon}(\bm{u})) = \bm{b} $$
+\end{frame}
+
+\begin{frame}{Model 2: Incompressible Non-Linear Elasticity}
+    \textbf{Original Equation (Energy Minimization):}
+    $$ \min_{\bm{\varphi}} \Pi(\bm{\varphi}) = \int_{\Omega_0} \Psi(\nabla_{\bm{X}} \bm{\varphi}) \, dV - \text{Work}(\bm{\varphi}) $$
+
+    \textbf{Hypotheses:}
+    \begin{itemize}
+        \item \textbf{Strict Incompressibility:} The deformation must be isochoric (volume-preserving) at all times, meaning $J = \det F = 1$.
+        \item \textbf{Lagrange Multipliers:} The kinematic constraint is enforced variationally by introducing a scalar field $p$ (the hydrostatic pressure) such that $P = \frac{\partial \Psi}{\partial F} - p F^{-T}$.
+    \end{itemize}
+
+    \textbf{Resulting Model (Saddle Point Problem):}
+    \begin{align*}
+        \rho_0 \ddot{\bm{u}} - \text{Div}_{\bm{X}} \left( \frac{\partial \Psi}{\partial F} - p F^{-T} \right) &= \rho_0 \bm{b}_0 \\
+        \det(\nabla_{\bm{X}} \bm{\varphi}) &= 1
+    \end{align*}
+\end{frame}
+
+\subsection{Fluid Mechanics}
+
+\begin{frame}{Model 3: Navier-Stokes (Incompressible)}
+    \textbf{Original Equations (Eulerian Mass \& Momentum):}
+    $$ \frac{D\rho}{Dt} + \rho \text{div}_{\bm{x}} \bm{v} = 0 \quad \text{and} \quad \rho \frac{D\bm{v}}{Dt} = \text{div}_{\bm{x}} \bm{\sigma} + \rho \bm{b} $$
+
+    \textbf{Hypotheses:}
+    \begin{itemize}
+        \item \textbf{Incompressible Fluid:} Material density is constant ($\frac{D\rho}{Dt} = 0 \implies \text{div}_{\bm{x}} \bm{v} = 0$).
+        \item \textbf{Newtonian Viscosity:} The stress tensor decomposes into a hydrostatic pressure $p$ and a viscous shear stress linearly proportional to the rate of deformation $D$: $\bm{\sigma} = -p I + 2\mu D$.
+    \end{itemize}
+
+    \textbf{Resulting Model:}
+    \begin{align*}
+        \rho (\partial_t \bm{v} + (\bm{v} \cdot \nabla) \bm{v}) - \mu \Delta \bm{v} + \nabla p &= \rho \bm{b} \\
+        \nabla \cdot \bm{v} &= 0
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Model 4: Porous Media (Darcy Flow)}
+    \textbf{Original Equation (Navier-Stokes Momentum):}
+    $$ \rho (\partial_t \bm{v} + (\bm{v} \cdot \nabla) \bm{v}) = \text{div} (-pI + 2\mu D) + \bm{f}_{drag} $$
+
+    \textbf{Hypotheses:}
+    \begin{itemize}
+        \item \textbf{Creeping Flow:} Velocity is extremely low. Inertial and advective terms are negligible ($\rho \frac{D\bm{v}}{Dt} \approx \bm{0}$).
+        \item \textbf{Dominant Drag:} The viscous interaction with the porous matrix overwhelms internal fluid shearing ($\mu \Delta \bm{v} \approx \bm{0}$). The drag force is linearly proportional to velocity: $\bm{f}_{drag} = - \mu K^{-1} \bm{v}$ (where $K$ is permeability).
+        \item \textbf{Incompressibility:} $\nabla \cdot \bm{v} = 0$.
+    \end{itemize}
+
+    \textbf{Resulting Model (Darcy's Law \& Pressure Equation):}
+    $$ \bm{v} = -\frac{K}{\mu} \nabla p \quad \implies \quad - \nabla \cdot \left( \frac{K}{\mu} \nabla p \right) = 0 $$
+\end{frame}
+
+\subsection{Thermodynamics \& Transport}
+
+\begin{frame}{Model 5: The Heat Equation}
+    \textbf{Original Equation (First Law of Thermodynamics):}
+    $$ \rho_0 \dot{e}_m = \bm{S} : \dot{E} - \text{Div}_{\bm{X}} \bm{q}_0 + r_0 $$
+
+    \textbf{Hypotheses:}
+    \begin{itemize}
+        \item \textbf{Rigid Solid:} The body is at rest and undeformed ($\bm{v} = \bm{0}$, $E = 0$). The stress power identically vanishes ($\bm{S} : \dot{E} = 0$).
+        \item \textbf{Caloric Equation of State:} Internal energy is strictly proportional to temperature via constant specific heat capacity $c_v$ ($e_m = c_v \theta_m$).
+        \item \textbf{Fourier's Law:} Heat flux opposes the temperature gradient ($\bm{q}_0 = -k \nabla \theta_m$).
+    \end{itemize}
+
+    \textbf{Resulting Model:}
+    $$ \rho_0 c_v \dot{\theta}_m - k \Delta \theta_m = r_0 $$
+\end{frame}
+
+\begin{frame}{Model 6: Dynamic Advection-Diffusion-Reaction (ADR)}
+    \textbf{Original Equation (Species Mass Conservation):}
+    $$ \partial_t c + \text{div} \, \bm{q}_c = r_c $$
+    where $c$ is species concentration and $\bm{q}_c$ is the total species flux.
+
+    \textbf{Hypotheses:}
+    \begin{itemize}
+        \item \textbf{Kinematics (Advection):} The species is transported by a known, given background velocity field $\bm{v}$.
+        \item \textbf{Fick's Law (Diffusion):} The species disperses from high to low concentration with diffusivity $\mathcal{D}$. Therefore, $\bm{q}_c = \bm{v} c - \mathcal{D} \nabla c$.
+        \item \textbf{Kinetics (Reaction):} The internal volumetric source depends on the concentration itself: $r_c = R(c)$.
+    \end{itemize}
+
+    \textbf{Resulting Model:}
+    $$ \partial_t c + \nabla \cdot (\bm{v} c) - \nabla \cdot (\mathcal{D} \nabla c) = R(c) $$
+\end{frame}
+
+\end{document}
+
+\end{document}
