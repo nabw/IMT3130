@@ -201,4 +201,34 @@
     Since the integral is zero for any arbitrary arbitrary subdomain $\omega_0$, we conclude. \qed
 \end{frame}
 
+\begin{frame}{The Localization Theorem}
+    \begin{block}{Localization theorem}
+    Let $f: \Omega \to \mathbb{R}$ be an $L^1(\Omega)$ function. If for every measurable set $\omega$ we have
+    $$ \int_{\omega} f(\bm{x}) \, dx = 0 $$
+    then $f(\bm{x}) = 0$ for all $\bm{x} \in \Omega$.
+\end{block}
+
+    \textbf{Proof:}
+    $$ \int_\Omega |f|(\vec x)\,dx = \int_{\{f>0\}} f(\vec x)\,dx + \int_{\{f<0\}}f(\vec x)\,dx, $$
+    where $\{f<0\}$ and $\{f>0\}$ are measurable.  \qed
+\end{frame}
+
+\begin{frame}{Reynolds Transport Theorem (RTT)}
+    
+    \vspace{0.2cm}
+    \begin{block}{Reynolds Transport Theorem}
+        For a smooth spatial field $\psi(\bm{x}, t)$:
+        $$ \frac{d}{dt} \int_{\omega_t} \psi \, dv = \int_{\omega_t} \left( \frac{\partial \psi}{\partial t} + \vec v\cdot \nabla \psi + \psi \text{div}_{\bm{x}} \bm{v} \right) dv $$
+    \end{block}
+    
+    \pause \textbf{Proof:}
+    Let $\Psi(\bm{X}, t) = \psi(\bm{\varphi}(\bm{X}, t), t)$. Using $dv = J dV$:
+    \begin{align*}
+        \frac{d}{dt} \int_{\omega_t} \psi \, dv &= \frac{d}{dt} \int_{\omega_0} \Psi J \, dV = \int_{\omega_0} \left( \dot{\Psi} J + \Psi \dot{J} \right) dV \tag{Pull-back} \\
+        &= \int_{\omega_0} \left( \dot{\Psi} J + \Psi J \text{div}_{\bm{x}} \bm{v} \right) dV \tag{Euler's Expansion: $\dot{J} = J \text{div}_{\bm{x}} \bm{v}$} \\
+        &= \int_{\omega_t} \left( \frac{D\psi}{Dt} + \psi \text{div}_{\bm{x}} \bm{v} \right) dv \tag{Push-forward to spatial}
+    \end{align*} \qed
+\end{frame}
+
+
 \end{document}

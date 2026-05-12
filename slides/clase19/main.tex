@@ -28,31 +28,21 @@
 
 \section{Core Theorems}
 
-\begin{frame}{The Localization Theorem}
-    \begin{block}{Localization theorem}
-    Let $f: \Omega \to \mathbb{R}$ be an $L^1(\Omega)$ function. If for every measurable set $\omega$ we have
-    $$ \int_{\omega} f(\bm{x}) \, dx = 0 $$
-    then $f(\bm{x}) = 0$ for all $\bm{x} \in \Omega$.
-\end{block}
-
-    \textbf{Proof:}
-    $$ \int_\Omega |f|(\vec x)\,dx = \int_{\{f>0\}} f(\vec x)\,dx + \int_{\{f<0\}}f(\vec x)\,dx, $$
-    where $\{f<0\}$ and $\{f>0\}$ are measurable.  \qed
-\end{frame}
 
 \begin{frame}{Reynolds Transport Theorem (RTT)}
     
     \vspace{0.2cm}
     \begin{block}{Reynolds Transport Theorem}
         For a smooth spatial field $\psi(\bm{x}, t)$:
-        $$ \frac{d}{dt} \int_{\omega_t} \psi \, dv = \int_{\omega_t} \left( \frac{\partial \psi}{\partial t} + \vec v\cdot \nabla \psi + \psi \text{div}_{\bm{x}} \bm{v} \right) dv $$
+        $$ \frac{d}{dt} \int_{\omega_t} \psi \, dv = \int_{\omega_t} \left( \frac{\partial \psi}{\partial t} + \underbrace{\vec v\cdot \nabla \psi + \psi \text{div}_{\vec{x}} \vec{v}}_{\text{div}\left(\psi\vec v\right)} \right) dv = \int_{\omega_t} \left( \frac{D\psi}{Dt} + \psi \text{div}_{\vec x} \vec v\right)\,dv$$
+
     \end{block}
     
     \pause \textbf{Proof:}
     Let $\Psi(\bm{X}, t) = \psi(\bm{\varphi}(\bm{X}, t), t)$. Using $dv = J dV$:
     \begin{align*}
         \frac{d}{dt} \int_{\omega_t} \psi \, dv &= \frac{d}{dt} \int_{\omega_0} \Psi J \, dV = \int_{\omega_0} \left( \dot{\Psi} J + \Psi \dot{J} \right) dV \tag{Pull-back} \\
-        &= \int_{\omega_0} \left( \dot{\Psi} J + \Psi J \text{div}_{\bm{x}} \bm{v} \right) dV \tag{Euler's Expansion: $\dot{J} = J \text{div}_{\bm{x}} \bm{v}$} \\
+        &= \int_{\omega_0} \left( \dot{\Psi} J + \Psi J \text{div}_{\bm{x}} \bm{v} \right) dV \tag{Use $\dot{J} = J \text{div}_{\bm{x}} \bm{v}$} \\
         &= \int_{\omega_t} \left( \frac{D\psi}{Dt} + \psi \text{div}_{\bm{x}} \bm{v} \right) dv \tag{Push-forward to spatial}
     \end{align*} \qed
 \end{frame}
@@ -61,7 +51,7 @@
 
 \begin{frame}{Conservation of Mass: Eulerian Formulation}
     \textbf{Physical Postulate:} The mass of any material volume $\omega_t$ remains constant in time.
-    $$ \frac{d}{dt} \int_{\omega_t} \rho(\bm{x}, t) \, dv = 0 $$
+    $$ \frac{d}{dt}\left(\mathcal M(t, \omega_t)\right) = \frac{d}{dt} \int_{\omega_t} \underbrace{\rho(\bm{x}, t)}_\text{\alert{Spatial} density} \, dv = 0 $$
     
     \textbf{Derivation:}
     We apply the Reynolds Transport Theorem with $\psi = \rho$:
@@ -86,73 +76,103 @@
     $$ \rho_0(\bm{X}) = J(\bm{X},t) \rho(\bm{x},t) $$
 \end{frame}
 
+\section{Incompressibility}
+
+\begin{frame}{Incompressibility: The Volume Integral}
+    \textbf{Definition:} A material is \textit{incompressible} if the volume remains constant.
+    
+    The volume at time $t$ is defined as the integral of the indicator function:
+    $$ V(\omega_t, t) = \int_{\omega_t} 1 \, dv $$
+    
+    \textbf{Physical Postulate:} For an incompressible continuum, the rate of change is zero:
+    $$ \frac{d}{dt} V(t) = \frac{d}{dt} \int_{\omega_t} 1 \, dv = 0 $$
+\end{frame}
+
+\begin{frame}{Incompressibility: Eulerian}
+    We apply the Reynolds Transport Theorem to $\psi = 1$:
+    
+    \begin{align*}
+        0 &= \frac{d}{dt} \int_{\omega_t} 1 \, dv \\
+        0 &= \int_{\omega_t} \left( \underbrace{\frac{D(1)}{Dt}}_{=0} + 1 \cdot \text{div}_{\bm{x}} \bm{v} \right) dv \tag{Apply RTT} \\
+        0 &= \int_{\omega_t} \text{div}_{\bm{x}} \bm{v} \, dv 
+    \end{align*}
+    
+    By Localization Theorem:
+    
+    \vspace{0.2cm}
+    \textbf{Eulerian Incompressibility Condition:}
+    $$ \text{div}_{\bm{x}} \bm{v} = 0 $$
+\end{frame}
+
+\begin{frame}{Incompressibility: Lagrangian}
+    Pulling it back to the reference configuration $\omega_0$:
+    
+    \begin{align*}
+        V(t) &= \int_{\omega_t} 1 \, dv = \int_{\omega_0} J(\bm{X}, t) \, dV \tag{Pull-back using $dv = J dV$}
+    \end{align*}
+    
+    Since the volume is constant, $V(t) = V(0)=\int_{\omega_0}1\,dV$ using $\varphi_0(\vec X) = \vec X$. 
+    \begin{align*}
+        \int_{\omega_0} J(\bm{X}, t) \, dV &= \int_{\omega_0} 1 \, dV \\
+        \int_{\omega_0} (J - 1) \, dV &= 0
+    \end{align*}
+    
+    We conclude by the Localization Theorem on $\omega_0$.
+    
+    \vspace{0.2cm}
+    \textbf{Lagrangian Incompressibility Condition:} $ J = 1 $
+
+    \textit{Note:} Taking the time derivative yields $\text{div}\vec v = 0$.
+\end{frame}
+
 \section{Conservation of Linear Momentum}
 
-\begin{frame}{Preliminary: Transport of Density-Weighted Quantities}
+\begin{frame}{Preliminary: Transport of Density-Weighted Quant.}
     Before deriving momentum conservation, it is computationally useful to establish how integrals weighted by density evolve.
     
-    \vspace{0.2cm}
-    \textbf{Lemma:} For any spatial field $\psi$: $\frac{d}{dt} \int_{\omega_t} \rho \psi \, dv = \int_{\omega_t} \rho \frac{D\psi}{Dt} \, dv$.
+    \begin{block}{Lemma}
+    If the density $\rho$ follows conservaton of mass,  for any spatial field $\psi$: $\frac{d}{dt} \int_{\omega_t} \rho \psi \, dv = \int_{\omega_t} \rho \frac{D\psi}{Dt} \, dv$.
     
-    \vspace{0.2cm}
+    \end{block}
+    \begin{footnotesize}
     \textbf{Proof:} Apply RTT to the product $(\rho \psi)$:
     \begin{align*}
         \frac{d}{dt} \int_{\omega_t} \rho \psi \, dv &= \int_{\omega_t} \left( \frac{D(\rho\psi)}{Dt} + \rho\psi \text{div}_{\bm{x}} \bm{v} \right) dv \tag{RTT} \\
         &= \int_{\omega_t} \left( \dot{\rho}\psi + \rho\dot{\psi} + \rho\psi \text{div}_{\bm{x}} \bm{v} \right) dv \tag{Product Rule} \\
-        &= \int_{\omega_t} \left[ \psi \underbrace{\left( \dot{\rho} + \rho \text{div}_{\bm{x}} \bm{v} \right)}_{=0 \text{ (Mass Cons.)}} + \rho \dot{\psi} \right] dv \tag{Group terms} \\
-        &= \int_{\omega_t} \rho \frac{D\psi}{Dt} \, dv \tag{Simplify}
+        &= \int_{\omega_t} \left[ \psi \underbrace{\left( \dot{\rho} + \rho \text{div}_{\bm{x}} \bm{v} \right)}_{=0 \text{ (Mass Cons.)}} + \rho \dot{\psi} \right] dv = \int_{\omega_t} \rho \frac{D\psi}{Dt} \, dv \tag{Simplify}
     \end{align*} \qed
+\end{footnotesize}
 \end{frame}
 
-\begin{frame}{Conservation of Linear Momentum: Eulerian Formulation}
-    \textbf{Physical Postulate (Newton's 2nd Law):} Rate of change of momentum equals the sum of body forces ($\bm{b}$) and surface tractions ($\bm{t} = \bm{\sigma}\bm{n}$, via Cauchy's stress theorem).
+\begin{frame}{Conservation of Linear Momentum (Eulerian)}
+    \textbf{Physical Postulate (Newton's 2nd Law):} Rate of change of momentum equals the sum of body forces ($\bm{b}$) and surface tractions ($\bm{t} = \bm{\sigma}\bm{n}$, via \alert{Cauchy's stress theorem}).
     $$ \frac{d}{dt} \int_{\omega_t} \rho \bm{v} \, dv = \int_{\omega_t} \rho \bm{b} \, dv + \int_{\partial \omega_t} \bm{\sigma} \bm{n} \, da $$
     
     \textbf{Derivation:}
     \begin{align*}
         \int_{\omega_t} \rho \frac{D\bm{v}}{Dt} \, dv &= \int_{\omega_t} \rho \bm{b} \, dv + \int_{\partial \omega_t} \bm{\sigma} \bm{n} \, da \tag{Apply Density Lemma} \\
         \int_{\omega_t} \rho \frac{D\bm{v}}{Dt} \, dv &= \int_{\omega_t} \rho \bm{b} \, dv + \int_{\omega_t} \text{div}_{\bm{x}} \bm{\sigma} \, dv \tag{Divergence Theorem} \\
-        \int_{\omega_t} \left( \rho \frac{D\bm{v}}{Dt} - \text{div}_{\bm{x}} \bm{\sigma} - \rho \bm{b} \right) dv &= 0 \tag{Rearrange}
     \end{align*}
-    By Localization, we obtain the strong Eulerian form:
-    $$ \rho \frac{D\bm{v}}{Dt} = \text{div}_{\bm{x}} \bm{\sigma} + \rho \bm{b} $$
+    By Localization:
+    $$ \rho \frac{D\bm{v}}{Dt} = \text{div}_{\bm{x}} \bm{\sigma} + \rho \bm{b} \qquad\text{in $\Omega_t$}.$$
 \end{frame}
 
-\begin{frame}{Conservation of Linear Momentum: Lagrangian Formulation}
-    To pull back to $\omega_0$, we map the surface traction using Nanson's Formula ($\bm{n} da = J F^{-T} \bm{N} dA$). We define the \textbf{First Piola-Kirchhoff Stress Tensor} as $P = J \bm{\sigma} F^{-T}$.
+\begin{frame}{Conservation of Linear Momentum (Lagrangian)}
+    We use Nanson's Formula ($\bm{n} da = J F^{-T} \bm{N} dA$) and define  \textbf{Piola-Kirchhoff Stress Tensor} $P = J \bm{\sigma} F^{-T}$.
     
     \vspace{0.2cm}
     \textbf{Derivation:}
-    Starting from the global balance law, we express all integrals over $\omega_0$:
+    Starting from the global balance and using $\rho_0=J\rho$, we pull-back to $\omega_0$:
     \begin{align*}
         \frac{d}{dt} \int_{\omega_0} \rho_0 \bm{V} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\partial \omega_0} \bm{\sigma} (J F^{-T} \bm{N}) \, dA \tag{Change variables} \\
-        \int_{\omega_0} \rho_0 \dot{\bm{V}} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\partial \omega_0} P \bm{N} \, dA \tag{Since $\dot{\rho}_0 = 0$, define $P$} \\
-        \int_{\omega_0} \rho_0 \dot{\bm{V}} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\omega_0} \text{Div}_{\bm{X}} P \, dV \tag{Divergence Theorem}
+        \int_{\omega_0} \rho_0 \dot{\bm{V}} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\partial \omega_0} \ten P \bm{N} \, dA \tag{Since $\dot{\rho}_0 = 0$, define $P$} \\
+        \int_{\omega_0} \rho_0 \dot{\bm{V}} \, dV &= \int_{\omega_0} \rho_0 \bm{b}_0 \, dV + \int_{\omega_0} \text{div}_{\bm{X}} \ten P \, dV \tag{Divergence Theorem}
     \end{align*}
     By Localization, we obtain the strong Lagrangian form:
-    $$ \rho_0 \frac{\partial \bm{V}}{\partial t} = \text{Div}_{\bm{X}} P + \rho_0 \bm{b}_0 $$
+    $$ \rho_0 \frac{\partial \bm{V}}{\partial t} = \text{div}_{\bm{X}} P + \rho_0 \bm{b}_0\qquad\text{in $\Omega_0$}. $$
 \end{frame}
 
-\section{Simplifications and Limits}
-
-\begin{frame}{Mathematical Consequences: Simplifying Mass Conservation}
-    Under specific physical hypotheses, the general continuity equation $\frac{\partial \rho}{\partial t} + \text{div}_{\bm{x}} (\rho \bm{v}) = 0$ collapses into familiar PDEs studied earlier in the course.
-    
-    \vspace{0.3cm}
-    \textbf{1. Steady-State Flow:}
-    If the density field is independent of time ($\partial \rho / \partial t = 0$), the equation becomes:
-    $$ \text{div}_{\bm{x}} (\rho \bm{v}) = 0 $$
-    This is the classic advection constraint.
-    
-    \vspace{0.3cm}
-    \textbf{2. Incompressible Flow:}
-    If the material is strictly incompressible, the density of a material particle cannot change, meaning $\frac{D\rho}{Dt} = 0$. 
-    Because $\frac{D\rho}{Dt} + \rho \text{div}_{\bm{x}} \bm{v} = 0$, this immediately yields:
-    $$ \text{div}_{\bm{x}} \bm{v} = 0 $$
-    This is the fundamental constraint giving rise to the saddle-point structure of the Stokes and Navier-Stokes equations.
-\end{frame}
-
-\begin{frame}{Mathematical Consequences: Small Deformations}
+\begin{frame}{Small Deformations}
     What happens to the complex Piola-Kirchhoff stress tensor $P$ if we assume deformations are infinitesimal (Linear Elasticity)?
     
     \vspace{0.2cm}
@@ -164,13 +184,214 @@
     \begin{align*}
         F &= I + \nabla_{\bm{X}} \bm{u} \approx I \tag{Gradient limit} \\
         J &= \det(I + \nabla_{\bm{X}} \bm{u}) \approx 1 + \text{div}_{\bm{X}} \bm{u} \approx 1 \tag{Trace approximation} \\
-        F^{-T} &= (I + \nabla_{\bm{X}} \bm{u})^{-T} \approx I - (\nabla_{\bm{X}} \bm{u})^T \approx I \tag{Neumann series}
+        F^{-T} &= (I + \nabla_{\bm{X}} \bm{u})^{-T} \approx I - (\nabla_{\bm{X}} \bm{u})^{T} \approx I \tag{Neumann series}
     \end{align*}
     
     Applying these to the definition of the First Piola-Kirchhoff tensor:
-    $$ P = J \bm{\sigma} F^{-T} \approx (1) \bm{\sigma} (I) = \bm{\sigma} $$
+    $$ P = J \bm{\sigma} F^{-T} \approx \bm{\sigma} $$
     
     \textbf{Conclusion:} Under small deformations, the distinction between reference and current configurations vanishes mathematically. The Piola-Kirchhoff and Cauchy stress tensors become indistinguishable, allowing us to formulate linear elasticity on the fixed domain $\Omega$.
+\end{frame}
+
+\section{Conservation of Angular Momentum}
+
+\begin{frame}{Angular Momentum: The Physical Postulate}
+    \textbf{Physical Postulate (Euler's 2nd Law):} The rate of change of angular momentum equals the sum of the moments of body forces and surface tractions.
+    $$ \frac{d}{dt} \int_{\omega_t} \bm{x} \times (\rho \bm{v}) \, dv = \int_{\omega_t} \bm{x} \times (\rho \bm{b}) \, dv + \int_{\partial \omega_t} \bm{x} \times (\bm{\sigma} \bm{n}) \, da $$
+
+    \textbf{Step 1: The Left-Hand Side (Transport)}
+    Using the density-weighted transport lemma:
+    \begin{align*}
+        \frac{d}{dt} \int_{\omega_t} \rho (\bm{x} \times \bm{v}) \, dv &= \int_{\omega_t} \rho \frac{D}{Dt}(\bm{x} \times \bm{v}) \, dv \\
+        &= \int_{\omega_t} \rho \left( \underbrace{\bm{v} \times \bm{v}}_{=0} + \bm{x} \times \frac{D\bm{v}}{Dt} \right) dv \\
+        &= \int_{\omega_t} \bm{x} \times \left( \rho \frac{D\bm{v}}{Dt} \right) dv
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Angular Momentum: Symmetry of the Stress Tensor}
+    \textbf{Step 2: The Right-Hand Side}
+    We use index notation to apply the divergence theorem to the traction term: $\int_{\partial\omega_t}\vec x\times(\ten\sigma\vec n)=\int_{\partial \omega_t} \epsilon_{ijk} x_j \sigma_{kl} n_l \, da$.
+    \begin{align*}
+        \int_{\omega_t} \partial_l (\epsilon_{ijk} x_j \sigma_{kl}) \, dv &= \int_{\omega_t} \epsilon_{ijk} (\underbrace{\partial_l x_j}_{=\delta_{jl}} \sigma_{kl} + x_j \partial_l \sigma_{kl}) \, dv \\
+        &= \int_{\omega_t} \left( \epsilon_{ijk} \sigma_{kj} + \epsilon_{ijk} x_j \partial_l \sigma_{kl} \right) dv = \int_{\omega_t} \left[ \bm{\epsilon} : \bm{\sigma} + \bm{x} \times (\text{div}_{\bm{x}} \bm{\sigma}) \right] dv
+    \end{align*}
+
+    \textbf{Step 3: Assembly}
+    Substitute LHS and RHS back into the balance law and group the cross products:
+    $$ \int_{\omega_t} \bm{x} \times \underbrace{\left( \rho \frac{D\bm{v}}{Dt} - \text{div}_{\bm{x}} \bm{\sigma} - \rho \bm{b} \right)}_{=0 \text{ (Linear Momentum)}} dv = \int_{\omega_t} \bm{\epsilon} : \bm{\sigma} \, dv $$
+\end{frame}
+
+\begin{frame}{Angular Momentum: Final Conditions}
+    We are left with:
+    $$ \int_{\omega_t} \bm{\epsilon} : \bm{\sigma} \, dv = \bm{0} $$
+
+    By the Localization Theorem, $\epsilon_{ijk} \sigma_{kj} = 0_i$, which means the axial vector of the stress tensor is zero. This yields $\sigma_{kj} = \sigma_{jk}$.
+
+    \vspace{0.2cm}
+    \textbf{Eulerian Consequence:} The Cauchy stress tensor must be symmetric.
+    $$ \bm{\sigma} = \bm{\sigma}^T $$
+
+    \vspace{0.2cm}
+    \textbf{Lagrangian Consequence:} Recall that $\bm{\sigma} = J^{-1} P F^T$.
+    \begin{align*}
+        J^{-1} P F^T &= (J^{-1} P F^T)^T \\
+        P F^T &= F P^T
+    \end{align*}
+    Unlike Cauchy stress, the First Piola-Kirchhoff tensor $P$ is generally \textbf{not symmetric}, but it satisfies the above constraint.
+\end{frame}
+
+\section{Cauchy's stress Theorem}
+\begin{frame}{Cauchy's Postulate and Theorem}
+    \textbf{Cauchy's Postulate:} The surface traction vector $\bm{t}$ at a point $\bm{x}$ depends also on the \textbf{normal vector} $\bm{n}$ of the surface passing through $\bm{x}$: $ \bm{t} = \bm{t}(\bm{x}, t, \bm{n}) $
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+
+            \vspace{1cm}
+            
+
+            \begin{center}
+            \begin{tikzpicture}[scale=1]
+                \draw[thick, fill=blue!5, smooth cycle] plot coordinates {(0,0) (3,-0.5) (4,1.5) (2,2.5) (-0.5,1.5)};
+                \draw[thick, dashed] (1, -0.7) .. controls (2, 0.5) and (1.5, 1.5) .. (2.5, 2.7);
+                \filldraw (1.7, 1.0) circle (1.5pt) node[below right] {$\bm{x}$};
+                \draw[->, ultra thick, blue] (1.7, 1.0) -- (2.5, 0.8) node[right] {$\bm{n}$};
+                \draw[->, ultra thick, red] (1.7, 1.0) -- (2.2, 1.7) node[above] {$\bm{t}(\bm{x}, t, \bm{n})$};
+            \end{tikzpicture}
+            \end{center}
+        \end{column}
+        \begin{column}{0.55\textwidth}
+            \begin{block}{Cauchy Stress Theorem}
+                There exists a unique second-order tensor field $\bm{\sigma}(\bm{x}, t)$ such that the traction vector depends \textit{linearly} on the normal vector:
+                $$ \bm{t}(\bm{x}, t, \bm{n}) = \bm{\sigma}(\bm{x}, t) \bm{n} $$
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{The Pillbox Geometry}
+    To prove Cauchy's Reciprocal Theorem ($\bm{t}(-\bm{n}) = -\bm{t}(\bm{n})$), we isolate a flat, cylindrical sub-volume at $\bm{x}$ that straddles an arbitrary plane $\mathcal{P}$ with normal $\bm{n}$.
+
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=1.8]
+
+                \draw[->, ultra thick, blue] (0.4, 0) -- (0.4, -0.7) node[right] {$-\bm{n}$};
+                \draw[->, thick, red] (0.4, 0) -- (1.0, -0.5) node[right] {$\bm{t}(-\bm{n})$};
+                % Bottom half of cylinder
+                \draw[thick, fill=gray!30] (0.4, 0) ellipse (0.6 and 0.2);
+                \draw[dashed, thick] (1, 0.4) arc (0:180:0.6 and 0.2);
+                \draw[thick, fill=gray!20, opacity=0.9] (-0.2, 0.4) arc (180:360:0.6 and 0.2) -- (1, 0) arc (360:180:0.6 and 0.2) -- cycle;
+
+                % Top half of cylinder
+                \draw[thick, fill=gray!40, opacity=0.9] (-0.2, 0.4) -- (-0.2, 0.8) arc (180:360:0.6 and 0.2) -- (1, 0.4) arc (360:180:0.6 and 0.2);
+                \draw[thick, fill=gray!50] (0.4, 0.8) ellipse (0.6 and 0.2);
+
+                % Points
+                \filldraw (0.4, 0.8) circle (1pt) node[below right, font=\small] {$\bm{x}^+$};
+                \filldraw (0.4, 0) circle (1pt) node[above right, font=\small] {$\bm{x}^-$};
+                \filldraw (0.4, 0.4) circle (1.5pt) node[right, font=\small] {$\bm{x}$};
+
+                % Vectors
+                \draw[->, ultra thick, blue] (0.4, 0.8) -- (0.4, 1.5) node[right] {$\bm{n}$};
+
+                \draw[->, thick, red] (0.4, 0.8) -- (-0.2, 1.3) node[left] {$\bm{t}(\bm{n})$};
+
+                \draw[->, thick, green!50!black] (1, 0.5) -- (1.5, 0.6) node[right] {$\bm{n}_{side}$};
+
+                % Height
+                \draw[|<->|] (-0.5, 0) -- (-0.5, 0.8) node[midway, left] {$h$};
+            \end{tikzpicture}
+            \end{center}
+        \end{column}
+        \begin{column}{0.55\textwidth}
+            Let $h$ be the total thickness and let the cross-section have area $A$ and perimeter $P$.
+
+            \vspace{0.2cm}
+            \textbf{Geometric Decomposition:}
+            \begin{itemize}
+                \item \textbf{Top/Bottom Faces:} Area $A$, normal $\pm\bm{n}$.
+                \item \textbf{Lateral Sides:} Area $A_{side} = P h$, outward normal $\bm{n}_{side}$.
+                \item \textbf{Volume:} $V = A h$.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Step 1: The Pillbox Lemma (Reciprocal Theorem)}
+    \textbf{Lemma:} For any normal vector $\bm{n}$, $\bm{t}(-\bm{n}) = -\bm{t}(\bm{n})$.
+
+    \textbf{Proof:} Construct a flat "pillbox" (cylinder) of thickness $h$ and face area $A$, straddling a plane with normal $\bm{n}$ at point $\bm{x}$. Apply the balance of linear momentum:
+    $$ \int_{\text{Top}} \bm{t}(\bm{n}) \, da + \int_{\text{Bottom}} \bm{t}(-\bm{n}) \, da + \int_{\text{Sides}} \bm{t}(\bm{n}_{side}) \, da + \int_V \rho (\bm{b} - \bm{a}) \, dv = \bm{0} $$
+
+    Using the Mean Value Theorem, approximate the integrals:
+    $$ \bm{t}(\bm{n}) A + \bm{t}(-\bm{n}) A + \bm{t}(\bm{n}_{side}) P h + \rho (\bm{b} - \bm{a}) A h = \bm{0} $$
+
+    Divide by the (constant) area $A$ and take the asymptotic limit $h \to 0$:
+    $$ \bm{t}(\bm{n}) + \bm{t}(-\bm{n}) = \bm{0} \quad \implies \quad \bm{t}(-\bm{n}) = -\bm{t}(\bm{n}) $$ \qed
+\end{frame}
+
+\begin{frame}{The Cauchy Tetrahedron: Geometry}
+    To prove the theorem, we isolate an infinitesimal tetrahedron at $\bm{x}$.
+
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            \begin{center}
+            \begin{tikzpicture}[scale=2]
+                % Axes
+                \draw[->, thick] (0,0,0) -- (1.5,0,0) node[right] {$\bm{e}_1$};
+                \draw[->, thick] (0,0,0) -- (0,1.5,0) node[above] {$\bm{e}_3$};
+                \draw[->, thick] (0,0,0) -- (0,0,1.5) node[below left] {$\bm{e}_2$};
+
+                % Faces
+                \draw[fill=gray!20, opacity=0.7] (0,0,0) -- (1,0,0) -- (0,0,1) -- cycle; % Bottom
+                \draw[fill=gray!40, opacity=0.7] (0,0,0) -- (1,0,0) -- (0,1,0) -- cycle; % Back
+                \draw[fill=gray!60, opacity=0.7] (0,0,0) -- (0,1,0) -- (0,0,1) -- cycle; % Left
+
+                % Slanted face
+                \draw[fill=blue!20, opacity=0.8, thick] (1,0,0) -- (0,1,0) -- (0,0,1) -- cycle;
+
+                % Normal vector
+                \draw[->, ultra thick, blue] (0.33,0.33,0.33) -- (0.8,0.8,0.8) node[right] {$\bm{n}, A$};
+            \end{tikzpicture}
+            \end{center}
+        \end{column}
+        \begin{column}{0.6\textwidth}
+            Let $h$ be the characteristic length of the tetrahedron.
+            \begin{itemize}
+                \item \textbf{Slanted face:} Area $A \sim O(h^2)$, outward normal $\bm{n}$.
+                \item \textbf{Orthogonal faces:} Areas $A_1, A_2, A_3$, outward normals $-\bm{e}_1, -\bm{e}_2, -\bm{e}_3$.
+            \end{itemize}
+
+            By projecting the slanted area $A$ onto the orthogonal coordinate planes, geometry dictates:
+            $$ A_i = A (\bm{n} \cdot \bm{e}_i) = A n_i $$
+
+            \vspace{0.2cm}
+            Note that volume scales as $V \sim O(h^3)$.
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Proof of Cauchy's Stress Theorem}
+    Balance of linear momentum in the tetrahedron:
+    $$ \int_{\partial V} \bm{t}(\bm{n}) \, da + \int_V \rho \bm{b} \, dv = \int_V \rho \bm{a} \, dv $$
+
+
+    \only<1->{\textbf{Step 1: Asymptotic Limit ($h \to 0$)}}
+    \only<1>{
+        Using the Mean Value Theorem, the integrals are approximated by the face areas and volume:
+    $$ \bm{t}(\bm{n})A + \sum_{i=1}^3 \bm{t}(-\bm{e}_i)A_i + \rho(\bm{b} - \bm{a})V = \bm{0} $$
+    Divide by $A \sim O(h^2)$. Since $V/A \sim O(h)$, taking the limit $h \to 0$ makes the body force and inertia terms vanish:
+    $$ \bm{t}(\bm{n}) + \sum_{i=1}^3 \bm{t}(-\bm{e}_i) \frac{A_i}{A} = \bm{0} $$
+
+    }
+
+    \only<2->{\textbf{Step 2: Newton's Third Law and Assembly}}
+    \only<2>{
+        By Reciprocity Theorem $\bm{t}(-\bm{e}_i) = -\bm{t}(\bm{e}_i)$:
+        $$ \bm{t}(\bm{n}) = \sum_{i=1}^3 \bm{t}(\bm{e}_i) n_i $$
+        We define the Cauchy stress tensor $\bm{\sigma}$ such that its columns are the traction vectors on the coordinate planes: $\sigma_{ji} = \bm{t}(\bm{e}_i) \cdot \bm{e}_j$. Thus, $\bm{t}(\bm{n}) = \bm{\sigma} \bm{n}$. \qed
+    }
 \end{frame}
 
 \end{document}
