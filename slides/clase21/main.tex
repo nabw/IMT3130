@@ -1,0 +1,141 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{mathtools}
+\usepackage{isomath}
+\usepackage{centernot}
+\usepackage{amsmath, amssymb, amsthm, bm}
+\DeclareMathOperator{\grad}{\nabla}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ttag}[1]{(#1)}
+
+\newcommand{\ten}{\tensorsym}
+\renewcommand{\vec}{\vectorsym}
+
+\title{Guided Exercise: \\ Thermomechanical Modeling of Rubber}
+\author{Nicol\'as A. Barnafi}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\section{Governing Equations}
+
+\begin{frame}{Step 1: The Coupled Governing Equations}
+    We aim to model a rubber band being rapidly stretched. The process is non-isothermal due to the \textbf{Gough-Joule effect} (rubber heats up when stretched). 
+    
+    \begin{align*}
+        \rho_0 \ddot{\bm{u}} - \text{Div}_{\bm{X}} P &= \rho_0 \bm{b}_0 \tag{Linear Momentum} \\
+        \rho_0 \theta \dot{\eta}_m + \text{Div}_{\bm{X}} \bm{q}_0 &= \rho_0 r_0 \tag{Entropy Balance}
+    \end{align*}
+    
+    \textbf{Expanding the Entropy Rate:}
+    Recall $\eta_m = - \frac{\partial \Psi}{\partial \theta}$. By the chain rule, $\dot{\eta}_m = - \frac{\partial^2 \Psi}{\partial \theta^2} \dot{\theta} - \frac{\partial^2 \Psi}{\partial \theta \partial F} : \dot{F}$. 
+    Defining the specific heat capacity $c_v = - \theta \frac{\partial^2 \Psi}{\partial \theta^2}$ and substituting Fourier's law ($\bm{q}_0 = -\bm{\kappa} \nabla_{\bm{X}} \theta$), the energy equation becomes:
+    
+    $$ \rho_0 c_v \dot{\theta} \underbrace{- \theta \frac{\partial P}{\partial \theta} : \dot{F}}_{\text{Structural Heating}} - \text{Div}_{\bm{X}} (\bm{\kappa} \nabla_{\bm{X}} \theta) = \rho_0 r_0 $$
+\end{frame}
+
+\section{Constitutive Model}
+
+\begin{frame}{Step 2: Constitutive Modeling for Rubber}
+    Rubber is a nearly-incompressible hyperelastic material. We define a \textbf{Thermoelastic Neo-Hookean} free energy potential $\Psi(F, \theta)$:
+    
+    $$ \Psi(F, \theta) = \underbrace{\frac{\mu}{2}(\text{tr}(C) - 3) - \mu \ln J + \frac{\lambda}{2}(\ln J)^2}_{\text{Mechanical (Isothermal)}} \underbrace{- 3\alpha K (\theta - \theta_0) \ln J}_{\text{Thermal Expansion}} + \underbrace{\rho_0 c_v (\theta - \theta \ln(\theta/\theta_0))}_{\text{Purely Caloric}} $$
+    where $C = F^T F$, $J = \det F$, $\alpha$ is the thermal expansion coefficient, and $K = \lambda + \frac{2}{3}\mu$.
+    
+    \textbf{Derived Quantities:}
+    \begin{align*}
+        P(F, \theta) &= \frac{\partial \Psi}{\partial F} = \mu F + (\lambda \ln J - \mu - 3\alpha K (\theta - \theta_0)) F^{-T} \tag{First Piola Stress} \\
+        \mathcal{H}_{mech} &= - \theta \frac{\partial P}{\partial \theta} : \dot{F} = \theta (3\alpha K) F^{-T} : \dot{F} = 3\alpha K \theta \text{tr}(\dot{F} F^{-1}) \tag{Coupling Term}
+    \end{align*}
+\end{frame}
+
+\section{Setup}
+
+\begin{frame}{Step 3: Initial and Boundary Conditions}
+    Let $\Omega_0 \subset \mathbb{R}^d$ be the reference domain (the unstretched rubber). The time interval is $(0, T]$.
+    
+    \textbf{Initial Conditions ($t=0$):}
+    \begin{itemize}
+        \item $\bm{\varphi}(\bm{X}, 0) = \bm{X}$ (Undeformed state)
+        \item $\dot{\bm{\varphi}}(\bm{X}, 0) = \bm{0}$ (At rest)
+        \item $\theta(\bm{X}, 0) = \theta_0$ (Room temperature)
+    \end{itemize}
+    
+    \textbf{Boundary Conditions ($t > 0$):}
+    \begin{itemize}
+        \item $\bm{\varphi}(\bm{X}, t) = \bm{g}(t)$ on $\Gamma_D$ (Applied stretching on ends)
+        \item $P \bm{N} = \bm{0}$ on $\Gamma_N$ (Traction-free lateral sides)
+        \item $\nabla_{\bm{X}} \theta \cdot \bm{N} = 0$ on $\partial \Omega_0$ (Adiabatic / thermally insulated to maximize internal heating)
+    \end{itemize}
+\end{frame}
+
+\section{Time Discretization}
+
+\begin{frame}{Step 4: Time Discretization (Backward Euler)}
+    Let $t^n = n \Delta t$. We approx. time with implicit Backward Euler scheme to obtain unconditional stability for this stiff, coupled non-linear system.
+    
+    Given states at $t^n$, find the unknowns $(\bm{\varphi}^{n+1}, \theta^{n+1})$ at $t^{n+1}$.
+    
+    \vspace{0.2cm}
+    \textbf{Kinematic Updates:}
+    \begin{align*}
+        \bm{V}^{n+1} &\approx \frac{\bm{\varphi}^{n+1} - \bm{\varphi}^n}{\Delta t} \\
+        \bm{A}^{n+1} &\approx \frac{\bm{V}^{n+1} - \bm{V}^n}{\Delta t} = \frac{\bm{\varphi}^{n+1} - 2\bm{\varphi}^n + \bm{\varphi}^{n-1}}{\Delta t^2}
+    \end{align*}
+    
+    \textbf{Semi-Discrete Strong Form (evaluated at $t^{n+1}$):}
+    \begin{align*}
+        \rho_0 \left( \frac{\bm{u}^{n+1} - 2\bm{u}^n + \bm{u}^{n-1}}{\Delta t^2} \right) - \text{Div}_{\bm{X}} P(\ten F^{n+1}, \theta^{n+1}) &= \rho_0 \bm{b}_0^{n+1} \\
+        \rho_0 c_v \left( \frac{\theta^{n+1} - \theta^n}{\Delta t} \right) - \text{Div}_{\bm{X}} (\bm{\kappa} \nabla_{\bm{X}} \theta^{n+1}) - \mathcal{H}_{mech}(\ten F^{n+1}, \theta^{n+1}) &= \rho_0 r_0^{n+1}
+    \end{align*}
+\end{frame}
+
+\section{Weak Formulation}
+
+\begin{frame}{Step 5: Semi-Discrete Weak Formulation}
+    Define test spaces $\bm{W} = \{ \bm{w} \in [H^1(\Omega_0)]^d : \bm{w}|_{\Gamma_D} = \bm{0} \}$ and $Q = H^1(\Omega_0)$.
+    
+    Integrate against test functions $\bm{w} \in \bm{W}$ and $q \in Q$:
+    
+    \vspace{0.2cm}
+    \textbf{Find $\bm{u}^{n+1} \in [H^1(\Omega_0)]^d$ (with $\bm{\varphi}^{n+1}|_{\Gamma_D} = \bm{g}$) and $\theta^{n+1} \in Q$ such that:}
+    
+    \begin{footnotesize}
+    \begin{align*}
+        \int_{\Omega_0} \rho_0 \frac{\bm{u}^{n+1} - 2\bm{u}^n + \bm{u}^{n-1}}{\Delta t^2} \cdot \bm{w} \, dV + \int_{\Omega_0} P(\ten F^{n+1}, \theta^{n+1}) : \nabla_{\bm{X}} \bm{w} \, dV &= \int_{\Omega_0} \rho_0 \bm{b}_0^{n+1} \cdot \bm{w} \, dV \\
+        \int_{\Omega_0} \rho_0 c_v \frac{\theta^{n+1} - \theta^n}{\Delta t} q \, dV + \int_{\Omega_0} \bm{\kappa} \nabla_{\bm{X}} \theta^{n+1} \cdot \nabla_{\bm{X}} q \, dV - \int_{\Omega_0} \mathcal H(\ten F^{n+1}, \theta^{n+1}) q\,dV &= \int_{\Omega_0} \rho_0 r_0^{n+1} q \, dV
+    \end{align*}
+    \end{footnotesize}
+\end{frame}
+
+\section{Spatial Discretization}
+
+\begin{frame}{Step 6: Spatial Discretization (FEM)}
+    Introduce conforming finite element spaces $\bm{W}_h \subset \bm{W}$ and $Q_h \subset Q$. 
+    Because rubber is nearly incompressible ($\lambda \gg \mu$), standard $\mathbb{P}_1$ elements for displacement will suffer from \textbf{volumetric locking}. 
+    
+    \textbf{Choice of Elements:}
+    We use \textbf{Taylor-Hood type pairings} or simply quadratic elements for mechanics and linear for temperature: $\bm{W}_h = [\mathbb{P}_2(\mathcal{T}_h)]^d$ and $Q_h = \mathbb{P}_1(\mathcal{T}_h)$.
+    
+    
+    \vspace{0.2cm}
+    \textbf{Solution Strategy:}
+    Solve coupled nonlinear algebraic system $\bm{R}(\bm{U}_h^{n+1}, \vec \theta_h^{n+1}) = \bm{0}$ with \textbf{Newton-Raphson method}, requiring the exact derivation of the Jacobian (tangent matrix) $\bm{J} = \frac{\partial \bm{R}}{\partial \bm{X}}$: Solve
+    $$ \bm{J}(\vec X^k) \delta \vec X^{k+1} = - \vec R(\vec X^k), $$
+    and update $\vec X^{k+1} = \vec X^k + \delta \vec X^{k+1}. $
+\end{frame}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\end{document}
