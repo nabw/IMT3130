@@ -10,8 +10,7 @@
 \usepackage{todonotes}
 
 \title{Course Projects}
-%\author{Nicol\'as A Barnafi\thanks{Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile, Chile}, Axel Osses\thanks{Departamento de Ingeniería Matemática, Universidad de Chile, Chile}}
-%\author{Nicol\'as A Barnafi}
+\author{Nicol\'as A Barnafi\thanks{IMC \& FCB, Pontificia Universidad Católica de Chile, Chile}}
 \date{}
 
 \renewcommand{\vec}{\vectorsym}
@@ -35,14 +34,22 @@
 \newtheorem{lemma}{Lemma}
 \newcommand{\pts}[1]{[{\bf #1 puntos}] }
 
+% Custom command for Master's/Paper potential
+\newcommand{\master}{$^\bigstar$}
+
 \begin{document}
 
 \maketitle
-Course projects must be developed in groups of 1--3 people. Presentation dates can be flexible but will be preferrably taking place during the last week of lessons of the semester. 
 
+\noindent\textbf{Note:} Projects marked with a \master\ have the potential to be extended into a Master's thesis or to lead to the development of a scientific paper.
+
+\vspace{0.5cm}
+
+Course projects must be developed in groups of 1--3 people.
+Presentation dates can be flexible but will be preferrably taking place during the last week of lessons of the semester.
 \begin{enumerate}
     \item \textbf{Heat equation analysis.} This equations consists in the following: Find $u$ in a Bochner space $L^2(0,T;H_{\Gamma_D}^1(\Omega))$ such that for a heat source $f$ such that $f(t)$ in $[H_{\Gamma_D}^1(\Omega)]'$ and an initial condition $u_0$ in $L^2(\Omega)$ it holds that
-        $$ \parder{u}{t} - \Delta u = f \qquad\text{in $(0,T]\times \Omega$}. $$
+        $$\parder{u}{t} - \Delta u = f \qquad\text{in $(0,T]\times \Omega$}.$$
         This project's goals are:
         \begin{itemize}
             \item To study the well-posedness theory of parabolic equations in a Bochner space setting.
@@ -59,7 +66,7 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
         \end{itemize}
 
     \item \textbf{The Helmholtz problem.} This problem consists in finding the eigenvalues of the Laplace operator, i.e. a pair $(\omega, u)$ such that
-        $$ -\Delta u = \omega u. $$
+        $$-\Delta u = \omega u.$$
         For this project you will have to 
         \begin{itemize}
             \item Study the well-posedness of the problem using Fredholm theory and G\r arding inequalities.
@@ -73,6 +80,7 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
             \item Boffi, Finite element approximation of eigenvalue problems. 2010. 
             \item Babuska, Osborne. Eigenvalue problems in \emph{Handbook of Numerical Analysis}. 1990.
         \end{itemize}
+
     \item \textbf{The Darcy problem.} This is a mixed problem, given by: Find $u$ in $\vec H(\dive)$ and $p$ in $L^2(\Omega)$ such that for some $f$ in $L^2(\Omega)$ it holds that
         $$ \begin{aligned}
             u + \grad p &= 0 && \Omega \\
@@ -83,12 +91,13 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
         For this project you will have to 
         \begin{itemize}
             \item Study how this problem is related to the Poisson problem, and when they are equivalent.
-            \item Study the LBB theory and show that it applies to it
-            \item Study the discrete problem and show that the LBB conditions hold
-            \item Validate numerically the convergence rates
+            \item Study the LBB theory and show that it applies to it.
+            \item Study the discrete problem and show that the LBB conditions hold.
+            \item Validate numerically the convergence rates.
         \end{itemize}
+
     \item \textbf{The steady Navier-Stokes equation.} The steady Navier-Stokes equation consists in finding a velocity field $\vec u$ in $H_D^1(\Omega, \R^d)$ and a pressulre $p$ in $L^2(\Omega)$ such that
-            $$\begin{aligned}
+          $$\begin{aligned}
                 -\mu \Delta \vec u + [\grad \vec u] \vec u + \grad p &= \vec f && \Omega \\
                 \dive \vec u &= 0 && \Omega \\
                 \vec u = \vec u_D && \Gamma_D \\
@@ -96,21 +105,23 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
             \end{aligned}$$
             where $\vec f$ in $[H_d^1(\Omega, \R^d)]'$ is a given load, $\vec u_D$ in $H^{1/2}(\Gamma_D)$ is a Dirichlet boundary condition, $\ten\sigma(\vec u, p) = \mu\grad \vec u - p\ten I$ is the stress tensor, $\vec n$ is the normal vector, and $\vec t$ in $H^{-1/2}(\Gamma_N)$ is a given surface traction. The objective of this project is to investigate the techniques required to handle the nonlinearity of this problem in order to guarantee the existence (and possibly uniqueness) of solutions. This implies:
             \begin{itemize}
-                \item To understand the saddle point structure of the problem
-                \item To formulate an auxiliary linear problem that defines a fixed-point operator
-                \item To establish conditions that guarantee contractiveness
-                \item To study extensions using Schauder and Brower fixed-point theorems
-                \item To use the fixed-point operator to devise a solution strategy of the nonlinear problem
-                \item To use such techniques to establish the convergence of a FEM scheme
-                \item To validate all theoretical claims numerically
+                \item To understand the saddle point structure of the problem.
+                \item To formulate an auxiliary linear problem that defines a fixed-point operator.
+                \item To establish conditions that guarantee contractiveness.
+                \item To study extensions using Schauder and Brower fixed-point theorems.
+                \item To use the fixed-point operator to devise a solution strategy of the nonlinear problem.
+                \item To use such techniques to establish the convergence of a FEM scheme.
+                \item To validate all theoretical claims numerically.
             \end{itemize}
+
     \item \textbf{The unsteady Navier-Stokes equation.} Adding a time derivative to the momentum equation in the previous equation yields the unsteady NS equation. The scope of this project is to study the numerical instabilities that this equation presents, and some of the remedies that can be used. In particular, provide stabilization strategies for
         \begin{itemize}
             \item Inf-sup instabilities
             \item Reynolds instabilities
             \item Turbulence modeling
         \end{itemize}
-        All tests shall be performed on a standard flow pasta a cylinder test (in 2D) to obtain physically relevant solutions to be compared. 
+        All tests shall be performed on a standard flow pasta a cylinder test (in 2D) to obtain physically relevant solutions to be compared.
+
     \item \textbf{The incompressible elasticity equation.} The incompressible elasticity equation is given by 
             $$\begin{aligned}
                 -\dive\left( \ten P - \lambda J \ten F^{-T}\right) &= \vec f &&\Omega, \\
@@ -118,15 +129,16 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
             \end{aligned}$$
             plus boundary conditions. The idea of this project is to correctly employ a Lagrange multiplier procedure to derive this problem for hyperelastic materials, and then use homotopy continuation to study certain bifurcation phenomena present in nonlinear elasticity. For this: 
             \begin{itemize}
-                \item To correctly derive the model
-                \item To formulate a model with rotating boundary conditions (Dirichlet vs Neumann approaches)
-                \item To devise a parameter to be used for the continuation 
-                \item To push the model until bifurcation happens
-                \item To study polyconvexity and use materials that satisfy such a condition (and not convexity)
-                \item To revise (not in detail) bifurcation theory to justify the observations
-                \item What can be said about approximation properties? 
+                \item To correctly derive the model.
+                \item To formulate a model with rotating boundary conditions (Dirichlet vs Neumann approaches).
+                \item To devise a parameter to be used for the continuation. 
+                \item To push the model until bifurcation happens.
+                \item To study polyconvexity and use materials that satisfy such a condition (and not convexity).
+                \item To revise (not in detail) bifurcation theory to justify the observations.
+                \item What can be said about approximation properties?
             \end{itemize}
-    \item \textbf{The Keller-Segel equation.} Chemotaxis describes the dynamics of species that are on one hand attracted and on the other one repelled by certain species. This is described by the following system of equations: 
+
+    \item \textbf{The Keller-Segel equation.}\master\ Chemotaxis describes the dynamics of species that are on one hand attracted and on the other one repelled by certain species. This is described by the following system of equations: 
         $$\begin{aligned}
             \partial_t u &= \dive\left(D_1(u,c)\grad u - \chi(u,c) \grad c\right) && \Omega \\
             \partial_t c &= D_2\Delta c - g(c) c + f(c) u && \Omega \\
@@ -134,11 +146,11 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
         \end{aligned} $$
         with some initial conditions for $u,c$. The idea of this project is
         \begin{itemize}
-            \item To propose a time discretization scheme for the model 
-            \item To study the well-posedness of the time-discrete problem
-            \item To establish the convergence of a FEM scheme for the semi-discrete problems
-            \item To study the concept of Turing instabilities that give rise to pattern formation
-            \item To simulate scenarios that are Turing stable and unstable. 
+            \item To propose a time discretization scheme for the model.
+            \item To study the well-posedness of the time-discrete problem.
+            \item To establish the convergence of a FEM scheme for the semi-discrete problems.
+            \item To study the concept of Turing instabilities that give rise to pattern formation.
+            \item To simulate scenarios that are Turing stable and unstable.
         \end{itemize}
 
     \item \textbf{An optimal control problem.} An optimal control problem is a PDE-constrained optimization problem. The idea of this project is to study the discretization of a simple optimal control problem, given by the volume control of the Laplacian. This can be stated as the following minimization problem: 
@@ -148,14 +160,13 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
         \end{aligned} $$
         This project consists in:
         \begin{itemize}
-            \item To study the adjoint method
-            \item Establishing the well-posedness of this problem using the Stampacchia theorem
-            \item To formulate a FEM approximation of the problem using either optimize-then-discretize or discretize-then-optimize strategies
-            \item Show that optimization and discretization in this setting \emph{do not commute}
-            \item Show the convergence rates of the model
-            \item To implement the problem and validate all theoretical claims numerically
+            \item To study the adjoint method.
+            \item Establishing the well-posedness of this problem using the Stampacchia theorem.
+            \item To formulate a FEM approximation of the problem using either optimize-then-discretize or discretize-then-optimize strategies.
+            \item Show that optimization and discretization in this setting \emph{do not commute}.
+            \item Show the convergence rates of the model.
+            \item To implement the problem and validate all theoretical claims numerically.
         \end{itemize}
-
         For this problem, the following references will be useful: 
         \begin{itemize}
             \item Tröltzsch, Optimal control of partial differential equations: theory, methods, and applications. 2010.
@@ -163,33 +174,75 @@ Course projects must be developed in groups of 1--3 people. Presentation dates c
         \end{itemize}
 
     \item \textbf{Wave equation.} The scope of this project is that of studying the wave equation, given by finding a function $u(t)$ in $H_0^1(\R^d)=\{v\in H^1(\R^d): \lim_{|x|\to \infty} v(x) = 0\}$  such that
-        $$ c\parder{^2 u}{t^2} -\Delta u=0 $$
+        $$c\parder{^2 u}{t^2} -\Delta u=0$$
         for some initial condition. The scope of this project is to:
         \begin{itemize}
-            \item Study the formulation of symplectic time integration methods that guarantee energy conservation
-            \item Study the formulation of boundary conditions that allow for a truncation of the domain (unbounded into a bounded one)
-            \item Implement different symplectic time integrators and study the well-posedness of the semi-discrete problem
-            \item Study the convergence of a FEM scheme for the semi-discrete problem and establish its convergence properties
-            \item Validate all theoretical propositions numerically
+            \item Study the formulation of symplectic time integration methods that guarantee energy conservation.
+            \item Study the formulation of boundary conditions that allow for a truncation of the domain (unbounded into a bounded one).
+            \item Implement different symplectic time integrators and study the well-posedness of the semi-discrete problem.
+            \item Study the convergence of a FEM scheme for the semi-discrete problem and establish its convergence properties.
+            \item Validate all theoretical propositions numerically.
         \end{itemize}
 
-        \paragraph{\textbf{Flexibilities. }} All projects will be assumed to be developed in high level software such as Firedrake/NGSolve/FEniCS/etc, so that the implementation of a FEM code is not part of the difficulty. Still, flexilibity with respect to the stated goals will be considered for projects if you want to explore different topics, such as: 
+    \item \textbf{Mixed elastodynamics.}\master\ This project investigates a mixed finite element formulation for wave propagation, focusing on the use of a non-standard stress tensor where the conventional law is inverted. Instead of $\ten\sigma = \ten\sigma(\ten\varepsilon)$, we consider an inverted constitutive relation $\ten\varepsilon = \ten\varepsilon(\ten\sigma)$. The governing equations for the mixed displacement-stress system can be stated as:
+        $$\begin{aligned}
+            \rho \parder{^2 \vec u}{t^2} - \dive \ten\sigma &= \vec f && \Omega \\
+            \ten\varepsilon(\ten\sigma) - \sym\grad\vec u &= 0 && \Omega 
+        \end{aligned}$$
+        plus appropriate initial and boundary conditions. For a 1D model, the project involves:
         \begin{itemize}
-            \item Implementation in a lower-level library, such as \texttt{deal.ii} [C++], \texttt{PETSc} [C], Ferrite [Julia].
-            \item Study of preconditioning strategies using spectrally equivalent operators.
-            \item Study of parallel implementations.
-            \item Study of iterative methods such as Uzawa schemes, or any infinite-dimensional optimization problem.
-            \item Others you can think of.
+            \item The analysis of the time-discrete problem, requiring continuous formulation, discrete analysis, and convergence guarantees.
+            \item The proposal of a symplectic solver for this model to ensure proper energy behavior over long time scales.
+            \item The implementation of benchmark tests provided by Roger Bustamante to validate the method.
+        \end{itemize}
+        A helpful reference for numerical aspects of mixed dynamic problems is:
+        \begin{itemize}
+            \item Boffi, Brezzi, Fortin. \emph{Mixed Finite Element Methods and Applications}, 2013.
         \end{itemize}
 
-        \paragraph{\textbf{Inflexibilities.}} A final grade in the project below a 50\% means failing the entire course, and attendance to the final presentation is mandatory for all group members unless timely justified. Each projects can be taken by up to two groups. It will be fundamental for all projects to have 
-        \begin{enumerate}
-            \item A derivation of the model from fundamental principles
-            \item Continuous and discrete analysis
-            \item A convergence analysis showing that there is a controlable gap between the discrete solutions and the continuous ones
-            \item Two simulations: a numerical validation of the computed convergence rates and a physically significant one
-        \end{enumerate}
+    \item \textbf{Geometric gradient descent for the Oseen-Frank equations.}\master\ The Oseen-Frank equations model the nematic state of liquid crystals and natively involve an underlying geometric constraint, requiring the director field to satisfy $|\vec n| = 1$. This corresponds to finding local minimizers of the free energy:
+        $$ \min_{|\vec n| = 1} \int_\Omega W(\vec n, \grad \vec n) \, dx $$
+        where $W$ is the Frank-Oseen energy density function. 
+        The steps for this project include:
+        \begin{itemize}
+            \item Studying Riemannian gradient descent schemes to natively handle the unit vector field constraint.
+            \item Developing all the continuous objects (metrics, retractions, parallel transport) that define the scheme.
+            \item Showing that the numerical discretization of these objects is consistent.
+        \end{itemize}
+        A key reference to guide the manifold optimization framework is:
+        \begin{itemize}
+            \item Absil, Mahony, Sepulchre. \emph{Optimization Algorithms on Matrix Manifolds}, 2008.
+        \end{itemize}
+
+    \item \textbf{Stabilization techniques for the ADR equations.}\master\ Advection-Diffusion-Reaction (ADR) equations frequently suffer from spurious numerical oscillations in convection-dominated regimes when standard finite elements are used. 
+    The steps for this project include:
+        \begin{itemize}
+            \item Deriving the continuous model and illustrating the breakdown of standard FEM stability.
+            \item Proposing and analyzing a stabilization strategy (e.g., SUPG, GLS, or similar variants).
+            \item Establishing the well-posedness of the modified discrete problem and demonstrating coercivity in an appropriate stabilized norm.
+            \item Deriving theoretical error estimates and computing numerical validations to confirm the elimination of spurious oscillations.
+        \end{itemize}
+        A comprehensive reference for these methods is:
+        \begin{itemize}
+            \item Roos, Stynes, Tobiska. \emph{Robust Numerical Methods for Singularly Perturbed Differential Equations}, 2008.
+        \end{itemize}
+\end{enumerate}
+
+\paragraph{\textbf{Flexibilities.}} All projects will be assumed to be developed in high level software such as Firedrake/NGSolve/FEniCS/etc, so that the implementation of a FEM code is not part of the difficulty. Still, flexilibity with respect to the stated goals will be considered for projects if you want to explore different topics, such as: 
+\begin{itemize}
+    \item Implementation in a lower-level library, such as \texttt{deal.ii} [C++], \texttt{PETSc} [C], Ferrite [Julia].
+    \item Study of preconditioning strategies using spectrally equivalent operators.
+    \item Study of parallel implementations.
+    \item Study of iterative methods such as Uzawa schemes, or any infinite-dimensional optimization problem.
+    \item Others you can think of.
+\end{itemize}
+
+\paragraph{\textbf{Inflexibilities.}} A final grade in the project below a 50\% means failing the entire course, and attendance to the final presentation is mandatory for all group members unless timely justified. Each projects can be taken by up to two groups. It will be fundamental for all projects to have 
+\begin{enumerate}
+    \item A derivation of the model from fundamental principles
+    \item Continuous and discrete analysis
+    \item A convergence analysis showing that there is a controlable gap between the discrete solutions and the continuous ones
+    \item Two simulations: a numerical validation of the computed convergence rates and a physically significant one
 \end{enumerate}
 
 \end{document}
-
