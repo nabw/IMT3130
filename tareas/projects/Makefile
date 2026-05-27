@@ -1,3 +1,3 @@
 all: 
-	pdflatex main.tex
+	pdflatex --jobname projects main.tex
 
