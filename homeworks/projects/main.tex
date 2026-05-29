@@ -47,9 +47,9 @@
 \vspace{0.5cm}
 
 Course projects must be developed in groups of 1--3 people.
-Presentation dates can be flexible but will be preferrably taking place during the last week of lessons of the semester.
+Presentation dates can be flexible but will preferably take place during the last week of lessons of the semester.
 \begin{enumerate}
-    \item \textbf{Heat equation analysis.} This equations consists in the following: Find $u$ in a Bochner space $L^2(0,T;H_{\Gamma_D}^1(\Omega))$ such that for a heat source $f$ such that $f(t)$ in $[H_{\Gamma_D}^1(\Omega)]'$ and an initial condition $u_0$ in $L^2(\Omega)$ it holds that
+    \item \textbf{Heat equation analysis.} This equation consists in the following: Find $u$ in a Bochner space $L^2(0,T;H_{\Gamma_D}^1(\Omega))$ such that for a heat source $f$ such that $f(t)$ is in $[H_{\Gamma_D}^1(\Omega)]'$ and an initial condition $u_0$ in $L^2(\Omega)$ it holds that
         $$\parder{u}{t} - \Delta u = f \qquad\text{in $(0,T]\times \Omega$}.$$
         This project's goals are:
         \begin{itemize}
@@ -61,7 +61,7 @@ Presentation dates can be flexible but will be preferrably taking place during t
 
         The following references might be useful: 
         \begin{itemize}
-            \item Quarteroni, Valli. Numerical approximation of partial differential equations, 1994.
+            \item Quarteroni, Valli. \emph{Numerical approximation of partial differential equations}, 1994.
             \item Thomée. Galerkin finite element methods for parabolic problems, 2007.
             \item Evans. Partial Differential Equations, 2022.
         \end{itemize}
@@ -73,13 +73,13 @@ Presentation dates can be flexible but will be preferrably taking place during t
             \item Study the well-posedness of the problem using Fredholm theory and G\r arding inequalities.
             \item Study the spectral properties of the Laplacian for Dirichlet, Neumann, and mixed boundary conditions.
             \item Study the spectral properties of the discretized Laplacian under Dirichlet, Neumann, and mixed boundary conditions.
-            \item Study the convergence of the eigenvalues and eigenvectors and devise strategies to matche the discrete eigenvalues to the corresponding continuous ones.
+            \item Study the convergence of the eigenvalues and eigenvectors and devise strategies to match the discrete eigenvalues to the corresponding continuous ones.
             \item Validate numerically the convergence rates.
         \end{itemize}
         The following references will be useful for this project: 
         \begin{itemize}
             \item Boffi, Finite element approximation of eigenvalue problems. 2010. 
-            \item Babuska, Osborne. Eigenvalue problems in \emph{Handbook of Numerical Analysis}. 1990.
+            \item Babu\v{s}ka, Osborn. \emph{Eigenvalue problems} in Handbook of Numerical Analysis, 1991.
         \end{itemize}
 
     \item \textbf{The Darcy problem.} This is a mixed problem, given by: Find $u$ in $\vec H(\dive)$ and $p$ in $L^2(\Omega)$ such that for some $f$ in $L^2(\Omega)$ it holds that
@@ -97,19 +97,19 @@ Presentation dates can be flexible but will be preferrably taking place during t
             \item Validate numerically the convergence rates.
         \end{itemize}
 
-    \item \textbf{The steady Navier-Stokes equation.} The steady Navier-Stokes equation consists in finding a velocity field $\vec u$ in $H_D^1(\Omega, \R^d)$ and a pressulre $p$ in $L^2(\Omega)$ such that
+    \item \textbf{The steady Navier-Stokes equation.} The steady Navier-Stokes equation consists in finding a velocity field $\vec u$ in $H_D^1(\Omega, \R^d)$ and a pressure $p$ in $L^2(\Omega)$ such that
           $$\begin{aligned}
                 -\mu \Delta \vec u + [\grad \vec u] \vec u + \grad p &= \vec f && \Omega \\
                 \dive \vec u &= 0 && \Omega \\
                 \vec u = \vec u_D && \Gamma_D \\
                 \ten \sigma(\vec u, p)\vec n &= \vec t && \Gamma_N, 
             \end{aligned}$$
-            where $\vec f$ in $[H_d^1(\Omega, \R^d)]'$ is a given load, $\vec u_D$ in $H^{1/2}(\Gamma_D)$ is a Dirichlet boundary condition, $\ten\sigma(\vec u, p) = \mu\grad \vec u - p\ten I$ is the stress tensor, $\vec n$ is the normal vector, and $\vec t$ in $H^{-1/2}(\Gamma_N)$ is a given surface traction. The objective of this project is to investigate the techniques required to handle the nonlinearity of this problem in order to guarantee the existence (and possibly uniqueness) of solutions. This implies:
+            where $\vec f$ in $[H_D^1(\Omega, \R^d)]'$ is a given load, $\vec u_D$ in $H^{1/2}(\Gamma_D)$ is a Dirichlet boundary condition, $\ten\sigma(\vec u, p) = \mu\grad \vec u - p\ten I$ is the stress tensor, $\vec n$ is the normal vector, and $\vec t$ in $H^{-1/2}(\Gamma_N)$ is a given surface traction. The objective of this project is to investigate the techniques required to handle the nonlinearity of this problem in order to guarantee the existence (and possibly uniqueness) of solutions. This implies:
             \begin{itemize}
                 \item To understand the saddle point structure of the problem.
                 \item To formulate an auxiliary linear problem that defines a fixed-point operator.
                 \item To establish conditions that guarantee contractiveness.
-                \item To study extensions using Schauder and Brower fixed-point theorems.
+                \item To study extensions using Schauder and Brouwer fixed-point theorems.
                 \item To use the fixed-point operator to devise a solution strategy of the nonlinear problem.
                 \item To use such techniques to establish the convergence of a FEM scheme.
                 \item To validate all theoretical claims numerically.
@@ -121,7 +121,7 @@ Presentation dates can be flexible but will be preferrably taking place during t
             \item Reynolds instabilities
             \item Turbulence modeling
         \end{itemize}
-        All tests shall be performed on a standard flow pasta a cylinder test (in 2D) to obtain physically relevant solutions to be compared.
+        All tests shall be performed on a standard flow past a cylinder test (in 2D) to obtain physically relevant solutions to be compared.
 
     \item \textbf{The incompressible elasticity equation.} The incompressible elasticity equation is given by 
             $$\begin{aligned}
@@ -139,7 +139,7 @@ Presentation dates can be flexible but will be preferrably taking place during t
                 \item What can be said about approximation properties?
             \end{itemize}
 
-    \item \textbf{The Keller-Segel equation.}\master\ Chemotaxis describes the dynamics of species that are on one hand attracted and on the other one repelled by certain species. This is described by the following system of equations: 
+    \item \textbf{The Keller-Segel equations.}\master\ Chemotaxis describes the dynamics of species that are on one hand attracted and on the other one repelled by certain species. This is described by the following system of equations: 
         $$\begin{aligned}
             \partial_t u &= \dive\left(D_1(u,c)\grad u - \chi(u,c) \grad c\right) && \Omega \\
             \partial_t c &= D_2\Delta c - g(c) c + f(c) u && \Omega \\
@@ -227,9 +227,33 @@ Presentation dates can be flexible but will be preferrably taking place during t
         \begin{itemize}
             \item Roos, Stynes, Tobiska. \emph{Robust Numerical Methods for Singularly Perturbed Differential Equations}, 2008.
         \end{itemize}
+    \item \textbf{A-posteriori error estimation for problems with reduced regularity.}\master\ Problems in domains with re-entrant corners (e.g., an L-shaped domain) or mixed boundary conditions often lack $H^2$ regularity, causing standard uniform mesh refinement to yield suboptimal convergence rates. The goals of this project are:
+        \begin{itemize}
+            \item To formulate a model problem with a known singularity.
+            \item To study and derive a residual-based a-posteriori error estimator.
+            \item To prove the reliability and efficiency of the estimator.
+            \item To implement an Adaptive Mesh Refinement (AMR) loop driven by the estimator.
+            \item To validate that optimal convergence rates (with respect to degrees of freedom) are restored compared to uniform refinement.
+        \end{itemize}
+
+    \item \textbf{Phase-field modeling of fracture (or Cahn-Hilliard).}\master\ Phase-field models use an order parameter to track interfaces implicitly, avoiding the need for complex mesh tracking. The goals of this project are:
+        \begin{itemize}
+            \item To derive the continuous model for phase-field fracture (or the Allen-Cahn/Cahn-Hilliard equations).
+            \item To study the well-posedness of the coupled non-linear variational problem.
+            \item To devise an alternate minimization scheme (staggered solver) to handle the non-convex energy landscape.
+            \item To validate the model with classical benchmark tests (e.g. single edge notched shear test).
+        \end{itemize}
+
+    \item \textbf{Domain Decomposition Methods.} As problem sizes grow, iterative methods with robust preconditioners are required to achieve scalable solvers. The goals of this project are:
+        \begin{itemize}
+            \item To study the Schwarz alternating method (overlapping or non-overlapping).
+            \item To prove convergence of the method at the continuous level.
+            \item To formulate the discrete counterparts and use them as preconditioners for Krylov subspace methods.
+            \item To numerically validate the parallel scaling (or iteration count independence) of the preconditioner.
+        \end{itemize}
 \end{enumerate}
 
-\paragraph{\textbf{Flexibilities.}} All projects will be assumed to be developed in high level software such as Firedrake, NGSolve, Gridap, FEniCS or others, so that the implementation of a FEM code is not part of the difficulty. Still, flexilibity with respect to the stated goals will be considered for projects if you want to explore different topics, such as: 
+\paragraph{\textbf{Flexibilities.}} All projects will be assumed to be developed in high level software such as Firedrake, NGSolve, Gridap, FEniCS or others, so that the implementation of a FEM code is not part of the difficulty. Still, flexibility with respect to the stated goals will be considered for projects if you want to explore different topics, such as: 
 \begin{itemize}
     \item Implementation in a lower-level library, such as \texttt{deal.ii} [C++], \texttt{PETSc} [C], Ferrite [Julia].
     \item Study of preconditioning strategies using spectrally equivalent operators.
@@ -242,7 +266,7 @@ It will be fundamental for all projects to have, as much as possible:
 \begin{enumerate}
     \item A derivation of the model from fundamental principles
     \item Continuous and discrete analysis
-    \item A convergence analysis showing that there is a controlable gap between the discrete solutions and the continuous ones
+    \item A convergence analysis showing that there is a controllable gap between the discrete solutions and the continuous ones
     \item Two simulations: a numerical validation of the computed convergence rates and a physically significant one
 \end{enumerate}
 
