@@ -9,9 +9,9 @@
 \usepackage{algorithm, algorithmic}
 \usepackage{mathtools}
 \usepackage{todonotes}
+\input{../macros.tex}
 
 \title{Homework 2}
-%\author{Nicol\'as A Barnafi\thanks{Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile, Chile}, Axel Osses\thanks{Departamento de Ingeniería Matemática, Universidad de Chile, Chile}}
 %\author{Nicol\'as A Barnafi}
 \date{}
 
@@ -33,50 +33,48 @@
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
-\newcommand{\pts}[1]{[{\bf #1 puntos}] }
 
 \begin{document}
 
 \maketitle
  
-\todo[inline,color=white!90!black]{\textbf{Instrucciones: } La homework debe ser entregada de manera individual (aunque se puede desarrollar en grupos de 1 o 2 personas) en un informe en formato .pdf a través del buzón habilitado en la plataforma Canvas, donde deben mostrar también el código desarrollado. Para su conveniencia, pueden entregar las homeworks en un Jupyter Notebook, de modo que sea más cómodo mostrar el código. La política de atrasos será: se calculará un factor lineal que vale 1 a la hora de entrega y 0 48 horas después. Esto multiplicará su puntaje obtenido. Pueden usar ChatGPT u otros modelos solo a conciencia. El uso de salidas de GPT sin su debida comprensión será severamente sancionado. }
+\instruccion
 
 \begin{enumerate}
-    \item Considere el problema biestable con difusión en el tiempo y espacio $\Omega_T = (0,T)\times (0,1)$:
+    \item Consider the bistable problem with diffusion in time and space $\Omega_T = (0,T)\times (0,1)$:
             $$ \dot u - \mu \partial_{xx} u - u(1-u^2) = f. $$
-            Como datos y condiciones de borde, considere:
+            As data and boundary conditions, consider:
             \begin{itemize}
-                \item $f(t,x) = I_{x\in (0.4,0.6)}I_{t<1}$, donde $I$ es una función indicatriz.
-                \item Una condición inicial dada por $u(0,x) = 0$ para todo $x$ in $(0,1)$. 
-                \item Condiciones de Neumann homogéneas en el borde para todo $t>0$. 
+                \item $f(t,x) = I_{x\in (0.4,0.6)}I_{t<1}$, where $I$ is an indicator function.
+                \item An initial condition given by $u(0,x) = 0$ for all $x$ in $(0,1)$. 
+                \item Homogeneous Neumann boundary conditions for all $t>0$. 
             \end{itemize}
-            Para este modelo:
+            For this model:
             \begin{enumerate}
-                \item\pts{1} Proponga tres formulaciones de discretización en tiempo: (i) explícita, (ii) implícita, y (iii) semi-implícita. 
-                \item\pts{1} Proponga un esquema de discretización en espacio y tiempo, y demuestre que es consistente.
-                \item\pts{1} Formule un método iterativo (Newton o punto fijo) para resolver la formulación implícita y comente sobre las propiedades de convergencia que tiene el método propuesto. 
-                \item\pts{1} El método propuesto en la pregunta anterior require resolver un sistema lineal en cada iteración. Usando el análisis de von Neumann, proponga hipótesis de la solución discreta y los parámetros de discretización que permitan obtener una aproximación estable en cada iteración.
-                \item\pts{2} Implemente el método semi-implícito propuesto y grafique la evolución de la solución para $\mu=0.1$ en un horizonte temporal de $T=5$. Comente sus resultados.
-                \item\pts{3} Implemente el método implícito propuesto y grafique la evolución de la solución para $\mu=0.1$. Comente sus resultados y compárelos con los obtenidos en el punto anterior.
+                \item\pts{1} Propose three time discretization formulations: (i) explicit, (ii) implicit, and (iii) semi-implicit. 
+                \item\pts{1} Propose a space and time discretization scheme, and prove that it is consistent.
+                \item\pts{1} Formulate an iterative method (Newton or fixed point) to solve the implicit formulation and comment on the convergence properties of the proposed method. 
+                \item\pts{1} The method proposed in the previous question requires solving a linear system in each iteration. Using von Neumann analysis, propose hypotheses for the discrete solution and the discretization parameters that allow obtaining a stable approximation in each iteration.
+                \item\pts{2} Implement the proposed semi-implicit method and plot the evolution of the solution for $\mu=0.1$ over a time horizon of $T=5$. Comment on your results.
+                \item\pts{3} Implement the proposed implicit method and plot the evolution of the solution for $\mu=0.1$. Comment on your results and compare them with those obtained in the previous point.
             \end{enumerate}
 
-    \item En esta pregunta, jugaremos con la definición de las distribuciones. Usaremos la notación $\mathcal D(\R) = C_0^\infty(\R)$, espacio de funciones suaves con soporte compacto en $\R$.
+    \item In this question, we will play with the definition of distributions. We will use the notation $\mathcal D(\R) = C_0^\infty(\R)$, the space of smooth functions with compact support in $\R$.
         \begin{enumerate}
-            \item\pts{1} Definimos la inyección de funciones integrables a distribuciones $T:L^1(\R) \to \left(\mathcal D(\R)\right)'$ según la acción
+            \item\pts{1} We define the injection of integrable functions into distributions $T:L^1(\R) \to \left(\mathcal D(\R)\right)'$ according to the action
                 $$ (Tf)(\varphi)  = \left\langle f, \varphi\right\rangle_{\mathcal D'\times \mathcal D}.$$
-                Demuestre que dicha inyección es continua. 
-            \item\pts{1} Demuestre que, dado $x_0\in \R$,  la sucesión inducida por la función $I_n(x) = nI_{(x_0-1/2n, x_0+1/2n)}$, i.e. $\{I_n\}_n$, converge como distribución a la delta de Dirac $\delta_{x_0}$. 
-            \item\pts{1}Demuestre que no existe ninguna función $f$ en $L^1$ tal que $T_f = \delta_0$. 
-            \item\pts{2} Sabemos que dada una función vectorial $\vec F:\Omega \to \R^d$, su divergencia está dada por $\dive{\vec F}=F_{i,i}$. Para extender esta noción a distribuciones, demuestre dado un dominio $\Omega$ los espacios $(\mathcal D(\Omega, \R^d))'$ y $[(\mathcal D(\Omega))']^d$ son homeomorfos\footnote{$X^3 = X\times X\times X$} y con ello construya una definición de divergencia en $(\mathcal D(\Omega, \R^d))'$. Hint: $\int_\Omega (\dive F)\varphi = \int_{\partial\Omega} \varphi F\cdot \vec n - \int_\Omega F\cdot \grad \varphi$. 
-            \item\pts{1} Extienda la construcción de la pregunta anterior para definir un $\curl$ distribucional en el caso $d=3$. 
-            \item\pts{2} Considere la función $\Phi:\R^3\to \mathbb C$ dada por
+                Prove that this injection is continuous. 
+            \item\pts{1} Prove that, given $x_0\in \R$, the sequence induced by the function $I_n(x) = nI_{(x_0-1/2n, x_0+1/2n)}$, i.e. $\{I_n\}_n$, converges as a distribution to the Dirac delta $\delta_{x_0}$. 
+            \item\pts{1} Prove that there is no function $f$ in $L^1$ such that $T_f = \delta_0$. 
+            \item\pts{2} We know that given a vector function $\vec F:\Omega \to \R^d$, its divergence is given by $\dive{\vec F}=F_{i,i}$. To extend this notion to distributions, prove that given a domain $\Omega$, the spaces $(\mathcal D(\Omega, \R^d))'$ and $[(\mathcal D(\Omega))']^d$ are homeomorphic\footnote{$X^3 = X\times X\times X$} and with this, construct a definition of divergence in $(\mathcal D(\Omega, \R^d))'$. Hint: $\int_\Omega (\dive F)\varphi = \int_{\partial\Omega} \varphi F\cdot \vec n - \int_\Omega F\cdot \grad \varphi$. 
+            \item\pts{1} Extend the construction from the previous question to define a distributional $\curl$ for the case $d=3$. 
+            \item\pts{2} Consider the function $\Phi:\R^3\to \mathbb C$ given by
                     $$ \Phi(x) = \frac{1}{4\pi|x|} e^{-ik |x|}. $$
-                Muestre que se tiene la siguiente igualdad en $\mathcal D'(\R^3)$:
+                Show that the following equality holds in $\mathcal D'(\R^3)$:
                         $$ -\Delta \Phi - k^2 \Phi = \delta_0, $$
-                i.e. en el sentido de las distribuciones, donde $\delta_0$ es la delta de Dirac en $x=0$. 
+                i.e. in the sense of distributions, where $\delta_0$ is the Dirac delta at $x=0$. 
         \end{enumerate}
 \end{enumerate}
 
-\todo[inline,color=white!90!black]{\textbf{Nota: } Abriremos un foro en Canvas para revisar cualquier typo y/o error que haya en el enunciado.}
+\todo[inline,color=white!90!black]{\textbf{Note: } We will open a forum on Canvas to review any typos and/or errors in the formulation.}
 \end{document}
-

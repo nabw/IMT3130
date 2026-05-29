@@ -33,25 +33,25 @@
 \instruccion
 
 \begin{enumerate}
-    \item Considere $\Omega = (0,1)$. Implemente un código de elementos finitos que aproxime el problema ADR con condición de Dirichlet en el lado izquierdo y Neumann en el derecho, i.e.
-        $$ \mathcal L u \coloneqq -\mu u'' + b u' + c u = f \quad \text{en $\Omega$}.$$
+    \item Consider $\Omega = (0,1)$. Implement a finite element code that approximates the ADR problem with a Dirichlet condition on the left side and Neumann on the right, i.e.
+        $$ \mathcal L u \coloneqq -\mu u'' + b u' + c u = f \quad \text{in $\Omega$}.$$
 
-        Considere una discretización equiespaciada parametrizada en el número de intervalos y que $\mu, b, c$ son constantes positivas. El método de soluciones manufacturadas en elementos finitos se puede implementar de dos maneras. Dada una solución analítica $u_{ex}$, se puede generar el lado derecho que da esa solución: 
+        Consider an equally spaced discretization parameterized by the number of intervals and that $\mu, b, c$ are positive constants. The method of manufactured solutions in finite elements can be implemented in two ways. Given an analytical solution $u_{ex}$, one can generate the right hand side that gives that solution: 
             $$ f_{ex} \coloneqq -\mu u_{ex}'' + b u_{ex}' + c u_{ex} $$
-            y luego resolver el problema ADR con $f = f_{ex}$ con condición de Dirichlet $u(0)=u_{ex}(0)$ y Neumann $u'(1) = u_{ex}'(1)$. Este es el método que usamos para estudiar la convergencia de esquemas de diferencias finitas. Ahora también podemos aplicar esto directamente en la formulación débil, resolviendo 
+            and then solve the ADR problem with $f = f_{ex}$ with Dirichlet condition $u(0)=u_{ex}(0)$ and Neumann $u'(1) = u_{ex}'(1)$. This is the method we use to study the convergence of finite difference schemes. Now we can also apply this directly in the weak formulation, solving 
             $$ a(u,v) = a(u_{ex}, v) \quad \forall v \in V,$$
-                lo que permite compensar el lado derecho evaluando directamente la forma bilineal, sin tener que generar términos de carga de volumen y superficie que compensen. Naturalmente, para soluciones analíticas ambos esquemas coinciden.
+                which allows compensating the right hand side by evaluating the bilinear form directly, without having to generate volume and surface load terms that compensate. Naturally, for analytical solutions both schemes coincide.
 
         \begin{itemize}
-            \item\pts{1} Usando la teoría de convergencia de los elementos finitos, muestre cuál es la tasa esperada de convergencia para este problema usando elementos de primer orden (lineales) y bajo qué hipótesis este resultado es válido.
-            \item\pts{2} Considere una función manufacturada suave y demuestre que ambos esquemas de soluciones manufacturadas entregan tasas correctas de convergencia. 
-            \item\pts{2} Considere una función manufacturada no diferenciable (por ejemplo, $u_{ex}(x) = (x-0.5)^2 - |x-0.5|$) y muestre las tasas de convergencia entregadas por cada enfoque. 
+            \item\pts{1} Using the finite element convergence theory, show what the expected convergence rate is for this problem using first-order (linear) elements and under what hypotheses this result is valid.
+            \item\pts{2} Consider a smooth manufactured function and show that both manufactured solution schemes deliver the correct convergence rates. 
+            \item\pts{2} Consider a non-differentiable manufactured function (for example, $u_{ex}(x) = (x-0.5)^2 - |x-0.5|$) and show the convergence rates delivered by each approach. 
         \end{itemize}
 
-    \item Considere $\Omega = (0,1)^2$. Implemente un código de elementos finitos que aproxime el problema ADR con condición de Dirichlet $u=1$ en el lado derecho y Neumann homogéneo en el resto, puede elegir si aproximar con triángulos o con cuadrados. Para ello: 
+    \item Consider $\Omega = (0,1)^2$. Implement a finite element code that approximates the ADR problem with Dirichlet condition $u=1$ on the right side and homogeneous Neumann on the rest, you can choose whether to approximate with triangles or squares. To do this: 
             \begin{itemize}
-                \item\pts{1} Dado un número de intervalos por lado, implemente las matrices \texttt{IEN} y \texttt{coords}. Muestre su resultado para un cuadrado con dos elementos por lado, y grafique la geometría discretizada con los elementos enumerados para validar el resultado.
-                \item Considere el elemento de referencia (triangular) y un elemento global igual al de referencia por simplicidad ($K = \hat K$). Calcule con una regla de cuadratura adecuada la matriz local asociada a cada uno de los operadores del problema y valide los valores numéricos obtenidos con las expresiones analíticas de las integrales asociadas a los siguientes términos: 
+                \item\pts{1} Given a number of intervals per side, implement the matrices \texttt{IEN} and \texttt{coords}. Show your result for a square with two elements per side, and plot the discretized geometry with the enumerated elements to validate the result.
+                \item Consider the reference element (triangular) and a global element equal to the reference one for simplicity ($K = \hat K$). Compute with an appropriate quadrature rule the local matrix associated with each of the operators of the problem and validate the obtained numerical values with the analytical expressions of the integrals associated with the following terms: 
                     \begin{itemize}
                         \item\pts{1} $-\Delta u$
                         \item\pts{1} $\vec b \cdot \grad u$
@@ -59,26 +59,25 @@
                         \item\pts{1} $f(x)\coloneqq 1$
                     \end{itemize}
 
-                \item\pts{3} A partir de las rutinas anteriores, genere una función \texttt{getProblem(mu,b,c,f)} donde $\mu,c$ son escalares, $\vec b$ un vector y $f:\R\to\R$ una función, que entregue la matriz $\mat A_h$ que define el problema y el lado derecho $\vec F_h$ sin considerar aún condiciones de Dirichlet.
-                \item\pts{2} Explique cómo implementar las condiciones de borde mediante un operador de Lifting y genere una función (en código) que modifique el problema $(\mat A_h, \vec F_h)$ para imponer la condición de Dirichlet dada ($u=1$ en el lado derecho).
-                \item\pts{3} Usando el método de soluciones manufacturadas, muestre que la solución discreta converge a la continua con las tasas esperadas en $L^2$ y $H^1$. \emph{Hint: Para calcular el error de aproximación $e_h = u - u_h$, use que la norma se puede dividir por elementos $\|e_h\|_0^2 = \int_\Omega e_h^2\,dx = \sum_e \int_e e_h^2\,dx$ y la integral en cada elemento se puede calcular con cuadratura en el elemento de referencia.}
+                \item\pts{3} Based on the previous routines, generate a function \texttt{getProblem(mu,b,c,f)} where $\mu,c$ are scalars, $\vec b$ a vector and $f:\R\to\R$ a function, that returns the matrix $\mat A_h$ that defines the problem and the right hand side $\vec F_h$ without considering Dirichlet conditions yet.
+                \item\pts{2} Explain how to implement the boundary conditions using a Lifting operator and generate a function (in code) that modifies the problem $(\mat A_h, \vec F_h)$ to impose the given Dirichlet condition ($u=1$ on the right side).
+                \item\pts{3} Using the method of manufactured solutions, show that the discrete solution converges to the continuous one with the expected rates in $L^2$ and $H^1$. \emph{Hint: To compute the approximation error $e_h = u - u_h$, use that the norm can be divided by elements $\|e_h\|_0^2 = \int_\Omega e_h^2\,dx = \sum_e \int_e e_h^2\,dx$ and the integral in each element can be computed with quadrature in the reference element.}
             \end{itemize}
 
-    \item Considere el setting del problema de la pregunta anterior pero con condición de borde $u=0$, en esta pregunta discretizaremos el sistema
+    \item Consider the setting of the problem from the previous question but with boundary condition $u=0$, in this question we will discretize the system
                 \begin{equation}\label{eq}
                     \dot u + \mathcal L u = 0.
                 \end{equation}
             \begin{itemize}
-                \item\pts{3} Aplique formalmente el método $\theta$ de discretización en tiempo para un intervalo temporal $(0,T)$ equiespaciado al problema \eqref{eq}. Luego, muestre la formulación débil asociada a los problemas semi-discretos obtenidos en función de $\theta$\footnote{Semi-discretos ya que solo han sido discretizados en tiempo, no en espacio}.
-                \item\pts{2} Estudie para qué valores de $\theta$ es posible establecer que el sistema semi-discreto es invertible usando el Lema de Lax-Milgram.
-                \item Considere $\Omega = (0,1)^2$ y como condición inicial $u(0) = I_{B_r(x_0)}$ con $B_r(x_0)$  una bola centrada en $x_0=(0.5,0.5)$ y de radio $r=1/3$. Para la simulación, le servirá el código desarrollado en la pregunta 2 de esta homework.
+                \item\pts{3} Formally apply the $\theta$-method of time discretization for an equally spaced time interval $(0,T)$ to problem \eqref{eq}. Then, show the weak formulation associated with the semi-discrete problems obtained as a function of $\theta$\footnote{Semi-discrete since they have only been discretized in time, not in space}.
+                \item\pts{2} Study for what values of $\theta$ it is possible to establish that the semi-discrete system is invertible using the Lax-Milgram Lemma.
+                \item Consider $\Omega = (0,1)^2$ and as initial condition $u(0) = I_{B_r(x_0)}$ with $B_r(x_0)$ a ball centered at $x_0=(0.5,0.5)$ and of radius $r=1/3$. For the simulation, the code developed in question 2 of this homework will be useful.
                     \begin{itemize}
-                        \item\pts{2} Considere los parámetros $\mu=1$, $b=c=0$ y un paso temporal $\Delta T=0.01$. Grafique la evolución de la solución en algunos instantes e interprete por qué al operador $-\Delta (\cdot)$ se le llama \emph{difusión}. 
-                        \item\pts{2} Considere los parámetros $\mu=0.01$\footnote{Se agrega un poco de difusión para estabilizar la aproximación. Tiene holgura para probar distintos niveles de refinamiento de malla que también ayuda a estabilizar la aproximación. Este comentario vale también para el problema siguiente.}, $b=1$, $c=0$ y un paso temporal $\Delta T=0.01$. Grafique la evolución de la solución en algunos instantes e interprete por qué al operador $\vec b \cdot\nabla(\cdot)$ se le llama \emph{advección}.
-                        \item\pts{2} Considere los parámetros $\mu=0.01$, $b=0$, $c=1$ y un paso temporal $\Delta T=0.01$. Grafique la evolución de la solución en algunos instantes e interprete por qué al operador $c (\cdot)$ se le llama \emph{reacción}.
+                        \item\pts{2} Consider the parameters $\mu=1$, $b=c=0$ and a time step $\Delta T=0.01$. Plot the evolution of the solution at some instants and interpret why the operator $-\Delta (\cdot)$ is called \emph{diffusion}. 
+                        \item\pts{2} Consider the parameters $\mu=0.01$\footnote{A bit of diffusion is added to stabilize the approximation. You have room to try different mesh refinement levels which also helps stabilize the approximation. This comment is also valid for the next problem.}, $b=1$, $c=0$ and a time step $\Delta T=0.01$. Plot the evolution of the solution at some instants and interpret why the operator $\vec b \cdot\nabla(\cdot)$ is called \emph{advection}.
+                        \item\pts{2} Consider the parameters $\mu=0.01$, $b=0$, $c=1$ and a time step $\Delta T=0.01$. Plot the evolution of the solution at some instants and interpret why the operator $c (\cdot)$ is called \emph{reaction}.
                     \end{itemize}
             \end{itemize}
 \end{enumerate} % preguntas
 
 \end{document}
-

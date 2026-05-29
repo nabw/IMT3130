@@ -4,19 +4,19 @@
 %\setcounter{totalpts}{0} % Contador de puntos en homework
 
 \newcommand{\getTotal}{\number\totvalue{totalpts} }
-\newcommand{\instruccion}{\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black!70!white,title=Instrucciones]
-La homework debe ser desarrollada por una o dos personas en un informe en formato .pdf a través del buzón habilitado en la plataforma Canvas, donde deben mostrar también el código desarrollado si es que corresponde. Para su conveniencia, pueden entregar las homeworks en un Jupyter Notebook, de modo que sea más cómodo mostrar el código. En cualquier caso, se debe entregar un único archivo como respuesta a la homework. La política de atrasos será: se calculará un factor lineal que vale 1 a la hora de entrega y 0 48 horas después. Esto multiplicará su puntaje obtenido.
+\newcommand{\instruccion}{\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black!70!white,title=Instructions]
+The homework must be developed by one or two people in a .pdf report submitted through the designated drop box on the Canvas platform, where you must also show the developed code if applicable. For your convenience, you may submit the homeworks in a Jupyter Notebook, so it is more comfortable to show the code. In any case, a single file must be submitted as the answer to the homework. The late policy will be: a linear factor will be calculated that is 1 at the time of delivery and 0 48 hours later. This will multiply your obtained score.
 
 
-La homework tiene \getTotal puntos. En cada pregunta, el puntaje dado será: el total si está bien, la mitad si tiene un desarrollo concluyente pero tiene errores, y 0.0 puntos si tiene poco o nada de desarrollo.
+The homework has \getTotal points. In each question, the given score will be: the total if it is correct, half if it has a conclusive development but contains errors, and 0.0 points if it has little to no development.
 
-Está permitido el uso de modelos de lenguaje (tipo chatGPT) para apoyar el desarrollo de la homework, aunque sugerimos intentar un poco cada pregunta primero para generar dudas. Si bien no podemos controlar que le pidan directamente la respuesta al modelo, creemos es mejor para su proceso de aprendizaje que pidan sugerencias más que soluciones. Por esta razón, si deciden usarlo, debe adjuntar a su homework otro pdf donde  muestren los prompts usados. Sugerimos usar prompts de este estilo: "Soy estudiante de [Carrera] y estoy desarrollando el siguiente ejercicio para una homework del curso [Curso]: [Copiar ejercicio]
-  Y hemos visto hasta ahora los contenidos en las diapositivas adjuntas [adjunten los pdfs con las clases]. Dado este contenido, quería pedirte una sugerencia para resolver [explicar dificultad], ya que me confunde [escribir duda]. Como respuesta, no quiero que me des la solución, si no que una guía para ayudarme a iniciar el desarrollo de mi respuesta."kk:
+The use of language models (like ChatGPT) is allowed to support the development of the homework, although we suggest trying each question a bit first to generate doubts. While we cannot control if you ask the model directly for the answer, we believe it is better for your learning process to ask for suggestions rather than solutions. For this reason, if you decide to use it, you must attach to your homework another pdf showing the prompts used. We suggest using prompts of this style: "I am a student of [Major] and I am developing the following exercise for a homework in the course [Course]: [Copy exercise]
+  And we have seen so far the contents in the attached slides [attach pdfs of the lectures]. Given this content, I would like to ask you for a suggestion to solve [explain difficulty], since I am confused about [write doubt]. As an answer, I do not want you to give me the solution, but a guide to help me start developing my answer."
 
-  Si tienen dudas y/o observaciones, por favor contáctenos por correo o Canvas. Es posible que el enunciado tenga errores.
+  If you have doubts and/or comments, please contact us by email or Canvas. It is possible that the formulation has errors.
 \end{tcolorbox}}
 
 
 \newcommand{\code}[1]{\texttt{#1}}
 % Logic: To create a counter with the points in each question and accumulate that in a total variable. Now I simply set the full threshold at the beginning to 75% and it gives the computed value automatically.
-\newcommand{\pts}[1]{\if#11\textbf{[#1 punto]}\else\textbf{[#1 puntos]}\fi\addtocounter{totalpts}{#1}}
+\newcommand{\pts}[1]{\if#11\textbf{[#1 point]}\else\textbf{[#1 points]}\fi\addtocounter{totalpts}{#1}}
