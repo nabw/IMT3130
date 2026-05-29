@@ -1,0 +1,122 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+
+\newcommand{\example}[1]{\todo[inline,color=green!30!white]{\textbf{Example:} #1}}
+
+\title{Homework 1}
+%\author{Nicol\'as A Barnafi\thanks{Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile, Chile}, Axel Osses\thanks{Departamento de Ingeniería Matemática, Universidad de Chile, Chile}}
+%\author{Nicol\'as A Barnafi}
+\date{}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\newcommand{\tin}{\text{in}}
+\newcommand{\ton}{\text{on}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+\maketitle
+\hfill \textbf{Fecha de entrega: 23:59 del 09/10/2024}
+ 
+\todo[inline,color=white!90!black]{\textbf{Instrucciones: } La homework debe ser entregada en formato .pdf a través del buzón habilitado en la plataforma Canvas. Luego de la corrección de las homeworks, les daré la oportunidad de rehacer todos los ejercicios que tengan errores para poder trabajar sobre sus errores. Por lo mismo, las homeworks con atraso tendrán un 1.0 automáticamente. Las preguntas 1,2,3,4 tienen 1 punto. Las preguntas 5,6,10 tienen 2 puntos. Las preguntas 7,8,9 tienen 3 puntos. El puntaje está basado en mi estimación personal de dificultad de las preguntas.}
+
+\begin{enumerate}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item El espacio de movimientos rígidos, dado por el kernel del gradiente simétrico $\varepsilon(u) = \frac 1 2 \left( \grad u + (\grad u)^T \right)$ está dado por el espacio generado por las funciones $(1,0)$, $(0,1)$, y $(-y, x)$. Definimos dicho espacio como $\mathbb{RM}$. Encuentre la proyección a $\mathbb{RM}$ de la functión 
+        $$ f(x,y) = (\sin(x) + \cos(y), \sin(x) - \cos(y)) $$
+    en $\mathbb{RM}$ con respecto a los espacios $L^2(\Omega)$ y $H^1(\Omega)$, con $\Omega=[0,1]^2$.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item Considere la siguiente función: 
+        $$ f(x) = \begin{cases}
+                        1 & \text{$x$ in $(0,1)$} \\
+                        0 & \text{elsewhere}
+                    \end{cases}. $$
+    Muestre que $f$ está en $L^\infty(\R)$ pero no en $W^{1,\infty}(\R)$. Extienda la demostración para alguna función discontinua $\R^2$. 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item Encuentre una generalización de la desigualdad de Hölder para productos de $n$ funciones: $\| f_1 \hdots f_n \|_{L^1(\Omega)} \leq \| f_1\|_{L^{a_1}(\Omega)} \hdots \| f_n \|_{L^{a_n}(\Omega)}$. Qué condiciones deben cumplir los exponentes $a_i$? 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item Demuestre las tres identidades de integración por partes mostradas en los apuntes del curso.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item (Problemas cuadráticos) Se define la derivada de Gateaux de un funcional $\Pi: V \to \R$ en $u$ y en dirección $v$ como
+        $$ d\Pi(u)[v] \coloneqq \frac{d}{d\epsilon}\left.\left(\Pi(u + \epsilon v) \right)\right|_{\epsilon=0}. $$
+    Esta derivada es una extensión de las derivadas parciales, y coincide con la derivada abstracta (de Frechèt) en el caso en que el funcional resultante sea lineal y continuo. 
+    Muestre que dada una forma bilineal simétrica $a: V\times V \to \R$ y un funcional lineal $L:V\to \R$, se tiene que las condiciones de primer orden del funcional cuadrático $\Pi(u) = \frac 1 2 a(u,u) + L(u)$ corresponden a la ecuación 
+        $$ a(u,v) = L(v) \qquad\forall v \in V. $$
+    Muestre además que los puntos $u$ en $V$ que satisfacen dicha ecuación son efectivamente mínimos del funcional cuadrático. Finalmente, muestre que esto caracteriza a las funciones armónicas ($-\Delta u=0$) como aquellas que minimizan la semi norma $H^1$. 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item (Laplaciano biarmónico) Considere el laplaciano biarmónico $\Delta^2 u$, definido como aplicar dos veces el Laplaciano $\Delta = \sum_i \partial_i^2$. Este operador aparece en el contexto general de la teoría de Kirchhof-Love para modelar la deformación de placas delgadas sometidas a esfuerzos mecánicos. Encuentre la formulación variacional de este problema, y sus correspondientes condiciones de Dirichlet y de Neumann. 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item (Elasticidad lineal) Considere el tensor de Hooke, tensor del cuarto orden, cuya acción está dada por 
+        $$ \mathbb{C}_\text{Hooke}\tau = \lambda \tr \tau \ten I + 2 \mu \tau, $$
+    donde $\lambda, \mu$ se conocen como parámetros de Lamé. Considere además el gradiente simétrico $\varepsilon(u) = \frac 1 2 \left( \grad u + (\grad u)^T \right)$. Encuentre la formulación débil del problema de elasticidad lineal, cuya forma fuerte está dada por 
+        $$ - \dive \mathbb C_\text{Hooke}\varepsilon(\vec u) = \vec f $$
+    para alguna fuerza externa $f$. Este problema corresponde a encontrar el desplazamiento de un sólido $\Omega$ sometido a ciertos esfuerzos y/o condiciones de borde, y a una fuerza volumétrica $f$ (como la gravedad). 
+
+    Determine la regularidad necesaria de $f$, así como también las condiciones de borde sugeridas por la integración por partes. Finalmente, demuestre que dada una matriz arbitraria $A$ y una simétrica $S$, se tiene que  
+        $$ A : S = \sym(A) : S, $$
+    donde $\sym(A) = \frac 1 2\left(A + A^T\right)$, para encontrar una formulación variacional donde la forma bilineal sea simétrica. Para dicha formulación, elija una condición de borde y, para el problema resultante (i) demuestre la existencia y unicidad de soluciones\footnote{El análogo a las desigualdades de Poincaré para este problema se llaman desigualdades de K\"orn, y las puede citar directamente desde el libro de Brenner y Scott. Su mayor dificultad radica en que hay que controlar la norma del gradiente simétrico, no simplemente del gradiente.}, y (ii) proponga un espacio discreto conforme y muestre cuáles son las tasas de convergencia esperadas a partir de la estimación de Céa correspondiente.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item (Condiciones de Dirichlet débiles) Como vimos, las condiciones de borde para un problema como el Laplaciano: 
+        $$ -\Delta u = f \quad\text{en $\Omega$}, \qquad u=g\quad\text{en $\partial\Omega$} $$
+    deben ser tratadas con cuidado. Una estrategia más robusta para tratar esta dificultad es la de imponer la condición de Dirichlet de manera débil. Este será nuestro primer ejemplo de un método \emph{no-conforme}. Para esto, revise la formulación por penalización y el método de Nitsche, descritos en el siguiente trabajo: 
+
+    $$ \text{https://doi.org/10.1007/s10013-024-00702-1}. $$
+   
+    Para el análisis, será útil revisar el siguiente paper: 
+
+    $$ \text{https://doi.org/10.1016/0377-0427(95)00057-7} $$
+
+    Para esta pregunta, en ambas formulaciones (penalización y Nitsche): (i) Encuentre la formulación variacional discreta, (ii) Demuestre existencia y unicidad de la formulación discreta (encontrará la norma correcta para usar en las referencias entregadas), (iii) encuentre un esquema de elementos finitos convergentes y demuestre la tasa de convergencia, y (iv) calcule las tasas de convergencia numéricas para alguna solución manufacturada conveniente. Responda además la siguiente pregunta: Qué argumentos a favor y en contra hay de cada formulación? 
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item (Problema de Helmholtz) Vimos que el problema de Helmholtz no es elíptico: Encontrar $u$ en $H^1(\Omega)$ tal que 
+        $$
+        \left\{\begin{aligned}
+             -\Delta u - k^2 u&= 0 &&\Omega \\
+            u &= g &&\partial\Omega
+        \end{aligned}\right.
+        $$
+        La ecuación de Helmholtz se obtiene típicamente al hacer la transformada de Fourier en tiempo de la ecuación de onda. Así, desaparece la dependencia en tiempo del problema. Típicamente esta ecuación, por la misma razón, se formula en el plano complejo, así que la ecuación que estamos estudiando corresponde solo a la parte real de la solución. 
+
+        Utilice la estimación de Céa vista en clases para encontrar un esquema de elementos finitos convergente para este problema. Calcule numéricamente las tasas de convergencia para alguna solución manufacturada, y muestre que la convergencia se tiene solo para una malla lo suficientemente fina. 
+        
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item (Problema de advección-difusión) Muestre que, para una malla lo suficientemente fina, y dadas funciones $f$ en $H^{-1}(\Omega)$ y $\vec b$ en $\vec L^\infty(\Omega)$, el problema de advección-difusión: 
+         $$
+        \left\{\begin{aligned}
+             -\Delta u + \vec b\cdot \grad u &= \vec f &&\Omega \\
+            u &= 0 &&\partial\Omega
+        \end{aligned}\right.
+        $$
+        (i) posee existencia de soluciones, (ii) existe un esquema de elementos finitos conformes para aproximarlo, y (iii) muestre las tasas de convergencia de dicho esquema. \textbf{Nota: }Probablemente, el efecto de "malla suficientemente fina" se note solo si $\dive \vec b\neq 0$, ya que en ese caso el problema es elíptico. 
+   
+\end{enumerate}
+
+\todo[inline,color=white!90!black]{\textbf{Nota: } No he desarrollado los problemas, así que probablemente tengan typos y/o errores. Podemos discutir esto cuando quieran, o me pueden notificar por correo en \texttt{nicolas.barnafi@uc.cl}.}
+\end{document}
+

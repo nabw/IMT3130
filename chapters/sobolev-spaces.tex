@@ -44,7 +44,7 @@ Linearity is obvious, and continuity follows from the dominated convergence theo
 It is clearly linear and continuous (point evaluation is continuous in the topology of $\mathcal D$). It is singular because it cannot be represented by a locally integrable function.
 }
 
-\subsubsection{Topology of $\mathcal D'$}
+\subsubsection{\texorpdfstring{Topology of $\mathcal D'$}{Topology of D'}}
 Defining the topology of the space of distributions is not a trivial affair. In fact, one could be tempted to use the topology induced by the dual norm 
 $$ \| T \|_{\mathcal D'} = \sup_{x \in \mathcal D} \frac{|\langle T, x\rangle |}{\|x\|_{\mathcal{D}}} , $$
 but the issue is that the space $\mathcal D$ is \emph{not metrizable} and thus the term $\|x\|_{\mathcal D}$ is not well-defined. You may find a proof of this in \cite{MR1157815}. For this reason, the correct topology is simply the weak$^*$ topology, meaning that a sequence $(T_n)_n$ in $\mathcal D'$ converges to $T$ in $\mathcal D'$ if $\langle T_n, \varphi\rangle \to \langle T, \varphi\rangle$ for all $\varphi$ in $\mathcal D$. 
@@ -339,7 +339,7 @@ The relevant formulas are the following:
     \end{equation}
 \end{itemize}
 
-\paragraph{$H(\dive)$ and the normal trace} In this space, we have a first simple density result: 
+\paragraph{\texorpdfstring{$H(\dive)$ and the normal trace}{H(div) and the normal trace}} In this space, we have a first simple density result: 
 \begin{theorem}\label{thm:def-Hdiv-closure}
 Consider a bounded and Lipschitz domain $\Omega$ in $\R^n$, then $H(\dive;\Omega)$ is the closure of $[C(\bar\Omega)]^d$ in the $H(\dive)$ norm.
 \begin{proof}
@@ -405,7 +405,7 @@ H_0(\dive;\Omega) = \{\vec v\in H(\dive;\Omega): \gamma_N \vec v = 0 \}.
 \end{proof}
 \end{theorem}
 
-\paragraph{$H(\curl)$ and the tangential traces} In the proofs involving $H(\dive)$, we heavily used the fact that the $\grad$ and $\dive$ are the transpose of one another. This is not the case for the $\curl$ operator, so the proofs for this case are notoriously more complicated. Instead, it will suffice to state the relevant results:
+\paragraph{\texorpdfstring{$H(\curl)$ and the tangential traces}{H(curl) and the tangential traces}} In the proofs involving $H(\dive)$, we heavily used the fact that the $\grad$ and $\dive$ are the transpose of one another. This is not the case for the $\curl$ operator, so the proofs for this case are notoriously more complicated. Instead, it will suffice to state the relevant results:
 \begin{itemize}
     \item As with the previous spaces, one can define $H_0(\curl,\Omega)$ by density with the appropriate norm:
     \begin{equation}\label{eq:def-Hcurl-density}
