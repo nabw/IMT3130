@@ -1,0 +1,83 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+\input{../macros.tex}
+
+\title{Homework 4}
+\author{}
+\date{IMT3130}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\begin{document}
+
+\maketitle
+
+\instruccion
+
+\begin{enumerate}
+    \item Consider $\Omega = (0,1)$. Implement a finite element code that approximates the ADR problem with a Dirichlet condition on the left side and Neumann on the right, i.e.
+        $$ \mathcal L u \coloneqq -\mu u'' + b u' + c u = f \quad \text{in $\Omega$}.$$
+
+        Consider an equally spaced discretization parameterized by the number of intervals and that $\mu, b, c$ are positive constants. The method of manufactured solutions in finite elements can be implemented in two ways. Given an analytical solution $u_{ex}$, one can generate the right hand side that gives that solution: 
+            $$ f_{ex} \coloneqq -\mu u_{ex}'' + b u_{ex}' + c u_{ex} $$
+            and then solve the ADR problem with $f = f_{ex}$ with Dirichlet condition $u(0)=u_{ex}(0)$ and Neumann $u'(1) = u_{ex}'(1)$. This is the method we use to study the convergence of finite difference schemes. Now we can also apply this directly in the weak formulation, solving 
+            $$ a(u,v) = a(u_{ex}, v) \quad \forall v \in V,$$
+                which allows compensating the right hand side by evaluating the bilinear form directly, without having to generate volume and surface load terms that compensate. Naturally, for analytical solutions both schemes coincide.
+
+        \begin{itemize}
+            \item\pts{1} Using the finite element convergence theory, show what the expected convergence rate is for this problem using first-order (linear) elements and under what hypotheses this result is valid.
+            \item\pts{2} Consider a smooth manufactured function and show that both manufactured solution schemes deliver the correct convergence rates. 
+            \item\pts{2} Consider a non-differentiable manufactured function (for example, $u_{ex}(x) = (x-0.5)^2 - |x-0.5|$) and show the convergence rates delivered by each approach. 
+        \end{itemize}
+
+    \item Consider $\Omega = (0,1)^2$. Implement a finite element code that approximates the ADR problem with Dirichlet condition $u=1$ on the right side and homogeneous Neumann on the rest, you can choose whether to approximate with triangles or squares. To do this: 
+            \begin{itemize}
+                \item\pts{1} Given a number of intervals per side, implement the matrices \texttt{IEN} and \texttt{coords}. Show your result for a square with two elements per side, and plot the discretized geometry with the enumerated elements to validate the result.
+                \item Consider the reference element (triangular) and a global element equal to the reference one for simplicity ($K = \hat K$). Compute with an appropriate quadrature rule the local matrix associated with each of the operators of the problem and validate the obtained numerical values with the analytical expressions of the integrals associated with the following terms: 
+                    \begin{itemize}
+                        \item\pts{1} $-\Delta u$
+                        \item\pts{1} $\vec b \cdot \grad u$
+                        \item\pts{1} $u$
+                        \item\pts{1} $f(x)\coloneqq 1$
+                    \end{itemize}
+
+                \item\pts{3} Based on the previous routines, generate a function \texttt{getProblem(mu,b,c,f)} where $\mu,c$ are scalars, $\vec b$ a vector and $f:\R\to\R$ a function, that returns the matrix $\mat A_h$ that defines the problem and the right hand side $\vec F_h$ without considering Dirichlet conditions yet.
+                \item\pts{2} Explain how to implement the boundary conditions using a Lifting operator and generate a function (in code) that modifies the problem $(\mat A_h, \vec F_h)$ to impose the given Dirichlet condition ($u=1$ on the right side).
+                \item\pts{3} Using the method of manufactured solutions, show that the discrete solution converges to the continuous one with the expected rates in $L^2$ and $H^1$. \emph{Hint: To compute the approximation error $e_h = u - u_h$, use that the norm can be divided by elements $\|e_h\|_0^2 = \int_\Omega e_h^2\,dx = \sum_e \int_e e_h^2\,dx$ and the integral in each element can be computed with quadrature in the reference element.}
+            \end{itemize}
+
+    \item Consider the setting of the problem from the previous question but with boundary condition $u=0$, in this question we will discretize the system
+                \begin{equation}\label{eq}
+                    \dot u + \mathcal L u = 0.
+                \end{equation}
+            \begin{itemize}
+                \item\pts{3} Formally apply the $\theta$-method of time discretization for an equally spaced time interval $(0,T)$ to problem \eqref{eq}. Then, show the weak formulation associated with the semi-discrete problems obtained as a function of $\theta$\footnote{Semi-discrete since they have only been discretized in time, not in space}.
+                \item\pts{2} Study for what values of $\theta$ it is possible to establish that the semi-discrete system is invertible using the Lax-Milgram Lemma.
+                \item Consider $\Omega = (0,1)^2$ and as initial condition $u(0) = I_{B_r(x_0)}$ with $B_r(x_0)$ a ball centered at $x_0=(0.5,0.5)$ and of radius $r=1/3$. For the simulation, the code developed in question 2 of this homework will be useful.
+                    \begin{itemize}
+                        \item\pts{2} Consider the parameters $\mu=1$, $b=c=0$ and a time step $\Delta T=0.01$. Plot the evolution of the solution at some instants and interpret why the operator $-\Delta (\cdot)$ is called \emph{diffusion}. 
+                        \item\pts{2} Consider the parameters $\mu=0.01$\footnote{A bit of diffusion is added to stabilize the approximation. You have room to try different mesh refinement levels which also helps stabilize the approximation. This comment is also valid for the next problem.}, $b=1$, $c=0$ and a time step $\Delta T=0.01$. Plot the evolution of the solution at some instants and interpret why the operator $\vec b \cdot\nabla(\cdot)$ is called \emph{advection}.
+                        \item\pts{2} Consider the parameters $\mu=0.01$, $b=0$, $c=1$ and a time step $\Delta T=0.01$. Plot the evolution of the solution at some instants and interpret why the operator $c (\cdot)$ is called \emph{reaction}.
+                    \end{itemize}
+            \end{itemize}
+\end{enumerate} % preguntas
+
+\end{document}

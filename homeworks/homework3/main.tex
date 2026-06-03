@@ -1,0 +1,112 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+\input{../macros.tex}
+
+\title{Homework 3}
+%\author{Nicol\'as A Barnafi}
+\date{}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\newcommand{\tin}{\text{in}}
+\newcommand{\ton}{\text{on}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+\maketitle
+ 
+\instruccion
+
+\begin{enumerate}
+
+    \item\pts{4}  Consider a bounded Lipschitz domain $\Omega\subset \R^d$, a function $\ten K:\Omega \to \R^{d\times d}$ in $L^\infty(\Omega,\R^{d\times d})$ such that it is symmetric, continuous, and positive definite almost everywhere ($\exists c, C>0: c|\vec x|^2 \leq \vec x^T\ten K\vec x \leq C|\vec x|^2$ a.e.), a function $\vec b$ in $L^\infty(\Omega, \R^d)$ such that $\dive {\vec b}=0$, $\vec b\cdot \vec n\geq 0$ on $\Gamma_N$ and $\vec b\in \vec H(\dive; \Omega)$, a positive scalar function $a>0$ in $L^\infty(\Omega)$, and an element $f$ of $[H^1(\Omega)]'$. In this context, consider the Advection-Diffusion-Reaction (ADR) problem
+            $$ 
+            \begin{aligned}
+                -\dive \ten K\grad u + \vec b\cdot \grad u + a u &= f &&\text{ in $\Omega$}, \\
+                u &= u_D &&\text{on $\Gamma_D$}, \\
+                \ten K\grad u\cdot \vec n &= t &&\text{on $\Gamma_N$},
+            \end{aligned}
+            $$
+            where $\partial \Omega=\overline\Gamma_D \cup \overline \Gamma_N$, $u_D$ is in $H^{1/2}(\Gamma_D)$, and $t$ in $H^{-1/2}(\Gamma_N)$. 
+            \begin{enumerate}
+                \item\pts{2} Find a weak formulation of this problem, clearly defining the solution space, the test function space, and the involved linear/bilinear forms. To do this, you only need to integrate by parts the second-order differential operator. Note that integrating the first-order term would generate new boundary terms that would be difficult to analyze.
+                \item\pts{2} Prove that the found weak formulation has a unique solution using the Lax-Milgram Lemma. It will be useful to prove the following identity:
+                   $$ \int_{\partial\Omega} u^2 (\vec b\cdot n)\,dS = \int_\Omega \dive (u\vec b) u\,dx + \int_\Omega (u\vec b)\cdot \grad u\,dx = \int_\Omega (\vec b\cdot \grad u + u \dive \vec b) u\,dx + \int_\Omega u\vec b\cdot \grad u\,dx $$
+                   Clearly indicate where the hypotheses on the parameters are used.
+            \end{enumerate}
+
+        \item\pts{6} Consider a bounded Lipschitz domain $\Omega\subset \R^d$ and the following problem: Find $u_1, u_2:\Omega \to \R$ such that
+            $$ 
+            \begin{aligned}
+                -\Delta u_1 + u_2 &= f_1  && \text{in $\Omega$} \\
+                -\Delta u_2 - u_1 &= f_2  && \text{in $\Omega$},
+            \end{aligned}
+            $$
+            given two functions $f_1,f_2$. 
+            \begin{enumerate}
+                \item\pts{2} Show, by integrating by parts each equation separately, what the appropriate boundary conditions for this problem are (Dirichlet, Neumann, or a mixture of them). 
+                \item\pts{2} Consider homogeneous boundary conditions for both variables: 
+                        $$ u_1 = u_2 = 0 \quad\text{on $\partial\Omega$}. $$
+                       Write the weak formulation of the problem, clearly stating the spaces involved, and the required regularity for the functions $f_1, f_2$. For this, it will be useful to note that the solution space of your problem can be given by $V_0 = H_0^1(\Omega)\times H_0^1(\Omega)$, and therefore $\vec u \in V_0$ if and only if $\vec u = (u_1, u_2)$, for $u_1, u_2$ in $H_0^1(\Omega)$. 
+                   \item\pts{2} Prove that the problem has a unique solution and write the a-priori stability bound that shows the continuity of the inverse. 
+            \end{enumerate}
+
+        \item\pts{10} Consider $\mu,\lambda>0$ (Lamé parameters), and a bounded Lipschitz domain $\Omega\subset\R^2$. Given a vector field $\vec u:\Omega\to \R^2$, which we will call displacement, we define its symmetric gradient as
+            $$ \ten \varepsilon (\vec u) \coloneqq \frac 1 2\left(\grad \vec u + [\grad \vec u]^T\right), $$
+            where the matrix $\grad \vec u$ is given pointwise by $[\grad \vec u]_{ij} = \frac{\partial u_i}{\partial x^j}$. The Hooke tensor is also defined as the following operator: 
+            $$ \ten \sigma (\vec u) \coloneqq 2 \mu \ten \varepsilon(\vec u) + \lambda \dive (\vec u) \ten I. $$
+            Given these definitions, a volumetric force $\vec f:\Omega\to \R^d$, and a boundary condition $\vec u_D$, the \emph{linear elasticity} problem is defined as
+                $$ \begin{aligned}
+                    -\dive \ten \sigma (\vec u) &= \vec f &&\text{ in $\Omega$},  \\
+                    \vec u &= \vec u_D &&\text{on $\Gamma_D$},  \\
+                    \ten \sigma \vec n &= \vec t &&\text{on $\Gamma_N$}. 
+                \end{aligned} $$
+                \begin{enumerate}
+                    \item\pts{1} Prove that given a symmetric matrix $A$ and an antisymmetric matrix $B$, we have that 
+                            $$ A : B = 0, $$
+                            where $:$ is the matrix contraction or Frobenius product, given by $X:Y=\sum_{i,j} X_{ij}Y_{ij}$. 
+                        \item\pts{1} Prove that the integration by parts formula in matrix form is given by
+                        $$ \int_{\partial\Omega} \vec v\cdot (\ten \tau \vec n)\,dS = \int_\Omega \dive\ten \tau \cdot \vec v\,dx + \int_\Omega \ten\tau : \grad \vec v\,dx, $$
+                        where $\ten \tau:\Omega \to \R^{d\times d}$ belongs to $\ten H(\dive; \Omega)\coloneqq[H(\dive;\Omega)]^d$, and $\vec v:\Omega \to \R^d$ belongs to $\vec H^1(\Omega)\coloneqq [H^1(\Omega)]^d$. Note that the $\dive$ operator applied to a matrix function $\ten \tau$ is applied row-wise, meaning it results in the following vector: 
+                        $$ \dive \ten \tau = \begin{bmatrix} \dive \ten \tau_{1,\bullet} \\ \dive \ten \tau_{2,\bullet} \\ \vdots \\ \dive \ten \tau_{d, \bullet} \end{bmatrix} $$ 
+                    \item\pts{2} Use the two previous results to show that the weak formulation of the elasticity problem is given by: Find $\vec u$ in $\vec V_{u_D}$ such that 
+                        $$ \int_\Omega \ten \sigma(\vec u):\ten\varepsilon(\vec v)\,dx = \langle \vec f, \vec v\rangle_{V_0', V_0} + \langle \vec t, \vec v\rangle_{[H^{1/2}(\Gamma_N)]', H^{1/2}(\Gamma_N)} \qquad \forall \vec v \in \vec V_0,$$
+                        where 
+                        $$ \vec V_{u_D} = \{ \vec v \in \vec H^1(\Omega): \vec v = \vec u_D \text{ on $\Gamma_D$}\} $$
+                        and
+                        $$ \vec V_0 = \{ \vec v \in \vec H^1(\Omega): \vec v = \vec 0 \text{ on $\Gamma_D$}\}, $$
+                        with the equalities in these definitions understood in the sense of traces. 
+                    \item\pts{1} Show that the symmetric gradient $\varepsilon(\vec u)$ is such that 
+                        $$ \| \ten \varepsilon(\vec u) \|_{0,\Omega} \leq C \| \grad \vec u \|_{0,\Omega} . $$
+                    \item\pts{3} Prove Korn's inequality, given by
+                        $$ \| \vec u \|_{1,\Omega} \leq C \|\ten \varepsilon(\vec u) \|_{0,\Omega} \qquad \forall \vec u \in [H_0^1(\Omega)]^d. $$
+                            \emph{Hint: Extend Poincaré's proof for this case. Note that the condition $\ten \varepsilon(\vec u) = 0$ implies that $\vec u$ is a rigid body motion, i.e. a function of the form $\vec u = \left(\begin{smallmatrix} \alpha x_2 + \beta \\ -\alpha x_1 + \gamma \end{smallmatrix}\right)$, for arbitrary constants $\alpha, \beta, \gamma$. This holds only in 2D, so you can reduce the proof to the case $\Omega\subset \mathbb R^2$.}
+                    \item\pts{2} Using the previous results, show that the linear elasticity problem has a unique solution if $|\Gamma_D|>0$ and show the stability bound.
+                \end{enumerate}
+\end{enumerate}
+
+\todo[inline,color=white!90!black]{\textbf{Note: } We will open a forum on Canvas to review any typos and/or errors in the formulation.}
+\end{document}

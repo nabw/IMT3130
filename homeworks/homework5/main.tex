@@ -1,0 +1,89 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+\input{../macros.tex}
+
+\title{Homework 5}
+\author{}
+\date{IMT3130}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\begin{document}
+
+\maketitle
+
+\instruccion
+
+\begin{enumerate}
+    \item Consider the deformation given by 
+        \begin{align*}
+            x_1(\vec X, t) &= e^tX_1 - e^{-t} X_2 \\
+            x_2(\vec X, t) &= e^t X_1 + e^{-t}X_2 \\
+            x_3(\vec X, t) &= X_3. 
+        \end{align*}
+    \begin{itemize}
+        \item\pts{1} Compute the displacement field, the velocity, and the acceleration in material (reference) coordinates. 
+        \item\pts{1} Compute the displacement field, the velocity, and the acceleration in spatial (deformed) coordinates. 
+        \item\pts{1} Compute the tensors $\ten F$, $\ten C$, and $\ten E$.
+        \item\pts{1} Ignore the third component and consider $\Omega$ a unit square. Plot in Python the initial configuration ($t=0$), and the deformed configuration at times 0.5, 1.0, and 2.0. 
+        \item\pts{1} At the described times, compute the Frobenius norm of $\ten C$ in the reference configuration and in the deformed one. Comment on how the interpretation of the tensor changes between both configurations, and propose a way to modify the tensor $\ten C$ so that it has a correct interpretation in the deformed configuration.
+    \end{itemize}
+
+    \item Consider a Neo-Hookean hyperelastic material, where the hyperelastic energy is given by
+            $$ \Psi(\ten F) = \frac C 2(\tr \ten C - 3) + \frac \kappa 2 \left( J -1\right)^2. $$
+            \begin{itemize}
+                \item\pts{1} Compute the first and second Piola-Kirchhoff stress tensors.
+                \item\pts{1} Write the weak formulation associated with the momentum equation with the computed explicit Piola tensor and appropriate boundary conditions. Since it is a non-linear problem, it is not clear a-priori what the correct regularity space for this model is. To develop the exercise, simply consider $H^1$ as the ambient space.
+            \end{itemize}
+    \item Modify the derivation of mass conservation to consider a mass flux given by its normal gradient, i.e. consider an additional surface term for any subdomain $\omega_t\subseteq\Omega_t$: 
+            $$ \int_{\partial \omega_t} \ten K \grad\rho \cdot \vec n \,dS, $$
+            \begin{itemize}
+                \item\pts{1} Show the resulting equation, and show that the spatial differential operator is an ADR operator. 
+            \end{itemize}
+    \item Consider the reference linear momentum equation: 
+            $$ \rho_0\ddot{\vec u} - \dive_X \ten P(\ten F)=0. $$
+            \begin{itemize}
+                \item\pts{1} Rewrite the tensor $\ten P$ so that it depends on $\ten E$, and then linearize with respect to $\vec u = 0$. Remember that linearizing an equation
+                    $$ F(x) = 0 $$
+                    with respect to a point $x_0$ means replacing $F(x) \approx F(x_0) + dF(x_0)[\delta x]$ to obtain an equation for the increment $\delta x$. Here, $dF(x_0)[\delta x]$ is the Gâteaux derivative in the direction $\delta x$. 
+                \item\pts{1} Show that the resulting problem is the linear elastodynamics problem, and clearly identify the obtained Hooke tensor. 
+            \end{itemize}
+
+    \item Consider the incompressibility constraint $J=1$ for non-linear elastic problems. 
+        \begin{itemize}
+            \item\pts{1} Write the variational principle of hyperelasticity restricted to $J=1$, and then show the saddle-point problem with a Lagrange multiplier that helps impose the condition $J=1$ through an unconstrained problem.
+            \item\pts{1} Show the first-order conditions for the two-variable system obtained in the previous point.
+        \end{itemize}
+
+
+    \item\pts{1} Define your course project. To do this, consider the following breakdown: 
+            \begin{enumerate}
+                \item Delimit the problem of interest and explain its origin. Deriving a model can also be part of the project, as long as what will be done is well explained. 
+                \item The project must contemplate a discretization process.
+                \item The project must contemplate the stability and convergence analysis of the proposed discretization.
+            \end{enumerate}
+
+            Like the homeworks, the projects are in groups of up to 2 people.
+
+
+\end{enumerate} % preguntas
+
+\end{document}

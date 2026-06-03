@@ -1,0 +1,80 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+\input{../macros.tex}
+
+\title{Homework 2}
+%\author{Nicol\'as A Barnafi}
+\date{}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+
+\newcommand{\tin}{\text{in}}
+\newcommand{\ton}{\text{on}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+\maketitle
+ 
+\instruccion
+
+\begin{enumerate}
+    \item Consider the bistable problem with diffusion in time and space $\Omega_T = (0,T)\times (0,1)$:
+            $$ \dot u - \mu \partial_{xx} u - u(1-u^2) = f. $$
+            As data and boundary conditions, consider:
+            \begin{itemize}
+                \item $f(t,x) = I_{x\in (0.4,0.6)}I_{t<1}$, where $I$ is an indicator function.
+                \item An initial condition given by $u(0,x) = 0$ for all $x$ in $(0,1)$. 
+                \item Homogeneous Neumann boundary conditions for all $t>0$. 
+            \end{itemize}
+            For this model:
+            \begin{enumerate}
+                \item\pts{1} Propose three time discretization formulations: (i) explicit, (ii) implicit, and (iii) semi-implicit. 
+                \item\pts{1} Propose a space and time discretization scheme, and prove that it is consistent.
+                \item\pts{1} Formulate an iterative method (Newton or fixed point) to solve the implicit formulation and comment on the convergence properties of the proposed method. 
+                \item\pts{1} The method proposed in the previous question requires solving a linear system in each iteration. Using von Neumann analysis, propose hypotheses for the discrete solution and the discretization parameters that allow obtaining a stable approximation in each iteration.
+                \item\pts{2} Implement the proposed semi-implicit method and plot the evolution of the solution for $\mu=0.1$ over a time horizon of $T=5$. Comment on your results.
+                \item\pts{3} Implement the proposed implicit method and plot the evolution of the solution for $\mu=0.1$. Comment on your results and compare them with those obtained in the previous point.
+            \end{enumerate}
+
+    \item In this question, we will play with the definition of distributions. We will use the notation $\mathcal D(\R) = C_0^\infty(\R)$, the space of smooth functions with compact support in $\R$.
+        \begin{enumerate}
+            \item\pts{1} We define the injection of integrable functions into distributions $T:L^1(\R) \to \left(\mathcal D(\R)\right)'$ according to the action
+                $$ (Tf)(\varphi)  = \left\langle f, \varphi\right\rangle_{\mathcal D'\times \mathcal D}.$$
+                Prove that this injection is continuous. 
+            \item\pts{1} Prove that, given $x_0\in \R$, the sequence induced by the function $I_n(x) = nI_{(x_0-1/2n, x_0+1/2n)}$, i.e. $\{I_n\}_n$, converges as a distribution to the Dirac delta $\delta_{x_0}$. 
+            \item\pts{1} Prove that there is no function $f$ in $L^1$ such that $T_f = \delta_0$. 
+            \item\pts{2} We know that given a vector function $\vec F:\Omega \to \R^d$, its divergence is given by $\dive{\vec F}=F_{i,i}$. To extend this notion to distributions, prove that given a domain $\Omega$, the spaces $(\mathcal D(\Omega, \R^d))'$ and $[(\mathcal D(\Omega))']^d$ are homeomorphic\footnote{$X^3 = X\times X\times X$} and with this, construct a definition of divergence in $(\mathcal D(\Omega, \R^d))'$. Hint: $\int_\Omega (\dive F)\varphi = \int_{\partial\Omega} \varphi F\cdot \vec n - \int_\Omega F\cdot \grad \varphi$. 
+            \item\pts{1} Extend the construction from the previous question to define a distributional $\curl$ for the case $d=3$. 
+            \item\pts{2} Consider the function $\Phi:\R^3\to \mathbb C$ given by
+                    $$ \Phi(x) = \frac{1}{4\pi|x|} e^{-ik |x|}. $$
+                Show that the following equality holds in $\mathcal D'(\R^3)$:
+                        $$ -\Delta \Phi - k^2 \Phi = \delta_0, $$
+                i.e. in the sense of distributions, where $\delta_0$ is the Dirac delta at $x=0$. 
+        \end{enumerate}
+\end{enumerate}
+
+\todo[inline,color=white!90!black]{\textbf{Note: } We will open a forum on Canvas to review any typos and/or errors in the formulation.}
+\end{document}

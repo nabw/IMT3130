@@ -39,7 +39,7 @@ and we define the mesh size $h$ as
 
 In what follows, the intervals $I_i$ are also called \emph{elements} (or \emph{cells}) and the mesh is denoted by $\mathcal{T}_h = \{I_i\}_{0 \le i \le N}$, where the subscript $h$ refers to the refinement level given by the mesh size.
 
-\paragraph{The $\mathbb{P}_1$ Lagrange finite element}
+\paragraph{\texorpdfstring{The $\mathbb{P}_1$ Lagrange finite element}{The P1 Lagrange finite element}}
 One of the simplest methods to approximate functions over $\Omega$ is to define piecewise-linear functions. We denote the vector space of continuous, piecewise-linear functions
 \begin{equation}
     P_h^1 = \{ v_h \in C(\bar{\Omega}): \forall i \in \{0, \dots, N\}, v_h|_{I_i} \in \mathbb{P}_1 \}.
@@ -141,7 +141,7 @@ The proofs of the two previous lemmas can now be rewritten using the local inter
 \begin{equation}
     \|v - \mathcal{I}_{I_i}^1 v\|_{0,I_i} \le h_i^2 |v|_{2,I_i},\qquad|\mathcal{I}_{I_i}^1 v|_{1,I_i} \le h_i |v|_{2,I_i}.
 \end{equation}
-\paragraph{The $\mathbb{P}_k$ Lagrange finite elements}
+\paragraph{\texorpdfstring{The $\mathbb{P}_k$ Lagrange finite elements}{The Pk Lagrange finite elements}}
 The interpolation technique presented for the piecewise-linear case (polynomial degree $1$) generalizes to higher-degree polynomials. Consider the mesh $\mathcal{T}_h = \{I_i\}_{0 \le i \le N}$ introduced previously. Let
 \begin{equation}\label{eq:def-Phk}
     P_h^k = \{ v_h \in C(\bar{\Omega}): \forall i \in \{0, \dots, N\}, v_h|_{I_i} \in \mathbb{P}_k \}.
@@ -393,7 +393,7 @@ See~\cite[Exercise 1.4]{ern2004theory} for further properties in dimension 2 and
 
 \example{In the unit simplex, $\lambda_0 = 1 - x_1 - x_2$, $\lambda_1 = x_1$, and $\lambda_2 = x_2$ in dimension 2, and $\lambda_0 = 1 - x_1 - x_2 - x_3$, $\lambda_1 = x_1$, $\lambda_2 = x_2$, $\lambda_3 = x_3$ in dimension 3.}
 
-\paragraph{The polynomial space $\mathbb{P}_k$} Let $x = (x_1, \dots, x_d)$ and let $\mathbb{P}_k$ be the space of polynomials in the variables $x_1, \dots, x_d$, with real coefficients and of global degree at most $k$,
+\paragraph{\texorpdfstring{The polynomial space $\mathbb{P}_k$}{The polynomial space Pk}} Let $x = (x_1, \dots, x_d)$ and let $\mathbb{P}_k$ be the space of polynomials in the variables $x_1, \dots, x_d$, with real coefficients and of global degree at most $k$,
 \begin{equation}
     \mathbb{P}_k = \{ p(x) = \sum_{0 \le i_1 + \cdots + i_d \le k} \alpha_{i_1 \dots i_d} x_1^{i_1} \dots x_d^{i_d} : \alpha_{i_1 \dots i_d} \in \mathbb{R} \}.
 \end{equation}
@@ -427,7 +427,7 @@ and for $k=3$
 \paragraph{Tensor product Lagrange finite elements}
 \paragraph{Cuboids} Given a set of $d$ intervals $\{[c_i, d_i]\}_{1 \le i \le d}$, all with non-zero measure, the set $K = \prod_{i=1}^d [c_i, d_i]$ is called a \emph{cuboid}. For $x \in K$, there exists a unique vector $(t_1, \dots, t_d) \in [0, 1]^d$ such that, for all $1 \le i \le d$, $x_i = c_i + t_i(d_i - c_i)$. The vector $(t_1, \dots, t_d)$ is called the \emph{local coordinate vector} of $x$ in $K$.
 
-\paragraph{The polynomial space $\mathbb{Q}_k$} Let $\mathbb{Q}_k$ be the polynomial space in the variables $x_1, \dots, x_d$, with real coefficients and of degree at most $k$ in each variable. In dimension 1, $\mathbb{Q}_k = \mathbb{P}_k$; in dimension $d \ge 2$
+\paragraph{\texorpdfstring{The polynomial space $\mathbb{Q}_k$}{The polynomial space Qk}} Let $\mathbb{Q}_k$ be the polynomial space in the variables $x_1, \dots, x_d$, with real coefficients and of degree at most $k$ in each variable. In dimension 1, $\mathbb{Q}_k = \mathbb{P}_k$; in dimension $d \ge 2$
 \begin{equation}
     \mathbb{Q}_k = \{ q(x) = \sum_{0 \le i_1, \dots, i_d \le k} \alpha_{i_1 \dots i_d} x_1^{i_1} \dots x_d^{i_d} : \alpha_{i_1 \dots i_d} \in \mathbb{R} \}.
 \end{equation}
@@ -449,8 +449,8 @@ For $1 \le i \le d$, set $\xi_{i,l} = c_i + \frac{l}{k}(d_i - c_i)$, $0 \le l \l
     \theta_{i_1 \dots i_d}(x) = \mathcal{L}_{1,i_1}^k(x_1) \dots \mathcal{L}_{d,i_d}^k(x_d), \quad 0 \le i_1, \dots, i_d \le k.
 \end{equation*}
 
-\section{Finite elements in $H(\dive)$ and $H(\curl)$}\label{sec:finite-elements-Hdiv-Hcurl}
-\paragraph{$H(\dive)$:} Here we consider the local polynomial in $\R^d$ given by
+\section{\texorpdfstring{Finite elements in $H(\dive)$ and $H(\curl)$}{Finite elements in H(div) and H(curl)}}\label{sec:finite-elements-Hdiv-Hcurl}
+\paragraph{\texorpdfstring{$H(\dive)$:}{H(div):}} Here we consider the local polynomial in $\R^d$ given by
 \begin{equation}
     D_k = [\P_{k-1}]^d \oplus \widetilde{\P_{k-1}} \vec x,
 \end{equation}
@@ -471,7 +471,7 @@ where $W_h$ is conforming in $H(\dive)$. In addition, we get the following resul
 \end{theorem}
 
 Naturally, this results implies the estimate in the $H(\dive)$ norm. 
-\paragraph{$H(\curl)$} The procedure for this space is roughly similar to the previous one. For it, we define the space
+\paragraph{\texorpdfstring{$H(\curl)$}{H(curl)}} The procedure for this space is roughly similar to the previous one. For it, we define the space
 \begin{equation}
     S_k = \{ \vec p \in [\widetilde{\P_k}]^3 | \vec p \cdot \vec x = 0 \},
 \end{equation}
@@ -496,7 +496,7 @@ This space is conforming in $H(\curl)$. In addition, we also get some nice inter
         \end{equation}
     \end{itemize}
 \end{theorem}
-\paragraph{$H^1$} From the lemma regarding conforming spaces, we can immediately see that the following is a conforming space in $H^1$: 
+\paragraph{\texorpdfstring{$H^1$}{H1}} From the lemma regarding conforming spaces, we can immediately see that the following is a conforming space in $H^1$: 
 \begin{equation}
     U_h = \{ v_h \in H^1(\Omega): v_h|_K \in \P_k, \forall K\in \T_h\},
 \end{equation}
@@ -507,7 +507,7 @@ with a nice interpolation operator:
         \|p - \pi_h p \|_1 \leq C h^{s-1} \|p\|_{H^s}, \quad 3/2+\delta \leq s \leq k+1 .
     \end{equation*}
 \end{theorem}
-\paragraph{$L^2$} We can finally write the space 
+\paragraph{\texorpdfstring{$L^2$}{L2}} We can finally write the space 
 \begin{equation}
     Z_h = \{ p_h \in L^2(\Omega): p_h|K \in P_{k-1}, \forall K\in \T_h\},
 \end{equation}
@@ -605,7 +605,7 @@ The assembly process of adding the contributions from the local element matrices
             2 & 3
         \end{bmatrix}.
     \end{equation}
-    \item The \emph{destination array} $\texttt{ID}\in \mathbb{Z}^{n_{nodes}}$ maps each global node index $i$ to its corresponding equation number or global degree of freedom index in the assembled linear system. If global node $i$ has a prescribed boundary condition (such as a Dirichlet value), $\texttt{ID}(i)$ is typically set to 0 or a negative value to indicate that this node does not correspond to an unknown degree of freedom in the system. For example, if we have $n_{nodes}=4$ nodes in a 1D mesh, where where nodes $1$ and $3$ have Dirichlet boundary conditions, the $\texttt{ID}$ array might look like:
+    \item The \emph{destination array} $\texttt{ID}\in \mathbb{Z}^{n_{nodes}}$ maps each global node index $i$ to its corresponding equation number or global degree of freedom index in the assembled linear system. If global node $i$ has a prescribed boundary condition (such as a Dirichlet value), $\texttt{ID}(i)$ is typically set to 0 or a negative value to indicate that this node does not correspond to an unknown degree of freedom in the system. For example, if we have $n_{nodes}=4$ nodes in a 1D mesh, where nodes $1$ and $3$ have Dirichlet boundary conditions, the $\texttt{ID}$ array might look like:
     \begin{equation}
         \texttt{ID} = \begin{bmatrix}
             0 \\

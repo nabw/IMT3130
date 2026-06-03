@@ -1,0 +1,22 @@
+\usepackage{tcolorbox}
+\usepackage{totcount,xfp}
+\newtotcounter{totalpts}
+%\setcounter{totalpts}{0} % Contador de puntos en homework
+
+\newcommand{\getTotal}{\number\totvalue{totalpts} }
+\newcommand{\instruccion}{\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black!70!white,title=Instructions]
+The homework must be developed by one or two people in a .pdf report submitted through the designated drop box on the Canvas platform, where you must also show the developed code if applicable. For your convenience, you may submit the homeworks in a Jupyter Notebook, so it is more comfortable to show the code. In any case, a single file must be submitted as the answer to the homework. The late policy will be: a linear factor will be calculated that is 1 at the time of delivery and 0 48 hours later. This will multiply your obtained score.
+
+
+The homework has \getTotal points. In each question, the given score will be: the total if it is correct, half if it has a conclusive development but contains errors, and 0.0 points if it has little to no development.
+
+The use of language models (like ChatGPT) is allowed to support the development of the homework, although we suggest trying each question a bit first to generate doubts. While we cannot control if you ask the model directly for the answer, we believe it is better for your learning process to ask for suggestions rather than solutions. For this reason, if you decide to use it, you must attach to your homework another pdf showing the prompts used. We suggest using prompts of this style: "I am a student of [Major] and I am developing the following exercise for a homework in the course [Course]: [Copy exercise]
+  And we have seen so far the contents in the attached slides [attach pdfs of the lectures]. Given this content, I would like to ask you for a suggestion to solve [explain difficulty], since I am confused about [write doubt]. As an answer, I do not want you to give me the solution, but a guide to help me start developing my answer."
+
+  If you have doubts and/or comments, please contact us by email or Canvas. It is possible that the formulation has errors.
+\end{tcolorbox}}
+
+
+\newcommand{\code}[1]{\texttt{#1}}
+% Logic: To create a counter with the points in each question and accumulate that in a total variable. Now I simply set the full threshold at the beginning to 75% and it gives the computed value automatically.
+\newcommand{\pts}[1]{\if#11\textbf{[#1 point]}\else\textbf{[#1 points]}\fi\addtocounter{totalpts}{#1}}

@@ -374,7 +374,7 @@ and so we can uniquely define the 1D vector $\vec f^I$ as the vector of all grid
 For example, if one has a grid with $N_x=3$ and $N_y=2$, then the forward and inverse index maps are given as in Table 2.1.
 \begin{table}[ht!]
     \centering
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subtable}{0.45\textwidth}
         \centering
     \begin{tabular}{c c | c}
         \toprule $i$ & $j$ & $I(i,j)$ \\ \midrule
@@ -386,8 +386,8 @@ For example, if one has a grid with $N_x=3$ and $N_y=2$, then the forward and in
         2 & 1 & 5 \\ \bottomrule
     \end{tabular}
     \caption{Forward map}
-    \end{subfigure}
-    \begin{subfigure}{0.45\textwidth}
+    \end{subtable}
+    \begin{subtable}{0.45\textwidth}
         \centering
     \begin{tabular}{c | c c}
         \toprule $I$ & $i(I)$ & $j(I)$ \\ \midrule
@@ -399,7 +399,7 @@ For example, if one has a grid with $N_x=3$ and $N_y=2$, then the forward and in
         5 & 2 & 1 \\ \bottomrule
     \end{tabular}
     \caption{Backward map}
-    \end{subfigure}
+    \end{subtable}
     \caption{Forward and inverse index maps for a 2D example.}
 \end{table}
 

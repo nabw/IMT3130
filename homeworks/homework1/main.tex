@@ -1,0 +1,87 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, mathpazo, isomath, mathtools}
+\usepackage{subcaption,graphicx,pgfplots}
+\usepackage{fullpage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm, algorithmic}
+\usepackage{mathtools}
+\usepackage{todonotes}
+\input{../macros.tex}
+
+\title{Homework 1}
+%\author{Nicol\'as A Barnafi\thanks{Instituto de Ingeniería Biológica y Médica, Pontificia Universidad Católica de Chile, Chile}, Axel Osses\thanks{Departamento de Ingeniería Matemática, Universidad de Chile, Chile}}
+%\author{Nicol\'as A Barnafi}
+\date{}
+
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}{\matrixsym}
+\newcommand{\ten}{\tensorsym}
+\newcommand{\der}[2]{\frac{d#1}{d#2}}
+\DeclareMathOperator{\grad}{\nabla}
+\DeclareMathOperator{\dive}{\text{div}}
+\DeclareMathOperator{\curl}{\text{curl}}
+\DeclareMathOperator{\tr}{\text{tr}}
+\DeclareMathOperator{\sym}{\text{sym}}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\parder}[2]{\frac{\partial\,#1}{\partial\,#2}}
+
+\newcommand{\tin}{\text{in}}
+\newcommand{\ton}{\text{on}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+\maketitle
+
+\instruccion
+
+\begin{enumerate}
+    \item\pts{1} Define the higher-order Fréchet derivatives. Then, consider the operator $T: L^p(\Omega) \to \R$ given by $T(f) = \int_\Omega f^p\,dx$ and compute its third-order derivative.
+    \item\pts{2 extra} State and prove the chain rule for Fréchet derivatives, given by $d(G\circ F)(u)[h] = dG(F(u))[dF(u)[h]]$. Then, use it to find the derivative of the composition $S\circ T$ of the operators $S:L^\infty(\Omega)\to L^\infty(\Omega)$ and $T:L^\infty(\Omega)\to L^\infty(\Omega)$ given by $S(u) = \sin u$ and $T(u) = \cos u$. Precisely define all the spaces used to apply the chain rule. 
+    \item\pts{2} The Cayley-Hamilton Theorem states that every matrix satisfies its own characteristic equation using the invariants: 
+                $$ \mat A^3 - I_1(\mat A) \mat A^2 + I_2(\mat A) \mat A - I_3(\mat A) \mat I = 0. $$
+                Differentiate this equation with respect to $\mat A$ and expand the equation to prove that $\parder{\det \mat A}{\mat A} = \det (\mat A) \mat A^{-T}$.
+    \item\pts{1}  Use the previous question to prove that if $A:\R \to \R^{n\times n}$ is a matrix function, then
+            $$ \der{\det A}{t}(t) = \det A(t) A^{-T}(t) : \der A{t}(t). $$
+            \item If $\phi, \vec u, \ten A$ are a scalar, vector, and tensor field respectively in $\R^3$, prove using index notation that if $\vec v$ is another vector field:
+                    \begin{itemize}
+                        \item\pts{0.5} $$\dive(\phi\vec  u) = \phi \dive \vec u + \vec u \cdot \grad \phi $$
+                        \item\pts{0.5} $$\dive(\phi\ten  A) = \phi \dive \ten A + \ten A \grad \phi $$
+                        \item\pts{0.5} $$\dive(\vec u \times \vec v) = \vec v\cdot \curl \vec u - \vec u \cdot \curl v $$
+                        \item\pts{0.5} $$ \grad(\phi \vec u) = \vec u \otimes \grad \phi + \phi \grad \vec u$$
+                    \end{itemize}
+    \item Consider the domain $\Omega=(a,b)$ with $a<b$.
+            \begin{itemize}
+                \item\pts{1} Consider the function $f:\Omega \to \R$ given by $f(x) = \sin (2\pi x)$. For it, consider a numerical differentiation scheme using the finite difference method to approximate its derivative $f'(x)$ in $\Omega$. In particular, compute the theoretical convergence rate for the forward, backward, and centered difference schemes in the $\|\cdot \|_{\infty,h}$ norm. For this, consider $a=-1$, $b=1$, and a distance between discrete points given by $h  \in \{2^{-n}\}_{n=4}^{20}$, compute the empirical convergence rates and interpret the obtained results.
+                \item\pts{1} Repeat the previous exercise for the function $f(x) = 2$ and interpret the obtained results.
+                \item\pts{1 extra} For this problem, when computing the numerical derivatives at the boundaries, you will have issues when using first-order finite differences combined with centered differences, which will deteriorate convergence. While this is not a problem, you can choose to use a one-sided finite difference formula to obtain quadratic convergence at the endpoints. By computing the Taylor series associated with $f(x+h)$ and $f(x+2h)$, prove that the corresponding approximation is
+            $$ f'(x) = \frac{-3f(x) + 4 f(x+h) - f(x+2h)}{2h} + O(h^2). $$
+            Use this formula to show that the quadratic convergence of centered differences is recovered.
+            \end{itemize}
+        \item\pts{3} Implement the first-order discrete derivatives $\ten D^+, \ten D^-, \ten D$ and construct an example to validate the convergence rates seen in class. Analytically compute the convergence rate of centered differences for the second-order derivatives $\ten D^-\ten D^+$, and program an example to also validate its convergence rate. Finally, analyze the case of the composition of centered differences $\ten D\ten D$.
+        \item\pts{2} The notes detail how centered differences can be written as the composition of the forward and backward difference operators according to $\ten D^+ \ten D^- = \ten D^-\ten D^+$. Prove theoretically that instead $\ten D^+\ten D^+$ (or $\ten D^-\ten D^-$) is not a good approximation of the second-order derivative.
+    \item Consider the domain $\Omega=(0,1)$. In it, discretize the equation 
+            $$ \mathcal L u = 1 $$ 
+            with the differential operator $\mathcal L$ given by
+            $$ \mathcal L u = - u'' + bu' + cu, $$
+            with boundary conditions given by $u(0) = 1$, $u(1) = 2$. This problem is known as the Advection-Diffusion-Reaction (ADR) equation. We will compute the sensitivity of the problem to its parameters in terms of the conditioning of the system, which is intrinsically related to the numerical difficulty of the problem. We will call the matrix induced by the discretization $\mat L_h$. 
+            \begin{itemize}
+                \item\pts{1} Show the corresponding equation for the grid node $i$ for (i) forward differences for $u'$ and (ii) centered differences for $u'$. 
+                \item\pts{2} In each of the two discretizations from the previous point, show that the obtained discretization is consistent and compute the order of consistency.
+                \item\pts{1} Plot in a log-log graph the conditioning of the matrix $\mat L_h$ with respect to the following values: $h \in \{2^{-n}\}_{n=2}^8$, $b \in \{0.01,0.1,1,10,100\}$, and $c \in \{0.01,0.1,1,10,100\}$. Do this only for the scheme where $u'$ is approximated with centered differences.
+                \item\pts{2} Prove theoretically using the Lax Equivalence Theorem that the discrete solution obtained with the matrix $\mat L_h$ converges to the continuous solution if $b=0$. To do this, extend the proof from the notes for the Laplacian.
+                \item\pts{2} Using the method of manufactured solutions, show that the numerical convergence rate to an analytical solution is the one expected by the theory. 
+            \end{itemize}
+
+\end{enumerate}
+
+\todo[inline,color=white!90!black]{\textbf{Note: } We will open a forum on Canvas to review any typos and/or errors in the formulation.}
+\end{document}

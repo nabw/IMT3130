@@ -255,7 +255,7 @@ Some common and simple examples: Helmholtz decomposition, zero average functions
         h = f - c = f -  \frac{(f,1)_H}{(1,1)_H}    .
     \end{equation*}\vspace{-10pt}
 }
-\paragraph{$L^p$ spaces}
+\paragraph{\texorpdfstring{$L^p$ spaces}{Lp spaces}}
 The most important spaces for us are the Lebesgue spaces $L^p(\Omega;\R^n)$, which are equipped with a $p$-norm. To this end, we need to recall some basic definitions of measure theory. We will denote $\mathcal{P}(\Omega)$ as the \emph{power set} of $\Omega$, that is, the set of all subsets of $\Omega$. 
 \begin{definition}[Measure space, measurable sets, measure]
     A triplet $(\Omega, \Sigma, \mu)$ is called a \emph{measure space}, if 
@@ -684,10 +684,10 @@ For context, we note that most generally a (real) $n$-tensor over $X$ is simply 
     A \emph{second-order tensor} $\ten T$ is defined as a linear operator $\ten T\in \mathcal{L}(\R^3, \R^3)$. We write its action on $\vec u\in\R^3$ as $\ten T(\vec u) \equiv \ten T \vec u$. The \emph{components} $T_{ij}\in\R$ of $\ten T$ are defined as the $i$-th component of $\ten T\vec e_j$, i.e. $T_{ij}\vec e_i \coloneqq \ten T\vec e_j$, or equivalently, $T_{ij} = \vec e_i\cdot\ten T\vec e_j$. Since $\mathcal{L}(\R^3,\R^3)$ and $\R^{3\times 3}$ are isomorphic, we can always uniquely identify a second-order tensor $\ten T$ via its coefficient matrix $[\ten T]\in\R^{3\times 3}$, and thus we just write $\ten T$ for ease of notation.
 
     Given two vectors $\vec a, \vec b\in\R^3$, we can construct a second-order tensor through the \emph{tensor product} $\otimes$, where we identify
-    \begin{tightalign*}\label{eq:tensor-product-definition}
+    \begin{tightalign}\label{eq:tensor-product-definition}
         \otimes: \R^3\times\R^3 &\to \R^{3\times 3}\\
         (\vec a,\vec b) &\mapsto \vec a\otimes\vec b \coloneqq \vec a\vec b^\top.
-    \end{tightalign*}
+    \end{tightalign}
     From the definition, we note that $(\vec a\otimes \vec b)_{ij} = a_i b_j$, and we define the action of $(\vec a\otimes\vec b)$ on vector $\vec c$ as 
     \begin{equation}\label{eq:tensor-product-action}
         (\vec a\otimes\vec b)\vec c = (\vec b\cdot\vec c)\vec a.
