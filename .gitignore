@@ -200,6 +200,8 @@ svg-inkscape/
 # local teaching material
 **/pauta/
 **/pauta-old/
+!tutorials/**/pauta/
+!tutorials/**/pauta/*.tex
 
 # sympy
 *.sout

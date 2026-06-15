@@ -37,7 +37,7 @@
 \usepackage{esint}
 \usepackage{amsthm}
 \usepackage{thmtools}
-\RequirePackage[most]{tcolorbox}  
+\RequirePackage[most]{tcolorbox}
 
 \swapnumbers
 
@@ -111,6 +111,7 @@
 \def\N{\mathbb N}
 \def\Q{\mathbb Q}
 \def\Z{\mathbb Z}
+\def\D{\mathcal D}
 
 \usepackage{mdframed}
 \mdfdefinestyle{MyFrame}{%
@@ -124,7 +125,7 @@
     innerleftmargin=20pt,
     splittopskip=2\baselineskip,
     backgroundcolor=gray!50!white}
-    
+
 \setlength\textwidth{7in}
 \setlength\parindent{0pt}
 \oddsidemargin=-0.5cm
@@ -139,14 +140,14 @@
 \renewcommand{\thesection}{\arabic{section}.}
 \renewcommand{\thesubsection}{\thesection\arabic{subsection}.}
 \renewcommand{\labelitemi}{{\raisebox{.3\height}{\scalebox{0.6}{$\blacklozenge$}}}}
-\renewcommand*\contentsname{Índice}
+\renewcommand*\contentsname{\'Indice}
 
 \newcommand{\p}{\vspace{10pt}}
 
 \AtBeginDocument{\vspace*{-3.2\baselineskip}}
 \textheight=665pt
 
-\lhead{\scshape Pontificia Universidad Católica de Chile}
+\lhead{\scshape Pontificia Universidad Cat\'olica de Chile}
 \rhead{\scshape IMC UC}
 \cfoot{\thepage}
 
@@ -161,51 +162,65 @@
         \small
         \vspace{1pt}
         \textbf{IMT3130} \hfill
-        \textbf{20/03/2026}
+        \textbf{10/04/2026}
     \end{flushleft}
     \begin{center}
-        \LARGE\textbf{Ayudantía 2}\\
+        \LARGE\textbf{Ayudant\'ia 4}\\
         \vspace{3pt}
-        \normalsize\textbf{Diferencias finitas}\\
-        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \normalsize\textbf{Formulaciones d\'ebiles, Poincar\'e, Lax--Milgram y Galerkin}\\
+        \normalsize Ayudante: Basti\'an Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
         \rule{\textwidth}{0.05mm}
     \end{center}
 
-\section{Problemas}
+\section*{Problemas}
 
 \begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
 
-    \item Sea $f$ suficientemente suave y considere la familia de aproximaciones
+    \item \textbf{Problema con condiciones mixtas.} Sea $\Omega\subset\R^d$ un dominio acotado, conexo y Lipschitz. Suponga que $\partial\Omega=\overline{\Gamma_D}\cup\overline{\Gamma_R}$, con $\Gamma_D\cap\Gamma_R=\varnothing$. Para $c\in L^\infty(\Omega)$, $\beta\in L^\infty(\Gamma_R)$ y $c,\beta\ge 0$, considere el problema
     \[
-    \frac{a f(x_i-2h)+b f(x_i-h)+c f(x_i+h)+d f(x_i+2h)}{h},
+    \begin{aligned}
+        -\Delta u + cu &= f &&\text{en }\Omega,\\
+        \gamma_0u &=0 &&\text{en }\Gamma_D,\\
+        \partial_n u+\beta\gamma_0u &= r &&\text{en }\Gamma_R.
+    \end{aligned}
     \]
-    donde $a,b,c,d\in\R$ son constantes independientes de $h$.
-    Determine $a,b,c,d$ de modo que la expresión aproxime $f'(x_i)$ con el mayor orden posible. Escriba el esquema resultante y determine su orden de consistencia.
+    Defina
+    \[
+        V=\{v\in H^1(\Omega):\gamma_0v=0\text{ en }\Gamma_D\}.
+    \]
+    \begin{enumerate}[label=(\alph*)]
+        \item Derive la formulaci\'on d\'ebil del problema, identificando la forma bilineal $a:V\times V\to\R$ y la forma lineal $\ell:V\to\R$. Explique por qu\'e la condici\'on de Dirichlet es esencial y la de Robin es natural.
+        \item Bajo hip\'otesis razonables sobre $f$ y $r$, demuestre continuidad de $a$ y de $\ell$ en $V$. Luego determine en qu\'e casos $a$ es coerciva en $V$ y concluya existencia y unicidad por Lax--Milgram.
+        \item Considere ahora al caso de condiciones puramente Neumann, i.e. $\Gamma_D=\varnothing$, $\Gamma_R=\partial\Omega$, $\beta=0$ y $c=0$. Muestre que las funciones constantes pertenecen a $\ker a$, deduzca la condici\'on necesaria de compatibilidad tomando $v=1$, y explique c\'omo se recupera coercividad sobre
+        \[
+            H^1_\ast(\Omega)=\left\{v\in H^1(\Omega):\int_\Omega v\,dx=0\right\}
+        \]
+        usando la desigualdad de Poincar\'e--Wirtinger. ¿Qu\'e cambia si $c(x)\ge c_0>0$?
+    \end{enumerate}
 
-    \item Considere el problema de borde
+    \item \textbf{Ortogonalidad de Galerkin como proyecci\'on.} Sea $V$ un espacio de Hilbert, $a:V\times V\to\R$ una forma bilineal sim\'etrica, continua y coerciva, y $\ell\in V'$. Sea $u\in V$ la soluci\'on de
     \[
-    -u''(x)=f(x), \qquad x\in(0,1), \qquad u(0)=u(1)=0,
+        a(u,v)=\ell(v)
+        \qquad\forall v\in V.
     \]
-    y su discretización estándar
+    Sea $V_h\subset V$ un subespacio finito-dimensional conforme y suponga que $u_h\in V_h$ satisface
     \[
-    \frac{-u_{i+1}+2u_i-u_{i-1}}{h^2}=f(x_i), \qquad i=1,\dots,N.
+        a(u_h,v_h)=\ell(v_h)
+        \qquad\forall v_h\in V_h.
     \]
-    Suponga además que el error de truncamiento local es de orden $O(h^2)$. ¿Esto basta para concluir que el error global también es de orden $O(h^2)$? Deduzca la ecuación de error, identifique la hipótesis adicional necesaria para obtener convergencia, y discuta qué ocurre si solo se dispone de una cota de estabilidad de la forma
-    \[
-    \|v_h\|\le C_h\|A_hv_h\|,
-    \qquad C_h\to\infty \text{ cuando } h\to 0.
-    \]
-
-    \item Sea $\Omega=(0,1)^2$ y considere una malla cartesiana uniforme
-    \[
-    x_i=ih,\qquad y_j=jh.
-    \]
-    Para nodos interiores, sea $u_{ij}\approx u(x_i,y_j)$. Construya un esquema de diferencias finitas para
-    \[
-    -\Delta u=f
-    \qquad \text{en } \Omega,
-    \]
-    usando diferencias centradas en cada dirección. Escriba el \textit{stencil} resultante y pruebe, mediante expansiones de Taylor en dos variables, que el método es consistente de orden $2$. Identifique además el término dominante del error local.
+    \begin{enumerate}[label=(\alph*)]
+        \item Demuestre la ortogonalidad de Galerkin
+        \[
+            a(u-u_h,v_h)=0
+            \qquad\forall v_h\in V_h.
+        \]
+        \item Defina $\|v\|_a\coloneqq a(v,v)^{1/2}$ y pruebe que es una norma equivalente a la norma de $V$.
+        \item Use la ortogonalidad para concluir que $u_h$ es la mejor aproximaci\'on de $u$ en $V_h$ respecto de $\|\cdot\|_a$, es decir,
+        \[
+            \|u-u_h\|_a=\inf_{v_h\in V_h}\|u-v_h\|_a.
+        \]
+        \item Si $V_h=\operatorname{span}\{\varphi_1,\dots,\varphi_N\}$ y $u_h=\sum_{j=1}^N U_j\varphi_j$, escriba el sistema lineal que satisfacen los coeficientes $U_j$.
+    \end{enumerate}
 
 \end{enumerate}
 

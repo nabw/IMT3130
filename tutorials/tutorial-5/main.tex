@@ -1,0 +1,286 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{color}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{commath}
+\usepackage{relsize}
+\usepackage{centernot}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{gensymb}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{fancyhdr}
+\usepackage{floatrow}
+\usepackage{wrapfig}
+\usepackage[labelfont=bf]{caption}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{multicol}
+\usepackage[misc]{ifsym}
+\usepackage{tabularx}
+\usepackage{empheq}
+\usepackage{tkz-tab}
+\usepackage{xpatch}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tabularray}
+\usepackage{esint}
+\usepackage{amsthm}
+\usepackage{thmtools}
+\RequirePackage[most]{tcolorbox}
+
+\swapnumbers
+
+\makeatletter
+\declaretheoremstyle[
+  headfont= \sffamily\bfseries\color{cyan!50!black},
+  headpunct={\sffamily\bfseries.},
+  postheadspace=0.5em,
+  notefont=\sffamily\bfseries,
+  headformat=\NAME\NUMBER\let\thmt@space\@empty\NOTE,
+  bodyfont=\mdseries\slshape,
+  spaceabove=12pt,spacebelow=12pt,
+]{thmstyle}
+\makeatother
+
+\theoremstyle{thmstyle}
+\declaretheorem[name=Definici\'on]{theorem}
+\newtheorem{definition}[theorem]{Definici\'on}
+
+\definecolor{lightcyan}{rgb}{0.88, 1.0, 1.0}
+\colorlet{mythmback}{lightcyan!40!white}
+
+\tcolorboxenvironment{theorem}{
+  colback=mythmback,coltitle=blue,colframe=mythmback,
+  left=0pt,right=0pt,
+  top=0pt,bottom=0pt,
+  before skip=10pt, after skip=10pt,
+}
+
+\xpatchcmd{\tkzTabLine}{$0$}{$\bullet$}{}{}
+\tikzset{t style/.style={style=solid}}
+\pgfplotsset{compat=newest}
+
+\newtheorem{manualtheoreminner}{}
+\newenvironment{manualtheorem}[1]{%
+  \renewcommand\themanualtheoreminner{#1}%
+  \manualtheoreminner
+}{\endmanualtheoreminner}
+
+\renewcommand{\pd}[2]{\frac{\partial #1}{ \partial #2}}
+\newcommand{\td}[2]{\frac{\mathrm{d} #1}{ \mathrm{d} #2}}
+\newcommand{\pdd}[2]{\frac{\partial^2 #1}{ \partial #2 ^2}}
+\newcommand{\pddc}[3]{\frac{\partial^2 #1}{ \partial #2 \partial #3}}
+\newcommand{\solution}[0]{\large{\textbf{Soluci\'on}}\normalsize}
+
+\def\sca   #1{\mbox{\rm{#1}}{}}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\ten   #1{\mbox{\boldmath $#1$}{}}
+\def\ltr   #1{\mbox{\sf{#1}}}
+\def\bltr  #1{\mbox{\sffamily{\bfseries{{#1}}}}}
+
+\DeclareMathOperator{\dive}{div}
+\DeclareMathOperator{\trace}{trace}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\symm}{symm}
+\DeclareMathOperator{\sk}{skew}
+\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\Grad}{Grad}
+\DeclareMathOperator{\curl}{curl}
+\DeclareMathOperator{\Curl}{Curl}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\ds{\mbox{\(\,\mathrm{d}s\)}}
+\def\dS{\mbox{\(\,\mathrm{d}S\)}}
+\def\dV{\mbox{\(\,\mathrm{d}V\)}}
+\def\dv{\mbox{\(\,\mathrm{d}v\)}}
+\def\R{\mathbb R}
+\def\C{\mathbb C}
+\def\N{\mathbb N}
+\def\Q{\mathbb Q}
+\def\Z{\mathbb Z}
+\def\D{\mathcal D}
+
+\usepackage{mdframed}
+\mdfdefinestyle{MyFrame}{%
+    linecolor=black,
+    linewidth=1pt,
+    outerlinewidth=1pt,
+    roundcorner=20pt,
+    innertopmargin=\baselineskip,
+    innerbottommargin=\baselineskip,
+    innerrightmargin=20pt,
+    innerleftmargin=20pt,
+    splittopskip=2\baselineskip,
+    backgroundcolor=gray!50!white}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\pagestyle{fancy}
+\newcommand*{\vertbar}{\rule[-1ex]{0.5pt}{2.5ex}}
+\setlength{\headheight}{13.59999pt}
+
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\renewcommand{\figurename}{Figura}
+\renewcommand\refname{Referencias}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\thesection\arabic{subsection}.}
+\renewcommand{\labelitemi}{{\raisebox{.3\height}{\scalebox{0.6}{$\blacklozenge$}}}}
+\renewcommand*\contentsname{\'Indice}
+
+\newcommand{\p}{\vspace{10pt}}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+\textheight=665pt
+
+\lhead{\scshape Pontificia Universidad Cat\'olica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\usepackage{footnote}
+\usepackage{etoolbox}
+\newtoggle{indefintion}
+\togglefalse{indefintion}
+\pretocmd{\footnote}{\iftoggle{indefintion}{\stepcounter{footnote}}{\relax}}{}{}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{16/04/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Ayudant\'ia 5}\\
+        \vspace{3pt}
+        \normalsize\textbf{Lifting, Galerkin y estimaciones abstractas}\\
+        \normalsize Ayudante: Basti\'an Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Condiciones mixtas y lifting sobre $\Gamma_D$.} Considere el problema
+    \[
+    \begin{aligned}
+        -\Delta u + cu &= f &&\text{en }\Omega,\\
+        \gamma_0u &=g &&\text{en }\Gamma_D,\\
+        \partial_n u+\beta\gamma_0u &= r &&\text{en }\Gamma_R,
+    \end{aligned}
+    \]
+    en un dominio Lipschitz acotado con $\partial\Omega=\overline{\Gamma_D}\cup\overline{\Gamma_R}$ y $\Gamma_D\cap\Gamma_R=\varnothing$. Defina
+    \[
+        V=\{v\in H^1(\Omega):\gamma_0v=0\text{ en }\Gamma_D\},
+        \qquad
+        V_g=\{v\in H^1(\Omega):\gamma_0v=g\text{ en }\Gamma_D\}.
+    \]
+    Suponga $f\in L^2(\Omega)$, $r\in H^{-1/2}(\Gamma_R)$, $g\in H^{1/2}(\Gamma_D)$ y $c,\beta\in L^\infty$ con $c,\beta\ge 0$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Considere primero el caso homog\'eneo $g=0$. Derive la formulaci\'on d\'ebil en el espacio $V$, identificando la forma bilineal y la forma lineal. Suponiendo $|\Gamma_D|>0$, muestre que el problema es bien puesto por Lax--Milgram.
+        \item Vuelva ahora al caso general $g\in H^{1/2}(\Gamma_D)$. Tome un lifting $G\in H^1(\Omega)$ tal que $\gamma_0G=g$ en $\Gamma_D$, escriba $u=u_0+G$ con $u_0\in V$, y derive el problema equivalente satisfecho por $u_0$. Identifique con cuidado la nueva funcional lineal y explique por qu\'e la existencia y unicidad de $u_0$ implican existencia y unicidad de $u$ en $V_g$.
+    \end{enumerate}
+
+    \item \textbf{Ortogonalidad de Galerkin como proyecci\'on.} Sea $V$ un espacio de Hilbert, $a:V\times V\to\R$ una forma bilineal sim\'etrica, continua y coerciva, y $\ell\in V'$. Sea $u\in V$ la soluci\'on de
+    \[
+        a(u,v)=\ell(v)
+        \qquad\forall v\in V.
+    \]
+    Sea $V_h\subset V$ un subespacio finito-dimensional conforme y suponga que $u_h\in V_h$ satisface
+    \[
+        a(u_h,v_h)=\ell(v_h)
+        \qquad\forall v_h\in V_h.
+    \]
+    Usaremos la ortogonalidad de Galerkin, ya demostrada en clases:
+    \[
+        a(u-u_h,v_h)=0
+        \qquad\forall v_h\in V_h.
+    \]
+    \begin{enumerate}[label=(\alph*)]
+        \item Defina $\|v\|_a\coloneqq a(v,v)^{1/2}$ y pruebe que es una norma equivalente a la norma de $V$.
+        \item Use la ortogonalidad para concluir que $u_h$ es la mejor aproximaci\'on de $u$ en $V_h$ respecto de $\|\cdot\|_a$, es decir,
+        \[
+            \|u-u_h\|_a=\inf_{v_h\in V_h}\|u-v_h\|_a.
+        \]
+        \item Si $V_h=\operatorname{span}\{\varphi_1,\dots,\varphi_N\}$ y $u_h=\sum_{j=1}^N U_j\varphi_j$, escriba el sistema lineal que satisfacen los coeficientes $U_j$.
+    \end{enumerate}
+
+\item \textbf{Recuperar la formulaci\'on fuerte desde una formulaci\'on d\'ebil con coeficiente anisotr\'opico y condiciones mixtas.}
+Sea $\Omega\subset\R^d$ un dominio Lipschitz acotado, con descomposici\'on
+\[
+\partial\Omega=\overline{\Gamma_D}\cup\overline{\Gamma_R},
+\qquad
+\Gamma_D\cap\Gamma_R=\varnothing,
+\qquad
+|\Gamma_D|>0.
+\]
+Sea $\mat B\in W^{1,\infty}(\Omega;\R^{d\times d})$ una matriz sim\'etrica, y defina
+\[
+\mat A_\varepsilon(x)=\mat I+\varepsilon \mat B(x),
+\qquad \varepsilon\ge 0.
+\]
+Suponga adem\'as que
+\[
+\|\mat B\|_{L^\infty(\Omega)}\le M,
+\qquad
+M>0,
+\qquad
+0\le \varepsilon<\frac1M,
+\]
+y que $c\in L^\infty(\Omega)$, $\beta\in L^\infty(\Gamma_R)$, con $c,\beta\ge 0$. Suponga tambi\'en
+\[
+    f\in L^2(\Omega),
+    \qquad
+    r\in H^{-1/2}(\Gamma_R),
+    \qquad
+    g\in H^{1/2}(\Gamma_D).
+\]
+
+Considere el problema
+\[
+\begin{aligned}
+-\dive\!\big(\mat A_\varepsilon \grad u\big)+cu &= f &&\text{en }\Omega,\\
+\gamma_0u &= g &&\text{en }\Gamma_D,\\
+(\mat A_\varepsilon\grad u)\cdot \vec n+\beta\,\gamma_0u &= r &&\text{en }\Gamma_R.
+\end{aligned}
+\]
+Defina
+\[
+V=\{v\in H^1(\Omega):\gamma_0v=0\text{ en }\Gamma_D\},
+\qquad
+V_g=\{v\in H^1(\Omega):\gamma_0v=g\text{ en }\Gamma_D\}.
+\]
+
+\begin{enumerate}[label=(\alph*)]
+    \item Tome un lifting $G\in H^1(\Omega)$ tal que $\gamma_0G=g$ en $\Gamma_D$, escriba $u=u_0+G$ con $u_0\in V$, y derive la formulaci\'on d\'ebil equivalente para $u_0$. Identifique con cuidado la forma bilineal $a_\varepsilon$ y la funcional lineal $\widetilde \ell_\varepsilon$.
+
+    \item Demuestre que $a_\varepsilon$ es continua y coerciva en $V$, y concluya existencia y unicidad de $u_0$ por Lax--Milgram. Explique por qu\'e esto implica existencia y unicidad de $u\in V_g$.
+
+    \item Suponga ahora que $u\in H^2(\Omega)$ y que $\mat A_\varepsilon\in W^{1,\infty}(\Omega)$. Partiendo de la formulaci\'on d\'ebil, recupere:
+    \begin{itemize}
+        \item la ecuaci\'on fuerte en $\Omega$,
+        \item la condici\'on de Robin/conormal en $\Gamma_R$,
+        \item y explique por qu\'e la condici\'on de Dirichlet en $\Gamma_D$ ya estaba incorporada desde el comienzo.
+    \end{itemize}
+
+    \item Discuta brevemente qu\'e puede fallar si $\Gamma_D=\varnothing$, $c=0$ y $\beta=0$. Relacione esto con el caso de Neumann puro.
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

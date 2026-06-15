@@ -1,0 +1,440 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,enumitem,fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\ten   #1{\mbox{\boldmath $#1$}{}}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\R{\mathbb R}
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\dX{\mbox{\(\,\mathrm{d}X\)}}
+\def\ds{\mbox{\(\,\mathrm{d}s\)}}
+\def\dA{\mbox{\(\,\mathrm{d}A\)}}
+\DeclareMathOperator{\dive}{div}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cof}{Cof}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{16/05/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 8}\\
+        \vspace{3pt}
+        \normalsize\textbf{Mecánica del continuo, formulaciones mixtas y termodinámica}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} Sea $\Omega\subset\R^d$, $d\in\{2,3\}$, Lipschitz, acotado y conexo. Considere el modelo de Stokes--Brinkman incomprensible
+    \[
+    \begin{aligned}
+        -\mu\Delta\vec v+\alpha\vec v+\nabla p&=\vec f &&\text{en }\Omega,\\
+        \dive\vec v&=0 &&\text{en }\Omega,\\
+        \vec v&=\vec0 &&\text{en }\partial\Omega,\\
+        \int_\Omega p\dx&=0.
+    \end{aligned}
+    \]
+    Derive la condición local de incomprensibilidad, obtenga el modelo desde el balance de momentum y la ley newtoniana, derive la formulación mixta y verifique las hipótesis de Brezzi usando la inf--sup continua de la divergencia.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Si $\omega_t$ es un subcuerpo material, la conservación de volumen exige
+        \[
+            \frac{\mathrm d}{\mathrm dt}|\omega_t|=0.
+        \]
+        Usando Reynolds con la función escalar $1$,
+        \[
+            0=\frac{\mathrm d}{\mathrm dt}\int_{\omega_t}1\dx
+            =\int_{\omega_t}\dive\vec v\dx.
+        \]
+        Como $\omega_t$ es arbitrario, por localización,
+        \[
+            \dive\vec v=0\qquad\text{en }\Omega.
+        \]
+        De forma equivalente, si $J=\det\ten F$, entonces
+        \[
+            \dot J=J\,\dive\vec v.
+        \]
+        La conservación local de volumen, $J\equiv1$, implica nuevamente $\dive\vec v=0$.
+
+        \item El balance euleriano de momentum con arrastre lineal es
+        \[
+            \rho\frac{D\vec v}{Dt}=\dive\ten\sigma+\rho\vec b-\alpha\vec v.
+        \]
+        En régimen estacionario lento se desprecia la inercia, y por tanto
+        \[
+            -\dive\ten\sigma+\alpha\vec v=\rho\vec b.
+        \]
+        Para un fluido newtoniano incomprensible,
+        \[
+            \ten\sigma=-p\ten I+2\mu D(\vec v),
+            \qquad
+            D(\vec v)=\frac12(\nabla\vec v+\nabla\vec v^\top).
+        \]
+        Si $\mu$ es constante,
+        \[
+            \dive(2\mu D(\vec v))
+            =
+            \mu\Delta\vec v+\mu\nabla(\dive\vec v)
+            =
+            \mu\Delta\vec v.
+        \]
+        Luego
+        \[
+            -\mu\Delta\vec v+\alpha\vec v+\nabla p=\vec f,
+            \qquad
+            \vec f:=\rho\vec b.
+        \]
+
+        \item Tomamos
+        \[
+            V=H^1_0(\Omega)^d,
+            \qquad
+            Q=L^2_0(\Omega)=\left\{q\in L^2(\Omega):\int_\Omega q\dx=0\right\}.
+        \]
+        Multiplicando la ecuación de momentum por $\vec w\in V$,
+        \[
+            \int_\Omega
+            (-\mu\Delta\vec v+\alpha\vec v+\nabla p)\cdot\vec w\dx
+            =
+            \langle\vec f,\vec w\rangle.
+        \]
+        Los términos diferenciales se integran por partes:
+        \[
+        \begin{aligned}
+            -\mu\int_\Omega \Delta\vec v\cdot\vec w\dx
+            &=
+            \mu\int_\Omega \nabla\vec v:\nabla\vec w\dx
+            -\mu\int_{\partial\Omega}\partial_n\vec v\cdot\vec w\ds\\
+            &=
+            \mu\int_\Omega \nabla\vec v:\nabla\vec w\dx,
+        \end{aligned}
+        \]
+        porque $\vec w=\vec0$ en $\partial\Omega$. Además,
+        \[
+        \begin{aligned}
+            \int_\Omega \nabla p\cdot\vec w\dx
+            &=
+            -\int_\Omega p\,\dive\vec w\dx
+            +\int_{\partial\Omega}p\,\vec w\cdot\vec n\ds\\
+            &=
+            -\int_\Omega p\,\dive\vec w\dx.
+        \end{aligned}
+        \]
+        Por tanto,
+        \[
+            \mu\int_\Omega \nabla\vec v:\nabla\vec w\dx
+            +\alpha\int_\Omega \vec v\cdot\vec w\dx
+            -\int_\Omega p\,\dive\vec w\dx
+            =
+            \langle \vec f,\vec w\rangle.
+        \]
+        La restricción se escribe como
+        \[
+            -\int_\Omega q\,\dive\vec v\dx=0
+            \qquad\forall q\in Q.
+        \]
+        Definimos
+        \[
+        \begin{aligned}
+            a(\vec v,\vec w)&=
+            \mu\int_\Omega \nabla\vec v:\nabla\vec w\dx
+            +\alpha\int_\Omega \vec v\cdot\vec w\dx,\\
+            b(\vec w,p)&=-\int_\Omega p\,\dive\vec w\dx,
+            \qquad
+            F(\vec w)=\langle\vec f,\vec w\rangle.
+        \end{aligned}
+        \]
+        La formulación mixta es: hallar $(\vec v,p)\in V\times Q$ tal que
+        \[
+        \begin{aligned}
+            a(\vec v,\vec w)+b(\vec w,p)&=F(\vec w) &&\forall \vec w\in V,\\
+            b(\vec v,q)&=0 &&\forall q\in Q.
+        \end{aligned}
+        \]
+        La presión se toma con media cero porque sólo aparece $\nabla p$ en el modelo fuerte; por tanto, $p$ queda determinada salvo constantes.
+
+        \item Primero verificamos las hipótesis sobre las formas. Para $a$, usando Cauchy--Schwarz,
+        \[
+        \begin{aligned}
+            \abs{a(\vec v,\vec w)}
+            &\le
+            \mu\norm{\nabla\vec v}_{L^2(\Omega)}
+            \norm{\nabla\vec w}_{L^2(\Omega)}
+            +\alpha\norm{\vec v}_{L^2(\Omega)}
+            \norm{\vec w}_{L^2(\Omega)}\\
+            &\le
+            (\mu+\alpha)\norm{\vec v}_{H^1(\Omega)}
+            \norm{\vec w}_{H^1(\Omega)}.
+        \end{aligned}
+        \]
+        Para $b$, como $\abs{\dive\vec w}\le \sqrt d\,\abs{\nabla\vec w}$ c.t.p.,
+        \[
+        \begin{aligned}
+            \abs{b(\vec w,q)}
+            &=
+            \abs{\int_\Omega q\,\dive\vec w\dx}\\
+            &\le
+            \norm{q}_{L^2(\Omega)}
+            \norm{\dive\vec w}_{L^2(\Omega)}
+            \le
+            \sqrt d\,\norm{q}_{L^2(\Omega)}
+            \norm{\vec w}_{H^1(\Omega)}.
+        \end{aligned}
+        \]
+        Además, por Poincaré en $H^1_0(\Omega)^d$ existe $C_P>0$ tal que
+        \[
+            \norm{\vec w}_{H^1(\Omega)}^2
+            \le C_P\norm{\nabla\vec w}_{L^2(\Omega)}^2.
+        \]
+        Por tanto, usando $\mu>0$ y $\alpha\ge0$,
+        \[
+        \begin{aligned}
+            a(\vec w,\vec w)
+            &=
+            \mu\norm{\nabla\vec w}_{L^2(\Omega)}^2
+            +\alpha\norm{\vec w}_{L^2(\Omega)}^2\\
+            &\ge
+            \mu\norm{\nabla\vec w}_{L^2(\Omega)}^2
+            \ge
+            \frac{\mu}{C_P}\norm{\vec w}_{H^1(\Omega)}^2.
+        \end{aligned}
+        \]
+        En particular, $a$ es coerciva sobre el núcleo
+        \[
+            Z=\{\vec w\in V:\ b(\vec w,q)=0\ \forall q\in Q\}
+            =
+            \{\vec w\in H^1_0(\Omega)^d:\ \dive\vec w=0\}.
+        \]
+        Para identificar el núcleo, notamos que $\dive\vec w\in L^2_0(\Omega)$ porque
+        \[
+            \int_\Omega \dive\vec w\dx
+            =
+            \int_{\partial\Omega}\vec w\cdot\vec n\ds
+            =0.
+        \]
+        Entonces $b(\vec w,q)=0$ para todo $q\in Q$ implica, tomando $q=\dive\vec w$,
+        \[
+            \norm{\dive\vec w}_{L^2(\Omega)}^2=0.
+        \]
+        Si además se cumple
+        \[
+            \inf_{q\in Q\setminus\{0\}}
+            \sup_{\vec w\in V\setminus\{\vec0\}}
+            \frac{\abs{b(\vec w,q)}}{\norm{\vec w}_{H^1(\Omega)}\norm{q}_{L^2(\Omega)}}
+            \ge\beta>0,
+        \]
+        y $\vec f\in H^{-1}(\Omega)^d$, entonces $F(\vec w)=\langle\vec f,\vec w\rangle$ es continuo en $V$. El teorema de Brezzi da existencia y unicidad de $(\vec v,p)\in V\times Q$, junto con
+        \[
+            \norm{\vec v}_{H^1(\Omega)}+\norm{p}_{L^2(\Omega)}
+            \le C\norm{\vec f}_{H^{-1}(\Omega)}.
+        \]
+        El caso $\alpha=0$ sigue cubierto. El caso $\mu=0$ no queda cubierto por esta formulación, porque ya no se controla la norma $H^1$ de la velocidad.
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} En la configuración material $\Omega_0$, considere
+    \[
+        \rho_0c_v\dot\theta-\Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta)
+        =
+        R_0+g_{\mathrm{mec}},
+        \qquad
+        \ten\kappa\nabla_{\vec X}\theta\cdot\vec N=0\quad\text{en }\partial\Omega_0,
+    \]
+    con $\rho_0,c_v>0$ y $\ten\kappa$ simétrica, acotada y uniformemente elíptica. Explique el origen de la ecuación desde la primera ley y Fourier, escriba $g_{\mathrm{mec}}=3\alpha_TK\theta_\star\ten F^{-\top}:\dot{\ten F}$ en términos de $J=\det\ten F$, derive Euler implícito y pruebe bien planteamiento por Lax--Milgram.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item La primera ley material es
+        \[
+            \rho_0\dot e_m=\ten S:\dot{\ten E}-\Div_{\vec X}\vec q_0+R_0.
+        \]
+        Si la parte térmica se modela como $e_{\mathrm{th}}=c_v\theta$ y la potencia mecánica que se transforma en calor se agrupa en una fuente conocida $g_{\mathrm{mec}}$, queda
+        \[
+            \rho_0c_v\dot\theta=-\Div_{\vec X}\vec q_0+R_0+g_{\mathrm{mec}}.
+        \]
+        La desigualdad residual de Clausius--Duhem contiene
+        \[
+            -\vec q_0\cdot\nabla_{\vec X}\theta\ge0.
+        \]
+        Con la ley de Fourier material,
+        \[
+            \vec q_0=-\ten\kappa\nabla_{\vec X}\theta,
+        \]
+        se obtiene
+        \[
+            -\vec q_0\cdot\nabla_{\vec X}\theta
+            =
+            \ten\kappa\nabla_{\vec X}\theta\cdot\nabla_{\vec X}\theta
+            \ge \kappa_0|\nabla_{\vec X}\theta|^2\ge0.
+        \]
+        Sustituyendo Fourier en el balance térmico,
+        \[
+            \rho_0c_v\dot\theta-\Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta)
+            =
+            R_0+g_{\mathrm{mec}}.
+        \]
+
+        \item Como $J=\det\ten F$, la fórmula de Jacobi da
+        \[
+            \dot J=\Cof(\ten F):\dot{\ten F}
+            =
+            J\ten F^{-\top}:\dot{\ten F}.
+        \]
+        Por tanto,
+        \[
+            \ten F^{-\top}:\dot{\ten F}=\frac{\dot J}{J},
+            \qquad
+            g_{\mathrm{mec}}=3\alpha_TK\theta_\star\frac{\dot J}{J}.
+        \]
+        Así, esta fuente mide la tasa relativa de cambio volumétrico. Si $J$ es constante en el tiempo, entonces esta contribución se anula.
+
+        \item Con Euler implícito,
+        \[
+            \dot\theta(t^{n+1})\approx\frac{\theta^{n+1}-\theta^n}{\Delta t}.
+        \]
+        El problema en el paso $n+1$ es
+        \[
+            \rho_0c_v\frac{\theta^{n+1}-\theta^n}{\Delta t}
+            -\Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta^{n+1})
+            =
+            R_0^{n+1}+g_{\mathrm{mec}}^{n+1}.
+        \]
+        Para $q\in H^1(\Omega_0)$, multiplicamos por $q$ e integramos:
+        \[
+        \begin{aligned}
+            &\frac{\rho_0c_v}{\Delta t}
+            \int_{\Omega_0}(\theta^{n+1}-\theta^n)q\dX
+            -\int_{\Omega_0}
+            \Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta^{n+1})q\dX\\
+            &\qquad=
+            \int_{\Omega_0}
+            (R_0^{n+1}+g_{\mathrm{mec}}^{n+1})q\dX.
+        \end{aligned}
+        \]
+        El término difusivo satisface
+        \[
+        \begin{aligned}
+            -\int_{\Omega_0}
+            \Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta^{n+1})q\dX
+            &=
+            \int_{\Omega_0}
+            \ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\nabla_{\vec X}q\dX\\
+            &\quad
+            -\int_{\partial\Omega_0}
+            (\ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\vec N)q\dA\\
+            &=
+            \int_{\Omega_0}
+            \ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\nabla_{\vec X}q\dX,
+        \end{aligned}
+        \]
+        usando la condición adiabática. Reordenando los términos conocidos al lado derecho,
+        \[
+        \begin{aligned}
+            &\frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta^{n+1}q\dX
+            +\int_{\Omega_0}\ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\nabla_{\vec X}q\dX\\
+            &\qquad=
+            \int_{\Omega_0}(R_0^{n+1}+g_{\mathrm{mec}}^{n+1})q\dX
+            +\frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta^nq\dX.
+        \end{aligned}
+        \]
+
+        \item Definimos
+        \[
+        \begin{aligned}
+            a(\theta,q)
+            &:=
+            \frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta q\dX
+            +\int_{\Omega_0}\ten\kappa\nabla_{\vec X}\theta\cdot\nabla_{\vec X}q\dX,\\
+            L(q)
+            &:=
+            \int_{\Omega_0}(R_0^{n+1}+g_{\mathrm{mec}}^{n+1})q\dX
+            +\frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta^nq\dX.
+        \end{aligned}
+        \]
+        La forma $a$ es continua. En efecto, si $\norm{\ten\kappa}_{L^\infty}\le \kappa_1$, entonces
+        \[
+        \begin{aligned}
+            \abs{a(\theta,q)}
+            &\le
+            \frac{\rho_0c_v}{\Delta t}
+            \norm{\theta}_{L^2(\Omega_0)}
+            \norm{q}_{L^2(\Omega_0)}
+            +\kappa_1
+            \norm{\nabla\theta}_{L^2(\Omega_0)}
+            \norm{\nabla q}_{L^2(\Omega_0)}\\
+            &\le
+            C\norm{\theta}_{H^1(\Omega_0)}
+            \norm{q}_{H^1(\Omega_0)}.
+        \end{aligned}
+        \]
+        Además, por la elipticidad uniforme de $\ten\kappa$,
+        \[
+        \begin{aligned}
+            a(\theta,\theta)
+            &=
+            \frac{\rho_0c_v}{\Delta t}
+            \norm{\theta}_{L^2(\Omega_0)}^2
+            +\int_{\Omega_0}\ten\kappa\nabla_{\vec X}\theta
+            \cdot\nabla_{\vec X}\theta\dX\\
+            &\ge
+            \frac{\rho_0c_v}{\Delta t}
+            \norm{\theta}_{L^2(\Omega_0)}^2
+            +\kappa_0\norm{\nabla\theta}_{L^2(\Omega_0)}^2\\
+            &\ge
+            \min\left\{\frac{\rho_0c_v}{\Delta t},\kappa_0\right\}
+            \norm{\theta}_{H^1(\Omega_0)}^2.
+        \end{aligned}
+        \]
+        Si
+        \[
+            R_0^{n+1},\,g_{\mathrm{mec}}^{n+1},\,\theta^n\in L^2(\Omega_0),
+        \]
+        entonces $L\in H^1(\Omega_0)'$ porque
+        \[
+        \begin{aligned}
+            \abs{L(q)}
+            &\le
+            \left(
+            \norm{R_0^{n+1}}_{L^2}
+            +\norm{g_{\mathrm{mec}}^{n+1}}_{L^2}
+            +\frac{\rho_0c_v}{\Delta t}\norm{\theta^n}_{L^2}
+            \right)\norm{q}_{L^2}\\
+            &\le
+            C\norm{q}_{H^1(\Omega_0)}.
+        \end{aligned}
+        \]
+        Por Lax--Milgram existe un único $\theta^{n+1}\in H^1(\Omega_0)$.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

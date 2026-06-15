@@ -54,8 +54,8 @@
 \makeatother
 
 \theoremstyle{thmstyle}
-\declaretheorem[name=Definición]{theorem}
-\newtheorem{definition}[theorem]{Definición}
+\declaretheorem[name=Definici\'on]{theorem}
+\newtheorem{definition}[theorem]{Definici\'on}
 
 \definecolor{lightcyan}{rgb}{0.88, 1.0, 1.0}
 \colorlet{mythmback}{lightcyan!40!white}
@@ -81,7 +81,7 @@
 \newcommand{\td}[2]{\frac{\mathrm{d} #1}{ \mathrm{d} #2}}
 \newcommand{\pdd}[2]{\frac{\partial^2 #1}{ \partial #2 ^2}}
 \newcommand{\pddc}[3]{\frac{\partial^2 #1}{ \partial #2 \partial #3}}
-\newcommand{\solution}[0]{\large{\textbf{Solución}}\normalsize}
+\newcommand{\solution}[0]{\large{\textbf{Soluci\'on}}\normalsize}
 
 \def\sca   #1{\mbox{\rm{#1}}{}}
 \def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
@@ -111,6 +111,7 @@
 \def\N{\mathbb N}
 \def\Q{\mathbb Q}
 \def\Z{\mathbb Z}
+\def\D{\mathcal D}
 
 \usepackage{mdframed}
 \mdfdefinestyle{MyFrame}{%
@@ -156,98 +157,107 @@
 \togglefalse{indefintion}
 \pretocmd{\footnote}{\iftoggle{indefintion}{\stepcounter{footnote}}{\relax}}{}{}
 
+
 \begin{document}
     \begin{flushleft}
         \small
         \vspace{1pt}
         \textbf{IMT3130} \hfill
-        \textbf{27/03/2026}
+        \textbf{09/05/2026}
     \end{flushleft}
     \begin{center}
-        \LARGE\textbf{Ayudant\'ia 3}\\
+        \LARGE\textbf{Ayudant\'ia 7}\\
         \vspace{3pt}
-        \normalsize\textbf{Diferencias finitas en 2D, stepping temporal y estabilidad}\\
+        \normalsize\textbf{Interpolaci\'on, elementos finitos compatibles e inf--sup}\\
         \normalsize Ayudante: Basti\'an Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
         \rule{\textwidth}{0.05mm}
     \end{center}
 
-\section{Problemas}
+\section*{Problemas}
 
 \begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
 
-    \item Considere el problema de Poisson
-    \[
+    \item \textbf{C\'ea, interpolaci\'on y Aubin--Nitsche para reacci\'on--difusi\'on.} Sea $\eta>0$ fijo y considere
+    \begin{equation*}
     \begin{aligned}
-        -\Delta u &= f && \text{en } \Omega=(0,1)^2, \\
-        u &= 0 && \text{en } \partial\Omega.
+        -u''+\eta u &= f &&\text{en }(0,1),\\
+        u(0)&=u(1)=0,
     \end{aligned}
-    \]
-    Sobre la malla uniforme $x_i=ih$, $y_j=jh$, con $h=1/N$, sea $u_{ij}\approx u(x_i,y_j)$ en nodos interiores.
+    \end{equation*}
+    con $f\in L^2(0,1)$. La formulaci\'on d\'ebil es: hallar $u\in V:=H^1_0(0,1)$ tal que
+    \begin{equation*}
+        a_\eta(u,v)=F(v)\qquad \forall v\in V,
+        \qquad
+        a_\eta(w,v)=\int_0^1 w'v'\,dx+\eta\int_0^1wv\,dx,
+        \qquad
+        F(v)=\int_0^1fv\,dx.
+    \end{equation*}
+    Defina la norma de energ\'ia $\|v\|_{a_\eta}^2:=a_\eta(v,v)$. Sea $\mathcal T_h$ una malla uniforme y, para $r=1,2$, sea
+    \begin{equation*}
+        V_h^{(r)}=\{v_h\in C^0([0,1]):\ v_h|_K\in\mathbb P_r(K)\ \forall K\in\mathcal T_h,\ v_h(0)=v_h(1)=0\}.
+    \end{equation*}
+    Sea $u_h^{(r)}\in V_h^{(r)}$ la soluci\'on de Galerkin. Suponga que la soluci\'on exacta satisface $u\in H^3(0,1)$ y use las estimaciones de interpolaci\'on nodal
+    \begin{equation*}
+        |u-\Pi_h^{(r)}u|_{H^1(0,1)}\le Ch^r|u|_{H^{r+1}(0,1)},
+        \qquad
+        \|u-\Pi_h^{(r)}u\|_{L^2(0,1)}\le Ch^{r+1}|u|_{H^{r+1}(0,1)}.
+    \end{equation*}
     \begin{enumerate}[label=(\alph*)]
-        \item Escriba el esquema de 5 puntos y el stencil asociado.
-        \item Usando la soluci\'on manufacturada $u(x,y)=\sin(\pi x)\sin(\pi y)$, determine $f$ y el orden esperado del m\'etodo.
-        \item Implemente el esquema para $h=1/8,1/16,1/32,1/64$, reporte el error máximo en la malla $E_h=\max_{i,j}\abs{u(x_i,y_j)-u_{ij}}$, y estime la tasa emp\'irica de convergencia.
+        \item Pruebe la ortogonalidad de Galerkin y deduzca la estimaci\'on de C\'ea en norma de energ\'ia.
+        \item Compare los errores de energ\'ia esperados para $P_1$ y $P_2$.
+        \item Use el argumento de Aubin--Nitsche para obtener estimaciones en norma $L^2$ para $P_1$ y $P_2$. Explique por qu\'e el resultado en $L^2$ es estrictamente mejor que el resultado en energ\'ia.
     \end{enumerate}
 
-    % \item Considere la ecuaci\'on del calor unidimensional
-    % \[
-    % \pd{u}{t}-\pdd{u}{x}=0, \qquad (x,t)\in(0,1)\times(0,T],
-    % \]
-    % con condiciones de borde homog\'eneas y condici\'on inicial $u_0$. Sea $x_j=jh$, $t^n=n\Delta t$ y $U_j^n\approx u(x_j,t^n)$. Considere el esquema $\theta$
-    % \[
-    % \frac{U_j^{n+1}-U_j^n}{\Delta t}
-    % =
-    % \theta \frac{U_{j+1}^{n+1}-2U_j^{n+1}+U_{j-1}^{n+1}}{h^2}
-    % +(1-\theta)\frac{U_{j+1}^{n}-2U_j^{n}+U_{j-1}^{n}}{h^2}.
-    % \]
-    % \begin{enumerate}[label=(\alph*)]
-    %     \item Identifique los casos $\theta=0$, $\theta=1$ y $\theta=1/2$.
-    %     \item Muestre que el error de truncamiento local satisface
-    %     \[
-    %     \tau_j^n=O(h^2+\Delta t)
-    %     \quad \text{si } \theta\neq \frac12,
-    %     \qquad
-    %     \tau_j^n=O(h^2+\Delta t^2)
-    %     \quad \text{si } \theta=\frac12.
-    %     \]
-    %     \item Según estos resultados, explique la ventaja pr\'actica de Crank-Nicolson frente a Euler expl\'icito e impl\'icito.
-    % \end{enumerate}
-
-    \item Considere la ecuaci\'on de advecci\'on peri\'odica
-    \[
-    \pd{u}{t}+\pd{u}{x}=0, \qquad x\in[0,1], \quad t>0,
-    \]
-    con condici\'on peri\'odica y un dato inicial suave. Estudiamos el esquema
-    \[
-    \frac{U_j^{n+1}-U_j^n}{\Delta t} + \frac{U_{j+1}^{n}-U_{j-1}^{n}}{2h}=0.
-    \]
+    \item \textbf{Dos triples de Ciarlet: unisolvencia de $P_2$ y $RT_0$.} Recuerde que un elemento finito de Ciarlet es un triple $(K,\mathcal P,\Sigma)$, donde $K$ es el dominio local, $\mathcal P$ es el espacio local y $\Sigma$ es una familia de grados de libertad que debe determinar un\'ivocamente a cada funci\'on de $\mathcal P$.
     \begin{enumerate}[label=(\alph*)]
-        \item Determine su orden de consistencia.
-        \item Realice un an\'alisis de von Neumann y obtenga el factor de amplificaci\'on $g(\xi)$.
-        \item Pruebe que el esquema es inestable para todo $\lambda=\Delta t/h>0$ y explique por qu\'e este ejemplo muestra que consistencia no implica convergencia.
+        \item En el intervalo de referencia $\widehat K=[-1,1]$, considere $\mathcal P=\mathbb P_2(\widehat K)$ y
+        \begin{equation*}
+            \ell_1(p)=p(-1),\qquad \ell_2(p)=p(0),\qquad \ell_3(p)=p(1).
+        \end{equation*}
+        Pruebe la unisolvencia y construya las tres funciones de base locales.
+
+        \item En el tri\'angulo de referencia
+        \begin{equation*}
+            \widehat K=\operatorname{conv}\{(0,0),(1,0),(0,1)\},
+        \end{equation*}
+        considere
+        \begin{equation*}
+            RT_0(\widehat K)=\{\vec q(x,y)=(\alpha,\beta)+\gamma(x,y):\ \alpha,\beta,\gamma\in\mathbb R\}.
+        \end{equation*}
+        Los grados de libertad son los flujos normales
+        \begin{equation*}
+            \ell_i(\vec q)=\int_{e_i}\vec q\cdot\vec n_i\,ds,
+            \qquad i=1,2,3,
+        \end{equation*}
+        donde $e_i$ son las tres aristas y $\vec n_i$ las normales exteriores. Pruebe la unisolvencia en este tri\'angulo.
+
+        \item Explique qu\'e continuidad global induce el ensamblaje de $P_2$ y qu\'e continuidad global induce el ensamblaje de $RT_0$.
     \end{enumerate}
 
-    \item Considere nuevamente la ecuaci\'on de advecci\'on peri\'odica
-    \[
-    \pd{u}{t}+a\pd{u}{x}=0, \qquad a\in\R.
-    \]
+    \item \textbf{Inf--sup continuo versus inf--sup discreto.} Considere el problema de transporte--reacci\'on
+    \begin{equation*}
+        u'+u=f\quad\text{en }(0,1),
+        \qquad
+        u(0)=0.
+    \end{equation*}
+    Sean
+    \begin{equation*}
+        U=\{u\in H^1(0,1):u(0)=0\},
+        \qquad
+        V=L^2(0,1),
+        \qquad
+        a(u,v)=\int_0^1(u'+u)v\,dx.
+    \end{equation*}
     \begin{enumerate}[label=(\alph*)]
-        \item Sea $\nu=a\Delta t/h$. Derive el esquema de Lax-Wendroff
-        \[
-        U_j^{n+1}
-        =
-        U_j^n
-        -\frac{a\Delta t}{2h}(U_{j+1}^n-U_{j-1}^n)
-        +\frac{a^2\Delta t^2}{2h^2}(U_{j+1}^n-2U_j^n+U_{j-1}^n)
-        \]
-        usando la ecuación y las expansiones de Taylor en tiempo y espacio. 
-        \item Muestre que el error local de truncamiento es de orden $2$ y que su t\'ermino principal est\'a dado por una tercera derivada espacial, es decir,
-        \[
-        \tau_j^n = \frac{a h^2}{6}(1-\nu^2)\,u_{xxx}(x_j,t^n) + O(h^3),
-        \]
-        asumiendo $\nu$ fijo.
-        \item Realice un an\'alisis de von Neumann y pruebe que el esquema es estable si y solo si $\abs{\nu}\le 1$.
-        \item Usando el teorema de equivalencia de Lax, explique qu\'e se concluye sobre la convergencia del esquema cuando $\abs{\nu}\le 1$.
+        \item Muestre que $a$ no es coerciva con respecto a la norma de $H^1(0,1)$.
+        \item Pruebe que el problema continuo satisface una condici\'on inf--sup en $U\times V$.
+        \item Considere la elecci\'on discreta deliberadamente incompatible
+        \begin{equation*}
+            U_h=\operatorname{span}\{x,x^2\},
+            \qquad
+            V_h=\operatorname{span}\{1\}.
+        \end{equation*}
+        Pruebe que la condici\'on inf--sup discreta falla. Interprete el resultado en relaci\'on con el an\'alisis de Galerkin para problemas no coercivos.
     \end{enumerate}
 
 \end{enumerate}

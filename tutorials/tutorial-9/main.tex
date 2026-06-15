@@ -1,0 +1,197 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{microtype}
+\usepackage{hyperref}
+
+\setlength\parindent{0pt}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\lhead{\scshape Pontificia Universidad Cat\'olica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\renewcommand{\labelitemi}{$\blacklozenge$}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\p}{\vspace{8pt}}
+\DeclareMathOperator{\diver}{div}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cof}{Cof}
+\DeclareMathOperator{\sym}{sym}
+
+\begin{document}
+
+\begin{flushleft}
+    \small
+    \textbf{IMT3130} \hfill
+    \textbf{23/05/2026}
+\end{flushleft}
+\begin{center}
+    \LARGE\textbf{Ayudant\'ia 9}\\
+    \vspace{3pt}
+    \normalsize\textbf{Mec\'anica del continuo: estabilidad, termodin\'amica y linealizaci\'on}\\
+    \normalsize Ayudante: Basti\'an Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+    \rule{\textwidth}{0.05mm}
+\end{center}
+
+\section*{Problemas}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+\item \textbf{Stokes--Brinkman II: estabilidad, presi\'on e inf--sup.}
+
+Sea $\Omega\subset\R^d$, $d\in\{2,3\}$, un dominio Lipschitz acotado y conexo. Sean
+\begin{equation*}
+    V=H^1_0(\Omega)^d,
+    \qquad
+    Q=L^2_0(\Omega)=\left\{q\in L^2(\Omega):\int_\Omega q\,dx=0\right\}.
+\end{equation*}
+Se considera el problema mixto de Stokes--Brinkman: hallar $(\bm v,p)\in V\times Q$ tal que
+\begin{equation*}
+\begin{aligned}
+    a(\bm v,\bm w)+b(\bm w,p)&=F(\bm w) &&\forall\bm w\in V,\\
+    b(\bm v,q)&=0 &&\forall q\in Q,
+\end{aligned}
+\end{equation*}
+donde
+\begin{equation*}
+\begin{aligned}
+    a(\bm v,\bm w)
+    &=2\mu\int_\Omega D(\bm v):D(\bm w)\,dx
+      +\alpha\int_\Omega \bm v\cdot\bm w\,dx,\\
+    b(\bm w,q)&=-\int_\Omega q\,\diver\bm w\,dx,
+\end{aligned}
+\end{equation*}
+con $\mu>0$, $\alpha\ge0$, y
+\begin{equation*}
+    D(\bm v)=\frac12(\nabla\bm v+\nabla\bm v^T).
+\end{equation*}
+Suponga que $F\in V'$ y que se satisface la condici\'on inf--sup continua de la divergencia:
+\begin{equation*}
+    \inf_{q\in Q\setminus\{0\}}
+    \sup_{\bm w\in V\setminus\{\bm0\}}
+    \frac{|b(\bm w,q)|}{\|\bm w\|_{H^1(\Omega)}\|q\|_{L^2(\Omega)}}
+    \ge \beta>0.
+\end{equation*}
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Pruebe que $a$ es continua y coerciva en $V$, usando la desigualdad de Korn. Pruebe tambi\'en que $b$ es continua en $V\times Q$.
+
+    \item Considere el caso homog\'eneo $F=0$. Pruebe primero que $\bm v=\bm0$ y luego use la condici\'on inf--sup para probar que $p=0$.
+
+    \item Deduzca la estimaci\'on de estabilidad
+    \begin{equation*}
+        \|\bm v\|_{H^1(\Omega)}+\|p\|_{L^2(\Omega)}
+        \le C\|F\|_{V'}.
+    \end{equation*}
+
+    \item Explique por qu\'e el caso $\alpha=0$ sigue estando cubierto, pero el l\'imite puramente Darcy $\mu=0$ no queda cubierto por esta formulaci\'on en $H^1_0(\Omega)^d$.
+\end{enumerate}
+
+\item \textbf{Termoelasticidad II: fuente mec\'anica expl\'icita y Lax--Milgram.}
+
+Sea $\Omega_0\subset\R^d$ un dominio material de referencia. Se considera la ecuaci\'on t\'ermica material
+\begin{equation*}
+    \rho_0c_v\dot\theta-
+    \Div_{\bm X}\left(\bm\kappa\nabla_{\bm X}\theta\right)
+    =R_0+g_{\mathrm{mec}}
+    \qquad\text{en }\Omega_0,
+\end{equation*}
+con condici\'on adiab\'atica homog\'enea
+\begin{equation*}
+    \bm\kappa\nabla_{\bm X}\theta\cdot\bm N=0
+    \qquad\text{en }\partial\Omega_0.
+\end{equation*}
+Se asume que $\rho_0>0$, $c_v>0$, y que $\bm\kappa\in L^\infty(\Omega_0)^{d\times d}$ es sim\'etrica y uniformemente el\'iptica:
+\begin{equation*}
+    \bm\kappa(\bm X)\xi\cdot\xi\ge\kappa_0|\xi|^2
+    \qquad\forall \xi\in\R^d,
+    \qquad
+    \kappa_0>0.
+\end{equation*}
+La deformaci\'on material es conocida y se denota por
+\begin{equation*}
+    \bm x=\bm\varphi(\bm X,t),
+    \qquad
+    F=\nabla_{\bm X}\bm\varphi,
+    \qquad
+    J=\det F>0.
+\end{equation*}
+La fuente mec\'anica expl\'icita est\'a dada por
+\begin{equation*}
+    g_{\mathrm{mec}}
+    =3\alpha_TK\theta_\star F^{-T}:\dot F,
+\end{equation*}
+donde $\alpha_T$, $K$ y $\theta_\star$ se consideran datos conocidos.
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Use la identidad de la derivada del determinante para mostrar que
+    \begin{equation*}
+        F^{-T}:\dot F=\frac{\dot J}{J}.
+    \end{equation*}
+    Reescriba $g_{\mathrm{mec}}$ en t\'erminos de $J$ y $\dot J$, e interprete brevemente el resultado.
+
+    \item Aplique Euler impl\'icito a la ecuaci\'on t\'ermica y derive la formulaci\'on d\'ebil para calcular $\theta^{n+1}\in H^1(\Omega_0)$, considerando $g_{\mathrm{mec}}^{n+1}$ como dato conocido.
+
+    \item Pruebe existencia y unicidad de $\theta^{n+1}$ usando Lax--Milgram. Indique claramente las hip\'otesis necesarias sobre $R_0^{n+1}$, $g_{\mathrm{mec}}^{n+1}$ y $\theta^n$.
+
+    \item Suponga ahora que, en vez de evaluarse expl\'icitamente, la fuente mec\'anica contiene un t\'ermino de reacci\'on de la forma $m(\bm X)\theta^{n+1}$. Explique qu\'e condici\'on adicional permitir\'ia conservar coercividad.
+\end{enumerate}
+
+\item \textbf{Hiperelasticidad finita, principio variacional y linealizaci\'on.}
+
+Sea $\Omega_0\subset\R^d$ un dominio material, con $d\in\{2,3\}$. Consideramos una deformaci\'on
+\begin{equation*}
+    \bm\varphi(\bm X)=\bm X+\bm u(\bm X),
+    \qquad
+    F=\nabla_{\bm X}\bm\varphi=I+\nabla_{\bm X}\bm u,
+\end{equation*}
+y el tensor de Green--Lagrange
+\begin{equation*}
+    E=\frac12(F^TF-I).
+\end{equation*}
+Sea un material de Saint Venant--Kirchhoff con energ\'ia almacenada por volumen de referencia
+\begin{equation*}
+    \Psi(E)=\frac{\lambda}{2}(\tr E)^2+\mu E:E,
+\end{equation*}
+donde
+\begin{equation*}
+    \mu>0,
+    \qquad
+    \lambda+\frac{2\mu}{d}>0.
+\end{equation*}
+El equilibrio material se escribe
+\begin{equation*}
+    -\Div_{\bm X}P=\bm B
+    \qquad\text{en }\Omega_0,
+\end{equation*}
+con $\bm u=\bm0$ en $\Gamma_D$, $P\bm N=\overline{\bm T}$ en $\Gamma_N$, y $|\Gamma_D|>0$.
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Derive el segundo tensor de Piola--Kirchhoff
+    \begin{equation*}
+        S=\frac{\partial\Psi}{\partial E},
+    \end{equation*}
+    y recuerde por qu\'e, para este material hiperl\'astico, el primer tensor de Piola--Kirchhoff viene dado por $P=FS$.
+
+    \item Derive la formulaci\'on d\'ebil lagrangiana no lineal asociada al equilibrio material.
+
+    \item Linealice el modelo alrededor de $F=I$ y obtenga la formulaci\'on d\'ebil de elasticidad lineal.
+
+    \item Pruebe existencia y unicidad del problema linealizado mediante Korn y Lax--Milgram.
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

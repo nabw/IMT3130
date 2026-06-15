@@ -1,0 +1,585 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,enumitem,fancyhdr,booktabs}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\ten   #1{\mbox{\boldmath $#1$}{}}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\R{\mathbb R}
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\dX{\mbox{\(\,\mathrm{d}X\)}}
+\def\dA{\mbox{\(\,\mathrm{d}A\)}}
+\DeclareMathOperator{\dive}{div}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cof}{Cof}
+\DeclareMathOperator{\sym}{sym}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{23/05/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 9}\\
+        \vspace{3pt}
+        \normalsize\textbf{Mecánica del continuo: estabilidad, termodinámica y linealización}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} Sea
+    \[
+        V=H^1_0(\Omega)^d,
+        \qquad
+        Q=L^2_0(\Omega),
+    \]
+    y considere el problema mixto de Stokes--Brinkman: hallar $(\vec v,p)\in V\times Q$ tal que
+    \[
+    \begin{aligned}
+        a(\vec v,\vec w)+b(\vec w,p)&=F(\vec w) &&\forall\vec w\in V,\\
+        b(\vec v,q)&=0 &&\forall q\in Q,
+    \end{aligned}
+    \]
+    donde
+    \[
+        a(\vec v,\vec w)=2\mu\int_\Omega D(\vec v):D(\vec w)\dx
+        +\alpha\int_\Omega \vec v\cdot\vec w\dx,
+        \qquad
+        b(\vec w,q)=-\int_\Omega q\,\dive\vec w\dx.
+    \]
+    Pruebe continuidad, coercividad por Korn, unicidad del problema homogéneo, estabilidad, y discuta los casos $\alpha=0$ y $\mu=0$.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Por Cauchy--Schwarz,
+        \[
+        \begin{aligned}
+            \abs{a(\vec v,\vec w)}
+            &\le
+            2\mu\norm{D(\vec v)}_{L^2}\norm{D(\vec w)}_{L^2}
+            +\alpha\norm{\vec v}_{L^2}\norm{\vec w}_{L^2}\\
+            &\le
+            C\norm{\vec v}_{H^1}\norm{\vec w}_{H^1}.
+        \end{aligned}
+        \]
+        En el último paso usamos que $\norm{D(\vec v)}_{L^2}\le C\norm{\vec v}_{H^1}$.
+        Además,
+        \[
+        \begin{aligned}
+            \abs{b(\vec w,q)}
+            &=
+            \abs{\int_\Omega q\,\dive\vec w\dx}\\
+            &\le
+            \norm{q}_{L^2}\norm{\dive\vec w}_{L^2}
+            \le C\norm{q}_{L^2}\norm{\vec w}_{H^1}.
+        \end{aligned}
+        \]
+        Como $\vec w\in H^1_0(\Omega)^d$, Korn da
+        \[
+            \norm{\vec w}_{H^1(\Omega)}\le C_K\norm{D(\vec w)}_{L^2(\Omega)}.
+        \]
+        Luego, usando $\mu>0$ y $\alpha\ge0$,
+        \[
+            a(\vec w,\vec w)
+            =
+            2\mu\norm{D(\vec w)}_{L^2}^2+\alpha\norm{\vec w}_{L^2}^2
+            \ge c\norm{\vec w}_{H^1}^2.
+        \]
+        En particular, $a$ es coerciva en todo $V$, y por tanto en el núcleo solenoidal.
+
+        \item Si $F=0$, tomamos $\vec w=\vec v$ y $q=p$. Como $b(\vec v,p)=0$,
+        \[
+            a(\vec v,\vec v)=0.
+        \]
+        Por coercividad, $\vec v=\vec0$. La primera ecuación queda
+        \[
+            b(\vec w,p)=0\qquad\forall \vec w\in V.
+        \]
+        Aplicando la inf--sup,
+        \[
+            \beta\norm{p}_{L^2}
+            \le
+            \sup_{\vec w\in V\setminus\{\vec0\}}
+            \frac{\abs{b(\vec w,p)}}{\norm{\vec w}_{H^1}}
+            =0.
+        \]
+        Así, $p=0$. La coercividad identifica la velocidad; la inf--sup identifica la presión.
+
+        \item Para la estabilidad de $\vec v$, usamos nuevamente $\vec w=\vec v$ y $q=p$:
+        \[
+            a(\vec v,\vec v)=F(\vec v).
+        \]
+        Entonces
+        \[
+            c\norm{\vec v}_{H^1}^2
+            \le
+            \norm{F}_{V'}\norm{\vec v}_{H^1},
+            \qquad
+            \norm{\vec v}_{H^1}\le C\norm{F}_{V'}.
+        \]
+        Para $p$, de la primera ecuación,
+        \[
+            b(\vec w,p)=F(\vec w)-a(\vec v,\vec w).
+        \]
+        Por inf--sup y continuidad de $a$,
+        \[
+            \beta\norm{p}_{L^2}
+            \le
+            \norm{F}_{V'}+C\norm{\vec v}_{H^1}
+            \le C\norm{F}_{V'}.
+        \]
+        En consecuencia,
+        \[
+            \norm{\vec v}_{H^1(\Omega)}+\norm{p}_{L^2(\Omega)}
+            \le C\norm{F}_{V'}.
+        \]
+
+        \item Si $\alpha=0$, todavía
+        \[
+            a(\vec w,\vec w)=2\mu\norm{D(\vec w)}_{L^2}^2,
+        \]
+        y Korn entrega coercividad porque $\mu>0$. En cambio, si $\mu=0$,
+        \[
+            a(\vec w,\vec w)=\alpha\norm{\vec w}_{L^2}^2,
+        \]
+        lo que no controla $\norm{\vec w}_{H^1}$. Por eso el límite puramente Darcy no queda cubierto por esta formulación en $H^1_0(\Omega)^d$; requiere otro marco funcional, típicamente con velocidades en $H(\dive;\Omega)$.
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} En $\Omega_0$, considere
+    \[
+        \rho_0c_v\dot\theta-\Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta)
+        =
+        R_0+g_{\mathrm{mec}},
+        \qquad
+        \ten\kappa\nabla_{\vec X}\theta\cdot\vec N=0
+        \quad\text{en }\partial\Omega_0,
+    \]
+    con
+    \[
+        g_{\mathrm{mec}}
+        =
+        3\alpha_TK\theta_\star\,\ten F^{-\top}:\dot{\ten F}.
+    \]
+    Reescriba la fuente con $J=\det\ten F$, derive la formulación débil con Euler implícito, pruebe Lax--Milgram y discuta qué ocurre si la fuente contiene un término implícito $m(\vec X)\theta^{n+1}$.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Usando la fórmula de Jacobi para $J=\det\ten F$,
+        \[
+            \dot J=\Cof(\ten F):\dot{\ten F}
+            =
+            J\ten F^{-\top}:\dot{\ten F}
+        \]
+        implica
+        \[
+            \ten F^{-\top}:\dot{\ten F}=\frac{\dot J}{J}.
+        \]
+        Luego
+        \[
+            g_{\mathrm{mec}}
+            =
+            3\alpha_TK\theta_\star\frac{\dot J}{J}.
+        \]
+        Esta fuente representa una contribución proporcional a la tasa relativa de cambio de volumen.
+
+        \item Euler implícito entrega
+        \[
+            \rho_0c_v\frac{\theta^{n+1}-\theta^n}{\Delta t}
+            -\Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta^{n+1})
+            =
+            R_0^{n+1}+g_{\mathrm{mec}}^{n+1}.
+        \]
+        Para $q\in H^1(\Omega_0)$, multiplicamos por $q$ e integramos en $\Omega_0$:
+        \[
+        \begin{aligned}
+            &\frac{\rho_0c_v}{\Delta t}
+            \int_{\Omega_0}(\theta^{n+1}-\theta^n)q\dX
+            -\int_{\Omega_0}
+            \Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta^{n+1})q\dX\\
+            &\qquad=
+            \int_{\Omega_0}
+            (R_0^{n+1}+g_{\mathrm{mec}}^{n+1})q\dX.
+        \end{aligned}
+        \]
+        Integrando por partes el término de difusión,
+        \[
+        \begin{aligned}
+            -\int_{\Omega_0}
+            \Div_{\vec X}(\ten\kappa\nabla_{\vec X}\theta^{n+1})q\dX
+            &=
+            \int_{\Omega_0}
+            \ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\nabla_{\vec X}q\dX\\
+            &\quad
+            -\int_{\partial\Omega_0}
+            (\ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\vec N)q\dA\\
+            &=
+            \int_{\Omega_0}
+            \ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\nabla_{\vec X}q\dX,
+        \end{aligned}
+        \]
+        porque la condición de borde es adiabática. Reordenando,
+        \[
+        \begin{aligned}
+            &\frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta^{n+1}q\dX
+            +\int_{\Omega_0}\ten\kappa\nabla_{\vec X}\theta^{n+1}\cdot\nabla_{\vec X}q\dX\\
+            &\qquad=
+            \int_{\Omega_0}(R_0^{n+1}+g_{\mathrm{mec}}^{n+1})q\dX
+            +\frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta^nq\dX.
+        \end{aligned}
+        \]
+        El término de borde desaparece por la condición adiabática.
+
+        \item Definimos
+        \[
+        \begin{aligned}
+            a(\theta,q)
+            &=
+            \frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta q\dX
+            +\int_{\Omega_0}\ten\kappa\nabla_{\vec X}\theta\cdot\nabla_{\vec X}q\dX,\\
+            L(q)
+            &=
+            \int_{\Omega_0}(R_0^{n+1}+g_{\mathrm{mec}}^{n+1})q\dX
+            +\frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta^nq\dX.
+        \end{aligned}
+        \]
+        La forma $a$ es continua. Si $\norm{\ten\kappa}_{L^\infty}\le\kappa_1$, entonces
+        \[
+        \begin{aligned}
+            \abs{a(\theta,q)}
+            &\le
+            \frac{\rho_0c_v}{\Delta t}
+            \norm{\theta}_{L^2}
+            \norm{q}_{L^2}
+            +\kappa_1
+            \norm{\nabla_{\vec X}\theta}_{L^2}
+            \norm{\nabla_{\vec X}q}_{L^2}\\
+            &\le
+            C\norm{\theta}_{H^1(\Omega_0)}
+            \norm{q}_{H^1(\Omega_0)}.
+        \end{aligned}
+        \]
+        Además,
+        \[
+        \begin{aligned}
+            a(\theta,\theta)
+            &=
+            \frac{\rho_0c_v}{\Delta t}\norm{\theta}_{L^2}^2
+            +\int_{\Omega_0}\ten\kappa\nabla_{\vec X}\theta
+            \cdot\nabla_{\vec X}\theta\dX\\
+            &\ge
+            \frac{\rho_0c_v}{\Delta t}\norm{\theta}_{L^2}^2
+            +\kappa_0\norm{\nabla_{\vec X}\theta}_{L^2}^2\\
+            &\ge
+            \min\left\{\frac{\rho_0c_v}{\Delta t},\kappa_0\right\}
+            \norm{\theta}_{H^1(\Omega_0)}^2.
+        \end{aligned}
+        \]
+        Si
+        \[
+            R_0^{n+1},\quad g_{\mathrm{mec}}^{n+1},\quad \theta^n\in L^2(\Omega_0),
+        \]
+        entonces $L\in H^1(\Omega_0)'$, pues
+        \[
+        \begin{aligned}
+            \abs{L(q)}
+            &\le
+            \left(
+            \norm{R_0^{n+1}}_{L^2}
+            +\norm{g_{\mathrm{mec}}^{n+1}}_{L^2}
+            +\frac{\rho_0c_v}{\Delta t}\norm{\theta^n}_{L^2}
+            \right)
+            \norm{q}_{L^2}\\
+            &\le
+            C\norm{q}_{H^1(\Omega_0)}.
+        \end{aligned}
+        \]
+        Por Lax--Milgram existe un único $\theta^{n+1}\in H^1(\Omega_0)$.
+
+        \item Si
+        \[
+            g_{\mathrm{mec}}^{n+1}=m(\vec X)\theta^{n+1}+\widetilde g^{n+1},
+        \]
+        y se mueve el término implícito al lado izquierdo, aparece
+        \[
+        \begin{aligned}
+            a_m(\theta,q)
+            &=
+            \frac{\rho_0c_v}{\Delta t}\int_{\Omega_0}\theta q\dX
+            +\int_{\Omega_0}\ten\kappa\nabla_{\vec X}\theta\cdot\nabla_{\vec X}q\dX
+            -\int_{\Omega_0}m\theta q\dX.
+        \end{aligned}
+        \]
+        Una condición suficiente para conservar coercividad es
+        \[
+            \frac{\rho_0c_v}{\Delta t}-m(\vec X)\ge m_0>0
+            \qquad\text{c.t.p. en }\Omega_0.
+        \]
+        Entonces
+        \[
+            a_m(\theta,\theta)
+            \ge m_0\norm{\theta}_{L^2}^2+\kappa_0\norm{\nabla\theta}_{L^2}^2
+            \ge c\norm{\theta}_{H^1}^2.
+        \]
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Sea
+    \[
+        \vec\varphi(\vec X)=\vec X+\vec u(\vec X),
+        \qquad
+        \ten F=\ten I+\nabla_{\vec X}\vec u,
+        \qquad
+        \ten E=\frac12(\ten F^\top\ten F-\ten I),
+    \]
+    y la energía de Saint Venant--Kirchhoff
+    \[
+        \Psi(\ten E)=\frac{\lambda}{2}(\tr\ten E)^2+\mu\,\ten E:\ten E,
+        \qquad
+        \mu>0,\quad \lambda+\frac{2\mu}{d}>0.
+    \]
+    Derive $\ten S=\partial\Psi/\partial\ten E$, muestre que $\ten P=\ten F\ten S$, derive la formulación débil material, linealice alrededor de $\ten F=\ten I$ y pruebe bien planteamiento del problema linealizado por Korn y Lax--Milgram.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Derivamos primero la energía respecto de $\ten E$. Como
+        \[
+            \tr\ten E=E_{kk},
+            \qquad
+            \ten E:\ten E=E_{ij}E_{ij},
+        \]
+        se tiene
+        \[
+        \begin{aligned}
+            \frac{\partial\Psi}{\partial E_{ij}}
+            &=
+            \lambda(\tr\ten E)\frac{\partial(\tr\ten E)}{\partial E_{ij}}
+            +\mu\frac{\partial(E_{kl}E_{kl})}{\partial E_{ij}}\\
+            &=
+            \lambda(\tr\ten E)\delta_{ij}
+            +2\mu E_{ij}.
+        \end{aligned}
+        \]
+        Por tanto,
+        \[
+            \ten S=\lambda(\tr\ten E)\ten I+2\mu\ten E.
+        \]
+        Equivalentemente, para toda variación $\ten G$ de $\ten E$,
+        \[
+            D\Psi(\ten E)[\ten G]
+            =
+            \ten S:\ten G.
+        \]
+        Ahora derivamos $\Psi(\ten E(\ten F))$ respecto de $\ten F$. Si $\ten H$ es una variación de $\ten F$, entonces
+        \[
+            D\ten E(\ten F)[\ten H]
+            =
+            \frac12(\ten H^\top\ten F+\ten F^\top\ten H).
+        \]
+        Usando índices y que $\ten S$ es simétrica,
+        \[
+        \begin{aligned}
+            D(\Psi\circ \ten E)(\ten F)[\ten H]
+            &=
+            S_{ij}\frac12(H_{ki}F_{kj}+F_{ki}H_{kj})\\
+            &=
+            \frac12H_{ki}F_{kj}S_{ij}
+            +\frac12H_{kj}F_{ki}S_{ij}\\
+            &=
+            H_{ki}F_{kj}S_{ij}
+            =
+            (\ten F\ten S)_{ki}H_{ki}
+            =
+            \ten F\ten S:\ten H.
+        \end{aligned}
+        \]
+        Luego
+        \[
+            \ten P=\frac{\partial(\Psi\circ\ten E)}{\partial\ten F}=\ten F\ten S.
+        \]
+
+        \item Sea
+        \[
+            V=\{\vec\eta\in H^1(\Omega_0)^d:\vec\eta=\vec0\text{ en }\Gamma_D\}.
+        \]
+        Desde
+        \[
+            -\Div_{\vec X}\ten P=\vec B,
+            \qquad
+            \ten P\vec N=\overline{\vec T}\text{ en }\Gamma_N,
+        \]
+        multiplicamos por $\vec\eta\in V$ e integramos:
+        \[
+            -\int_{\Omega_0}\Div_{\vec X}\ten P\cdot\vec\eta\dX
+            =
+            \int_{\Omega_0}\vec B\cdot\vec\eta\dX.
+        \]
+        Por integración por partes,
+        \[
+        \begin{aligned}
+            -\int_{\Omega_0}\Div_{\vec X}\ten P\cdot\vec\eta\dX
+            &=
+            \int_{\Omega_0}\ten P:\nabla_{\vec X}\vec\eta\dX
+            -\int_{\partial\Omega_0}(\ten P\vec N)\cdot\vec\eta\dA\\
+            &=
+            \int_{\Omega_0}\ten P:\nabla_{\vec X}\vec\eta\dX
+            -\int_{\Gamma_N}\overline{\vec T}\cdot\vec\eta\dA.
+        \end{aligned}
+        \]
+        En $\Gamma_D$ no aparece contribución porque $\vec\eta=\vec0$. Por tanto, se obtiene: hallar $\vec u$ admisible tal que
+        \[
+            \int_{\Omega_0}\ten P(\ten F(\vec u)):\nabla_{\vec X}\vec\eta\dX
+            =
+            \int_{\Omega_0}\vec B\cdot\vec\eta\dX
+            +\int_{\Gamma_N}\overline{\vec T}\cdot\vec\eta\dA
+            \qquad\forall\vec\eta\in V.
+        \]
+        Es no lineal porque $\ten P$ depende no linealmente de $\nabla\vec u$.
+
+        \item Como
+        \[
+            \ten E
+            =
+            \frac12\left(\nabla\vec u+\nabla\vec u^\top+\nabla\vec u^\top\nabla\vec u\right),
+        \]
+        la linealización para pequeñas deformaciones elimina el término cuadrático $\nabla\vec u^\top\nabla\vec u$:
+        \[
+            \ten E\approx \varepsilon(\vec u)
+            :=
+            \frac12(\nabla\vec u+\nabla\vec u^\top).
+        \]
+        Entonces
+        \[
+            \tr\ten E
+            \approx
+            \tr\varepsilon(\vec u)
+            =
+            \dive\vec u,
+            \qquad
+            \ten S
+            \approx
+            \lambda(\dive\vec u)\ten I+2\mu\varepsilon(\vec u).
+        \]
+        Además, como $\ten F=\ten I+\nabla\vec u\approx\ten I$, el producto $\ten P=\ten F\ten S$ queda, a primer orden,
+        \[
+            \ten P
+            \approx
+            \ten S
+            \approx
+            \lambda(\dive\vec u)\ten I+2\mu\varepsilon(\vec u).
+        \]
+        El problema linealizado es: hallar $\vec u\in V$ tal que
+        \[
+            a(\vec u,\vec\eta)=L(\vec\eta)\qquad\forall\vec\eta\in V,
+        \]
+        con
+        \[
+        \begin{aligned}
+            a(\vec u,\vec\eta)
+            &=
+            \int_{\Omega_0}
+            \left[
+            2\mu\,\varepsilon(\vec u):\varepsilon(\vec\eta)
+            +\lambda(\dive\vec u)(\dive\vec\eta)
+            \right]\dX,\\
+            L(\vec\eta)
+            &=
+            \int_{\Omega_0}\vec B\cdot\vec\eta\dX
+            +\int_{\Gamma_N}\overline{\vec T}\cdot\vec\eta\dA.
+        \end{aligned}
+        \]
+
+        \item La continuidad de $a$ se obtiene de Cauchy--Schwarz:
+        \[
+        \begin{aligned}
+            \abs{a(\vec u,\vec\eta)}
+            &\le
+            2\mu\norm{\varepsilon(\vec u)}_{L^2}
+            \norm{\varepsilon(\vec\eta)}_{L^2}
+            +|\lambda|
+            \norm{\dive\vec u}_{L^2}
+            \norm{\dive\vec\eta}_{L^2}\\
+            &\le
+            C\norm{\vec u}_{H^1(\Omega_0)}
+            \norm{\vec\eta}_{H^1(\Omega_0)}.
+        \end{aligned}
+        \]
+        Para la coercividad usamos que, para toda matriz simétrica $\ten A$,
+        \[
+            \ten A=\ten A_0+\frac{\tr\ten A}{d}\ten I,
+            \qquad
+            \tr\ten A_0=0,
+            \qquad
+            \abs{\ten A}^2=\abs{\ten A_0}^2+\frac{(\tr\ten A)^2}{d}.
+        \]
+        Entonces
+        \[
+        \begin{aligned}
+            2\mu\,\ten A:\ten A+\lambda(\tr\ten A)^2
+            &=
+            2\mu\abs{\ten A_0}^2
+            +\left(\lambda+\frac{2\mu}{d}\right)(\tr\ten A)^2\\
+            &\ge
+            c_E\left(
+            \abs{\ten A_0}^2+\frac{(\tr\ten A)^2}{d}
+            \right)
+            =
+            c_E\abs{\ten A}^2,
+        \end{aligned}
+        \]
+        con $c_E>0$ porque $\mu>0$ y $\lambda+2\mu/d>0$. Aplicando esto a $\ten A=\varepsilon(\vec u)$,
+        \[
+            a(\vec u,\vec u)\ge c_E\norm{\varepsilon(\vec u)}_{L^2(\Omega_0)}^2.
+        \]
+        Como $|\Gamma_D|>0$, Korn implica
+        \[
+            \norm{\vec u}_{H^1(\Omega_0)}
+            \le C_K\norm{\varepsilon(\vec u)}_{L^2(\Omega_0)}.
+        \]
+        Luego $a$ es coerciva en $V$. Si $\vec B\in L^2(\Omega_0)^d$ y $\overline{\vec T}\in L^2(\Gamma_N)^d$, entonces $L\in V'$ porque
+        \[
+        \begin{aligned}
+            \abs{L(\vec\eta)}
+            &\le
+            \norm{\vec B}_{L^2(\Omega_0)}
+            \norm{\vec\eta}_{L^2(\Omega_0)}
+            +\norm{\overline{\vec T}}_{L^2(\Gamma_N)}
+            \norm{\vec\eta}_{L^2(\Gamma_N)}\\
+            &\le
+            C\left(
+            \norm{\vec B}_{L^2(\Omega_0)}
+            +\norm{\overline{\vec T}}_{L^2(\Gamma_N)}
+            \right)\norm{\vec\eta}_{H^1(\Omega_0)}.
+        \end{aligned}
+        \]
+        En el último paso usamos la desigualdad de traza. Por Lax--Milgram existe una única solución del problema linealizado.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

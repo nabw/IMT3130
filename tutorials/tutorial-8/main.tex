@@ -1,0 +1,145 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{microtype}
+\usepackage{hyperref}
+
+\setlength\parindent{0pt}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\lhead{\scshape Pontificia Universidad Cat\'olica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\renewcommand{\labelitemi}{$\blacklozenge$}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\p}{\vspace{8pt}}
+\DeclareMathOperator{\diver}{div}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cof}{Cof}
+
+\begin{document}
+
+\begin{flushleft}
+    \small
+    \textbf{IMT3130} \hfill
+    \textbf{16/05/2026}
+\end{flushleft}
+\begin{center}
+    \LARGE\textbf{Ayudant\'ia 8}\\
+    \vspace{3pt}
+    \normalsize\textbf{Mec\'anica del continuo, formulaciones mixtas y termodin\'amica}\\
+    \normalsize Ayudante: Basti\'an Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+    \rule{\textwidth}{0.05mm}
+\end{center}
+
+\section*{Problemas}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+\item \textbf{Flujo de Stokes--Brinkman incomprensible e inf--sup.}
+
+Sea $\Omega\subset\R^d$, $d\in\{2,3\}$, un dominio Lipschitz acotado y conexo. Se considera un fluido incomprensible, estacionario y de baja velocidad, con velocidad $\bm v:\Omega\to\R^d$ y presi\'on $p:\Omega\to\R$. Sean $\mu>0$ la viscosidad y $\alpha\ge 0$ un coeficiente de arrastre lineal. La fuerza de volumen total se denota por $\bm f\in H^{-1}(\Omega)^d$.
+
+El objetivo es derivar y analizar el modelo
+\begin{equation*}
+\begin{aligned}
+    -\mu\Delta \bm v+\alpha \bm v+\nabla p &= \bm f &&\text{en }\Omega,\\
+    \diver \bm v &=0 &&\text{en }\Omega,\\
+    \bm v&=\bm 0 &&\text{en }\partial\Omega,\\
+    \int_\Omega p\,dx&=0.
+\end{aligned}
+\end{equation*}
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Usando el teorema de transporte de Reynolds, derive la condici\'on local de incomprensibilidad $\diver\bm v=0$ a partir de la conservaci\'on del volumen de todo subcuerpo material.
+
+    \item Partiendo del balance euleriano de momentum lineal
+    \begin{equation*}
+        \rho\frac{D\bm v}{Dt}=\diver\bm\sigma+\rho\bm b+\bm f_{\mathrm{drag}},
+    \end{equation*}
+    de la ley constitutiva newtoniana
+    \begin{equation*}
+        \bm\sigma=-pI+2\mu D(\bm v),
+        \qquad
+        D(\bm v)=\frac12\left(\nabla\bm v+\nabla\bm v^T\right),
+    \end{equation*}
+    y del arrastre lineal $\bm f_{\mathrm{drag}}=-\alpha\bm v$, derive el modelo fuerte anterior bajo las hip\'otesis de r\'egimen estacionario lento, viscosidad constante e incomprensibilidad.
+
+    \item Defina espacios adecuados $V$ y $Q$ para la velocidad y la presi\'on. Derive la formulaci\'on d\'ebil mixta y explique por qu\'e la presi\'on se busca con media cero.
+
+    \item Asuma la condici\'on inf--sup continua de la divergencia
+    \begin{equation*}
+        \inf_{q\in L^2_0(\Omega)\setminus\{0\}}
+        \sup_{\bm w\in H^1_0(\Omega)^d\setminus\{\bm 0\}}
+        \frac{\int_\Omega q\,\diver\bm w\,dx}
+        {\|q\|_{L^2(\Omega)}\|\bm w\|_{H^1(\Omega)}}
+        \ge \beta>0.
+    \end{equation*}
+    Verifique las hip\'otesis necesarias del teorema de Ne\v{c}as--Babu\v{s}ka--Brezzi para concluir existencia, unicidad y una estimaci\'on de estabilidad para $(\bm v,p)$.
+\end{enumerate}
+
+\item \textbf{Conducci\'on termoel\'astica con fuente mec\'anica prescrita y Lax--Milgram.}
+
+Sea $\Omega_0\subset\R^d$ un dominio material de referencia. Consideramos la temperatura absoluta $\theta:\Omega_0\times(0,T)\to\R$, con $\theta>0$, y una deformaci\'on prescrita
+\begin{equation*}
+    \bm\varphi(\bm X,t),
+    \qquad
+    F=\nabla_{\bm X}\bm\varphi,
+    \qquad
+    J=\det F>0.
+\end{equation*}
+La deformaci\'on es conocida, por ejemplo desde un experimento, desde un paso temporal anterior o desde una soluci\'on mec\'anica ya calculada.
+
+Para evitar ambig\"uedades de unidades, escribiremos $R_0$ para el suministro t\'ermico por unidad de volumen de referencia. Se asume que $\rho_0>0$, $c_v>0$, y que el tensor de conductividad $\bm\kappa(\bm X)$ es sim\'etrico, acotado y uniformemente el\'iptico:
+\begin{equation*}
+    \bm\kappa(\bm X)\xi\cdot\xi\ge \kappa_0|\xi|^2
+    \qquad\forall \xi\in\R^d,
+    \qquad
+    \kappa_0>0.
+\end{equation*}
+Se impone condici\'on adiab\'atica homog\'enea,
+\begin{equation*}
+    \bm\kappa\nabla_{\bm X}\theta\cdot\bm N=0
+    \qquad\text{en }\partial\Omega_0.
+\end{equation*}
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Partiendo de la primera ley en configuraci\'on material
+    \begin{equation*}
+        \rho_0\dot e_m=\bm S:\dot E-\Div_{\bm X}\bm q_0+R_0,
+    \end{equation*}
+    explique c\'omo se obtiene una ecuaci\'on de calor cuando la potencia mec\'anica se modela como una fuente conocida $g_{\mathrm{mec}}$. Use adem\'as la desigualdad residual de Clausius--Duhem para justificar la ley de Fourier $\bm q_0=-\bm\kappa\nabla_{\bm X}\theta$.
+
+    \item Suponga que el acoplamiento termoel\'astico se eval\'ua expl\'icitamente y produce
+    \begin{equation*}
+        g_{\mathrm{mec}}
+        =3\alpha_TK\,\theta_\star\,F^{-T}:\dot F,
+    \end{equation*}
+    donde $\alpha_T$, $K$ y $\theta_\star$ son datos conocidos. Use la identidad de la derivada del determinante para escribir $g_{\mathrm{mec}}$ en t\'erminos de $J$ y $\dot J$.
+
+    \item Aplique Euler impl\'icito a
+    \begin{equation*}
+        \rho_0c_v\dot\theta-
+        \Div_{\bm X}\left(\bm\kappa\nabla_{\bm X}\theta\right)
+        =R_0+g_{\mathrm{mec}},
+    \end{equation*}
+    evaluando $g_{\mathrm{mec}}^{n+1}$ como dato conocido. Derive la formulaci\'on d\'ebil para calcular $\theta^{n+1}$.
+
+    \item Pruebe existencia y unicidad de $\theta^{n+1}\in H^1(\Omega_0)$ usando Lax--Milgram. Indique claramente qu\'e hip\'otesis se requieren sobre $R_0^{n+1}$, $g_{\mathrm{mec}}^{n+1}$ y $\theta^n$.
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

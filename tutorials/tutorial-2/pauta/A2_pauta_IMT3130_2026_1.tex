@@ -1,0 +1,193 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,booktabs,enumitem,fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\solution}{\large\textbf{Solución}\normalsize}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\R{\mathbb R}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{20/03/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 2}\\
+        \vspace{3pt}
+        \normalsize\textbf{Diferencias finitas}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} Sea $f$ suficientemente suave. Determine $a,b,c,d\in\R$ para que
+    \[
+        \frac{a f(x_i-2h)+b f(x_i-h)+c f(x_i+h)+d f(x_i+2h)}{h}
+    \]
+    aproxime $f'(x_i)$ con el mayor orden posible. Escriba el esquema resultante y su orden.
+
+    \textbf{Solución.} Expandimos alrededor de $x_i$:
+    \begin{align*}
+        f(x_i\pm h)
+        &=f_i\pm h f_i'+\frac{h^2}{2}f_i''\pm\frac{h^3}{6}f_i^{(3)}
+        +\frac{h^4}{24}f_i^{(4)}\pm\frac{h^5}{120}f_i^{(5)}+O(h^6),\\
+        f(x_i\pm 2h)
+        &=f_i\pm2h f_i'+2h^2f_i''\pm\frac{4h^3}{3}f_i^{(3)}
+        +\frac{2h^4}{3}f_i^{(4)}\pm\frac{4h^5}{15}f_i^{(5)}+O(h^6).
+    \end{align*}
+    Al imponer que
+    \[
+        \frac{a f_{i-2}+b f_{i-1}+c f_{i+1}+d f_{i+2}}{h}
+    \]
+    aproxime $f_i'$ con el mayor orden posible, las condiciones sobre $a,b,c,d$ son
+    \[
+    \begin{aligned}
+        a+b+c+d&=0,\\
+        -2a-b+c+2d&=1,\\
+        2a+\frac12b+\frac12c+2d&=0,\\
+        -\frac43a-\frac16b+\frac16c+\frac43d&=0.
+    \end{aligned}
+    \]
+    Resolviendo,
+    \[
+        a=\frac1{12},\qquad b=-\frac23,\qquad c=\frac23,\qquad d=-\frac1{12}.
+    \]
+    Por tanto,
+    \[
+        f'(x_i)
+        =
+        \frac{f_{i-2}-8f_{i-1}+8f_{i+1}-f_{i+2}}{12h}
+        +O(h^4).
+    \]
+    El término de orden $h^3f^{(4)}$ también se cancela por simetría. El término dominante del error es
+    \[
+        -\frac{h^4}{30}f^{(5)}(x_i),
+    \]
+    de modo que la aproximación es de orden $4$.
+
+    \item \textbf{Enunciado.} Para el problema
+    \[
+        -u''=f\quad\text{en }(0,1),\qquad u(0)=u(1)=0,
+    \]
+    discretizado por
+    \[
+        \frac{-u_{i+1}+2u_i-u_{i-1}}{h^2}=f(x_i),
+    \]
+    suponga que el error de truncamiento local es $O(h^2)$. Determine si esto basta para concluir error global $O(h^2)$, deduzca la ecuación de error e identifique la hipótesis de estabilidad necesaria.
+
+    \textbf{Solución.} No basta conocer solamente que el error de truncamiento local es $O(h^2)$. Se necesita además una cota de estabilidad uniforme para el inverso discreto.
+
+    Sea $\vec u_h$ la solución discreta y sea $\vec u^I$ la restricción de la solución exacta a la malla. Si $\mat A_h$ denota la matriz del operador discreto, entonces
+    \[
+        \mat A_h\vec u_h=\vec f_h,
+        \qquad
+        \mat A_h\vec u^I=\vec f_h+\vec\tau_h,
+    \]
+    donde $\vec\tau_h$ es el error de truncamiento local. Para el error $\vec e_h=\vec u_h-\vec u^I$,
+    \[
+        \mat A_h\vec e_h=-\vec\tau_h.
+    \]
+    Si se dispone de estabilidad uniforme,
+    \[
+        \norm{\vec v_h}\le C\norm{\mat A_h\vec v_h}
+        \qquad\text{con }C\text{ independiente de }h,
+    \]
+    entonces
+    \[
+        \norm{\vec e_h}
+        \le
+        C\norm{\vec\tau_h}
+        =
+        O(h^2).
+    \]
+    Así se obtiene convergencia global de orden $2$ en la norma considerada.
+
+    En cambio, si sólo se tiene
+    \[
+        \norm{\vec v_h}\le C_h\norm{\mat A_h\vec v_h},
+        \qquad C_h\to\infty,
+    \]
+    entonces
+    \[
+        \norm{\vec e_h}\le C_h\norm{\vec\tau_h}=O(C_hh^2).
+    \]
+    Esta cota implica convergencia únicamente si $C_hh^2\to0$. Además, aunque haya convergencia, el orden global puede ser menor que el orden local. Este es el punto central: consistencia local más estabilidad implica convergencia; consistencia sola no controla la propagación del error.
+
+    \item \textbf{Enunciado.} En $\Omega=(0,1)^2$, construya el esquema de diferencias finitas centradas para
+    \[
+        -\Delta u=f
+    \]
+    en una malla cartesiana uniforme. Escriba el stencil, pruebe consistencia de orden $2$ por Taylor e identifique el término dominante del error local.
+
+    \textbf{Solución.} Usando diferencias centradas,
+    \[
+        u_{xx}(x_i,y_j)
+        =
+        \frac{u(x_{i+1},y_j)-2u(x_i,y_j)+u(x_{i-1},y_j)}{h^2}
+        -\frac{h^2}{12}u_{xxxx}(x_i,y_j)+O(h^4),
+    \]
+    y análogamente,
+    \[
+        u_{yy}(x_i,y_j)
+        =
+        \frac{u(x_i,y_{j+1})-2u(x_i,y_j)+u(x_i,y_{j-1})}{h^2}
+        -\frac{h^2}{12}u_{yyyy}(x_i,y_j)+O(h^4).
+    \]
+    Por tanto, el esquema para $-\Delta u=f$ es
+    \[
+        \frac{4u_{ij}-u_{i+1,j}-u_{i-1,j}-u_{i,j+1}-u_{i,j-1}}{h^2}
+        =
+        f_{ij},
+    \]
+    con stencil
+    \[
+        \frac1{h^2}
+        \begin{array}{ccc}
+            & -1 & \\
+            -1 & 4 & -1\\
+            & -1 &
+        \end{array}.
+    \]
+    Aplicando el operador discreto a la solución exacta,
+    \[
+        \frac{4u_{ij}-u_{i+1,j}-u_{i-1,j}-u_{i,j+1}-u_{i,j-1}}{h^2}
+        =
+        -\Delta u(x_i,y_j)
+        -\frac{h^2}{12}\left(u_{xxxx}(x_i,y_j)+u_{yyyy}(x_i,y_j)\right)
+        +O(h^4).
+    \]
+    Como $-\Delta u=f$, el error local dominante es
+    \[
+        -\frac{h^2}{12}\left(u_{xxxx}+u_{yyyy}\right)(x_i,y_j),
+    \]
+    y el método es consistente de orden $2$.
+
+\end{enumerate}
+
+\end{document}

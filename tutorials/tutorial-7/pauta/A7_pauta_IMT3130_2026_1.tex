@@ -1,0 +1,390 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,enumitem,fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\solution}{\large\textbf{Solución}\normalsize}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\DeclareMathOperator{\dive}{div}
+\def\R{\mathbb R}
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\ds{\mbox{\(\,\mathrm{d}s\)}}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{09/05/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 7}\\
+        \vspace{3pt}
+        \normalsize\textbf{Interpolación, elementos finitos compatibles e inf--sup}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} Para
+    \[
+        -u''+\eta u=f\quad\text{en }(0,1),\qquad u(0)=u(1)=0,
+    \]
+    con formulación débil $a_\eta(u,v)=F(v)$ en $V=H^1_0(0,1)$, compare los métodos de Galerkin conformes con $P_1$ y $P_2$. Pruebe ortogonalidad de Galerkin, derive Céa en norma de energía, estime los errores de energía por interpolación y use Aubin--Nitsche para obtener tasas en $L^2$.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item La solución continua satisface
+        \[
+            a_\eta(u,v)=F(v)\qquad\forall v\in V,
+        \]
+        y la discreta
+        \[
+            a_\eta(u_h^{(r)},v_h)=F(v_h)\qquad\forall v_h\in V_h^{(r)}.
+        \]
+        Como $V_h^{(r)}\subset V$, restando ambas ecuaciones se obtiene
+        \[
+            a_\eta(u-u_h^{(r)},v_h)=0
+            \qquad\forall v_h\in V_h^{(r)}.
+        \]
+        Sea $e_r=u-u_h^{(r)}$. Para cualquier $w_h\in V_h^{(r)}$,
+        \begin{align*}
+            \norm{e_r}_{a_\eta}^2
+            &=a_\eta(e_r,e_r)\\
+            &=a_\eta(e_r,u-u_h^{(r)})\\
+            &=a_\eta(e_r,u-w_h)+a_\eta(e_r,w_h-u_h^{(r)})\\
+            &=a_\eta(e_r,u-w_h)\\
+            &\le \norm{e_r}_{a_\eta}\norm{u-w_h}_{a_\eta}.
+        \end{align*}
+        El término $a_\eta(e_r,w_h-u_h^{(r)})$ se anula porque $w_h-u_h^{(r)}\in V_h^{(r)}$ y vale la ortogonalidad de Galerkin.
+        Si $e_r\neq0$, dividimos por $\norm{e_r}_{a_\eta}$ y tomamos ínfimo:
+        \[
+            \norm{u-u_h^{(r)}}_{a_\eta}
+            \le
+            \inf_{w_h\in V_h^{(r)}}\norm{u-w_h}_{a_\eta}.
+        \]
+        Esta es la estimación de Céa con constante $1$ en norma de energía.
+
+        \item Tomando $w_h=\Pi_h^{(r)}u$,
+        \[
+        \begin{aligned}
+            \norm{u-\Pi_h^{(r)}u}_{a_\eta}
+            &=
+            \left(
+            |u-\Pi_h^{(r)}u|_{H^1(0,1)}^2
+            +\eta\norm{u-\Pi_h^{(r)}u}_{L^2(0,1)}^2
+            \right)^{1/2}\\
+            &\le
+            |u-\Pi_h^{(r)}u|_{H^1(0,1)}
+            +\sqrt\eta\,\norm{u-\Pi_h^{(r)}u}_{L^2(0,1)}.
+        \end{aligned}
+        \]
+        Para $P_1$,
+        \[
+        \begin{aligned}
+            \norm{u-u_h^{(1)}}_{a_\eta}
+            &\le
+            C\left(h|u|_{H^2(0,1)}
+            +\sqrt\eta\,h^2|u|_{H^2(0,1)}\right)\\
+            &=
+            C\left(h+\sqrt\eta\,h^2\right)|u|_{H^2(0,1)}
+            =
+            O(h)
+            \quad(\eta\text{ fijo}).
+        \end{aligned}
+        \]
+        Para $P_2$,
+        \[
+        \begin{aligned}
+            \norm{u-u_h^{(2)}}_{a_\eta}
+            &\le
+            C\left(h^2|u|_{H^3(0,1)}
+            +\sqrt\eta\,h^3|u|_{H^3(0,1)}\right)\\
+            &=
+            C\left(h^2+\sqrt\eta\,h^3\right)|u|_{H^3(0,1)}
+            =
+            O(h^2)
+            \quad(\eta\text{ fijo}).
+        \end{aligned}
+        \]
+
+        \item Sea $e_r=u-u_h^{(r)}$ y sea $z\in H^1_0(0,1)$ la solución dual
+        \[
+            a_\eta(w,z)=\int_0^1 w e_r\dx
+            \qquad\forall w\in H^1_0(0,1).
+        \]
+        En forma fuerte, $z$ satisface
+        \[
+            -z''+\eta z=e_r\quad\text{en }(0,1),
+            \qquad
+            z(0)=z(1)=0.
+        \]
+        En 1D, para este problema elíptico, usamos la regularidad
+        \[
+            \norm{z}_{H^2(0,1)}\le C\norm{e_r}_{L^2(0,1)}.
+        \]
+        Entonces, para cualquier $z_h\in V_h^{(r)}$,
+        \begin{align*}
+            \norm{e_r}_{L^2(0,1)}^2
+            &=
+            a_\eta(e_r,z)\\
+            &=
+            a_\eta(e_r,z-z_h)
+            \qquad\text{(ortogonalidad de Galerkin)}\\
+            &\le
+            \norm{e_r}_{a_\eta}\norm{z-z_h}_{a_\eta}.
+        \end{align*}
+        Como $V_h^{(r)}$ contiene funciones $P_1$, podemos escoger un interpolante lineal de $z$ y obtener
+        \[
+        \begin{aligned}
+            \inf_{z_h\in V_h^{(r)}}\norm{z-z_h}_{a_\eta}
+            &\le
+            \norm{z-\Pi_h^{(1)}z}_{a_\eta}\\
+            &\le
+            C\left(h+\sqrt\eta\,h^2\right)\norm{z}_{H^2(0,1)}\\
+            &\le
+            Ch\norm{e_r}_{L^2(0,1)}
+            \qquad(\eta\text{ fijo}).
+        \end{aligned}
+        \]
+        Por tanto,
+        \[
+            \norm{e_r}_{L^2(0,1)}
+            \le
+            Ch\norm{e_r}_{a_\eta}.
+        \]
+        Combinando con las estimaciones de energía,
+        \[
+            \norm{u-u_h^{(1)}}_{L^2(0,1)}
+            =
+            O(h^2),
+            \qquad
+            \norm{u-u_h^{(2)}}_{L^2(0,1)}
+            =
+            O(h^3).
+        \]
+        La norma $L^2$ es más débil que la norma de energía, y el argumento dual permite ganar un orden adicional.
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Estudie dos triples de Ciarlet. Primero, en $\widehat K=[-1,1]$, use $\mathcal P=\mathbb P_2(\widehat K)$ y los grados de libertad $p(-1)$, $p(0)$, $p(1)$ para probar unisolvencia y construir la base local. Luego, en el triángulo de referencia, use
+    \[
+        RT_0(\widehat K)=\{\vec q(x,y)=(\alpha,\beta)+\gamma(x,y):\alpha,\beta,\gamma\in\R\}
+    \]
+    con grados de libertad dados por flujos normales en aristas. Pruebe unisolvencia y compare la continuidad global de $P_2$ y $RT_0$.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Sea $p\in\mathbb P_2([-1,1])$. Si
+        \[
+            p(-1)=p(0)=p(1)=0,
+        \]
+        entonces $p$ tiene tres raíces distintas. Como $\deg p\le2$, necesariamente $p\equiv0$. Además, $\dim\mathbb P_2=3$ y hay tres grados de libertad, luego el triple es unisolvente.
+
+        La base local se construye imponiendo $\phi_i(\widehat x_j)=\delta_{ij}$. Con la fórmula de Lagrange,
+        \[
+            \phi_i(x)=\prod_{j\neq i}
+            \frac{x-\widehat x_j}{\widehat x_i-\widehat x_j},
+            \qquad
+            \widehat x_1=-1,\quad \widehat x_2=0,\quad \widehat x_3=1.
+        \]
+        Así, las bases locales son
+        \[
+            \phi_1(x)=\frac{x(x-1)}{2},
+            \qquad
+            \phi_2(x)=1-x^2,
+            \qquad
+            \phi_3(x)=\frac{x(x+1)}{2}.
+        \]
+        Satisfacen $\phi_i(\widehat x_j)=\delta_{ij}$ para $\widehat x_1=-1$, $\widehat x_2=0$, $\widehat x_3=1$.
+
+        \item Escribimos
+        \[
+            \vec q(x,y)=(\alpha,\beta)+\gamma(x,y).
+        \]
+        Tomamos las aristas
+        \[
+            e_1=\{x=0,\ 0\le y\le1\},\quad
+            e_2=\{y=0,\ 0\le x\le1\},\quad
+            e_3=\{x+y=1\},
+        \]
+        con normales exteriores
+        \[
+            \vec n_1=(-1,0),\qquad
+            \vec n_2=(0,-1),\qquad
+            \vec n_3=\frac{1}{\sqrt2}(1,1).
+        \]
+        Entonces
+        \[
+            \ell_1(\vec q)=\int_{e_1}\vec q\cdot\vec n_1\ds=-\alpha,
+            \qquad
+            \ell_2(\vec q)=\int_{e_2}\vec q\cdot\vec n_2\ds=-\beta.
+        \]
+        En la hipotenusa, parametrizando $(x,y)=(s,1-s)$, $0\le s\le1$, se tiene $\ds=\sqrt2\,ds$ y
+        \[
+            \vec q(s,1-s)\cdot\vec n_3\,\ds
+            =
+            \frac{\alpha+\beta+\gamma}{\sqrt2}\sqrt2\,ds.
+        \]
+        Luego
+        \[
+            \ell_3(\vec q)=\alpha+\beta+\gamma.
+        \]
+        Si los tres grados de libertad son cero, entonces $\alpha=0$, $\beta=0$ y $\gamma=0$. Por tanto $\vec q\equiv\vec0$. Como $\dim RT_0(\widehat K)=3$ y hay tres grados de libertad, el elemento es unisolvente.
+
+        \item El elemento $P_2$ se ensambla igualando valores nodales compartidos. Por eso genera funciones globales continuas y conformes en $H^1$. En cambio, $RT_0$ se ensambla igualando los flujos normales sobre aristas compartidas. Por eso genera campos con continuidad normal y conformes en $H(\dive)$, pero no necesariamente funciones en $[H^1(\Omega)]^2$.
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Para el problema de transporte--reacción
+    \[
+        u'+u=f\quad\text{en }(0,1),\qquad u(0)=0,
+    \]
+    considere
+    \[
+        U=\{u\in H^1(0,1):u(0)=0\},\qquad
+        V=L^2(0,1),\qquad
+        a(u,v)=\int_0^1(u'+u)v\dx.
+    \]
+    Muestre que $a$ no es coerciva en norma $H^1$, pruebe una condición inf--sup continua y verifique que falla para $U_h=\operatorname{span}\{x,x^2\}$ y $V_h=\operatorname{span}\{1\}$.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Si $a$ fuera coerciva respecto de $\norm{\cdot}_{H^1(0,1)}$, existiría $\alpha>0$ tal que
+        \[
+            a(u,u)\ge\alpha\norm{u}_{H^1(0,1)}^2
+            \qquad\forall u\in U.
+        \]
+        Pero
+        \[
+            a(u,u)=\int_0^1(u'+u)u\dx
+            =
+            \frac12u(1)^2+\norm{u}_{L^2(0,1)}^2,
+        \]
+        porque $u(0)=0$. Tomando $u_n(x)=\sin(n\pi x)$,
+        \[
+            a(u_n,u_n)=\frac12,
+            \qquad
+            \norm{u_n}_{H^1(0,1)}^2
+            =
+            \frac12+\frac{n^2\pi^2}{2}\to\infty.
+        \]
+        Por tanto, no puede existir una constante de coercividad en norma $H^1$.
+
+        \item Sea $w=u'+u$. Si $u\neq0$, entonces $w\neq0$; de lo contrario, $u'+u=0$ y $u(0)=0$ implicarían $u\equiv0$. Elegimos $v=w\in L^2(0,1)$. Entonces
+        \[
+            \sup_{v\in L^2(0,1)\setminus\{0\}}
+            \frac{a(u,v)}{\norm{v}_{L^2}}
+            \ge
+            \frac{\int_0^1w^2\dx}{\norm{w}_{L^2}}
+            =
+            \norm{u'+u}_{L^2}.
+        \]
+        Falta controlar $\norm{u}_{H^1}$ por $\norm{u'+u}_{L^2}$. La ecuación $u'+u=w$, $u(0)=0$, da
+        \[
+            u(x)=e^{-x}\int_0^x e^s w(s)\,ds.
+        \]
+        De esta fórmula y Cauchy--Schwarz,
+        \[
+        \begin{aligned}
+            |u(x)|
+            &\le
+            \int_0^x e^{s-x}|w(s)|\,ds
+            \le
+            \int_0^1 |w(s)|\,ds
+            \le
+            \norm{w}_{L^2(0,1)}.
+        \end{aligned}
+        \]
+        Por tanto,
+        \[
+            \norm{u}_{L^2(0,1)}
+            \le
+            C\norm{w}_{L^2(0,1)}.
+        \]
+        Además, como $u'=w-u$,
+        \[
+            \norm{u'}_{L^2(0,1)}
+            \le
+            \norm{w}_{L^2(0,1)}
+            +\norm{u}_{L^2(0,1)}
+            \le
+            C\norm{w}_{L^2(0,1)}.
+        \]
+        Por tanto,
+        \[
+            \norm{u}_{H^1(0,1)}\le C\norm{u'+u}_{L^2(0,1)}.
+        \]
+        Así,
+        \[
+            \sup_{v\in V}
+            \frac{a(u,v)}{\norm{v}_{L^2}}
+            \ge
+            C^{-1}\norm{u}_{H^1(0,1)}.
+        \]
+        Tomando ínfimo sobre $u\neq0$,
+        \[
+            \inf_{u\in U\setminus\{0\}}
+            \sup_{v\in V\setminus\{0\}}
+            \frac{a(u,v)}{\norm{u}_{H^1}\norm{v}_{L^2}}
+            \ge C^{-1}>0.
+        \]
+
+        \item En el espacio discreto,
+        \[
+            U_h=\operatorname{span}\{x,x^2\},
+            \qquad
+            V_h=\operatorname{span}\{1\}.
+        \]
+        Para $u_h=\alpha x+\beta x^2$,
+        \[
+            a(u_h,1)
+            =
+            \int_0^1(u_h'+u_h)\dx
+            =
+            u_h(1)-u_h(0)+\int_0^1u_h\dx
+            =
+            \frac32\alpha+\frac43\beta.
+        \]
+        Eligiendo, por ejemplo,
+        \[
+            u_h(x)=8x-9x^2,
+        \]
+        se obtiene
+        \[
+            a(u_h,1)=0,
+            \qquad
+            u_h\neq0.
+        \]
+        Como todo $v_h\in V_h$ es múltiplo de $1$,
+        \[
+            \sup_{v_h\in V_h\setminus\{0\}}
+            \frac{a(u_h,v_h)}{\norm{v_h}_{L^2}}
+            =
+            0.
+        \]
+        La constante inf--sup discreta es cero. El punto es que, para problemas no coercivos, la estabilidad continua no se hereda automáticamente al discretizar: hay que verificar una condición inf--sup discreta compatible con los espacios elegidos.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

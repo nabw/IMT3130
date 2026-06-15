@@ -1,0 +1,177 @@
+\makeatletter \def\input@path{{../../}} \makeatother
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{microtype}
+\usepackage{hyperref}
+\setlength\parindent{0pt}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\lhead{\scshape Pontificia Universidad Cat\'olica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\renewcommand{\labelitemi}{$\blacklozenge$}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\p}{\vspace{8pt}}
+\newcommand{\dd}{\,\mathrm d}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\ten   #1{\mbox{\boldmath $#1$}{}}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\DeclareMathOperator{\diver}{div}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cof}{Cof}
+\DeclareMathOperator{\sym}{sym}
+
+\begin{document}
+\begin{flushleft}
+    \small
+    \textbf{IMT3130} \hfill
+    \textbf{12/06/2026}
+\end{flushleft}
+\begin{center}
+    \LARGE\textbf{Ayudant\'ia 11}\\
+    \vspace{3pt}
+    \normalsize\textbf{S\'intesis del curso: mec\'anica del continuo, inf--sup y FEM}\\
+    \normalsize Ayudante: Basti\'an Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+    \rule{\textwidth}{0.05mm}
+\end{center}
+
+\section*{Problemas}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+\item \textbf{Hiperelasticidad finita: cinem\'atica, tensiones y esquema num\'erico.}
+
+Sea $\Omega_0=(0,L_1)\times(0,L_2)\subset\R^2$ el dominio material de referencia. Se considera el movimiento af\'in
+\begin{equation*}
+    \vec\varphi(\vec X,t)=\mat A(t)\vec X,
+    \qquad
+    \mat A(t)=
+    \begin{pmatrix}
+        \lambda_1(t) & \gamma(t)\\
+        \chi(t) & \lambda_2(t)
+    \end{pmatrix},
+\end{equation*}
+con
+\begin{equation*}
+    J(t)=\det\mat A(t)=\lambda_1(t)\lambda_2(t)-\gamma(t)\chi(t)>0.
+\end{equation*}
+La densidad material $\rho_0>0$ es constante. El material es hiperel\'astico de Saint Venant--Kirchhoff, con energ\'ia almacenada por unidad de volumen de referencia
+\begin{equation*}
+    \Psi(\ten E)=\frac{\lambda_{\mathrm L}}{2}\big(\tr\ten E\big)^2+
+    \mu_{\mathrm L}\ten E:\ten E,
+    \qquad
+    \ten E=\frac12(\ten F^\top\ten F-\ten I),
+\end{equation*}
+donde $\lambda_{\mathrm L}$ y $\mu_{\mathrm L}>0$ son constantes de Lam\'e, y $\ten F=\nabla_{\vec X}\vec\varphi$.
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Calcule $\ten F$, $J$, la velocidad material $\dot{\vec\varphi}$, la velocidad espacial $\vec v(\vec x,t)$ y la densidad espacial $\rho(\vec x,t)$. Verifique tambi\'en la identidad $\dot J=J\tr(\dot{\ten F}\ten F^{-1})$ para este movimiento.
+
+    \item Usando notaci\'on indicial, derive
+    \begin{equation*}
+        S_{IJ}=\frac{\partial \Psi}{\partial E_{IJ}},
+        \qquad
+        P_{iJ}=\frac{\partial \Psi}{\partial F_{iJ}}=F_{iI}S_{IJ}.
+    \end{equation*}
+    Calcule expl\'icitamente las componentes de $\ten E$, $\ten S$ y $\ten P$ para el movimiento dado.
+
+    \item Considere el balance material de momentum lineal
+    \begin{equation*}
+        \rho_0\ddot\varphi_i-P_{iJ,J}=\rho_0B_i
+        \qquad\text{en }\Omega_0.
+    \end{equation*}
+    Para el movimiento af\'in anterior, determine una fuerza de cuerpo $\vec B(\vec X,t)$ que haga que el balance se satisfaga. Determine adem\'as la tracci\'on material $\vec T=\ten P\vec N$ sobre un borde con normal material $\vec N$.
+
+    \item Plantee la formulaci\'on d\'ebil lagrangiana general para un problema hiperel\'astico con $\vec u=\bar{\vec u}$ en $\Gamma_D$ y $\ten P\vec N=\bar{\vec T}$ en $\Gamma_N$. Proponga un esquema num\'erico de elementos finitos para resolver el problema no lineal quasiest\'atico.
+\end{enumerate}
+
+\item \textbf{Stokes--Brinkman con dato de borde no homog\'eneo e inf--sup.}
+
+Sea $\Omega\subset\R^d$, $d\in\{2,3\}$, un dominio Lipschitz acotado y conexo. Se considera el problema de Stokes--Brinkman incomprensible
+\begin{equation*}
+\begin{aligned}
+    -2\mu\diver D(\vec v)+\alpha\vec v+\nabla p&=\vec f &&\text{en }\Omega,\\
+    \diver\vec v&=0 &&\text{en }\Omega,\\
+    \vec v&=\vec g &&\text{en }\partial\Omega,\\
+    \int_\Omega p\,dx&=0,
+\end{aligned}
+\end{equation*}
+con $\mu>0$, $\alpha\ge0$, $D(\vec v)=\frac12(\nabla\vec v+\nabla\vec v^\top)$ y $\vec f\in H^{-1}(\Omega)^d$. Suponga que $\vec g$ satisface la compatibilidad de flujo
+\begin{equation*}
+    \int_{\partial\Omega}\vec g\cdot\vec n\,ds=0,
+\end{equation*}
+y que se dispone de un lifting solenoidal de $\vec g$, es decir, de una extensión $\vec v_g\in H^1(\Omega)^d$ tal que su traza satisface $\vec v_g=\vec g$ en $\partial\Omega$ y, además, $\diver\vec v_g=0$ en $\Omega$. No se pide construir este lifting; se asume su existencia.
+
+Sea
+\begin{equation*}
+    V=H^1_0(\Omega)^d,
+    \qquad
+    Q=L^2_0(\Omega).
+\end{equation*}
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Introduzca $\vec u=\vec v-\vec v_g$ y derive la formulaci\'on mixta para $(\vec u,p)\in V\times Q$.
+
+    \item Defina las formas $a$ y $b$. Pruebe continuidad de $a$ y $b$, y coercividad de $a$ usando Korn.
+
+    \item Enuncie con precisi\'on la condici\'on inf--sup continua de la divergencia. Explique por qu\'e esta condici\'on controla la presi\'on y pruebe unicidad para el problema homog\'eneo.
+
+    \item Deduzca una estimaci\'on de estabilidad de la forma
+    \begin{equation*}
+        \|\vec u\|_{H^1(\Omega)}+\|p\|_{L^2(\Omega)}
+        \le C\big(\|\vec f\|_{H^{-1}(\Omega)}+\|\vec v_g\|_{H^1(\Omega)}\big).
+    \end{equation*}
+\end{enumerate}
+
+\item \textbf{Advecci\'on--difusi\'on--reacci\'on: formulaci\'on, FEM e inf--sup.}
+
+Sea $\varepsilon>0$ y considere, en $(0,1)$, el problema
+\begin{equation*}
+    -\varepsilon u_\varepsilon''+u_\varepsilon'+u_\varepsilon=f,
+    \qquad
+    u_\varepsilon(0)=g_0,
+    \qquad
+    u_\varepsilon(1)=g_1.
+\end{equation*}
+Sea $\ell(x)=g_0(1-x)+g_1x$ y $w_\varepsilon=u_\varepsilon-\ell\in H^1_0(0,1)$.
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item Derive la formulaci\'on d\'ebil para $w_\varepsilon$ y pruebe existencia y unicidad por Lax--Milgram para cada $\varepsilon>0$.
+
+    \item Para espacios conformes $V_h^{(r)}\subset H^1_0(0,1)$ de grado $r=1,2$, formule el m\'etodo de Galerkin. Use C\'ea, interpolaci\'on y el argumento de Aubin--Nitsche para justificar, para $\varepsilon>0$ fijo, los \'ordenes esperados
+    \begin{equation*}
+        \|w_\varepsilon-w_{\varepsilon,h}^{(r)}\|_{H^1}=O(h^r),
+        \qquad
+        \|w_\varepsilon-w_{\varepsilon,h}^{(r)}\|_{L^2}=O(h^{r+1}).
+    \end{equation*}
+
+    \item Considere formalmente el problema de primer orden que se obtiene al poner $\varepsilon=0$. Identifique qu\'e condici\'on de borde es compatible con ese problema l\'imite y explique por qu\'e no se puede imponer simult\'aneamente $u_0(0)=g_0$ y $u_0(1)=g_1$ en general.
+
+    \item Para el problema l\'imite homog\'eneo, considere
+    \begin{equation*}
+        U=\{u\in H^1(0,1):u(0)=0\},
+        \qquad
+        V=L^2(0,1),
+    \end{equation*}
+    y
+    \begin{equation*}
+        a_0(u,v)=\int_0^1(u'+u)v\,dx.
+    \end{equation*}
+    Pruebe las condiciones de buena formulaci\'on asociadas al Lax--Milgram generalizado: una estimaci\'on inf--sup y la condici\'on de inyectividad correspondiente. En concreto, verifique que si $\zeta\in L^2(0,1)$ satisface $a_0(u,\zeta)=0$ para todo $u\in U$, entonces $\zeta=0$. Muestre adem\'as dos pares discretos mal elegidos para los cuales el inf--sup discreto falla.
+
+    \item Discuta por qu\'e las estimaciones para $\varepsilon>0$ fijo no entregan, por s\'i solas, una garant\'ia robusta cuando $\varepsilon$ es peque\~no. Proponga una estrategia num\'erica razonable basada en estabilizaci\'on o en una formulaci\'on Petrov--Galerkin.
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}
