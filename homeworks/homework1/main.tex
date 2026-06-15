@@ -44,8 +44,8 @@
 \instruccion
 
 \begin{enumerate}
-    \item\pts{1} Define the higher-order Fréchet derivatives. Then, consider the operator $T: L^p(\Omega) \to \R$ given by $T(f) = \int_\Omega f^p\,dx$ and compute its third-order derivative.
-    \item\pts{2 extra} State and prove the chain rule for Fréchet derivatives, given by $d(G\circ F)(u)[h] = dG(F(u))[dF(u)[h]]$. Then, use it to find the derivative of the composition $S\circ T$ of the operators $S:L^\infty(\Omega)\to L^\infty(\Omega)$ and $T:L^\infty(\Omega)\to L^\infty(\Omega)$ given by $S(u) = \sin u$ and $T(u) = \cos u$. Precisely define all the spaces used to apply the chain rule. 
+    \item\pts{2} Define the higher-order Fréchet derivatives. Then, consider the operator $T: L^p(\Omega) \to \R$ given by $T(f) = \int_\Omega f^p\,dx$ and compute its third-order derivative.
+    \item\pts{3} State and prove the chain rule for Fréchet derivatives, given by $d(G\circ F)(u)[h] = dG(F(u))[dF(u)[h]]$. Then, use it to find the derivative of the composition $S\circ T$ of the operators $S:L^\infty(\Omega)\to L^\infty(\Omega)$ and $T:L^\infty(\Omega)\to L^\infty(\Omega)$ given by $S(u) = \sin u$ and $T(u) = \cos u$. Precisely define all the spaces used to apply the chain rule. 
     \item\pts{2} The Cayley-Hamilton Theorem states that every matrix satisfies its own characteristic equation using the invariants: 
                 $$ \mat A^3 - I_1(\mat A) \mat A^2 + I_2(\mat A) \mat A - I_3(\mat A) \mat I = 0. $$
                 Differentiate this equation with respect to $\mat A$ and expand the equation to prove that $\parder{\det \mat A}{\mat A} = \det (\mat A) \mat A^{-T}$.
@@ -53,16 +53,16 @@
             $$ \der{\det A}{t}(t) = \det A(t) A^{-T}(t) : \der A{t}(t). $$
             \item If $\phi, \vec u, \ten A$ are a scalar, vector, and tensor field respectively in $\R^3$, prove using index notation that if $\vec v$ is another vector field:
                     \begin{itemize}
-                        \item\pts{0.5} $$\dive(\phi\vec  u) = \phi \dive \vec u + \vec u \cdot \grad \phi $$
-                        \item\pts{0.5} $$\dive(\phi\ten  A) = \phi \dive \ten A + \ten A \grad \phi $$
-                        \item\pts{0.5} $$\dive(\vec u \times \vec v) = \vec v\cdot \curl \vec u - \vec u \cdot \curl v $$
-                        \item\pts{0.5} $$ \grad(\phi \vec u) = \vec u \otimes \grad \phi + \phi \grad \vec u$$
+                        \item\pts{1} $$\dive(\phi\vec  u) = \phi \dive \vec u + \vec u \cdot \grad \phi $$
+                        \item\pts{1} $$\dive(\phi\ten  A) = \phi \dive \ten A + \ten A \grad \phi $$
+                        \item\pts{1} $$\dive(\vec u \times \vec v) = \vec v\cdot \curl \vec u - \vec u \cdot \curl v $$
+                        \item\pts{1} $$ \grad(\phi \vec u) = \vec u \otimes \grad \phi + \phi \grad \vec u$$
                     \end{itemize}
     \item Consider the domain $\Omega=(a,b)$ with $a<b$.
             \begin{itemize}
                 \item\pts{1} Consider the function $f:\Omega \to \R$ given by $f(x) = \sin (2\pi x)$. For it, consider a numerical differentiation scheme using the finite difference method to approximate its derivative $f'(x)$ in $\Omega$. In particular, compute the theoretical convergence rate for the forward, backward, and centered difference schemes in the $\|\cdot \|_{\infty,h}$ norm. For this, consider $a=-1$, $b=1$, and a distance between discrete points given by $h  \in \{2^{-n}\}_{n=4}^{20}$, compute the empirical convergence rates and interpret the obtained results.
                 \item\pts{1} Repeat the previous exercise for the function $f(x) = 2$ and interpret the obtained results.
-                \item\pts{1 extra} For this problem, when computing the numerical derivatives at the boundaries, you will have issues when using first-order finite differences combined with centered differences, which will deteriorate convergence. While this is not a problem, you can choose to use a one-sided finite difference formula to obtain quadratic convergence at the endpoints. By computing the Taylor series associated with $f(x+h)$ and $f(x+2h)$, prove that the corresponding approximation is
+                \item\pts{1} For this problem, when computing the numerical derivatives at the boundaries, you will have issues when using first-order finite differences combined with centered differences, which will deteriorate convergence. While this is not a problem, you can choose to use a one-sided finite difference formula to obtain quadratic convergence at the endpoints. By computing the Taylor series associated with $f(x+h)$ and $f(x+2h)$, prove that the corresponding approximation is
             $$ f'(x) = \frac{-3f(x) + 4 f(x+h) - f(x+2h)}{2h} + O(h^2). $$
             Use this formula to show that the quadratic convergence of centered differences is recovered.
             \end{itemize}
