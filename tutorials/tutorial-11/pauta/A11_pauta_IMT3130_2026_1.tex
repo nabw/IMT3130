@@ -1,0 +1,945 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,enumitem,fancyhdr,booktabs}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\ten   #1{\mbox{\boldmath $#1$}{}}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\R{\mathbb R}
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\dX{\mbox{\(\,\mathrm{d}X\)}}
+\def\ds{\mbox{\(\,\mathrm{d}s\)}}
+\def\dA{\mbox{\(\,\mathrm{d}A\)}}
+\DeclareMathOperator{\dive}{div}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cof}{Cof}
+\DeclareMathOperator{\spanop}{span}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{12/06/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 11}\\
+        \vspace{3pt}
+        \normalsize\textbf{Síntesis del curso: mecánica del continuo, inf--sup y FEM}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+\item \textbf{Hiperelasticidad finita: cinemática, tensiones y esquema numérico.}
+
+Sea $\Omega_0=(0,L_1)\times(0,L_2)\subset\R^2$ y
+\[
+    \vec\varphi(\vec X,t)=\mat A(t)\vec X,
+    \qquad
+    \mat A(t)=
+    \begin{pmatrix}
+        \lambda_1(t)&\gamma(t)\\
+        \chi(t)&\lambda_2(t)
+    \end{pmatrix},
+    \qquad
+    J(t)=\lambda_1\lambda_2-\gamma\chi>0.
+\]
+El material es Saint Venant--Kirchhoff, con
+\[
+    \Psi(\ten E)=\frac{\lambda_{\mathrm L}}2(\tr\ten E)^2+
+    \mu_{\mathrm L}\ten E:\ten E,
+    \qquad
+    \ten E=\frac12(\ten F^\top\ten F-\ten I).
+\]
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item \textbf{Enunciado.} Calcule $\ten F$, $J$, la velocidad material $\dot{\vec\varphi}$, la velocidad espacial $\vec v(\vec x,t)$ y la densidad espacial $\rho(\vec x,t)$. Verifique la identidad
+    \[
+        \dot J=J\tr(\dot{\ten F}\ten F^{-1}).
+    \]
+
+    \textbf{Solución.} Como $\vec\varphi(\vec X,t)=\mat A(t)\vec X$, el gradiente material es constante en espacio:
+    \[
+        \ten F=\nabla_{\vec X}\vec\varphi=\mat A(t),
+        \qquad
+        J=\det\ten F=\lambda_1\lambda_2-\gamma\chi.
+    \]
+    La velocidad material es la derivada temporal a $\vec X$ fijo:
+    \[
+        \dot{\vec\varphi}(\vec X,t)=\dot{\mat A}(t)\vec X
+        =
+        \begin{pmatrix}
+            \dot\lambda_1X_1+\dot\gamma X_2\\
+            \dot\chi X_1+\dot\lambda_2X_2
+        \end{pmatrix}.
+    \]
+    Para escribir la velocidad como campo espacial, usamos $\vec x=\mat A\vec X$. Como $J>0$, la matriz $\mat A$ es invertible y
+    \[
+        \vec X=\mat A^{-1}\vec x.
+    \]
+    Por tanto,
+    \[
+        \vec v(\vec x,t)=\dot{\vec\varphi}(\vec X,t)\big|_{\vec X=\mat A^{-1}\vec x}
+        =\dot{\mat A}\mat A^{-1}\vec x.
+    \]
+    En particular,
+    \[
+        \nabla_{\vec x}\vec v=\dot{\mat A}\mat A^{-1}=\dot{\ten F}\ten F^{-1}.
+    \]
+    La conservación de masa entre configuración material y espacial da
+    \[
+        \rho(\vec x,t)J(t)=\rho_0,
+        \qquad
+        \rho(\vec x,t)=\frac{\rho_0}{J(t)}.
+    \]
+    Finalmente,
+    \[
+        \dot J=\dot\lambda_1\lambda_2+
+        \lambda_1\dot\lambda_2-
+        \dot\gamma\chi-
+        \gamma\dot\chi.
+    \]
+    Además,
+    \[
+        \ten F^{-1}=\frac1J
+        \begin{pmatrix}
+            \lambda_2&-\gamma\\
+            -\chi&\lambda_1
+        \end{pmatrix}.
+    \]
+    Luego
+    \[
+    \begin{aligned}
+        J\tr(\dot{\ten F}\ten F^{-1})
+        &=
+        \tr\left[
+        \begin{pmatrix}
+            \dot\lambda_1&\dot\gamma\\
+            \dot\chi&\dot\lambda_2
+        \end{pmatrix}
+        \begin{pmatrix}
+            \lambda_2&-\gamma\\
+            -\chi&\lambda_1
+        \end{pmatrix}
+        \right]\\
+        &=
+        \dot\lambda_1\lambda_2-
+        \dot\gamma\chi-
+        \dot\chi\gamma+
+        \dot\lambda_2\lambda_1
+        =\dot J.
+    \end{aligned}
+    \]
+
+    \item \textbf{Enunciado.} Usando notación indicial, derive
+    \[
+        S_{IJ}=\frac{\partial\Psi}{\partial E_{IJ}},
+        \qquad
+        P_{iJ}=\frac{\partial\Psi}{\partial F_{iJ}}=F_{iI}S_{IJ}.
+    \]
+    Calcule las componentes de $\ten E$, $\ten S$ y $\ten P$ para el movimiento dado.
+
+    \textbf{Solución.} Primero,
+    \[
+        E_{IJ}=\frac12(F_{kI}F_{kJ}-\delta_{IJ}).
+    \]
+    La energía se escribe como
+    \[
+        \Psi(\ten E)=\frac{\lambda_{\mathrm L}}2(E_{KK})^2+
+        \mu_{\mathrm L}E_{IJ}E_{IJ}.
+    \]
+    Derivando respecto de $E_{IJ}$,
+    \[
+    \begin{aligned}
+        \frac{\partial\Psi}{\partial E_{IJ}}
+        &=
+        \lambda_{\mathrm L}E_{KK}\frac{\partial E_{LL}}{\partial E_{IJ}}
+        +\mu_{\mathrm L}\frac{\partial(E_{KL}E_{KL})}{\partial E_{IJ}}\\
+        &=
+        \lambda_{\mathrm L}(\tr\ten E)\delta_{IJ}
+        +2\mu_{\mathrm L}E_{IJ}.
+    \end{aligned}
+    \]
+    Por tanto,
+    \[
+        \ten S=\lambda_{\mathrm L}(\tr\ten E)\ten I+2\mu_{\mathrm L}\ten E.
+    \]
+    Para obtener $\ten P$, aplicamos regla de la cadena. Como
+    \[
+        E_{IJ}=\frac12(F_{kI}F_{kJ}-\delta_{IJ}),
+    \]
+    se tiene
+    \[
+        \frac{\partial E_{IJ}}{\partial F_{iK}}
+        =
+        \frac12(\delta_{IK}F_{iJ}+\delta_{JK}F_{iI}).
+    \]
+    Luego
+    \[
+    \begin{aligned}
+        P_{iK}
+        &=
+        \frac{\partial\Psi}{\partial F_{iK}}
+        =
+        S_{IJ}\frac{\partial E_{IJ}}{\partial F_{iK}}\\
+        &=
+        \frac12S_{IJ}(\delta_{IK}F_{iJ}+\delta_{JK}F_{iI})\\
+        &=
+        \frac12S_{KJ}F_{iJ}+\frac12S_{IK}F_{iI}.
+    \end{aligned}
+    \]
+    Como $\ten S$ es simétrica, ambos términos coinciden, y queda
+    \[
+        P_{iK}=F_{iI}S_{IK},
+        \qquad
+        \ten P=\ten F\ten S.
+    \]
+
+    Para la matriz dada,
+    \[
+        \ten F=
+        \begin{pmatrix}
+            \lambda_1&\gamma\\
+            \chi&\lambda_2
+        \end{pmatrix},
+        \qquad
+        \ten F^\top\ten F=
+        \begin{pmatrix}
+            \lambda_1^2+\chi^2&\lambda_1\gamma+\chi\lambda_2\\
+            \lambda_1\gamma+\chi\lambda_2&\gamma^2+\lambda_2^2
+        \end{pmatrix}.
+    \]
+    Así,
+    \[
+    \begin{aligned}
+        E_{11}&=\frac12(\lambda_1^2+\chi^2-1),\\
+        E_{22}&=\frac12(\gamma^2+\lambda_2^2-1),\\
+        E_{12}=E_{21}&=\frac12(\lambda_1\gamma+\chi\lambda_2),
+    \end{aligned}
+    \]
+    y
+    \[
+        \tr\ten E=\frac12(\lambda_1^2+\chi^2+\gamma^2+\lambda_2^2-2).
+    \]
+    Por tanto,
+    \[
+    \begin{aligned}
+        S_{11}&=\lambda_{\mathrm L}\tr(\ten E)+2\mu_{\mathrm L}E_{11},\\
+        S_{22}&=\lambda_{\mathrm L}\tr(\ten E)+2\mu_{\mathrm L}E_{22},\\
+        S_{12}=S_{21}&=2\mu_{\mathrm L}E_{12}.
+    \end{aligned}
+    \]
+    Finalmente,
+    \[
+        \ten P=	en F\ten S
+        =
+        \begin{pmatrix}
+            \lambda_1S_{11}+\gamma S_{12} & \lambda_1S_{12}+\gamma S_{22}\\
+            \chi S_{11}+\lambda_2S_{12} & \chi S_{12}+\lambda_2S_{22}
+        \end{pmatrix}.
+    \]
+
+    \item \textbf{Enunciado.} Para el balance material
+    \[
+        \rho_0\ddot\varphi_i-P_{iJ,J}=\rho_0B_i,
+    \]
+    determine una fuerza de cuerpo $\vec B(\vec X,t)$ compatible con el movimiento afín y determine la tracción material $\vec T=\ten P\vec N$ sobre un borde de normal material $\vec N$.
+
+    \textbf{Solución.} En este movimiento $\ten F$, $\ten E$, $\ten S$ y $\ten P$ dependen de $t$, pero no de $\vec X$. Por tanto,
+    \[
+        P_{iJ,J}=0.
+    \]
+    Además,
+    \[
+        \ddot{\vec\varphi}(\vec X,t)=\ddot{\mat A}(t)\vec X.
+    \]
+    El balance queda
+    \[
+        \rho_0\ddot{\vec\varphi}=\rho_0\vec B.
+    \]
+    Una fuerza de cuerpo compatible es entonces
+    \[
+        \vec B(\vec X,t)=\ddot{\mat A}(t)\vec X.
+    \]
+    En componentes,
+    \[
+        B_1=\ddot\lambda_1X_1+\ddot\gamma X_2,
+        \qquad
+        B_2=\ddot\chi X_1+\ddot\lambda_2X_2.
+    \]
+    La tracción material sobre un borde con normal material $\vec N$ es
+    \[
+        \vec T=\ten P\vec N.
+    \]
+    Por ejemplo, si $\vec N=\vec e_1$, entonces $\vec T=(P_{11},P_{21})^\top$; si $\vec N=\vec e_2$, entonces $\vec T=(P_{12},P_{22})^\top$.
+
+    \item \textbf{Enunciado.} Plantee la formulación débil lagrangiana general para un problema hiperelástico con $\vec u=\bar{\vec u}$ en $\Gamma_D$ y $\ten P\vec N=\bar{\vec T}$ en $\Gamma_N$. Proponga un esquema FEM para resolver el problema no lineal quasiestático.
+
+    \textbf{Solución.} En quasiestática se busca $\vec\varphi=\vec X+\vec u$ y
+    \[
+        \ten F(\vec u)=\ten I+\nabla_{\vec X}\vec u.
+    \]
+    Definimos
+    \[
+        V_{\bar u}=\{\vec u\in H^1(\Omega_0)^d:\vec u=\bar{\vec u}\text{ en }\Gamma_D\},
+        \qquad
+        V_0=\{\vec\eta\in H^1(\Omega_0)^d:\vec\eta=\vec0\text{ en }\Gamma_D\}.
+    \]
+    La ecuación fuerte quasiestática es
+    \[
+        -\Div\ten P(\ten F(\vec u))=\rho_0\vec B
+        \qquad\text{en }\Omega_0.
+    \]
+    Multiplicando por $\vec\eta\in V_0$ e integrando por partes,
+    \[
+    \begin{aligned}
+        \int_{\Omega_0}\ten P(\ten F(\vec u)):\nabla_{\vec X}\vec\eta\dX
+        -\int_{\partial\Omega_0}(\ten P\vec N)\cdot\vec\eta\dA
+        =
+        \int_{\Omega_0}\rho_0\vec B\cdot\vec\eta\dX.
+    \end{aligned}
+    \]
+    En $\Gamma_D$ se tiene $\vec\eta=0$, y en $\Gamma_N$ se usa $\ten P\vec N=\bar{\vec T}$. La formulación débil es: hallar $\vec u\in V_{\bar u}$ tal que
+    \[
+        \int_{\Omega_0}\ten P(\ten F(\vec u)):\nabla_{\vec X}\vec\eta\dX
+        =
+        \int_{\Omega_0}\rho_0\vec B\cdot\vec\eta\dX
+        +
+        \int_{\Gamma_N}\bar{\vec T}\cdot\vec\eta\dA
+        \qquad\forall\vec\eta\in V_0.
+    \]
+    Para resolverlo con FEM se elige $V_h\subset H^1(\Omega_0)^d$. Si el dato Dirichlet es no homogéneo, se usa un lifting discreto o eliminación de grados prescritos. Se busca $\vec u_h\in V_{h,\bar u}$ tal que
+    \[
+        R(\vec u_h)[\vec\eta_h]=0
+        \qquad\forall\vec\eta_h\in V_{h,0},
+    \]
+    donde
+    \[
+        R(\vec u_h)[\vec\eta_h]
+        =
+        \int_{\Omega_0}\ten P(\ten F(\vec u_h)):\nabla_{\vec X}\vec\eta_h\dX
+        -
+        \int_{\Omega_0}\rho_0\vec B\cdot\vec\eta_h\dX
+        -
+        \int_{\Gamma_N}\bar{\vec T}\cdot\vec\eta_h\dA.
+    \]
+    Como $\ten P(\ten F(\vec u_h))$ depende no linealmente de $\vec u_h$, se usa Newton: dado $\vec u_h^k$, hallar $\delta\vec u_h^k\in V_{h,0}$ tal que
+    \[
+        DR(\vec u_h^k)[\delta\vec u_h^k,\vec\eta_h]
+        =
+        -R(\vec u_h^k)[\vec\eta_h]
+        \qquad\forall\vec\eta_h\in V_{h,0},
+    \]
+    y actualizar
+    \[
+        \vec u_h^{k+1}=\vec u_h^k+\delta\vec u_h^k.
+    \]
+\end{enumerate}
+
+\item \textbf{Stokes--Brinkman con dato de borde no homogéneo e inf--sup.}
+
+Sea $\Omega\subset\R^d$, $d\in\{2,3\}$, Lipschitz, acotado y conexo. Se considera
+\[
+\begin{aligned}
+    -2\mu\dive D(\vec v)+\alpha\vec v+\nabla p&=\vec f &&\text{en }\Omega,\\
+    \dive\vec v&=0 &&\text{en }\Omega,\\
+    \vec v&=\vec g &&\text{en }\partial\Omega,\\
+    \int_\Omega p\dx&=0,
+\end{aligned}
+\]
+con $\mu>0$, $\alpha\ge0$ y $D(\vec v)=\frac12(\nabla\vec v+\nabla\vec v^\top)$. Se asume que existe un lifting solenoidal $\vec v_g\in H^1(\Omega)^d$ tal que $\vec v_g=\vec g$ en $\partial\Omega$ y $\dive\vec v_g=0$ en $\Omega$. Sea
+\[
+    V=H^1_0(\Omega)^d,
+    \qquad
+    Q=L^2_0(\Omega).
+\]
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item \textbf{Enunciado.} Introduzca $\vec u=\vec v-\vec v_g$ y derive la formulación mixta para $(\vec u,p)\in V\times Q$.
+
+    \textbf{Solución.} Como $\vec v_g$ tiene la misma traza que $\vec v$, la diferencia
+    \[
+        \vec u=\vec v-\vec v_g
+    \]
+    satisface $\vec u=\vec0$ en $\partial\Omega$. Por tanto $\vec u\in V$. Además,
+    \[
+        \dive\vec u=\dive\vec v-\dive\vec v_g=0-0=0.
+    \]
+    Tomamos $\vec w\in V$ y multiplicamos la ecuación de momentum. Integrando por partes los términos de difusión simétrica y presión, y usando que $\vec w=0$ en la frontera, se obtiene
+    \[
+        2\mu\int_\Omega D(\vec v):D(\vec w)\dx
+        +\alpha\int_\Omega \vec v\cdot\vec w\dx
+        -\int_\Omega p\,\dive\vec w\dx
+        =
+        \langle\vec f,\vec w\rangle.
+    \]
+    Reemplazando $\vec v=\vec u+\vec v_g$,
+    \[
+    \begin{aligned}
+        &2\mu\int_\Omega D(\vec u):D(\vec w)\dx
+        +\alpha\int_\Omega \vec u\cdot\vec w\dx
+        -\int_\Omega p\,\dive\vec w\dx\\
+        &\qquad=
+        \langle\vec f,\vec w\rangle
+        -2\mu\int_\Omega D(\vec v_g):D(\vec w)\dx
+        -\alpha\int_\Omega \vec v_g\cdot\vec w\dx.
+    \end{aligned}
+    \]
+    Definimos
+    \[
+    \begin{aligned}
+        a(\vec z,\vec w)&=
+        2\mu\int_\Omega D(\vec z):D(\vec w)\dx
+        +\alpha\int_\Omega\vec z\cdot\vec w\dx,\\
+        b(\vec w,q)&=-\int_\Omega q\,\dive\vec w\dx,\\
+        L(\vec w)&=\langle\vec f,\vec w\rangle-a(\vec v_g,\vec w).
+    \end{aligned}
+    \]
+    La formulación mixta queda: hallar $(\vec u,p)\in V\times Q$ tal que
+    \[
+    \begin{aligned}
+        a(\vec u,\vec w)+b(\vec w,p)&=L(\vec w) &&\forall\vec w\in V,\\
+        b(\vec u,q)&=0 &&\forall q\in Q.
+    \end{aligned}
+    \]
+
+    \item \textbf{Enunciado.} Defina las formas $a$ y $b$. Pruebe continuidad de $a$ y $b$, y coercividad de $a$ usando Korn.
+
+    \textbf{Solución.} Las formas ya fueron definidas en (a). Para $a$, por Cauchy--Schwarz,
+    \[
+    \begin{aligned}
+        \abs{a(\vec z,\vec w)}
+        &\le
+        2\mu\norm{D(\vec z)}_{L^2}\norm{D(\vec w)}_{L^2}
+        +\alpha\norm{\vec z}_{L^2}\norm{\vec w}_{L^2}\\
+        &\le
+        C\norm{\vec z}_{H^1}\norm{\vec w}_{H^1}.
+    \end{aligned}
+    \]
+    Para $b$,
+    \[
+    \begin{aligned}
+        \abs{b(\vec w,q)}
+        &=
+        \abs{\int_\Omega q\,\dive\vec w\dx}
+        \le
+        \norm{q}_{L^2}\norm{\dive\vec w}_{L^2}
+        \le
+        C\norm{q}_{L^2}\norm{\vec w}_{H^1}.
+    \end{aligned}
+    \]
+    Como $\vec w\in H^1_0(\Omega)^d$, Korn entrega
+    \[
+        \norm{\vec w}_{H^1(\Omega)}
+        \le
+        C_K\norm{D(\vec w)}_{L^2(\Omega)}.
+    \]
+    Luego, usando $\mu>0$ y $\alpha\ge0$,
+    \[
+    \begin{aligned}
+        a(\vec w,\vec w)
+        &=
+        2\mu\norm{D(\vec w)}_{L^2}^2
+        +\alpha\norm{\vec w}_{L^2}^2\\
+        &\ge
+        2\mu\norm{D(\vec w)}_{L^2}^2
+        \ge
+        c\norm{\vec w}_{H^1}^2.
+    \end{aligned}
+    \]
+    En particular, $a$ es coerciva en todo $V$, luego también en el núcleo solenoidal.
+
+    \item \textbf{Enunciado.} Enuncie la condición inf--sup continua de la divergencia. Explique por qué controla la presión y pruebe unicidad para el problema homogéneo.
+
+    \textbf{Solución.} La condición inf--sup continua es: existe $\beta>0$ tal que
+    \[
+        \inf_{q\in Q\setminus\{0\}}
+        \sup_{\vec w\in V\setminus\{\vec0\}}
+        \frac{\abs{b(\vec w,q)}}
+        {\norm{\vec w}_{H^1(\Omega)}\norm{q}_{L^2(\Omega)}}
+        \ge\beta.
+    \]
+    Equivalentemente, para todo $q\in Q$,
+    \[
+        \beta\norm{q}_{L^2}
+        \le
+        \sup_{\vec w\in V\setminus\{\vec0\}}
+        \frac{\abs{b(\vec w,q)}}{\norm{\vec w}_{H^1}}.
+    \]
+    Esta desigualdad controla la presión porque permite estimar $\norm{p}_{L^2}$ usando la ecuación donde aparece $b(\vec w,p)$.
+
+    Para probar unicidad, se consideran dos soluciones $(\vec u_1,p_1)$ y $(\vec u_2,p_2)$ del mismo problema, y se resta. La diferencia
+    \[
+        \delta\vec u=\vec u_1-\vec u_2,
+        \qquad
+        \delta p=p_1-p_2
+    \]
+    satisface el problema homogéneo
+    \[
+    \begin{aligned}
+        a(\delta\vec u,\vec w)+b(\vec w,\delta p)&=0 &&\forall\vec w\in V,\\
+        b(\delta\vec u,q)&=0 &&\forall q\in Q.
+    \end{aligned}
+    \]
+    Tomando $\vec w=\delta\vec u$ en la primera ecuación y $q=\delta p$ en la segunda, se tiene
+    \[
+        b(\delta\vec u,\delta p)=0.
+    \]
+    Por tanto,
+    \[
+        a(\delta\vec u,\delta\vec u)=0.
+    \]
+    Por coercividad,
+    \[
+        \delta\vec u=\vec0.
+    \]
+    Reemplazando en la primera ecuación queda
+    \[
+        b(\vec w,\delta p)=0
+        \qquad\forall\vec w\in V.
+    \]
+    Aplicando inf--sup,
+    \[
+        \beta\norm{\delta p}_{L^2}
+        \le
+        \sup_{\vec w\in V\setminus\{\vec0\}}
+        \frac{\abs{b(\vec w,\delta p)}}{\norm{\vec w}_{H^1}}
+        =0,
+    \]
+    luego $\delta p=0$. Así, la solución es única.
+
+    \item \textbf{Enunciado.} Deduzca una estimación de estabilidad de la forma
+    \[
+        \norm{\vec u}_{H^1(\Omega)}+
+\norm{p}_{L^2(\Omega)}
+        \le
+        C\left(\norm{\vec f}_{H^{-1}(\Omega)}+
+\norm{\vec v_g}_{H^1(\Omega)}\right).
+    \]
+
+    \textbf{Solución.} Primero estimamos el funcional $L$. Por continuidad de $a$,
+    \[
+    \begin{aligned}
+        \abs{L(\vec w)}
+        &\le
+        \norm{\vec f}_{H^{-1}}\norm{\vec w}_{H^1}
+        +\abs{a(\vec v_g,\vec w)}\\
+        &\le
+        \left(\norm{\vec f}_{H^{-1}}+C\norm{\vec v_g}_{H^1}\right)
+        \norm{\vec w}_{H^1}.
+    \end{aligned}
+    \]
+    Por tanto,
+    \[
+        \norm{L}_{V'}
+        \le
+        C\left(\norm{\vec f}_{H^{-1}}+
+\norm{\vec v_g}_{H^1}\right).
+    \]
+    Tomando $\vec w=\vec u$ en la primera ecuación y $q=p$ en la segunda,
+    \[
+        b(\vec u,p)=0,
+    \]
+    y entonces
+    \[
+        a(\vec u,\vec u)=L(\vec u).
+    \]
+    Por coercividad,
+    \[
+        c\norm{\vec u}_{H^1}^2
+        \le
+        \norm{L}_{V'}\norm{\vec u}_{H^1},
+    \]
+    luego
+    \[
+        \norm{\vec u}_{H^1}
+        \le
+        C\norm{L}_{V'}.
+    \]
+    Para la presión, de la primera ecuación,
+    \[
+        b(\vec w,p)=L(\vec w)-a(\vec u,\vec w).
+    \]
+    Usando inf--sup,
+    \[
+    \begin{aligned}
+        \beta\norm{p}_{L^2}
+        &\le
+        \sup_{\vec w\in V\setminus\{\vec0\}}
+        \frac{\abs{b(\vec w,p)}}{\norm{\vec w}_{H^1}}\\
+        &\le
+        \norm{L}_{V'}+C\norm{\vec u}_{H^1}
+        \le
+        C\norm{L}_{V'}.
+    \end{aligned}
+    \]
+    Combinando las cotas,
+    \[
+        \norm{\vec u}_{H^1(\Omega)}+
+\norm{p}_{L^2(\Omega)}
+        \le
+        C\left(\norm{\vec f}_{H^{-1}(\Omega)}+
+\norm{\vec v_g}_{H^1(\Omega)}\right).
+    \]
+\end{enumerate}
+
+\item \textbf{Advección--difusión--reacción: formulación, FEM e inf--sup.}
+
+Sea $\varepsilon>0$ y
+\[
+    -\varepsilon u_\varepsilon''+u_\varepsilon'+u_\varepsilon=f,
+    \qquad
+    u_\varepsilon(0)=g_0,
+    \qquad
+    u_\varepsilon(1)=g_1.
+\]
+Sea
+\[
+    \ell(x)=g_0(1-x)+g_1x,
+    \qquad
+    w_\varepsilon=u_\varepsilon-\ell\in H^1_0(0,1).
+\]
+
+\begin{enumerate}[label=(\alph*), leftmargin=*]
+    \item \textbf{Enunciado.} Derive la formulación débil para $w_\varepsilon$ y pruebe existencia y unicidad por Lax--Milgram para cada $\varepsilon>0$.
+
+    \textbf{Solución.} Multiplicamos la ecuación por $v\in H^1_0(0,1)$ e integramos. El término difusivo se integra por partes:
+    \[
+    \begin{aligned}
+        \int_0^1(-\varepsilon u_\varepsilon'')v\dx
+        &=
+        \varepsilon\int_0^1u_\varepsilon'v'\dx
+        -\varepsilon[u_\varepsilon'v]_{0}^{1}\\
+        &=
+        \varepsilon\int_0^1u_\varepsilon'v'\dx,
+    \end{aligned}
+    \]
+    porque $v(0)=v(1)=0$. Por tanto,
+    \[
+        \varepsilon\int_0^1u_\varepsilon'v'\dx
+        +\int_0^1u_\varepsilon'v\dx
+        +\int_0^1u_\varepsilon v\dx
+        =
+        \int_0^1fv\dx.
+    \]
+    Reemplazando $u_\varepsilon=w_\varepsilon+\ell$, se obtiene
+    \[
+        a_\varepsilon(w_\varepsilon,v)=L_\varepsilon(v)
+        \qquad\forall v\in H^1_0(0,1),
+    \]
+    donde
+    \[
+    \begin{aligned}
+        a_\varepsilon(w,v)&=
+        \varepsilon\int_0^1w'v'\dx+
+        \int_0^1w'v\dx+
+        \int_0^1wv\dx,\\
+        L_\varepsilon(v)&=
+        \int_0^1fv\dx-a_\varepsilon(\ell,v).
+    \end{aligned}
+    \]
+    La continuidad sigue de Cauchy--Schwarz:
+    \[
+        \abs{a_\varepsilon(w,v)}
+        \le
+        C_\varepsilon\norm{w}_{H^1}\norm{v}_{H^1}.
+    \]
+    Para coercividad,
+    \[
+    \begin{aligned}
+        a_\varepsilon(w,w)
+        &=
+        \varepsilon\norm{w'}_{L^2}^2+
+        \int_0^1w'w\dx+
+        \norm{w}_{L^2}^2.
+    \end{aligned}
+    \]
+    Como $w\in H^1_0(0,1)$,
+    \[
+        \int_0^1w'w\dx
+        =
+        \frac12[w^2]_{0}^{1}=0.
+    \]
+    Así,
+    \[
+        a_\varepsilon(w,w)=
+        \varepsilon\norm{w'}_{L^2}^2+
+\norm{w}_{L^2}^2
+        \ge
+        \min\{\varepsilon,1\}\norm{w}_{H^1}^2.
+    \]
+    Además $L_\varepsilon$ es continuo si $f\in L^2(0,1)$ y $\ell\in H^1(0,1)$. Por Lax--Milgram, existe un único $w_\varepsilon\in H^1_0(0,1)$.
+
+    \item \textbf{Enunciado.} Para espacios conformes $V_h^{(r)}\subset H^1_0(0,1)$, $r=1,2$, formule Galerkin. Use Céa, interpolación y Aubin--Nitsche para justificar los órdenes esperados para $\varepsilon>0$ fijo.
+
+    \textbf{Solución.} El método de Galerkin es: hallar $w_{\varepsilon,h}^{(r)}\in V_h^{(r)}$ tal que
+    \[
+        a_\varepsilon(w_{\varepsilon,h}^{(r)},v_h)=L_\varepsilon(v_h)
+        \qquad\forall v_h\in V_h^{(r)}.
+    \]
+    Por consistencia, la solución exacta satisface la misma identidad para todo $v_h\in V_h^{(r)}$. Restando,
+    \[
+        a_\varepsilon(w_\varepsilon-w_{\varepsilon,h}^{(r)},v_h)=0
+        \qquad\forall v_h\in V_h^{(r)}.
+    \]
+    Como $a_\varepsilon$ es continua y coerciva para $\varepsilon>0$ fijo, Céa da
+    \[
+        \norm{w_\varepsilon-w_{\varepsilon,h}^{(r)}}_{H^1}
+        \le
+        C_\varepsilon
+        \inf_{z_h\in V_h^{(r)}}
+        \norm{w_\varepsilon-z_h}_{H^1}.
+    \]
+    Tomando el interpolante nodal $\Pi_h^{(r)}w_\varepsilon$,
+    \[
+        \norm{w_\varepsilon-w_{\varepsilon,h}^{(r)}}_{H^1}
+        \le
+        C_\varepsilon h^r|w_\varepsilon|_{H^{r+1}}.
+    \]
+    Por tanto,
+    \[
+        \norm{w_\varepsilon-w_{\varepsilon,h}^{(r)}}_{H^1}=O(h^r)
+        \qquad(\varepsilon\text{ fijo}).
+    \]
+
+    Para $L^2$, sea $e=w_\varepsilon-w_{\varepsilon,h}^{(r)}$ y considere el problema auxiliar: hallar $z\in H^1_0(0,1)$ tal que
+    \[
+        a_\varepsilon(\phi,z)=(\phi,e)_{L^2(0,1)}
+        \qquad\forall\phi\in H^1_0(0,1).
+    \]
+    En forma fuerte, el problema auxiliar es
+    \[
+        -\varepsilon z''-z'+z=e,
+        \qquad
+        z(0)=z(1)=0.
+    \]
+    Entonces
+    \[
+    \begin{aligned}
+        \norm{e}_{L^2}^2
+        &=(e,e)_{L^2}
+        =a_\varepsilon(e,z)\\
+        &=a_\varepsilon(e,z-z_h)
+        \qquad\forall z_h\in V_h^{(r)},
+    \end{aligned}
+    \]
+    donde se usó la ortogonalidad de Galerkin. Usando continuidad de $a_\varepsilon$,
+    \[
+        \norm{e}_{L^2}^2
+        \le
+        C_\varepsilon\norm{e}_{H^1}\norm{z-z_h}_{H^1}.
+    \]
+    Si el problema auxiliar satisface la regularidad
+    \[
+        \norm{z}_{H^2}\le C_\varepsilon\norm{e}_{L^2},
+    \]
+    y tomamos un interpolante lineal de $z$, entonces
+    \[
+        \inf_{z_h\in V_h^{(r)}}\norm{z-z_h}_{H^1}
+        \le
+        Ch\norm{z}_{H^2}
+        \le
+        C_\varepsilon h\norm{e}_{L^2}.
+    \]
+    Por tanto,
+    \[
+        \norm{e}_{L^2}
+        \le
+        C_\varepsilon h\norm{e}_{H^1}.
+    \]
+    Combinando con la estimación en $H^1$,
+    \[
+        \norm{w_\varepsilon-w_{\varepsilon,h}^{(r)}}_{L^2}=O(h^{r+1}).
+    \]
+
+    \item \textbf{Enunciado.} Considere formalmente el problema de primer orden que se obtiene al poner $\varepsilon=0$. Identifique qué condición de borde es compatible y explique por qué no se pueden imponer ambos datos en general.
+
+    \textbf{Solución.} Si $\varepsilon=0$, queda
+    \[
+        u_0'+u_0=f.
+    \]
+    Esta es una ecuación diferencial de primer orden. Como el coeficiente advectivo es positivo, el dato compatible es el dato de entrada:
+    \[
+        u_0(0)=g_0.
+    \]
+    Resolviendo por factor integrante,
+    \[
+        (e^xu_0)'=e^xf,
+    \]
+    y por tanto
+    \[
+        u_0(x)=e^{-x}g_0+\int_0^xe^{-(x-s)}f(s)\,ds.
+    \]
+    El valor en $x=1$ queda determinado por $f$ y $g_0$:
+    \[
+        u_0(1)=e^{-1}g_0+\int_0^1e^{-(1-s)}f(s)\,ds.
+    \]
+    En general este valor no coincide con $g_1$. Por eso, al perderse el término de segundo orden, ya no se pueden imponer simultáneamente ambos datos de borde salvo que satisfagan una condición de compatibilidad especial.
+
+    \item \textbf{Enunciado.} Para el problema límite homogéneo, tome
+    \[
+        U=\{u\in H^1(0,1):u(0)=0\},
+        \qquad
+        V=L^2(0,1),
+        \qquad
+        a_0(u,v)=\int_0^1(u'+u)v\dx.
+    \]
+    Pruebe las condiciones de buena formulación asociadas al Lax--Milgram generalizado: estimación inf--sup e inyectividad. Muestre dos pares discretos mal elegidos donde falla el inf--sup discreto.
+
+    \textbf{Solución.} Primero, $a_0$ es continua:
+    \[
+    \begin{aligned}
+        \abs{a_0(u,v)}
+        &\le
+        \norm{u'+u}_{L^2}\norm{v}_{L^2}
+        \le
+        (\norm{u'}_{L^2}+\norm{u}_{L^2})\norm{v}_{L^2}\\
+        &\le
+        \sqrt2\norm{u}_{H^1}\norm{v}_{L^2}.
+    \end{aligned}
+    \]
+    Para el inf--sup, fijamos $u\in U$, $u\ne0$, y tomamos $v=u'+u\in L^2(0,1)$. Entonces
+    \[
+        \sup_{v\in V\setminus\{0\}}
+        \frac{a_0(u,v)}{\norm{v}_{L^2}}
+        \ge
+        \frac{\int_0^1(u'+u)^2\dx}{\norm{u'+u}_{L^2}}
+        =
+        \norm{u'+u}_{L^2}.
+    \]
+    Además,
+    \[
+    \begin{aligned}
+        \norm{u'+u}_{L^2}^2
+        &=
+        \int_0^1(u')^2\dx+2\int_0^1u'u\dx+
+        \int_0^1u^2\dx\\
+        &=
+        \norm{u'}_{L^2}^2+u(1)^2-u(0)^2+
+\norm{u}_{L^2}^2\\
+        &=
+        \norm{u}_{H^1}^2+u(1)^2
+        \ge
+        \norm{u}_{H^1}^2,
+    \end{aligned}
+    \]
+    porque $u(0)=0$. Por tanto,
+    \[
+        \inf_{u\in U\setminus\{0\}}
+        \sup_{v\in V\setminus\{0\}}
+        \frac{a_0(u,v)}{\norm{u}_{H^1}\norm{v}_{L^2}}
+        \ge1.
+    \]
+
+    Falta la condición de inyectividad en la variable de prueba: si $\zeta\in L^2(0,1)$ satisface
+    \[
+        a_0(u,\zeta)=0
+        \qquad\forall u\in U,
+    \]
+    debemos probar que $\zeta=0$. Para ello, definimos $u\in U$ como la solución de
+    \[
+        u'+u=\zeta,
+        \qquad
+        u(0)=0.
+    \]
+    Explícitamente,
+    \[
+        u(x)=\int_0^xe^{-(x-s)}\zeta(s)\,ds.
+    \]
+    Esta función pertenece a $U$ y satisface $u'+u=\zeta$. Entonces
+    \[
+        0=a_0(u,\zeta)=\int_0^1(u'+u)\zeta\dx
+        =
+        \int_0^1\zeta^2\dx
+        =
+        \norm{\zeta}_{L^2}^2.
+    \]
+    Por tanto $\zeta=0$.
+
+    Un primer par discreto malo es
+    \[
+        U_h=\spanop\{x,x^2\},
+        \qquad
+        V_h=\spanop\{1\}.
+    \]
+    Si $u_h=8x-9x^2$, entonces
+    \[
+    \begin{aligned}
+        a_0(u_h,1)
+        &=
+        \int_0^1(u_h'+u_h)\dx
+        =
+        u_h(1)-u_h(0)+\int_0^1u_h\dx\\
+        &=
+        (-1)-0+\int_0^1(8x-9x^2)\dx
+        =
+        -1+4-3=0.
+    \end{aligned}
+    \]
+    Como $u_h\ne0$ y todo $v_h\in V_h$ es múltiplo de $1$, el supremo discreto para este $u_h$ es cero.
+
+    Un segundo par malo es
+    \[
+        U_h=\spanop\{x\},
+        \qquad
+        V_h=\spanop\left\{1-\frac95x\right\}.
+    \]
+    Para $u_h=x$ y $v_h=1-\frac95x$,
+    \[
+    \begin{aligned}
+        a_0(x,v_h)
+        &=
+        \int_0^1(1+x)\left(1-\frac95x\right)\dx\\
+        &=
+        \int_0^1\left(1-\frac45x-\frac95x^2\right)\dx
+        =
+        1-\frac25-\frac35=0.
+    \end{aligned}
+    \]
+    Nuevamente, una función discreta no nula queda invisible para todas las funciones de prueba discretas. Por eso el inf--sup discreto falla.
+
+    \item \textbf{Enunciado.} Discuta por qué las estimaciones para $\varepsilon>0$ fijo no entregan una garantía robusta cuando $\varepsilon$ es pequeño. Proponga una estrategia numérica razonable basada en estabilización o Petrov--Galerkin.
+
+    \textbf{Solución.} La estimación de Céa para $\varepsilon>0$ fijo depende de las constantes de continuidad y coercividad de $a_\varepsilon$. La coercividad que probamos es
+    \[
+        a_\varepsilon(w,w)
+        \ge
+        \min\{\varepsilon,1\}\norm{w}_{H^1}^2.
+    \]
+    Por tanto, la constante de estabilidad puede crecer como $1/\varepsilon$ cuando $\varepsilon\to0^+$. Esto significa que la teoría elíptica estándar no controla uniformemente el error cuando la difusión es muy pequeña.
+
+    Además, cuando $\varepsilon$ es pequeño el operador dominante se parece más a
+    \[
+        u\mapsto u'+u
+    \]
+    que a un operador elíptico de segundo orden. Por eso los espacios de prueba centrados y puramente conformes pueden no capturar bien la dirección de transporte. Una estrategia razonable es usar una formulación Petrov--Galerkin, escogiendo funciones de prueba alineadas con el operador de transporte--reacción, o agregar una estabilización tipo SUPG/upwind. La idea no es cambiar la solución continua, sino estabilizar la discretización en la dirección dominante del transporte.
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

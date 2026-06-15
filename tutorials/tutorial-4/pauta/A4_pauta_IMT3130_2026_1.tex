@@ -1,0 +1,256 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,enumitem,fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\solution}{\large\textbf{Solución}\normalsize}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\DeclareMathOperator{\tr}{tr}
+\def\R{\mathbb R}
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\ds{\mbox{\(\,\mathrm{d}s\)}}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{10/04/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 4}\\
+        \vspace{3pt}
+        \normalsize\textbf{Formulaciones débiles, Poincaré, Lax--Milgram y Galerkin}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} Sea $\Omega$ Lipschitz acotado, $\partial\Omega=\overline{\Gamma_D}\cup\overline{\Gamma_R}$, y considere
+    \[
+    \begin{aligned}
+        -\Delta u+cu&=f &&\text{en }\Omega,\\
+        \gamma_0u&=0 &&\text{en }\Gamma_D,\\
+        \partial_nu+\beta\gamma_0u&=r &&\text{en }\Gamma_R.
+    \end{aligned}
+    \]
+    Con
+    \[
+        V=\{v\in H^1(\Omega):\gamma_0v=0\text{ en }\Gamma_D\},
+    \]
+    derive la formulación débil, estudie continuidad/coercividad y analice el caso de Neumann puro.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Tomamos $v\in V$. Multiplicando por $v$ e integrando por partes,
+        \begin{align*}
+            \int_\Omega fv\dx
+            &=
+            \int_\Omega (-\Delta u+cu)v\dx\\
+            &=
+            \int_\Omega \nabla u\cdot\nabla v\dx
+            -\int_{\partial\Omega}\partial_nu\,\gamma_0v\ds
+            +\int_\Omega cuv\dx.
+        \end{align*}
+        Como $\gamma_0v=0$ en $\Gamma_D$, sólo queda la contribución de $\Gamma_R$. Usando
+        \[
+            \partial_nu=r-\beta\gamma_0u\qquad\text{en }\Gamma_R,
+        \]
+        se obtiene
+        \[
+            \int_\Omega \nabla u\cdot\nabla v\dx
+            +\int_\Omega cuv\dx
+            +\int_{\Gamma_R}\beta\,\gamma_0u\,\gamma_0v\ds
+            =
+            \int_\Omega fv\dx
+            +\langle r,\gamma_0v\rangle_{\Gamma_R}.
+        \]
+        La formulación débil es: hallar $u\in V$ tal que
+        \[
+            a(u,v)=\ell(v)\qquad\forall v\in V,
+        \]
+        donde
+        \[
+            a(w,v)=
+            \int_\Omega \nabla w\cdot\nabla v\dx
+            +\int_\Omega cwv\dx
+            +\int_{\Gamma_R}\beta\,\gamma_0w\,\gamma_0v\ds,
+        \]
+        y
+        \[
+            \ell(v)=
+            \int_\Omega fv\dx
+            +\langle r,\gamma_0v\rangle_{\Gamma_R}.
+        \]
+        La condición de Dirichlet es esencial porque se incorpora en el espacio de solución y de test. La condición de Robin es natural porque aparece como término de borde después de integrar por partes.
+
+        \item Supongamos, por ejemplo, $f\in L^2(\Omega)$ y $r\in H^{-1/2}(\Gamma_R)$. La continuidad de $a$ sigue de Cauchy--Schwarz, de $c,\beta\in L^\infty$ y de la continuidad de la traza:
+        \begin{align*}
+            \abs{a(w,v)}
+            &\le
+            \norm{\nabla w}_{L^2(\Omega)}\norm{\nabla v}_{L^2(\Omega)}
+            +\norm{c}_{L^\infty}\norm{w}_{L^2(\Omega)}\norm{v}_{L^2(\Omega)}\\
+            &\quad
+            +\norm{\beta}_{L^\infty(\Gamma_R)}
+            \norm{\gamma_0w}_{L^2(\Gamma_R)}
+            \norm{\gamma_0v}_{L^2(\Gamma_R)}\\
+            &\le C\norm{w}_{H^1(\Omega)}\norm{v}_{H^1(\Omega)}.
+        \end{align*}
+        Además,
+        \[
+            \abs{\ell(v)}
+            \le
+            \norm{f}_{L^2(\Omega)}\norm{v}_{L^2(\Omega)}
+            +\norm{r}_{H^{-1/2}(\Gamma_R)}
+            \norm{\gamma_0v}_{H^{1/2}(\Gamma_R)}
+            \le C\norm{v}_{H^1(\Omega)}.
+        \]
+
+        Si $|\Gamma_D|>0$, la desigualdad de Poincaré generalizada entrega
+        \[
+            \norm{v}_{H^1(\Omega)}\le C_P\norm{\nabla v}_{L^2(\Omega)}
+            \qquad\forall v\in V.
+        \]
+        Como $c,\beta\ge0$,
+        \[
+            a(v,v)
+            =
+            \norm{\nabla v}_{L^2(\Omega)}^2
+            +\int_\Omega cv^2\dx
+            +\int_{\Gamma_R}\beta(\gamma_0v)^2\ds
+            \ge
+            \norm{\nabla v}_{L^2(\Omega)}^2
+            \ge
+            C\norm{v}_{H^1(\Omega)}^2.
+        \]
+        Luego $a$ es coerciva y Lax--Milgram da existencia y unicidad.
+
+        Si $\Gamma_D=\varnothing$, la coercividad también se recupera si $c(x)\ge c_0>0$ casi en todas partes, pues
+        \[
+            a(v,v)\ge \norm{\nabla v}_{L^2(\Omega)}^2+c_0\norm{v}_{L^2(\Omega)}^2.
+        \]
+        También puede recuperarse si el término Robin controla constantes, por ejemplo si $\beta\ge\beta_0>0$ en una porción de borde de medida positiva. Lo que falla en ausencia de estos mecanismos es el control de las constantes.
+
+        \item En Neumann puro,
+        \[
+            a(w,v)=\int_\Omega \nabla w\cdot\nabla v\dx,
+            \qquad
+            \ell(v)=\int_\Omega fv\dx+\langle r,\gamma_0v\rangle_{\partial\Omega}.
+        \]
+        Toda función constante pertenece al núcleo de $a$, porque su gradiente es cero. Si existe solución, al tomar $v=1$ se obtiene necesariamente
+        \[
+            0=a(u,1)=\ell(1)=\int_\Omega f\dx+\langle r,1\rangle_{\partial\Omega}.
+        \]
+        Por tanto, la compatibilidad es
+        \[
+            \int_\Omega f\dx+\langle r,1\rangle_{\partial\Omega}=0.
+        \]
+        La unicidad sólo puede esperarse módulo constantes. Para fijar una solución única se trabaja en
+        \[
+            H^1_\ast(\Omega)=\left\{v\in H^1(\Omega):\int_\Omega v\dx=0\right\}.
+        \]
+        Allí, Poincaré--Wirtinger da
+        \[
+            \norm{v}_{H^1(\Omega)}\le C\norm{\nabla v}_{L^2(\Omega)},
+        \]
+        y entonces $a$ es coerciva sobre $H^1_\ast(\Omega)$. Si $c(x)\ge c_0>0$, las constantes ya no están en el núcleo, no se necesita compatibilidad de Neumann puro y el problema es coercivo en todo $H^1(\Omega)$.
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Sea $V$ Hilbert, $a:V\times V\to\R$ simétrica, continua y coerciva, y sea $V_h\subset V$. Si
+    \[
+        a(u,v)=\ell(v)\quad\forall v\in V,
+        \qquad
+        a(u_h,v_h)=\ell(v_h)\quad\forall v_h\in V_h,
+    \]
+    pruebe la ortogonalidad de Galerkin, la equivalencia de la norma de energía, la propiedad de mejor aproximación y escriba el sistema lineal asociado.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Como $u$ y $u_h$ satisfacen las ecuaciones continua y discreta, para todo $v_h\in V_h$,
+        \[
+            a(u,v_h)=\ell(v_h),
+            \qquad
+            a(u_h,v_h)=\ell(v_h).
+        \]
+        Restando,
+        \[
+            a(u-u_h,v_h)=0\qquad\forall v_h\in V_h.
+        \]
+
+        \item La coercividad implica
+        \[
+            a(v,v)\ge \alpha\norm{v}_V^2,
+        \]
+        y la continuidad implica
+        \[
+            a(v,v)\le M\norm{v}_V^2.
+        \]
+        Por tanto,
+        \[
+            \sqrt{\alpha}\norm{v}_V\le \norm{v}_a\le \sqrt{M}\norm{v}_V,
+        \]
+        y $\norm{\cdot}_a$ es una norma equivalente a la norma de $V$.
+
+        \item Sea $v_h\in V_h$ arbitrario. Entonces $v_h-u_h\in V_h$ y por ortogonalidad,
+        \[
+            a(u-u_h,v_h-u_h)=0.
+        \]
+        Por tanto,
+        \begin{align*}
+            \norm{u-v_h}_a^2
+            &=
+            \norm{(u-u_h)+(u_h-v_h)}_a^2\\
+            &=
+            \norm{u-u_h}_a^2+\norm{u_h-v_h}_a^2
+            +2a(u-u_h,u_h-v_h)\\
+            &=
+            \norm{u-u_h}_a^2+\norm{u_h-v_h}_a^2
+            \ge
+            \norm{u-u_h}_a^2.
+        \end{align*}
+        Como esto vale para todo $v_h\in V_h$ y la igualdad se alcanza con $v_h=u_h$,
+        \[
+            \norm{u-u_h}_a=\inf_{v_h\in V_h}\norm{u-v_h}_a.
+        \]
+
+        \item Si $u_h=\sum_{j=1}^N U_j\varphi_j$, basta testear con cada $\varphi_i$. Se obtiene
+        \[
+            \sum_{j=1}^N a(\varphi_j,\varphi_i)U_j=\ell(\varphi_i),
+            \qquad i=1,\dots,N.
+        \]
+        En forma matricial,
+        \[
+            \mat A\vec U=\vec F,
+            \qquad
+            A_{ij}=a(\varphi_j,\varphi_i),
+            \qquad
+            F_i=\ell(\varphi_i).
+        \]
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

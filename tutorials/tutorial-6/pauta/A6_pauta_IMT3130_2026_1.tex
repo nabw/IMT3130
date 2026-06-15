@@ -1,0 +1,566 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,booktabs,enumitem,fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\solution}{\large\textbf{Solución}\normalsize}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\R{\mathbb R}
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\ds{\mbox{\(\,\mathrm{d}s\)}}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{24/04/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 6}\\
+        \vspace{3pt}
+        \normalsize\textbf{Elementos finitos $P^1$, lifting y ensamblaje}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} En $\Omega=(0,1)$, considere una partición uniforme y el problema
+    \[
+    \begin{aligned}
+        -\kappa u''+\sigma u&=f &&\text{en }(0,1),\\
+        u(0)&=g_0,\qquad u(1)=g_1,
+    \end{aligned}
+    \]
+    con elementos finitos $P^1$. Tome un lifting discreto, derive el sistema para los grados interiores, calcule la matriz elemental y ensamble la matriz tridiagonal reducida con las correcciones por $g_0,g_1$.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Sea $\{\varphi_i\}_{i=0}^N$ la base nodal de $P^1_h$. Un lifting discreto simple es
+        \[
+            G_h=g_0\varphi_0+g_1\varphi_N.
+        \]
+        Entonces $G_h(0)=g_0$, $G_h(1)=g_1$ y $G_h(x_i)=0$ para $i=1,\dots,N-1$. Escribimos
+        \[
+            u_h=u_{0,h}+G_h,
+            \qquad
+            u_{0,h}\in V_h^0.
+        \]
+        La formulación discreta es
+        \[
+            a(u_h,v_h)=\ell(v_h)
+            \qquad\forall v_h\in V_h^0,
+        \]
+        donde
+        \[
+            a(w,v)=\int_0^1\kappa w'v'\dx+\int_0^1\sigma wv\dx,
+            \qquad
+            \ell(v)=\int_0^1fv\dx.
+        \]
+        Reemplazando $u_h=u_{0,h}+G_h$ y usando la bilinealidad de $a$,
+        \[
+        \begin{aligned}
+            a(u_h,v_h)=\ell(v_h)
+            &\Longleftrightarrow
+            a(u_{0,h}+G_h,v_h)=\ell(v_h)\\
+            &\Longleftrightarrow
+            a(u_{0,h},v_h)+a(G_h,v_h)=\ell(v_h)\\
+            &\Longleftrightarrow
+            a(u_{0,h},v_h)=\ell(v_h)-a(G_h,v_h),
+        \end{aligned}
+        \]
+        para todo $v_h\in V_h^0$.
+
+        Ahora expandimos por separado la función con grados de libertad libres y el lifting:
+        \[
+            u_{0,h}=\sum_{j=1}^{N-1}U_j\varphi_j,
+            \qquad
+            G_h=g_0\varphi_0+g_1\varphi_N.
+        \]
+        Testeando con $v_h=\varphi_i$, para $i=1,\dots,N-1$, obtenemos
+        \[
+        \begin{aligned}
+            a(u_{0,h},\varphi_i)
+            &=
+            \ell(\varphi_i)-a(G_h,\varphi_i)\\
+            a\left(\sum_{j=1}^{N-1}U_j\varphi_j,\varphi_i\right)
+            &=
+            \ell(\varphi_i)-a(g_0\varphi_0+g_1\varphi_N,\varphi_i)\\
+            \sum_{j=1}^{N-1}U_j\,a(\varphi_j,\varphi_i)
+            &=
+            \ell(\varphi_i)
+            -g_0a(\varphi_0,\varphi_i)
+            -g_1a(\varphi_N,\varphi_i).
+        \end{aligned}
+        \]
+        Definiendo
+        \[
+            K_{ij}:=a(\varphi_j,\varphi_i),
+            \qquad
+            F_i:=\ell(\varphi_i),
+        \]
+        queda, para cada fila interior,
+        \[
+            \boxed{
+            \sum_{j=1}^{N-1}K_{ij}U_j
+            =
+            F_i-g_0K_{i0}-g_1K_{iN},
+            \qquad i=1,\dots,N-1.
+            }
+        \]
+        La suma sólo recorre $j=1,\dots,N-1$ porque esos son los grados de libertad que se resuelven. Los valores de borde $U_0=g_0$ y $U_N=g_1$ ya están fijados, por lo que entran al lado derecho.
+
+        En forma matricial, con
+        \[
+            I=\{1,\dots,N-1\},
+            \qquad
+            B=\{0,N\},
+            \qquad
+            \vec U_I=(U_1,\dots,U_{N-1})^\top,
+            \qquad
+            \vec G_B=(g_0,g_1)^\top,
+        \]
+        el sistema es
+        \[
+            \mat K_{II}\vec U_I
+            =
+            \vec F_I-\mat K_{IB}\vec G_B,
+        \]
+        Aquí $\mat K_{II}=(K_{ij})_{i,j\in I}$ contiene las interacciones entre grados libres. Por su parte, $\mat K_{IB}=(K_{ij})_{i\in I,\,j\in B}$ contiene las columnas asociadas a los nodos de borde.
+
+        \item En $K_e=[x_e,x_{e+1}]$, las funciones base locales son
+        \[
+            \varphi_1^e(x)=\frac{x_{e+1}-x}{h},
+            \qquad
+            \varphi_2^e(x)=\frac{x-x_e}{h}.
+        \]
+        Sus derivadas son $-(1/h)$ y $1/h$. Para la parte difusiva,
+        \[
+        \begin{aligned}
+            \int_{K_e}\kappa(\varphi_1^e)'(\varphi_1^e)'\dx
+            &=
+            \kappa\int_{x_e}^{x_{e+1}}\frac{1}{h^2}\dx
+            =
+            \frac{\kappa}{h},\\
+            \int_{K_e}\kappa(\varphi_1^e)'(\varphi_2^e)'\dx
+            &=
+            \kappa\int_{x_e}^{x_{e+1}}\left(-\frac{1}{h^2}\right)\dx
+            =
+            -\frac{\kappa}{h}.
+        \end{aligned}
+        \]
+        Las otras entradas se obtienen igual o por simetría. Por tanto,
+        \[
+            \int_{K_e}\kappa(\varphi_b^e)'(\varphi_a^e)'\dx
+            =
+            \frac{\kappa}{h}
+            \begin{pmatrix}
+                1&-1\\
+                -1&1
+            \end{pmatrix}_{ab},
+        \]
+        Para la parte de reacción,
+        \[
+        \begin{aligned}
+            \int_{K_e}(\varphi_1^e)^2\dx
+            &=
+            \int_{x_e}^{x_{e+1}}
+            \left(\frac{x_{e+1}-x}{h}\right)^2\dx
+            =
+            \frac{h}{3},\\
+            \int_{K_e}\varphi_1^e\varphi_2^e\dx
+            &=
+            \int_{x_e}^{x_{e+1}}
+            \frac{(x_{e+1}-x)(x-x_e)}{h^2}\dx
+            =
+            \frac{h}{6}.
+        \end{aligned}
+        \]
+        Las entradas restantes se obtienen por simetría, y así
+        \[
+            \int_{K_e}\sigma\varphi_b^e\varphi_a^e\dx
+            =
+            \frac{\sigma h}{6}
+            \begin{pmatrix}
+                2&1\\
+                1&2
+            \end{pmatrix}_{ab}.
+        \]
+        Luego
+        \[
+            \mat K^e=
+            \frac{\kappa}{h}
+            \begin{pmatrix}
+                1&-1\\
+                -1&1
+            \end{pmatrix}
+            +
+            \frac{\sigma h}{6}
+            \begin{pmatrix}
+                2&1\\
+                1&2
+            \end{pmatrix}.
+        \]
+
+        \item Para los grados de libertad interiores, la matriz reducida es tridiagonal:
+        \[
+            K_{ii}=\frac{2\kappa}{h}+\frac{2\sigma h}{3},
+            \qquad
+            K_{i,i+1}=K_{i+1,i}=-\frac{\kappa}{h}+\frac{\sigma h}{6}.
+        \]
+        En efecto, para un nodo interior $x_i$ contribuyen los elementos $[x_{i-1},x_i]$ y $[x_i,x_{i+1}]$. Cada uno aporta
+        \[
+            \frac{\kappa}{h}+\frac{\sigma h}{3}
+        \]
+        a la entrada diagonal asociada a $x_i$, luego
+        \[
+            K_{ii}
+            =
+            2\left(\frac{\kappa}{h}+\frac{\sigma h}{3}\right)
+            =
+            \frac{2\kappa}{h}+\frac{2\sigma h}{3}.
+        \]
+        La interacción entre dos nodos vecinos aparece en un único elemento, y corresponde a la entrada fuera de la diagonal de $\mat K^e$:
+        \[
+            K_{i,i+1}=K_{i+1,i}
+            =
+            -\frac{\kappa}{h}+\frac{\sigma h}{6}.
+        \]
+        En particular,
+        \[
+            \mat K_{II}=
+            \begin{pmatrix}
+                d&o& & \\
+                o&d&o& \\
+                 &\ddots&\ddots&\ddots\\
+                 & &o&d
+            \end{pmatrix},
+            \qquad
+            d=\frac{2\kappa}{h}+\frac{2\sigma h}{3},
+            \qquad
+            o=-\frac{\kappa}{h}+\frac{\sigma h}{6}.
+        \]
+        Sólo la primera y la última fila interior reciben correcciones de borde. La razón es el soporte local de las funciones nodales: $\varphi_0$ sólo se intersecta con $\varphi_1$, mientras que $\varphi_N$ sólo se intersecta con $\varphi_{N-1}$. Por tanto,
+        \[
+            a(\varphi_0,\varphi_i)=0\quad\text{si }i\neq1,
+            \qquad
+            a(\varphi_N,\varphi_i)=0\quad\text{si }i\neq N-1.
+        \]
+        Así, para la primera fila interior aparece el término conocido $g_0K_{10}=g_0o$:
+        \[
+        \begin{aligned}
+            dU_1+oU_2
+            &=
+            F_1-og_0\\
+            &=
+            F_1+\left(\frac{\kappa}{h}-\frac{\sigma h}{6}\right)g_0,
+        \end{aligned}
+        \]
+        y para la última fila interior aparece el término conocido $g_1K_{N-1,N}=g_1o$:
+        \[
+        \begin{aligned}
+            oU_{N-2}+dU_{N-1}
+            &=
+            F_{N-1}-og_1\\
+            &=
+            F_{N-1}+\left(\frac{\kappa}{h}-\frac{\sigma h}{6}\right)g_1.
+        \end{aligned}
+        \]
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} En el cuadrado $\Omega=(0,1)^2$ con nodos $x_1=(0,0)$, $x_2=(1,0)$, $x_3=(1,1)$ y $x_4=(0,1)$, considere los triángulos $K_1=(x_1,x_2,x_3)$ y $K_2=(x_1,x_3,x_4)$. Para
+    \[
+    \begin{aligned}
+        -\Delta u&=1 &&\text{en }\Omega,\\
+        \gamma_0u&=0 &&\text{en }\Gamma_D=\{0\}\times(0,1),\\
+        \partial_nu+\beta\gamma_0u&=r &&\text{en }\Gamma_R=\{1\}\times(0,1),
+    \end{aligned}
+    \]
+    use elementos $P^1$ conformes, construya IEN/ID/LM, ensamble las contribuciones de volumen y agregue la contribución Robin final.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item La formulación discreta es: hallar $u_h\in V_h$ con $u_h(x_1)=u_h(x_4)=0$ tal que
+        \[
+            \int_\Omega \nabla u_h\cdot\nabla v_h\dx
+            +\int_{\Gamma_R}\beta\,\gamma_0u_h\,\gamma_0v_h\ds
+            =
+            \int_\Omega v_h\dx+\int_{\Gamma_R}r\,\gamma_0v_h\ds
+            \qquad\forall v_h\in V_h^0.
+        \]
+        Con numeración global $(x_1,x_2,x_3,x_4)$,
+        \[
+            \mathrm{IEN}(K_1)=(1,2,3),
+            \qquad
+            \mathrm{IEN}(K_2)=(1,3,4).
+        \]
+        Los nodos libres son $x_2$ y $x_3$, luego podemos usar
+        \[
+            \mathrm{ID}(1)=0,\qquad
+            \mathrm{ID}(2)=1,\qquad
+            \mathrm{ID}(3)=2,\qquad
+            \mathrm{ID}(4)=0.
+        \]
+        Así,
+        \[
+            \mathrm{LM}(K_1)=(0,1,2),
+            \qquad
+            \mathrm{LM}(K_2)=(0,2,0).
+        \]
+
+        \item Para $K_1=(x_1,x_2,x_3)$, las funciones locales tienen gradientes
+        \[
+            \nabla\varphi_1=(-1,0),
+            \qquad
+            \nabla\varphi_2=(1,-1),
+            \qquad
+            \nabla\varphi_3=(0,1),
+        \]
+        y $|K_1|=1/2$. Como los gradientes son constantes en un elemento $P^1$,
+        \[
+            K^{(1)}_{ab}
+            =
+            \int_{K_1}\nabla\varphi_b\cdot\nabla\varphi_a\dx
+            =
+            |K_1|\,\nabla\varphi_b\cdot\nabla\varphi_a.
+        \]
+        Por ejemplo,
+        \[
+            K^{(1)}_{22}
+            =
+            \frac12(1,-1)\cdot(1,-1)
+            =
+            1,
+            \qquad
+            K^{(1)}_{23}
+            =
+            \frac12(0,1)\cdot(1,-1)
+            =
+            -\frac12.
+        \]
+        Calculando todas las entradas,
+        \[
+            \mat K^{(1)}
+            =
+            \frac12
+            \begin{pmatrix}
+                1&-1&0\\
+                -1&2&-1\\
+                0&-1&1
+            \end{pmatrix}.
+        \]
+        Para $K_2=(x_1,x_3,x_4)$,
+        \[
+            \nabla\varphi_1=(0,-1),
+            \qquad
+            \nabla\varphi_2=(1,0),
+            \qquad
+            \nabla\varphi_3=(-1,1),
+        \]
+        y, usando nuevamente $K^{(2)}_{ab}=|K_2|\nabla\varphi_b\cdot\nabla\varphi_a$ con $|K_2|=1/2$,
+        \[
+            \mat K^{(2)}
+            =
+            \frac12
+            \begin{pmatrix}
+                1&0&-1\\
+                0&1&-1\\
+                -1&-1&2
+            \end{pmatrix}.
+        \]
+        Como $f\equiv1$, en cada triángulo
+        \[
+            \vec F^{(e)}=\frac{|K_e|}{3}
+            \begin{pmatrix}
+                1\\1\\1
+            \end{pmatrix}
+            =
+            \frac16
+            \begin{pmatrix}
+                1\\1\\1
+            \end{pmatrix}.
+        \]
+        Ensamblamos sólo los grados de libertad libres $x_2,x_3$. Para $K_1$, como
+        \[
+            \mathrm{LM}(K_1)=(0,1,2),
+        \]
+        se conservan las filas y columnas locales $2$ y $3$:
+        \[
+            \begin{pmatrix}
+                K^{(1)}_{22}&K^{(1)}_{23}\\
+                K^{(1)}_{32}&K^{(1)}_{33}
+            \end{pmatrix}
+            =
+            \begin{pmatrix}
+                1&-\frac12\\[0.3ex]
+                -\frac12&\frac12
+            \end{pmatrix}.
+        \]
+        Para $K_2$, como
+        \[
+            \mathrm{LM}(K_2)=(0,2,0),
+        \]
+        el único grado libre del elemento es el nodo local $2$, que corresponde a $x_3$. Por tanto, $K_2$ sólo agrega
+        \[
+            K^{(2)}_{22}=\frac12
+        \]
+        a la entrada reducida asociada a $(x_3,x_3)$.
+
+        Denotemos por $\mat K_{\mathrm{vol}}$ y $\vec F_{\mathrm{vol}}$ la matriz y el vector reducidos que vienen de las integrales de volumen, es decir, de los términos integrados sobre los triángulos $K_1$ y $K_2$. Esta notación todavía no incluye la contribución Robin sobre la arista $E_R$. Entonces
+        \[
+            \mat K_{\mathrm{vol}}=
+            \begin{pmatrix}
+                1&-\frac12\\[0.3ex]
+                -\frac12&1
+            \end{pmatrix},
+            \qquad
+            \vec F_{\mathrm{vol}}=
+            \begin{pmatrix}
+                \frac16\\[0.3ex]
+                \frac13
+            \end{pmatrix}.
+        \]
+        Para el vector de carga ocurre lo mismo. El elemento $K_1$ aporta $\frac16$ a $x_2$ y $\frac16$ a $x_3$, mientras que $K_2$ aporta $\frac16$ sólo a $x_3$. Por eso
+        \[
+            F_{\mathrm{vol},1}=\frac16,
+            \qquad
+            F_{\mathrm{vol},2}=\frac16+\frac16=\frac13.
+        \]
+
+        \item La arista Robin es $E_R=[x_2,x_3]$, de longitud $1$. Sobre esta arista, las funciones activas son las asociadas a $x_2$ y $x_3$. Parametrizamos
+        \[
+            (x,y)=(1,s),
+            \qquad
+            0\le s\le1.
+        \]
+        Como $\ds=ds$, las trazas de las funciones nodales libres son
+        \[
+            \gamma_0\varphi_{x_2}=1-s,
+            \qquad
+            \gamma_0\varphi_{x_3}=s.
+        \]
+        Entonces las entradas Robin vienen de
+        \[
+        \begin{aligned}
+            \int_{E_R}\beta(\gamma_0\varphi_{x_2})^2\ds
+            &=\beta\int_0^1(1-s)^2ds=\frac{\beta}{3},\\
+            \int_{E_R}\beta(\gamma_0\varphi_{x_2})(\gamma_0\varphi_{x_3})\ds
+            &=\beta\int_0^1s(1-s)ds=\frac{\beta}{6},\\
+            \int_{E_R}\beta(\gamma_0\varphi_{x_3})^2\ds
+            &=\beta\int_0^1s^2ds=\frac{\beta}{3}.
+        \end{aligned}
+        \]
+        Por tanto, la contribución de matriz es
+        \[
+            \mat K_R=
+            \frac{\beta}{6}
+            \begin{pmatrix}
+                2&1\\
+                1&2
+            \end{pmatrix},
+        \]
+        La contribución de carga se calcula igual:
+        \[
+            \int_{E_R}r\,\gamma_0\varphi_{x_2}\ds
+            =
+            r\int_0^1(1-s)ds
+            =
+            \frac r2,
+            \qquad
+            \int_{E_R}r\,\gamma_0\varphi_{x_3}\ds
+            =
+            r\int_0^1s\,ds
+            =
+            \frac r2.
+        \]
+        Así,
+        \[
+            \vec F_R=
+            \frac{r}{2}
+            \begin{pmatrix}
+                1\\1
+            \end{pmatrix}.
+        \]
+        Sumando las contribuciones de volumen y de Robin, el sistema final reducido es
+        \[
+            (\mat K_{\mathrm{vol}}+\mat K_R)
+            \begin{pmatrix}
+                U_2\\U_3
+            \end{pmatrix}
+            =
+            \vec F_{\mathrm{vol}}+\vec F_R.
+        \]
+        Es decir,
+        \[
+            \left[
+            \begin{pmatrix}
+                1&-\frac12\\[0.3ex]
+                -\frac12&1
+            \end{pmatrix}
+            +
+            \frac{\beta}{6}
+            \begin{pmatrix}
+                2&1\\
+                1&2
+            \end{pmatrix}
+            \right]
+            \begin{pmatrix}
+                U_2\\U_3
+            \end{pmatrix}
+            =
+            \begin{pmatrix}
+                \frac16\\[0.3ex]
+                \frac13
+            \end{pmatrix}
+            +
+            \frac{r}{2}
+            \begin{pmatrix}
+                1\\1
+            \end{pmatrix}.
+        \]
+        Equivalentemente,
+        \[
+            \begin{pmatrix}
+                1+\frac{\beta}{3}&-\frac12+\frac{\beta}{6}\\[0.3ex]
+                -\frac12+\frac{\beta}{6}&1+\frac{\beta}{3}
+            \end{pmatrix}
+            \begin{pmatrix}
+                U_2\\U_3
+            \end{pmatrix}
+            =
+            \begin{pmatrix}
+                \frac16+\frac r2\\[0.3ex]
+                \frac13+\frac r2
+            \end{pmatrix}.
+        \]
+        Si los datos Dirichlet en $x_1$ y $x_4$ fueran no homogéneos, esos valores no se resolverían como incógnitas. Se moverían al lado derecho mediante la corrección usual
+        \[
+            \vec F_I\longmapsto \vec F_I-\mat K_{IB}\vec G_B,
+        \]
+        incluyendo las contribuciones locales de volumen conectadas con los nodos $x_1$ y $x_4$.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

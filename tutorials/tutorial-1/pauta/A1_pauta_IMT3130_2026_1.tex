@@ -1,0 +1,309 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,booktabs,enumitem,fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\td}[2]{\frac{\mathrm d #1}{\mathrm d #2}}
+\newcommand{\solution}{\large\textbf{Solución}\normalsize}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\ten   #1{\mbox{\boldmath $#1$}{}}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Cof}{Cof}
+\def\dx{\mbox{\(\,\mathrm{d}x\)}}
+\def\R{\mathbb R}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{13/03/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 1}\\
+        \vspace{3pt}
+        \normalsize\textbf{Cálculo diferencial tensorial}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} Sea
+    \[
+        F(\vec x)=\frac12\vec x^\top\ten M\vec x+\vec b\cdot\vec x,
+        \qquad
+        \ten M\in\R^{n\times n},\quad \vec b\in\R^n.
+    \]
+    Calcule la derivada de Fréchet de $F$ en $\vec x\in\R^n$.
+
+    \textbf{Solución.} Para una dirección $\vec h\in\R^n$,
+    \begin{align*}
+        F(\vec x+\vec h)-F(\vec x)
+        &=\frac12(\vec x+\vec h)^\top\ten M(\vec x+\vec h)-\frac12\vec x^\top\ten M\vec x+\vec b\cdot\vec h\\
+        &=\frac12\vec h^\top\ten M\vec x+\frac12\vec x^\top\ten M\vec h+\vec b\cdot\vec h+\frac12\vec h^\top\ten M\vec h\\
+        &=\left(\frac{\ten M+\ten M^\top}{2}\vec x+\vec b\right)\cdot\vec h+\frac12\vec h^\top\ten M\vec h.
+    \end{align*}
+    El resto es $O(\norm{\vec h}^2)$, luego
+    \[
+        dF(\vec x)[\vec h]
+        =
+        \left(\frac{\ten M+\ten M^\top}{2}\vec x+\vec b\right)\cdot\vec h.
+    \]
+    Identificando $(\R^n)'$ con $\R^n$, el gradiente es
+    \[
+        \nabla F(\vec x)=\frac{\ten M+\ten M^\top}{2}\vec x+\vec b.
+    \]
+    Si $\ten M$ es simétrica, esto se reduce a $\nabla F(\vec x)=\ten M\vec x+\vec b$.
+
+    \item \textbf{Enunciado.} Sea $\Omega\subset\R^d$ acotado, $\alpha>0$, $f\in L^1(\Omega)$ y
+    \[
+        J(u)=\int_\Omega\left(\frac12u^2+\frac{\alpha}{4}u^4-fu\right)\dx,
+        \qquad
+        J:L^\infty(\Omega)\to\R.
+    \]
+    Calcule la derivada de Gâteaux de $J$ y verifique que $J$ es Fréchet diferenciable.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item Para $u,v\in L^\infty(\Omega)$,
+        \begin{align*}
+            \frac{J(u+t v)-J(u)}{t}
+            &=
+            \int_\Omega
+            \left[
+            uv+\frac{t}{2}v^2
+            +\frac{\alpha}{4}\frac{(u+tv)^4-u^4}{t}
+            -fv
+            \right]\dx.
+        \end{align*}
+        Como $u,v\in L^\infty(\Omega)$ y $\Omega$ es acotado, se puede pasar al límite. Por tanto,
+        \[
+            d_GJ(u)[v]
+            =
+            \int_\Omega (u+\alpha u^3-f)v\dx.
+        \]
+
+        \item Definamos
+        \[
+            L_u(h)=\int_\Omega (u+\alpha u^3-f)h\dx.
+        \]
+        Es lineal, y además
+        \[
+            \abs{L_u(h)}
+            \le
+            \left(|\Omega|\norm{u+\alpha u^3}_{L^\infty(\Omega)}+\norm{f}_{L^1(\Omega)}\right)
+            \norm{h}_{L^\infty(\Omega)}.
+        \]
+        Luego $L_u\in (L^\infty(\Omega))'$. Para el resto,
+        \begin{align*}
+            J(u+h)-J(u)-L_u(h)
+            &=
+            \int_\Omega
+            \left[
+            \frac12h^2
+            +\frac{\alpha}{4}\left((u+h)^4-u^4-4u^3h\right)
+            \right]\dx\\
+            &=
+            \int_\Omega
+            \left[
+            \frac12h^2
+            +\frac{3\alpha}{2}u^2h^2
+            +\alpha uh^3
+            +\frac{\alpha}{4}h^4
+            \right]\dx.
+        \end{align*}
+        Así,
+        \[
+            \abs{J(u+h)-J(u)-L_u(h)}
+            \le
+            C(u,\alpha,\Omega)\left(\norm{h}_{L^\infty}^2+\norm{h}_{L^\infty}^3+\norm{h}_{L^\infty}^4\right),
+        \]
+        y por ende el cociente por $\norm{h}_{L^\infty}$ tiende a cero. Entonces $J$ es Fréchet diferenciable y
+        \[
+            dJ(u)[h]=\int_\Omega (u+\alpha u^3-f)h\dx.
+        \]
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Sean $\ten A,\ten H,\ten B\in\R^{n\times n}$, con $\ten B$ fijo. Para
+    \[
+        \ten C(\ten A)=\ten A^\top\ten A,
+        \qquad
+        \psi(\ten A)=\ten A:\ten B,
+    \]
+    calcule $d\ten C(\ten A)[\ten H]$, $d\psi(\ten A)[\ten H]$ y $\partial\psi/\partial\ten A$.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item
+        \[
+            \ten C(\ten A+\ten H)-\ten C(\ten A)
+            =
+            (\ten A+\ten H)^\top(\ten A+\ten H)-\ten A^\top\ten A
+            =
+            \ten H^\top\ten A+\ten A^\top\ten H+\ten H^\top\ten H.
+        \]
+        Por tanto,
+        \[
+            d\ten C(\ten A)[\ten H]=\ten H^\top\ten A+\ten A^\top\ten H.
+        \]
+
+        \item
+        \[
+            \psi(\ten A+\ten H)-\psi(\ten A)
+            =
+            (\ten A+\ten H):\ten B-\ten A:\ten B
+            =
+            \ten H:\ten B.
+        \]
+        Luego
+        \[
+            d\psi(\ten A)[\ten H]=\ten H:\ten B,
+            \qquad
+            \pd{\psi}{\ten A}=\ten B.
+        \]
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Para
+    \[
+        I_1(\ten A)=\tr(\ten A),\qquad
+        I_2(\ten A)=\frac12\left[(\tr\ten A)^2-\tr(\ten A^2)\right],
+        \qquad
+        I_3(\ten A)=\det(\ten A),
+    \]
+    calcule $\partial I_1/\partial\ten A$, $\partial I_2/\partial\ten A$ y $\partial I_3/\partial\ten A$, suponiendo $\ten A$ invertible para $I_3$.
+
+    \textbf{Solución.} Para toda dirección $\ten H$,
+    \[
+        dI_1(\ten A)[\ten H]=\tr(\ten H)=\ten I:\ten H,
+        \qquad
+        \pd{I_1}{\ten A}=\ten I.
+    \]
+    Además,
+    \begin{align*}
+        dI_2(\ten A)[\ten H]
+        &=
+        \tr(\ten A)\tr(\ten H)
+        -\frac12\tr(\ten A\ten H+\ten H\ten A)\\
+        &=
+        \tr(\ten A)\tr(\ten H)-\tr(\ten A\ten H)\\
+        &=
+        \left(\tr(\ten A)\ten I-\ten A^\top\right):\ten H.
+    \end{align*}
+    Por tanto,
+    \[
+        \pd{I_2}{\ten A}=\tr(\ten A)\ten I-\ten A^\top.
+    \]
+    Finalmente, si $\ten A$ es invertible,
+    \[
+        dI_3(\ten A)[\ten H]
+        =
+        \Cof(\ten A):\ten H
+        =
+        \det(\ten A)\ten A^{-\top}:\ten H,
+    \]
+    y entonces
+    \[
+        \pd{I_3}{\ten A}=\Cof(\ten A)=\det(\ten A)\ten A^{-\top}.
+    \]
+
+    \item \textbf{Enunciado.} Sea
+    \[
+        W(\ten F)=\frac{\mu}{2}(\ten F:\ten F-3)-\mu\ln(\det\ten F)
+        +\frac{\lambda}{2}\big(\ln(\det\ten F)\big)^2,
+        \qquad \det\ten F>0.
+    \]
+    Calcule $\partial W/\partial\ten F$ y evalúe en $\ten F=\ten I$.
+
+    \textbf{Solución.} Sea $J=\det\ten F$. Usamos
+    \[
+        d(\ten F:\ten F)[\ten H]=2\ten F:\ten H,
+        \qquad
+        d(\ln J)[\ten H]=\ten F^{-\top}:\ten H.
+    \]
+    Entonces
+    \begin{align*}
+        dW(\ten F)[\ten H]
+        &=
+        \mu\ten F:\ten H
+        -\mu\ten F^{-\top}:\ten H
+        +\lambda\ln(\det\ten F)\,\ten F^{-\top}:\ten H\\
+        &=
+        \left[\mu\ten F+\left(\lambda\ln(\det\ten F)-\mu\right)\ten F^{-\top}\right]:\ten H.
+    \end{align*}
+    Por tanto,
+    \[
+        \pd{W}{\ten F}
+        =
+        \mu\ten F+\left(\lambda\ln(\det\ten F)-\mu\right)\ten F^{-\top}.
+    \]
+    En $\ten F=\ten I$ se tiene $\det\ten I=1$, $\ln 1=0$ y $\ten I^{-\top}=\ten I$, luego
+    \[
+        \pd{W}{\ten F}(\ten I)=\mu\ten I-\mu\ten I=\ten 0.
+    \]
+
+    \item \textbf{Enunciado.} Estudie en el origen la existencia de derivadas direccionales o de Gâteaux y la diferenciabilidad de Fréchet de
+    \[
+        f(x)=|x|
+    \]
+    y de
+    \[
+        f(x,y)=
+        \begin{cases}
+        \dfrac{2xy}{\sqrt{x^2+y^2}}, &(x,y)\neq(0,0),\\[0.8ex]
+        0,&(x,y)=(0,0).
+        \end{cases}
+    \]
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item En $x=0$,
+        \[
+            \lim_{t\to0}\frac{|0+th|-|0|}{t}
+            =
+            \lim_{t\to0}\frac{|t|}{t}|h|
+        \]
+        no existe si $h\neq0$, porque los límites laterales son $|h|$ y $-|h|$. Si se consideran derivadas direccionales unilaterales, se obtiene $|h|$, que no es lineal en $h$. En cualquier caso, no hay derivada de Gâteaux bilateral ni derivada de Fréchet en $0$. Equivalentemente, si existiera $L\in(\R)'$ tal que $|x|=Lx+o(|x|)$, al tomar $x>0$ y $x<0$ se obtiene simultáneamente $L=1$ y $L=-1$, contradicción.
+
+        \item Primero,
+        \[
+            \abs{\frac{2xy}{\sqrt{x^2+y^2}}}
+            \le
+            \sqrt{x^2+y^2},
+        \]
+        luego $f(x,y)\to0=f(0,0)$ y $f$ es continua en el origen. Para una dirección $\vec h=(a,b)$,
+        \[
+            \frac{f(t a,t b)-f(0,0)}{t}
+            =
+            \frac{2ab}{\sqrt{a^2+b^2}}\frac{|t|}{t}
+            \qquad ((a,b)\neq(0,0)).
+        \]
+        El límite bilateral existe sólo si $ab=0$. En particular, no existe derivada de Gâteaux bilateral en el origen. Las derivadas parciales existen y valen cero, pero eso no implica diferenciabilidad. Como tampoco hay derivada de Gâteaux, $f$ no puede ser Fréchet diferenciable en $(0,0)$.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}

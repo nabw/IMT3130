@@ -1,0 +1,284 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,booktabs,enumitem,fancyhdr}
+\usepackage[misc]{ifsym}
+\usepackage{hyperref}
+
+\setlength\textwidth{7in}
+\setlength\parindent{0pt}
+\oddsidemargin=-0.5cm
+\textheight=665pt
+\pagestyle{fancy}
+\setlength{\headheight}{13.6pt}
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0.1pt}
+\lhead{\scshape Pontificia Universidad Católica de Chile}
+\rhead{\scshape IMC UC}
+\cfoot{\thepage}
+
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdd}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\solution}{\large\textbf{Solución}\normalsize}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\def\mat   #1{\mbox{\boldmath $\mathsf #1$}}
+\def\vec   #1{\mbox{\boldmath $#1$}{}}
+\def\R{\mathbb R}
+
+\AtBeginDocument{\vspace*{-3.2\baselineskip}}
+
+\begin{document}
+    \begin{flushleft}
+        \small
+        \vspace{1pt}
+        \textbf{IMT3130} \hfill
+        \textbf{27/03/2026}
+    \end{flushleft}
+    \begin{center}
+        \LARGE\textbf{Pauta Ayudantía 3}\\
+        \vspace{3pt}
+        \normalsize\textbf{Diferencias finitas en 2D, stepping temporal y estabilidad}\\
+        \normalsize Ayudante: Bastián Herrera \Letter{\hspace{1pt}: \texttt{biherrera@uc.cl}}
+        \rule{\textwidth}{0.05mm}
+    \end{center}
+
+\section*{Problemas y soluciones}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*]
+
+    \item \textbf{Enunciado.} Considere
+    \[
+    \begin{aligned}
+        -\Delta u&=f &&\text{en }\Omega=(0,1)^2,\\
+        u&=0 &&\text{en }\partial\Omega.
+    \end{aligned}
+    \]
+    En una malla uniforme, escriba el esquema de cinco puntos y su stencil. Luego use la solución manufacturada
+    \[
+        u(x,y)=\sin(\pi x)\sin(\pi y)
+    \]
+    para determinar $f$, el orden esperado, el error máximo $E_h$ y la tasa empírica de convergencia.
+
+    \textbf{Solución.}
+    \begin{enumerate}[label=(\alph*)]
+        \item En nodos interiores,
+        \[
+            \frac{4u_{i,j}-u_{i+1,j}-u_{i-1,j}-u_{i,j+1}-u_{i,j-1}}{h^2}
+            =
+            f(x_i,y_j).
+        \]
+        El stencil asociado al operador $-\Delta_h$ es
+        \[
+            \frac1{h^2}
+            \begin{array}{ccc}
+                & -1 & \\
+                -1 & 4 & -1\\
+                & -1 &
+            \end{array}.
+        \]
+
+        \item Para
+        \[
+            u(x,y)=\sin(\pi x)\sin(\pi y),
+        \]
+        se tiene
+        \[
+            -\Delta u
+            =
+            -u_{xx}-u_{yy}
+            =
+            2\pi^2\sin(\pi x)\sin(\pi y).
+        \]
+        Por tanto,
+        \[
+            f(x,y)=2\pi^2\sin(\pi x)\sin(\pi y).
+        \]
+        Usando Taylor en ambas direcciones,
+        \[
+            -\Delta_h u(x_i,y_j)
+            =
+            -\Delta u(x_i,y_j)
+            -\frac{h^2}{12}\left(u_{xxxx}+u_{yyyy}\right)(x_i,y_j)
+            +O(h^4).
+        \]
+        Luego el error local es $O(h^2)$ y el orden esperado del método es $2$, siempre que el sistema discreto sea estable.
+
+        \item La solución discreta se obtiene resolviendo
+        \[
+            \mat A_h\vec U_h=\vec F_h,
+        \]
+        donde $\vec U_h$ contiene los valores interiores $u_{ij}$. Para esta solución manufacturada, la tabla siguiente muestra
+        \[
+            E_h=\max_{i,j}\abs{u(x_i,y_j)-u_{ij}},
+            \qquad
+            \operatorname{ECR}(h)=
+            \frac{\log(E_h/E_{2h})}{\log(h/(2h))}.
+        \]
+        \begin{center}
+        \begin{tabular}{c c c c}
+            \toprule
+            $N$ & $h$ & $E_h$ & $\operatorname{ECR}$\\
+            \midrule
+            $8$  & $1/8$  & $1.2951\cdot10^{-2}$ & -\\
+            $16$ & $1/16$ & $3.2190\cdot10^{-3}$ & $2.0084$\\
+            $32$ & $1/32$ & $8.0358\cdot10^{-4}$ & $2.0021$\\
+            $64$ & $1/64$ & $2.0082\cdot10^{-4}$ & $2.0005$\\
+            \bottomrule
+        \end{tabular}
+        \end{center}
+        Esto confirma el orden cuadrático. En este caso particular, el modo $\sin(\pi x)\sin(\pi y)$ es también un modo propio del laplaciano discreto, con autovalor
+        \[
+            \lambda_h=\frac{8}{h^2}\sin^2\!\left(\frac{\pi h}{2}\right),
+        \]
+        mientras que el autovalor continuo es $2\pi^2$. Esta identidad explica por qué el comportamiento asintótico se ve tan limpio.
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Para la ecuación de advección periódica
+    \[
+        u_t+u_x=0,
+    \]
+    estudie el esquema
+    \[
+        \frac{U_j^{n+1}-U_j^n}{\Delta t}
+        +
+        \frac{U_{j+1}^n-U_{j-1}^n}{2h}=0.
+    \]
+    Determine su consistencia, calcule el factor de amplificación de von Neumann y pruebe que el esquema es inestable para todo $\lambda=\Delta t/h>0$.
+
+    \textbf{Solución.} Denotemos $\lambda=\Delta t/h$.
+    \begin{enumerate}[label=(\alph*)]
+        \item Al evaluar la solución exacta en el esquema,
+        \[
+            \frac{u(x_j,t^{n+1})-u(x_j,t^n)}{\Delta t}
+            +
+            \frac{u(x_{j+1},t^n)-u(x_{j-1},t^n)}{2h},
+        \]
+        Taylor entrega
+        \[
+            u_t+\frac{\Delta t}{2}u_{tt}+O(\Delta t^2)
+            +
+            u_x+\frac{h^2}{6}u_{xxx}+O(h^4).
+        \]
+        Como la ecuación exacta cumple $u_t+u_x=0$, el error local es
+        \[
+            \tau_j^n
+            =
+            \frac{\Delta t}{2}u_{tt}(x_j,t^n)
+            +
+            \frac{h^2}{6}u_{xxx}(x_j,t^n)
+            +O(\Delta t^2+h^4).
+        \]
+        Por tanto, el esquema es consistente de orden $O(\Delta t+h^2)$.
+
+        \item Para von Neumann, usamos el modo
+        \[
+            U_j^n=g^n e^{i j\theta},
+            \qquad \theta=\xi h.
+        \]
+        Sustituyendo en el esquema,
+        \begin{align*}
+            \frac{g-1}{\Delta t}
+            +
+            \frac{e^{i\theta}-e^{-i\theta}}{2h}
+            &=0,\\
+            g(\theta)
+            &=1-i\lambda\sin\theta.
+        \end{align*}
+
+        \item Entonces
+        \[
+            \abs{g(\theta)}^2
+            =
+            1+\lambda^2\sin^2\theta.
+        \]
+        Si $\lambda>0$, existe $\theta$ tal que $\sin\theta\neq0$, y para ese modo
+        \[
+            \abs{g(\theta)}>1.
+        \]
+        Por tanto, el esquema es inestable para todo $\lambda>0$. Este ejemplo muestra que la consistencia no basta: aunque el residuo local tiende a cero, algunos modos de Fourier se amplifican artificialmente. Sin estabilidad no se puede concluir convergencia.
+    \end{enumerate}
+
+    \item \textbf{Enunciado.} Para
+    \[
+        u_t+a u_x=0,\qquad a\in\R,
+    \]
+    derive el esquema de Lax--Wendroff
+    \[
+        U_j^{n+1}
+        =
+        U_j^n
+        -\frac{a\Delta t}{2h}(U_{j+1}^n-U_{j-1}^n)
+        +\frac{a^2\Delta t^2}{2h^2}(U_{j+1}^n-2U_j^n+U_{j-1}^n).
+    \]
+    Muestre el término principal del error local, realice el análisis de von Neumann y concluya convergencia vía Lax cuando corresponda.
+
+    \textbf{Solución.} Sea $\nu=a\Delta t/h$.
+    \begin{enumerate}[label=(\alph*)]
+        \item La expansión temporal exacta es
+        \[
+            u(x_j,t^{n+1})
+            =
+            u+\Delta t\,u_t+\frac{\Delta t^2}{2}u_{tt}+O(\Delta t^3).
+        \]
+        Como
+        \[
+            u_t=-a u_x,
+            \qquad
+            u_{tt}=\pd{}{t}(-a u_x)=-a(u_t)_x=-a(-a u_x)_x=a^2u_{xx},
+        \]
+        se obtiene
+        \[
+            u(x_j,t^{n+1})
+            =
+            u-a\Delta t\,u_x+\frac{a^2\Delta t^2}{2}u_{xx}+O(\Delta t^3).
+        \]
+        Reemplazando $u_x$ por diferencia centrada y $u_{xx}$ por diferencia centrada de segundo orden,
+        \[
+            U_j^{n+1}
+            =
+            U_j^n
+            -\frac{a\Delta t}{2h}(U_{j+1}^n-U_{j-1}^n)
+            +\frac{a^2\Delta t^2}{2h^2}(U_{j+1}^n-2U_j^n+U_{j-1}^n).
+        \]
+        Este es el esquema de Lax--Wendroff.
+
+        \item Al insertar la solución exacta en el esquema y usar $\Delta t=\nu h/a$ con $\nu$ fijo,
+        \[
+            \tau_j^n
+            =
+            \frac{a h^2}{6}(1-\nu^2)u_{xxx}(x_j,t^n)+O(h^3).
+        \]
+        En particular, el esquema tiene error local de orden $2$. El término principal es dispersivo: depende de una tercera derivada espacial.
+
+        \item Usando $U_j^n=g^n e^{ij\theta}$,
+        \[
+            g(\theta)
+            =
+            1-i\nu\sin\theta+\nu^2(\cos\theta-1).
+        \]
+        Luego
+        \begin{align*}
+            \abs{g(\theta)}^2
+            &=
+            \left(1+\nu^2(\cos\theta-1)\right)^2+\nu^2\sin^2\theta\\
+            &=
+            1-\nu^2(1-\nu^2)(1-\cos\theta)^2.
+        \end{align*}
+        Si $\abs{\nu}\le1$, entonces $\nu^2(1-\nu^2)\ge0$ y
+        \[
+            \abs{g(\theta)}\le1
+            \qquad\forall \theta.
+        \]
+        Si $\abs{\nu}>1$, entonces $\nu^2(1-\nu^2)<0$, y para cualquier $\theta$ con $\cos\theta\neq1$ se obtiene $\abs{g(\theta)}>1$. Por tanto, el esquema es estable si y sólo si
+        \[
+            \abs{\nu}\le1.
+        \]
+
+        \item El esquema es lineal, consistente y estable bajo la condición CFL $\abs{\nu}\le1$. Por el teorema de equivalencia de Lax, en un problema lineal bien planteado esto implica convergencia. Si $\abs{\nu}>1$, falla la estabilidad de von Neumann y no se puede esperar convergencia en general.
+    \end{enumerate}
+
+\end{enumerate}
+
+\end{document}
